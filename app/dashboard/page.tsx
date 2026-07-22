@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { userHasOrganization } from "@/app/dashboard/onboarding/actions";
 
-const summaryCards = [
-  { label: "Organizations", value: "0" },
-  { label: "Projects", value: "0" },
-  { label: "Companies", value: "0" },
-  { label: "AI Agents", value: "0" },
-];
+type OrganizationMembership = {
+  organization_id: string;
+  organizations: {
+    id: string;
+    name: string;
+  } | null;
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -19,11 +19,59 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const hasOrganization = await userHasOrganization(supabase, user.id);
+  const { data: membership, error: membershipError } = await supabase
+    .from("organization_members")
+    .select(
+      `
+        organization_id,
+        organizations (
+          id,
+          name
+        )
+      `,
+    )
+    .eq("user_id", user.id)
+    .is("deleted_at", null)
+    .limit(1)
+    .maybeSingle<OrganizationMembership>();
 
-  if (!hasOrganization) {
+  if (membershipError || !membership?.organizations) {
     redirect("/dashboard/onboarding");
   }
+
+  const organization = membership.organizations;
+  const organizationId = membership.organization_id;
+
+  const [
+    { count: projectsCount, error: projectsError },
+    { count: companiesCount, error: companiesError },
+    { count: membersCount, error: membersError },
+  ] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .is("deleted_at", null),
+    supabase
+      .from("companies")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .is("deleted_at", null),
+    supabase
+      .from("organization_members")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .is("deleted_at", null),
+  ]);
+
+  const summaryCards = [
+    { label: "Projects", value: projectsError ? "—" : String(projectsCount ?? 0) },
+    { label: "Companies", value: companiesError ? "—" : String(companiesCount ?? 0) },
+    {
+      label: "Organization Members",
+      value: membersError ? "—" : String(membersCount ?? 0),
+    },
+  ];
 
   return (
     <div>
@@ -31,7 +79,10 @@ export default async function DashboardPage() {
         <h1 className="text-[1.75rem] font-semibold tracking-tight text-white sm:text-[2.125rem]">
           Welcome to Infinity
         </h1>
-        <p className="mt-2 text-[13px] text-zinc-500">
+        <p className="mt-2 text-[15px] font-medium text-zinc-300">
+          {organization.name}
+        </p>
+        <p className="mt-1 text-[13px] text-zinc-500">
           Your command center for ventures, projects, and operations.
         </p>
       </header>
@@ -40,7 +91,7 @@ export default async function DashboardPage() {
         <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">
           Overview
         </h2>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {summaryCards.map((card) => (
             <div
               key={card.label}
