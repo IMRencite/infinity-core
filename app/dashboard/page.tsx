@@ -1,3 +1,7 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { userHasOrganization } from "@/app/dashboard/onboarding/actions";
+
 const summaryCards = [
   { label: "Organizations", value: "0" },
   { label: "Projects", value: "0" },
@@ -5,7 +9,22 @@ const summaryCards = [
   { label: "AI Agents", value: "0" },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const hasOrganization = await userHasOrganization(supabase, user.id);
+
+  if (!hasOrganization) {
+    redirect("/dashboard/onboarding");
+  }
+
   return (
     <div>
       <header className="mb-6">
