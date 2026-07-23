@@ -7,7 +7,7 @@
 | **Specification version** | 1.0 |
 | **Status** | Architecture Freeze Candidate |
 | **Repository** | `infinity-core` |
-| **Date** | 2026-07-23 |
+| **Date** | 2026-07-23 (amended: Registry layer) |
 
 **Source of truth:** This document is the durable architectural source of truth for Infinity platform design, autonomous behavior, governance, and implementation sequencing. Product terminology, layer responsibilities, lifecycle stages, and security principles defined here are **locked** under Architecture Freeze v1 unless superseded by an approved ADR in `docs/decisions/`.
 
@@ -29,25 +29,26 @@
 6. [Section 5 — Command](#section-5--command)
 7. [Section 6 — Planner](#section-6--planner)
 8. [Section 7 — Scheduler](#section-7--scheduler)
-9. [Section 8 — Engines](#section-8--engines)
-10. [Section 9 — Discovery Engine](#section-9--discovery-engine)
-11. [Section 10 — Research, Knowledge, and Memory](#section-10--research-knowledge-and-memory)
-12. [Section 11 — Scoring and Decisions](#section-11--scoring-and-decisions)
-13. [Section 12 — Validation](#section-12--validation)
-14. [Section 13 — Business Architect](#section-13--business-architect)
-15. [Section 14 — Build Factory](#section-14--build-factory)
-16. [Section 15 — Workers](#section-15--workers)
-17. [Section 16 — Autonomy and Approval](#section-16--autonomy-and-approval)
-18. [Section 17 — Capital and Resource Allocation](#section-17--capital-and-resource-allocation)
-19. [Section 18 — Security and Trust](#section-18--security-and-trust)
-20. [Section 19 — Event System](#section-19--event-system)
-21. [Section 20 — Data Architecture Principles](#section-20--data-architecture-principles)
-22. [Section 21 — UI Philosophy](#section-21--ui-philosophy)
-23. [Section 22 — Failure and Recovery](#section-22--failure-and-recovery)
-24. [Section 23 — Learning Loop](#section-23--learning-loop)
-25. [Section 24 — Implementation Phases](#section-24--implementation-phases)
-26. [Section 25 — Architecture Freeze Rules](#section-25--architecture-freeze-rules)
-27. [Section 26 — Current State](#section-26--current-state)
+9. [Section 8 — Registry](#section-8--registry)
+10. [Section 9 — Engines](#section-9--engines)
+11. [Section 10 — Discovery Engine](#section-10--discovery-engine)
+12. [Section 11 — Research, Knowledge, and Memory](#section-11--research-knowledge-and-memory)
+13. [Section 12 — Scoring and Decisions](#section-12--scoring-and-decisions)
+14. [Section 13 — Validation](#section-13--validation)
+15. [Section 14 — Business Architect](#section-14--business-architect)
+16. [Section 15 — Build Factory](#section-15--build-factory)
+17. [Section 16 — Workers](#section-16--workers)
+18. [Section 17 — Autonomy and Approval](#section-17--autonomy-and-approval)
+19. [Section 18 — Capital and Resource Allocation](#section-18--capital-and-resource-allocation)
+20. [Section 19 — Security and Trust](#section-19--security-and-trust)
+21. [Section 20 — Event System](#section-20--event-system)
+22. [Section 21 — Data Architecture Principles](#section-21--data-architecture-principles)
+23. [Section 22 — UI Philosophy](#section-22--ui-philosophy)
+24. [Section 23 — Failure and Recovery](#section-23--failure-and-recovery)
+25. [Section 24 — Learning Loop](#section-24--learning-loop)
+26. [Section 25 — Implementation Phases](#section-25--implementation-phases)
+27. [Section 26 — Architecture Freeze Rules](#section-26--architecture-freeze-rules)
+28. [Section 27 — Current State](#section-27--current-state)
 
 ---
 
@@ -78,6 +79,7 @@ These define **what Infinity is** across all organizations:
 | **Command** | Strategic intelligence and control layer; evaluates state and decides what should happen next. |
 | **Planner** | Transforms Command decisions into structured, versioned plans. |
 | **Scheduler** | Coordinates durable job execution with retries, locking, and recovery. |
+| **Registry** | Authoritative catalog of available execution capabilities (engines, workers, builders, modules, providers). |
 | **Engines** | Own broad domain capabilities (Discovery, Research, Build Factory, etc.). |
 | **Workers** | Perform specialized tasks under engine and policy direction. |
 | **Memory** | Preserves institutional knowledge, outcomes, and lessons across cycles. |
@@ -106,6 +108,7 @@ Identity
   → Command
   → Planner
   → Scheduler
+  → Registry
   → Engines
   → Workers
   → Memory
@@ -118,6 +121,7 @@ flowchart TB
   Command[Command]
   Planner[Planner]
   Scheduler[Scheduler]
+  Registry[Registry]
   Engines[Engines]
   Workers[Workers]
   Memory[Memory]
@@ -126,21 +130,25 @@ flowchart TB
   Mission --> Command
   Command --> Planner
   Planner --> Scheduler
-  Scheduler --> Engines
+  Scheduler --> Registry
+  Registry --> Engines
   Engines --> Workers
   Workers --> Memory
   Memory --> Portfolio
   Portfolio --> Command
+  Planner -.->|capability lookup| Registry
+  Scheduler -.->|resolve capability| Registry
 ```
 
 | Layer | Responsibility | Primary inputs | Primary outputs | Must not |
 | --- | --- | --- | --- | --- |
 | **Identity** | Define system purpose and invariant principles | Platform specification | Architectural constraints | Vary by tenant |
 | **Mission** | State active strategic objective | Owner/board direction, portfolio context | Mission record, constraints | Execute work directly |
-| **Command** | Evaluate state; prioritize; decide; escalate | Mission, policies, portfolio, pipeline, memory | Decisions, priorities, plan requests, approvals | Perform specialized research, coding, design, or marketing |
-| **Planner** | Structure work from decisions | Command decisions, constraints | Versioned plans, milestones, dependencies | Decide organization strategy |
-| **Scheduler** | Run durable jobs reliably | Plans, engine requests | Job queue state, worker invocations | Judge strategic worth of opportunities |
-| **Engines** | Own domain workflows end-to-end | Jobs, domain inputs | Domain outputs, events, artifacts | Bypass Command policy or cross domain boundaries silently |
+| **Command** | Evaluate state; prioritize; decide; escalate | Mission, policies, portfolio, pipeline, memory | Decisions, priorities, plan requests, approvals | Perform specialized research, coding, design, or marketing; hardcode specific engines or workers |
+| **Planner** | Structure work from decisions | Command decisions, constraints, Registry capability catalog | Versioned plans, milestones, dependencies, **abstract capability requirements** | Decide organization strategy |
+| **Scheduler** | Run durable jobs reliably | Plans, capability requirements, Registry resolution | Job queue state, resolved engine/worker invocations | Judge strategic worth of opportunities |
+| **Registry** | Catalog and expose execution capabilities | Capability registrations, health signals, policy bindings | Capability records, resolution metadata, availability status | Make strategic decisions, create plans, schedule jobs, or execute work |
+| **Engines** | Own domain workflows end-to-end | Jobs, domain inputs, resolved capability bindings | Domain outputs, events, artifacts | Bypass Command policy or cross domain boundaries silently |
 | **Workers** | Execute specialized tasks | Job payloads, tools | Outputs, costs, quality signals | Allocate capital outside policy |
 | **Memory** | Store and retrieve institutional knowledge | Events, outcomes, evidence | Memory records, lessons | Present inference as verified fact |
 | **Portfolio Feedback** | Aggregate performance and lessons | Metrics, venture state, capital | Portfolio signals to Command | Override explicit human approvals |
@@ -238,7 +246,16 @@ Mission, policies, portfolio state, opportunity pipeline, initiative state, vent
 
 ### Outputs
 
-Decisions, priorities, planning requests, approvals, escalations, pauses, cancellations, capital recommendations, engine activation requests.
+Decisions, priorities, planning requests, approvals, escalations, pauses, cancellations, capital recommendations, **outcome and priority directives** (not hardcoded engine or worker selections).
+
+### Command and capability selection
+
+Command requests **outcomes, priorities, constraints, and budgets**—not specific engines, workers, builders, or model providers. Examples:
+
+- "Validate demand for opportunity X within $500 and 14 days" — not "run Landing Page Worker v3 on Vercel."
+- "Prioritize research on top three SaaS opportunities" — not "invoke Research Engine with OpenAI GPT-4."
+
+Planner and Scheduler resolve **how** through the Registry. Command may set policy preferences (e.g., "no unapproved external APIs") but does not bypass Registry resolution for execution binding.
 
 ### Command cycles
 
@@ -262,11 +279,21 @@ Planner converts a **Command decision** into an executable structure.
 - Objectives and success criteria
 - Workstreams and dependencies
 - Milestones and acceptance criteria
-- Required engines and workers
+- **Required capabilities** (abstract requirements: capability type, constraints, quality/cost/latency bounds—not hardcoded engine or worker IDs)
 - Budget and timeline estimates
 - Risk controls and approval gates
 - Rollback strategy
 - Measurable outcomes
+
+### Registry integration
+
+When Planner structures a plan, it **queries the Registry** to determine which capabilities can satisfy each requirement. Planner records:
+
+- **Capability requirements** — e.g., `research.market_analysis`, `build.saas.frontend`, `worker.copywriter`
+- **Constraints** — max cost, required approval level, allowed providers, minimum quality tier
+- **Fallback options** — alternate capabilities if primary is unavailable or unhealthy
+
+Planner **must not** embed implementation-specific bindings (model name, API vendor, worker version) unless explicitly mandated by an approved policy override. Scheduler performs final resolution at job execution time using current Registry health and availability.
 
 ### Versioning and replanning
 
@@ -278,7 +305,19 @@ Planner **must not** decide whether an opportunity is strategically worthwhile�
 
 ## Section 7 — Scheduler
 
-Scheduler provides **durable job orchestration** between Planner and Engines/Workers.
+Scheduler provides **durable job orchestration** between Planner and Engines/Workers, using the **Registry** to resolve abstract capability requirements into executable bindings.
+
+### Registry integration
+
+When Scheduler dequeues a job, it:
+
+1. Reads the job's **capability requirement** from the plan (not a hardcoded engine/worker name from Command)
+2. **Queries the Registry** for matching capabilities filtered by health, version, policy, and organization scope
+3. **Resolves** to a concrete engine, worker, builder, or hybrid workflow binding
+4. Records the resolution (capability ID, version, provider) on the job and worker run for audit
+5. **Re-resolves** on retry if the primary capability is disabled, unhealthy, or deprecated—subject to plan fallback rules
+
+If no capability satisfies the requirement within policy, the job enters a **waiting** or **blocked** state and emits an escalation event—not silent failure.
 
 ### Capabilities
 
@@ -303,14 +342,173 @@ Scheduler provides **durable job orchestration** between Planner and Engines/Wor
 
 | Term | Meaning |
 | --- | --- |
-| **Plan** | Strategic structure from Planner (what and why) |
-| **Job** | Scheduler unit of durable work (when and how orchestrated) |
+| **Plan** | Strategic structure from Planner (what and why; includes abstract capability requirements) |
+| **Job** | Scheduler unit of durable work (when and how orchestrated; includes resolved capability binding) |
 | **Worker run** | Single execution attempt by a worker |
 | **Engine event** | Audit record of engine-level activity |
 
 ---
 
-## Section 8 — Engines
+## Section 8 — Registry
+
+The **Registry** is Infinity's **authoritative catalog of available execution capabilities**. It sits between Scheduler and Engines: Scheduler asks the Registry *what can run*; Engines and Workers *run* what the Registry describes.
+
+The Registry does **not** make strategic decisions, create plans, schedule jobs, or execute work.
+
+### Purpose
+
+Provide a single, queryable source of truth for every execution capability Infinity may invoke—so Planner can structure feasible plans and Scheduler can bind jobs to healthy, policy-compliant implementations without hardcoding vendors or versions in Command decisions.
+
+### Questions the Registry answers
+
+- Which engines are available?
+- Which workers are available?
+- Which builders are available?
+- Which capability modules can satisfy a plan requirement?
+- Which versions are active?
+- Which capabilities are healthy?
+- Which capabilities require approval?
+- Which providers or models can execute a capability?
+- What inputs and outputs does each capability support?
+- What cost, risk, latency, and quality characteristics are known?
+
+### Responsibilities
+
+- Register, update, and deprecate capabilities
+- Expose capability discovery and lookup APIs (server-side)
+- Track versioning and active/default version per capability
+- Maintain health status and availability signals
+- Attach policy requirements (approval level, autonomy class, spend caps)
+- Store cost, quality, latency, and risk metadata
+- Map providers, models, adapters, and deployment targets to capabilities
+- Support organization-scoped capability visibility where applicable
+- Emit audit events on registration and status changes
+
+### Inputs
+
+- Capability registration payloads (from engine/worker/builder implementations at deploy or bootstrap)
+- Health check results and heartbeat signals
+- Policy bindings from organization configuration
+- Performance and cost telemetry from worker runs and Memory
+- Deprecation and disable directives from operators or automated governance
+
+### Outputs
+
+- Capability records (searchable catalog entries)
+- Resolution results for Planner feasibility checks and Scheduler binding
+- Health and availability status
+- Version metadata (active, deprecated, superseded)
+- Policy requirement summaries per capability
+- Events (`registry.*`)
+
+### Prohibited responsibilities
+
+| Prohibited | Reason |
+| --- | --- |
+| Strategic decisions | Command's role |
+| Plan creation | Planner's role |
+| Job scheduling and execution | Scheduler's and Engines' roles |
+| Performing specialized work | Workers' role |
+| Overriding Command priorities | Registry is descriptive, not prescriptive |
+| Allocating capital | Finance/policy layers; Registry only exposes cost metadata |
+
+### Registrable capability types
+
+The Registry must support future registration of:
+
+- Engines
+- Workers
+- Builders (Build Factory families)
+- Capability modules (reusable build/execution modules)
+- Model providers
+- API adapters
+- Source adapters (Discovery and Research)
+- Deployment targets
+- Tools
+- Human-review capabilities
+- Hybrid workflows
+
+### Capability discovery
+
+Capabilities are identified by **stable capability keys** (e.g., `discovery.scan`, `research.web_evidence`, `build.saas`, `worker.developer`) with optional tags, input/output schemas, and constraint metadata. Planner and Scheduler query by:
+
+- Capability type and key patterns
+- Required input/output compatibility
+- Policy and approval requirements
+- Health and availability
+- Cost, latency, and quality bounds
+- Organization scope and entitlements
+
+### Versioning
+
+Each capability may have multiple **versions**. The Registry tracks:
+
+- **Active version** — default for new job resolution
+- **Supported versions** — still executable for in-flight jobs
+- **Deprecated versions** — no new bindings; existing jobs may complete or migrate
+- **Superseded-by** links — audit trail when versions change
+
+Version changes emit `registry.capability_updated` or `registry.version_deprecated`. Scheduler must not bind deprecated capabilities to new jobs unless explicitly allowed by policy.
+
+### Health status
+
+| Status | Meaning |
+| --- | --- |
+| `healthy` | Available for new bindings |
+| `degraded` | Available with reduced quality/latency expectations; may prefer fallbacks |
+| `unhealthy` | Not available for new bindings; retries may re-resolve |
+| `disabled` | Administratively off; no bindings |
+| `unknown` | Insufficient telemetry; treat as unavailable for autonomous binding |
+
+Health transitions emit `registry.health_changed`.
+
+### Policy requirements
+
+Each capability record may declare:
+
+- Minimum autonomy level required
+- Approval gates (e.g., external communication, deployment, spend threshold)
+- Allowed organization tiers or feature flags
+- Restricted data access classes
+- Prohibited action categories
+
+Scheduler and Engines must enforce policy **before** invocation; Registry exposes requirements for pre-flight checks.
+
+### Cost metadata
+
+Estimated and observed cost characteristics per capability/version: unit cost model (per run, per token, per minute), typical range, currency, budget category. **Estimates are not verified financial results**—actuals come from worker runs and Finance Engine.
+
+### Quality metadata
+
+Historical and declared quality signals: success rate, review pass rate, confidence calibration, error rate, output acceptance rate. Memory feeds observed quality back into Registry metadata over time.
+
+### Provider metadata
+
+For AI, API, and infrastructure capabilities: provider name, model or service identifier, region, rate limits, credential scope reference (not secrets), adapter version. Enables Scheduler fallback across providers when policy allows.
+
+### Availability
+
+Capabilities may be globally available, organization-scoped, or environment-scoped (development/staging/production). Availability windows and concurrency limits may apply. Unavailable capabilities are excluded from resolution unless plan specifies a mandatory wait.
+
+### Deprecation
+
+Deprecation is **explicit and auditable**. Deprecated capabilities remain in the catalog for history and in-flight job completion but are excluded from default Planner feasibility and Scheduler resolution. Removal from the catalog requires supersession or ADR; records are not silently deleted.
+
+### Build Factory registration
+
+Build Factory **builder families** (SaaS, Ecommerce, Marketplace, etc.) and **reusable capability modules** (brand, frontend, billing, deployment, etc.) are registered in the Registry as first-class capabilities:
+
+| Registration type | Example key | Notes |
+| --- | --- | --- |
+| Builder family | `build.saas` | Composes modules; declares venture asset outputs |
+| Capability module | `build.module.authentication` | Reusable across builder families |
+| Deployment target | `deploy.vercel` | Target environment binding |
+
+Build Factory implementations register at deploy time; Planner references builder/module **capability keys** in plans; Scheduler resolves to the active builder version and module set via Registry.
+
+---
+
+## Section 9 — Engines
 
 | # | Engine | Purpose | Key outputs | Stage |
 | --- | --- | --- | --- | --- |
@@ -335,7 +533,7 @@ For each engine (future implementation specs must define): accepted inputs, prod
 
 ---
 
-## Section 9 — Discovery Engine
+## Section 10 — Discovery Engine
 
 Discovery Engine performs **autonomous opportunity discovery**. It must **not** rely solely on user-entered ideas.
 
@@ -362,7 +560,7 @@ Market trends, search behavior, customer complaints, social discussions, product
 
 ---
 
-## Section 10 — Research, Knowledge, and Memory
+## Section 11 — Research, Knowledge, and Memory
 
 | System | Role |
 | --- | --- |
@@ -390,7 +588,7 @@ Every learned conclusion preserves **provenance** and **confidence**.
 
 ---
 
-## Section 11 — Scoring and Decisions
+## Section 12 — Scoring and Decisions
 
 ### Scoring dimensions (extensible)
 
@@ -406,7 +604,7 @@ reject, hold, research more, validate, approve initiative, approve build, acquir
 
 ---
 
-## Section 12 — Validation
+## Section 13 — Validation
 
 Validation proves critical assumptions **as cheaply and quickly as practical** before major capital allocation.
 
@@ -420,7 +618,7 @@ Hypothesis, assumption tested, method, budget, success threshold, failure thresh
 
 ---
 
-## Section 13 — Business Architect
+## Section 14 — Business Architect
 
 Transforms an **approved opportunity** into a **complete venture blueprint**.
 
@@ -428,11 +626,11 @@ Outputs may include: business model, target customer, positioning, offer, pricin
 
 ---
 
-## Section 14 — Build Factory
+## Section 15 — Build Factory
 
 Build Factory is an **asset production and integration system**—not merely code generation.
 
-It creates, configures, connects, tests, and deploys assets required by a venture.
+It creates, configures, connects, tests, and deploys assets required by a venture. Builder families and reusable modules are **registered in the Registry** (see [Section 8](#section-8--registry)); plans reference capability keys, not hardcoded implementation paths.
 
 ### Builder families
 
@@ -448,9 +646,9 @@ Artifact versioning, acceptance tests, rollback procedures, ownership records, d
 
 ---
 
-## Section 15 — Workers
+## Section 16 — Workers
 
-Workers are **specialized execution units** invoked by Engines via Scheduler.
+Workers are **specialized execution units** registered in the Registry and invoked by Engines via Scheduler.
 
 Examples: Research Worker, Market Analyst, Developer, Architect, Designer, Copywriter, SEO Worker, GEO Worker, Paid Media Worker, Social Worker, Sales Worker, Finance Worker, Legal Review Worker, Security Worker, QA Worker, Deployment Worker, Customer Success Worker.
 
@@ -462,7 +660,7 @@ Worker identity, model/implementation version, inputs, outputs, cost, duration, 
 
 ---
 
-## Section 16 — Autonomy and Approval
+## Section 17 — Autonomy and Approval
 
 ### Autonomy levels
 
@@ -486,7 +684,7 @@ Autonomy is **organization-specific, mission-specific, action-specific, and budg
 
 ---
 
-## Section 17 — Capital and Resource Allocation
+## Section 18 — Capital and Resource Allocation
 
 Infinity evaluates: available/reserved capital, experiment/build/operating budgets, expected value, downside exposure, opportunity cost, portfolio concentration, worker/API/infrastructure cost, payback period.
 
@@ -494,7 +692,7 @@ Infinity evaluates: available/reserved capital, experiment/build/operating budge
 
 ---
 
-## Section 18 — Security and Trust
+## Section 19 — Security and Trust
 
 | Principle | Requirement |
 | --- | --- |
@@ -512,15 +710,21 @@ Autonomous execution must be **observable, interruptible, auditable, and recover
 
 ---
 
-## Section 19 — Event System
+## Section 20 — Event System
 
 ### Event families
 
-`mission.*`, `command.*`, `planner.*`, `scheduler.*`, `discovery.*`, `research.*`, `scoring.*`, `validation.*`, `initiative.*`, `build.*`, `asset.*`, `venture.*`, `worker.*`, `growth.*`, `portfolio.*`, `approval.*`, `policy.*`, `system.*`
+`mission.*`, `command.*`, `planner.*`, `scheduler.*`, `registry.*`, `discovery.*`, `research.*`, `scoring.*`, `validation.*`, `initiative.*`, `build.*`, `asset.*`, `venture.*`, `worker.*`, `growth.*`, `portfolio.*`, `approval.*`, `policy.*`, `system.*`
 
 ### Example events
 
 `command.cycle_started`, `command.decision_created`, `discovery.scan_started`, `discovery.opportunity_found`, `research.evidence_added`, `scoring.completed`, `validation.experiment_completed`, `initiative.approved`, `build.asset_created`, `venture.launched`, `worker.failed`, `portfolio.metric_updated`
+
+### Registry events
+
+`registry.capability_registered`, `registry.capability_updated`, `registry.capability_disabled`, `registry.health_changed`, `registry.version_deprecated`
+
+Registry events follow the same payload requirements as all canonical events.
 
 ### Payload requirements
 
@@ -530,7 +734,7 @@ Implemented table: `engine_events` (foundation; naming conventions evolve toward
 
 ---
 
-## Section 20 — Data Architecture Principles
+## Section 21 — Data Architecture Principles
 
 | Principle | Rule |
 | --- | --- |
@@ -564,7 +768,7 @@ Implemented table: `engine_events` (foundation; naming conventions evolve toward
 
 ### Planned (not yet migrated)
 
-Missions, Command cycles, plans, milestones, jobs, worker runs, assets, deployments, campaigns, metrics, experiments, capital allocations, policies, approvals, lessons, knowledge records, validation experiments.
+Missions, Command cycles, plans, milestones, jobs, worker runs, **Registry capability records**, assets, deployments, campaigns, metrics, experiments, capital allocations, policies, approvals, lessons, knowledge records, validation experiments.
 
 Conceptual relationships:
 
@@ -572,20 +776,20 @@ Conceptual relationships:
 Organization
   ├── Mission
   ├── Opportunity → Evidence → Score
-  ├── Initiative (projects) → Plan → Job → Worker Run
+  ├── Initiative (projects) → Plan → Job → Registry resolution → Worker Run
   ├── Venture (companies) → Asset → Deployment
   └── Portfolio metrics / Lessons
 ```
 
 ---
 
-## Section 21 — UI Philosophy
+## Section 22 — UI Philosophy
 
 The UI is an **observability, governance, approval, and portfolio-control layer**—not the primary engine of autonomous operation.
 
 ### Future dashboard surfaces
 
-Mission, Command summary, approvals pending, discoveries, research in progress, validation experiments, initiatives, ventures, assets, portfolio value, revenue, profit, capital allocation, risk alerts, worker activity, system health, lessons learned.
+Mission, Command summary, approvals pending, discoveries, research in progress, validation experiments, initiatives, ventures, assets, portfolio value, revenue, profit, capital allocation, risk alerts, worker activity, **Registry capability health**, system health, lessons learned.
 
 ### Design rule
 
@@ -595,7 +799,7 @@ Manual controls exist for: override, testing, approval, policy, mission setting,
 
 ---
 
-## Section 22 — Failure and Recovery
+## Section 23 — Failure and Recovery
 
 | Failure | Responses |
 | --- | --- |
@@ -612,13 +816,15 @@ Manual controls exist for: override, testing, approval, policy, mission setting,
 | Low-confidence decisions | Hold or validate more |
 | External API failure | Retry; alternate adapter |
 | Lost locks | Timeout recovery; idempotent retry |
-| Repeated worker failure | Escalate; disable worker version |
+| Repeated worker failure | Escalate; disable worker version via Registry |
+| Unhealthy capability | Scheduler re-resolve fallback; `registry.health_changed` |
+| Deprecated capability on job | Complete in-flight or migrate; block new bindings |
 
 Actions: retry, escalation, pause, rollback, quarantine, dead-letter, human review, cancellation, lesson creation.
 
 ---
 
-## Section 23 — Learning Loop
+## Section 24 — Learning Loop
 
 Infinity compares predictions to actuals:
 
@@ -630,44 +836,46 @@ Infinity compares predictions to actuals:
 | Predicted vs actual revenue | Portfolio intelligence |
 | Predicted vs realized risks | Risk engine |
 | Validation vs launch results | Validation design |
-| Worker confidence vs quality | Worker selection |
+| Worker confidence vs quality | Worker selection; **Registry quality metadata** |
 | Source credibility vs verification | Source reliability memory |
 
 Historical models and scoring versions are **preserved**—past decisions are not rewritten.
 
 ---
 
-## Section 24 — Implementation Phases
+## Section 25 — Implementation Phases
 
 | Phase | Scope |
 | --- | --- |
 | **1 — Foundation** | Auth, organizations, protected dashboard, Supabase, migrations, Discovery data foundation |
 | **2 — Command and Orchestration** | Missions, Command cycles, durable jobs, events, secure execution, manual dev trigger, scheduler seam |
-| **3 — Planner and Scheduler** | Plans, milestones, dependencies, job execution, retries, locking, recovery |
+| **3 — Planner, Scheduler, and Registry** | Plans, milestones, dependencies, job execution, retries, locking, recovery, **capability catalog, registration, health, resolution** |
 | **4 — AI-Assisted Discovery** | Source adapters, AI synthesis, autonomous scans, opportunity creation, provenance |
 | **5 — Research, Knowledge, Scoring** | Evidence automation, knowledge records, scoring versions, contradiction handling |
 | **6 — Validation and Decisions** | Experiments, approval policies, initiative promotion |
 | **7 — Business Architect** | Venture blueprint, asset map, launch/financial/risk plans |
-| **8 — Build Factory** | First builder, reusable modules, artifact tracking, deployment |
-| **9 — Execution and Growth** | Workers, campaigns, metrics, optimization |
+| **8 — Build Factory** | First builder, reusable modules, artifact tracking, deployment, **Registry registration of builders and modules** |
+| **9 — Execution and Growth** | Workers, campaigns, metrics, optimization, **worker registration and quality feedback to Registry** |
 | **10 — Portfolio Intelligence** | Capital allocation, cross-venture learning, acquisitions/partnerships |
 
-**Current position:** Phase 1 substantially complete (Discovery **schema** foundation; autonomous discovery **not** yet running).
+**Current position:** Phase 1 substantially complete (Discovery **schema** foundation; autonomous discovery **not** yet running). **Registry not implemented.**
 
 ---
 
-## Section 25 — Architecture Freeze Rules
+## Section 26 — Architecture Freeze Rules
 
 ### Locked under Freeze v1
 
-- Product terminology (Mission, Command, Planner, Scheduler, Engines, Workers, Opportunities, Initiatives, Ventures, Assets, Discovery Engine, Build Factory)
-- Layer responsibilities and separation (Command ≠ Planner ≠ Scheduler)
+- Product terminology (Mission, Command, Planner, Scheduler, **Registry**, Engines, Workers, Opportunities, Initiatives, Ventures, Assets, Discovery Engine, Build Factory)
+- Layer responsibilities and separation (Command ≠ Planner ≠ Scheduler ≠ **Registry** ≠ Engines)
+- **Registry** as authoritative capability catalog between Scheduler and Engines; Registry does not decide, plan, schedule, or execute
 - Distinction between Opportunities, Initiatives, Ventures, and Assets
 - Autonomous lifecycle stages
 - Organization-scoped security model (RLS, no browser service role)
 - Durable job and event principles
 - Human governance and bounded-autonomy principles
 - Epistemic separation (inference ≠ fact)
+- Command requests **outcomes and priorities**, not hardcoded engine/worker bindings
 
 ### Remains flexible
 
@@ -685,7 +893,7 @@ Changes to **locked** items require an ADR and specification version bump.
 
 ---
 
-## Section 26 — Current State
+## Section 27 — Current State
 
 *Accurate as of specification date. Do not infer capabilities beyond this list.*
 
@@ -706,10 +914,11 @@ Changes to **locked** items require an ADR and specification version bump.
 
 ### Not implemented (planned)
 
-Mission persistence, Command, Planner, Scheduler, autonomous web discovery, AI research/scoring automation, validation experiments, initiative/venture promotion workflows, assets, Build Factory, execution Workers, portfolio learning, Command cycles, durable jobs beyond schema seam.
+Mission persistence, Command, Planner, Scheduler, **Registry**, autonomous web discovery, AI research/scoring automation, validation experiments, initiative/venture promotion workflows, assets, Build Factory, execution Workers, portfolio learning, Command cycles, durable jobs beyond schema seam.
 
 ### Important clarifications
 
+- **Registry is specified but not implemented** — no capability catalog, registration API, or health tracking exists yet.
 - **Discovery Engine tables exist; autonomous Discovery Engine does not yet run.**
 - **`engine_events` table exists; canonical event producers are not yet wired.**
 - **No AI integrations are live.**

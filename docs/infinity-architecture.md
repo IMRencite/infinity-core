@@ -21,17 +21,20 @@ Infinity initiates work autonomously. Humans govern through mission, policy, and
 ## Locked Hierarchy
 
 ```text
-Identity → Mission → Command → Planner → Scheduler → Engines → Workers → Memory → Portfolio Feedback
+Identity → Mission → Command → Planner → Scheduler → Registry → Engines → Workers → Memory → Portfolio Feedback
 ```
 
 | Layer | One-line role |
 | --- | --- |
 | **Mission** | Active strategic objective (organization-specific content) |
-| **Command** | Strategic intelligence; decides priorities—does not execute specialized work |
-| **Planner** | Versioned plans from Command decisions |
-| **Scheduler** | Durable jobs, retries, locking |
+| **Command** | Strategic intelligence; decides priorities and outcomes—does not execute specialized work |
+| **Planner** | Versioned plans from Command decisions; queries Registry for feasible capabilities |
+| **Scheduler** | Durable jobs, retries, locking; resolves capabilities via Registry |
+| **Registry** | Authoritative catalog of engines, workers, builders, and modules—does not decide, plan, schedule, or execute |
 | **Engines** | Broad capabilities (Discovery, Research, Build Factory, …) |
 | **Workers** | Specialized execution units |
+
+Full Registry definition: **[OS Specification §8](./infinity-os-specification.md#section-8--registry)**.
 
 ---
 
@@ -74,11 +77,11 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 | Status | Items |
 | --- | --- |
 | **Done** | Auth, orgs, dashboard, onboarding, Discovery **schema**, RLS, terminology |
-| **Not done** | Command, Planner, Scheduler, AI discovery, validation, Build Factory, Workers |
+| **Not done** | Command, Planner, Scheduler, **Registry**, AI discovery, validation, Build Factory, Workers |
 
-Full current state: **[OS Specification §26](./infinity-os-specification.md#section-26--current-state)**.
+Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 
-Phased roadmap: **[OS Specification §24](./infinity-os-specification.md#section-24--implementation-phases)**.
+Phased roadmap: **[OS Specification §25](./infinity-os-specification.md#section-25--implementation-phases)**.
 
 ---
 
