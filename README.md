@@ -4,9 +4,11 @@
 
 ## Architecture
 
-Product and system terminology: [`docs/infinity-architecture.md`](docs/infinity-architecture.md)
-
-Detailed Alpha schema and RLS specification: [`docs/INFINITY_ARCHITECTURE.md`](docs/INFINITY_ARCHITECTURE.md)
+| Document | Purpose |
+| --- | --- |
+| **[`docs/infinity-os-specification.md`](docs/infinity-os-specification.md)** | **Platform specification v1.0** (authoritative) |
+| [`docs/infinity-architecture.md`](docs/infinity-architecture.md) | Concise overview and navigation |
+| [`docs/INFINITY_ARCHITECTURE.md`](docs/INFINITY_ARCHITECTURE.md) | Historical Alpha schema and RLS reference |
 
 ## Getting Started
 

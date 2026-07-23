@@ -1,12 +1,14 @@
 # Infinity Architecture Bible
 
-> **Terminology update (v1.0):** Product and orchestration terminology is defined in [`infinity-architecture.md`](./infinity-architecture.md). This document remains the detailed Alpha schema and historical specification. Database table names such as `projects`, `companies`, and `opportunity_*` are intentionally unchanged.
+> **Superseded for platform architecture:** Product design, autonomous behavior, layer responsibilities, and implementation phases are defined in **[`infinity-os-specification.md`](./infinity-os-specification.md)** (Infinity OS Specification v1.0 — Architecture Freeze Candidate).
+>
+> **This document** remains a **historical Alpha schema and RLS reference**. It uses legacy terminology (`projects`, `companies`, `Opportunity Engine`, `Project Engine`, etc.). Map to current product terms via [`infinity-architecture.md`](./infinity-architecture.md).
 
 ## 1. Document Purpose
 
-This file is the **authoritative technical and product architecture** for Infinity. It defines what Infinity is, how it is structured, what each part owns, and how future work must be implemented.
+This file documents the **Alpha-phase database schema, RLS policies, and early product specification (v0.1)**. It is **not** the authoritative source for autonomous orchestration design.
 
-All implementation—by engineers or AI coding agents—must follow this document unless an approved **Architecture Decision Record (ADR)** in `docs/decisions/` explicitly changes it.
+For platform architecture, follow **[`infinity-os-specification.md`](./infinity-os-specification.md)** unless an approved ADR in `docs/decisions/` explicitly changes it.
 
 | Field | Value |
 | --- | --- |
