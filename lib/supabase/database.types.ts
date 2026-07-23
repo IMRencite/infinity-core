@@ -118,6 +118,547 @@ export type Database = {
           },
         ]
       }
+      capability_registry: {
+        Row: {
+          capability_key: string
+          capability_type: string
+          cost_metadata: Json
+          created_at: string
+          description: string | null
+          display_name: string
+          engine_name: string | null
+          health_status: string
+          id: string
+          input_schema: Json
+          is_default: boolean
+          organization_id: string | null
+          output_schema: Json
+          policy_requirements: Json
+          provider_metadata: Json
+          quality_metadata: Json
+          status: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          capability_key: string
+          capability_type: string
+          cost_metadata?: Json
+          created_at?: string
+          description?: string | null
+          display_name: string
+          engine_name?: string | null
+          health_status?: string
+          id?: string
+          input_schema?: Json
+          is_default?: boolean
+          organization_id?: string | null
+          output_schema?: Json
+          policy_requirements?: Json
+          provider_metadata?: Json
+          quality_metadata?: Json
+          status?: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          capability_key?: string
+          capability_type?: string
+          cost_metadata?: Json
+          created_at?: string
+          description?: string | null
+          display_name?: string
+          engine_name?: string | null
+          health_status?: string
+          id?: string
+          input_schema?: Json
+          is_default?: boolean
+          organization_id?: string | null
+          output_schema?: Json
+          policy_requirements?: Json
+          provider_metadata?: Json
+          quality_metadata?: Json
+          status?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capability_registry_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      command_cycles: {
+        Row: {
+          completed_at: string | null
+          correlation_id: string
+          created_at: string
+          id: string
+          mission_id: string
+          organization_id: string
+          started_at: string
+          status: string
+          summary: Json
+          trigger_source: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          correlation_id?: string
+          created_at?: string
+          id?: string
+          mission_id: string
+          organization_id: string
+          started_at?: string
+          status?: string
+          summary?: Json
+          trigger_source?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          correlation_id?: string
+          created_at?: string
+          id?: string
+          mission_id?: string
+          organization_id?: string
+          started_at?: string
+          status?: string
+          summary?: Json
+          trigger_source?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "command_cycles_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "command_cycles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      command_decisions: {
+        Row: {
+          command_cycle_id: string
+          confidence: number
+          created_at: string
+          decision_type: string
+          evidence_refs: Json
+          id: string
+          mission_id: string
+          organization_id: string
+          outcome: string
+          payload: Json
+          reasoning: string
+          supersedes_id: string | null
+        }
+        Insert: {
+          command_cycle_id: string
+          confidence?: number
+          created_at?: string
+          decision_type: string
+          evidence_refs?: Json
+          id?: string
+          mission_id: string
+          organization_id: string
+          outcome: string
+          payload?: Json
+          reasoning: string
+          supersedes_id?: string | null
+        }
+        Update: {
+          command_cycle_id?: string
+          confidence?: number
+          created_at?: string
+          decision_type?: string
+          evidence_refs?: Json
+          id?: string
+          mission_id?: string
+          organization_id?: string
+          outcome?: string
+          payload?: Json
+          reasoning?: string
+          supersedes_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "command_decisions_command_cycle_id_fkey"
+            columns: ["command_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "command_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "command_decisions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "command_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engine_jobs: {
+        Row: {
+          capability_key: string
+          command_cycle_id: string | null
+          completed_at: string | null
+          correlation_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          idempotency_key: string
+          organization_id: string
+          payload: Json
+          plan_id: string | null
+          plan_step_id: string | null
+          priority: number
+          resolved_capability_id: string | null
+          resolved_engine_name: string | null
+          resolved_version: string | null
+          result: Json
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          capability_key: string
+          command_cycle_id?: string | null
+          completed_at?: string | null
+          correlation_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key: string
+          organization_id: string
+          payload?: Json
+          plan_id?: string | null
+          plan_step_id?: string | null
+          priority?: number
+          resolved_capability_id?: string | null
+          resolved_engine_name?: string | null
+          resolved_version?: string | null
+          result?: Json
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          capability_key?: string
+          command_cycle_id?: string | null
+          completed_at?: string | null
+          correlation_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string
+          organization_id?: string
+          payload?: Json
+          plan_id?: string | null
+          plan_step_id?: string | null
+          priority?: number
+          resolved_capability_id?: string | null
+          resolved_engine_name?: string | null
+          resolved_version?: string | null
+          result?: Json
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engine_jobs_command_cycle_id_fkey"
+            columns: ["command_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "command_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_jobs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_jobs_plan_step_id_fkey"
+            columns: ["plan_step_id"]
+            isOneToOne: false
+            referencedRelation: "plan_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_jobs_resolved_capability_id_fkey"
+            columns: ["resolved_capability_id"]
+            isOneToOne: false
+            referencedRelation: "capability_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_policies: {
+        Row: {
+          autonomy_level: string
+          config: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          mission_id: string
+          organization_id: string
+          policy_category: string
+          policy_key: string
+          updated_at: string
+        }
+        Insert: {
+          autonomy_level?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mission_id: string
+          organization_id: string
+          policy_category: string
+          policy_key: string
+          updated_at?: string
+        }
+        Update: {
+          autonomy_level?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mission_id?: string
+          organization_id?: string
+          policy_category?: string
+          policy_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_policies_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_policies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missions: {
+        Row: {
+          activated_at: string | null
+          completed_at: string | null
+          constraints: Json
+          created_at: string
+          deleted_at: string | null
+          description: string | null
+          id: string
+          objectives: Json
+          organization_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          completed_at?: string | null
+          constraints?: Json
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          objectives?: Json
+          organization_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          completed_at?: string | null
+          constraints?: Json
+          created_at?: string
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          objectives?: Json
+          organization_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_steps: {
+        Row: {
+          capability_key: string
+          constraints: Json
+          created_at: string
+          description: string | null
+          id: string
+          organization_id: string
+          plan_id: string
+          status: string
+          step_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capability_key: string
+          constraints?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id: string
+          plan_id: string
+          status?: string
+          step_order: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capability_key?: string
+          constraints?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id?: string
+          plan_id?: string
+          status?: string
+          step_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_steps_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          command_cycle_id: string
+          command_decision_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          mission_id: string
+          objectives: Json
+          organization_id: string
+          status: string
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          command_cycle_id: string
+          command_decision_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          mission_id: string
+          objectives?: Json
+          organization_id: string
+          status?: string
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          command_cycle_id?: string
+          command_decision_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          mission_id?: string
+          objectives?: Json
+          organization_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plans_command_cycle_id_fkey"
+            columns: ["command_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "command_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_command_decision_id_fkey"
+            columns: ["command_decision_id"]
+            isOneToOne: false
+            referencedRelation: "command_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           assumptions: Json

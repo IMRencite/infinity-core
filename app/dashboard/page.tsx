@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { CommandPanel } from "@/components/dashboard/command-panel";
+import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
 import { createClient } from "@/lib/supabase/server";
 
 type OrganizationMembership = {
@@ -42,11 +44,13 @@ export default async function DashboardPage() {
   const organization = membership.organizations;
   const organizationId = membership.organization_id;
 
-  // Counts query legacy tables: projects → Initiatives, companies → Ventures (UI labels only).
   const [
     { count: projectsCount, error: projectsError },
     { count: companiesCount, error: companiesError },
     { count: membersCount, error: membersError },
+    { data: activeMission },
+    { count: pendingDiscoveryJobs },
+    { data: lastCycle },
   ] = await Promise.all([
     supabase
       .from("projects")
@@ -63,6 +67,26 @@ export default async function DashboardPage() {
       .select("*", { count: "exact", head: true })
       .eq("organization_id", organizationId)
       .is("deleted_at", null),
+    supabase
+      .from("missions")
+      .select("title")
+      .eq("organization_id", organizationId)
+      .eq("status", "active")
+      .is("deleted_at", null)
+      .maybeSingle(),
+    supabase
+      .from("engine_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .like("capability_key", "discovery.%")
+      .in("status", [...PENDING_JOB_STATUSES]),
+    supabase
+      .from("command_cycles")
+      .select("status")
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   const summaryCards = [
@@ -108,6 +132,12 @@ export default async function DashboardPage() {
           ))}
         </div>
       </section>
+
+      <CommandPanel
+        missionTitle={activeMission?.title ?? null}
+        pendingDiscoveryJobs={pendingDiscoveryJobs ?? 0}
+        lastCycleStatus={lastCycle?.status ?? null}
+      />
     </div>
   );
 }
