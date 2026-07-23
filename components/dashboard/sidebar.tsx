@@ -1,9 +1,10 @@
+// Legacy route paths (e.g. /dashboard/projects) are not created yet; labels use product terminology.
 const navItems = [
   { label: "Dashboard", href: "/dashboard", active: true },
   { label: "Organizations", href: "#", active: false },
-  { label: "Projects", href: "#", active: false },
-  { label: "Companies", href: "#", active: false },
-  { label: "AI Agents", href: "#", active: false },
+  { label: "Initiatives", href: "#", active: false },
+  { label: "Ventures", href: "#", active: false },
+  { label: "Workers", href: "#", active: false },
   { label: "Activity", href: "#", active: false },
   { label: "Settings", href: "#", active: false },
 ];

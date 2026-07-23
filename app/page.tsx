@@ -4,9 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 const sidebarItems = [
   { label: "Command Center", icon: "command", active: true },
   { label: "Opportunities", icon: "opportunities", active: false },
-  { label: "Companies", icon: "companies", active: false },
+  { label: "Ventures", icon: "companies", active: false },
   { label: "Build", icon: "build", active: false },
-  { label: "Agents", icon: "agents", active: false },
+  { label: "Workers", icon: "agents", active: false },
   { label: "Knowledge", icon: "knowledge", active: false },
   { label: "Growth", icon: "growth", active: false },
   { label: "Experiments", icon: "experiments", active: false },
@@ -17,15 +17,15 @@ const sidebarItems = [
 const suggestedCommands = [
   "Build a SaaS",
   "Analyze Market",
-  "Continue Project",
-  "Grow Company",
+  "Continue Initiative",
+  "Grow Venture",
   "Find Opportunities",
 ];
 
-const ceoMetrics = [
-  { label: "Portfolio Companies", value: "0" },
+const commandMetrics = [
+  { label: "Portfolio Ventures", value: "0" },
   { label: "Monthly Revenue", value: "$0" },
-  { label: "Active Agents", value: "0" },
+  { label: "Active Workers", value: "0" },
   { label: "Active Builds", value: "0" },
   { label: "Approvals Needed", value: "0" },
   { label: "Opportunities Found", value: "0" },
@@ -44,7 +44,7 @@ const missionStages = [
 
 const intelligenceBriefings = [
   { text: "No urgent portfolio issues", tone: "ok" as const },
-  { text: "Opportunity engine ready", tone: "ready" as const },
+  { text: "Discovery Engine ready", tone: "ready" as const },
   { text: "Memory Core offline", tone: "offline" as const },
   { text: "No builds currently running", tone: "neutral" as const },
   { text: "Waiting for first mission", tone: "neutral" as const },
@@ -60,8 +60,8 @@ const exampleConversations = [
 const runningSystems = [
   { name: "Conversation Engine", status: "Prototype", tone: "ready" as const },
   { name: "Memory Core", status: "Offline", tone: "offline" as const },
-  { name: "Opportunity Engine", status: "Ready", tone: "ready" as const },
-  { name: "Build Engine", status: "Waiting", tone: "neutral" as const },
+  { name: "Discovery Engine", status: "Ready", tone: "ready" as const },
+  { name: "Build Factory", status: "Waiting", tone: "neutral" as const },
   { name: "Growth Engine", status: "Waiting", tone: "neutral" as const },
 ];
 
@@ -70,7 +70,7 @@ const portfolioActivity = [
   { text: "Infinity HQ interface created", status: "Completed", tone: "success" as const },
   { text: "Conversation Engine", status: "Queued", tone: "queued" as const },
   { text: "Supabase connection", status: "Recommended", tone: "ready" as const },
-  { text: "Opportunity Intelligence", status: "Not Started", tone: "pending" as const },
+  { text: "Discovery Intelligence", status: "Not Started", tone: "pending" as const },
 ];
 
 const statusDot = {
@@ -225,7 +225,7 @@ export default async function Home() {
             <div className="shrink-0 leading-tight">
               <p className="text-[15px] font-semibold tracking-tight text-white">Infinity</p>
               <p className="hidden text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-600 sm:block">
-                Venture Operating System
+                Autonomous Venture Operating System
               </p>
             </div>
 
@@ -235,7 +235,7 @@ export default async function Home() {
               </div>
               <input
                 type="search"
-                placeholder="Search companies, opportunities, projects, knowledge..."
+                placeholder="Search ventures, opportunities, initiatives, knowledge..."
                 aria-label="Global search"
                 className="w-full rounded-md border border-white/[0.06] bg-white/[0.02] py-1.5 pl-8 pr-3 text-[13px] text-zinc-400 placeholder:text-zinc-700 outline-none"
                 readOnly
@@ -368,7 +368,7 @@ export default async function Home() {
               <SectionLabel>Current Mission</SectionLabel>
               <p className="text-[17px] font-medium text-white">No active mission.</p>
               <p className="mt-1 text-[13px] text-zinc-500">
-                Ask Infinity to research, validate, and build your first company.
+                Ask Infinity to research, validate, and build your first venture.
               </p>
 
               <div className="mt-5 overflow-x-auto pb-1">
@@ -405,11 +405,11 @@ export default async function Home() {
               </button>
             </Card>
 
-            {/* CEO Snapshot */}
+            {/* Command Snapshot */}
             <section className="mb-6">
-              <SectionLabel>CEO Snapshot</SectionLabel>
+              <SectionLabel>Command Snapshot</SectionLabel>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
-                {ceoMetrics.map((metric) => (
+                {commandMetrics.map((metric) => (
                   <div
                     key={metric.label}
                     className="rounded-lg border border-white/[0.04] px-2.5 py-2"
@@ -429,7 +429,7 @@ export default async function Home() {
             <Card className="mb-6" variant="accent">
               <SectionLabel>Recommended Next Action</SectionLabel>
               <p className="max-w-2xl text-[14px] leading-relaxed text-zinc-400">
-                Connect Supabase so Infinity can securely store users, companies, projects,
+                Connect Supabase so Infinity can securely store users, ventures, initiatives,
                 conversations, decisions, experiments, prompts, and long-term memory.
               </p>
               <button

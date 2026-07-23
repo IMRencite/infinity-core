@@ -9,7 +9,7 @@ export function Topbar({ userEmail }: { userEmail: string }) {
             Infinity
           </p>
           <p className="hidden text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-600 sm:block">
-            Venture Operating System
+            Autonomous Venture Operating System
           </p>
         </div>
 

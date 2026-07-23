@@ -15,7 +15,7 @@ export function AuthShell({
             Infinity
           </p>
           <p className="mt-1 text-[9px] font-medium uppercase tracking-[0.2em] text-zinc-600">
-            Venture Operating System
+            Autonomous Venture Operating System
           </p>
         </div>
 

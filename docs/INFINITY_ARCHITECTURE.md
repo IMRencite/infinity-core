@@ -1,5 +1,7 @@
 # Infinity Architecture Bible
 
+> **Terminology update (v1.0):** Product and orchestration terminology is defined in [`infinity-architecture.md`](./infinity-architecture.md). This document remains the detailed Alpha schema and historical specification. Database table names such as `projects`, `companies`, and `opportunity_*` are intentionally unchanged.
+
 ## 1. Document Purpose
 
 This file is the **authoritative technical and product architecture** for Infinity. It defines what Infinity is, how it is structured, what each part owns, and how future work must be implemented.
@@ -19,7 +21,7 @@ When this document and code disagree, treat the discrepancy as a defect. Fix the
 
 ## 2. Product Definition
 
-**Infinity** is an **AI Venture Operating System** that helps its owner identify, validate, create, launch, operate, and grow businesses through a conversational command center and coordinated specialist engines.
+**Infinity** is an **Autonomous Venture Operating System** that helps its owner identify, validate, create, launch, operate, and grow businesses through Command, coordinated engines, and specialized workers. See [`infinity-architecture.md`](./infinity-architecture.md) for the locked Mission → Command → Planner → Scheduler → Engines → Workers hierarchy.
 
 Infinity coordinates the full venture lifecycle:
 

@@ -42,6 +42,7 @@ export default async function DashboardPage() {
   const organization = membership.organizations;
   const organizationId = membership.organization_id;
 
+  // Counts query legacy tables: projects → Initiatives, companies → Ventures (UI labels only).
   const [
     { count: projectsCount, error: projectsError },
     { count: companiesCount, error: companiesError },
@@ -65,8 +66,8 @@ export default async function DashboardPage() {
   ]);
 
   const summaryCards = [
-    { label: "Projects", value: projectsError ? "—" : String(projectsCount ?? 0) },
-    { label: "Companies", value: companiesError ? "—" : String(companiesCount ?? 0) },
+    { label: "Initiatives", value: projectsError ? "—" : String(projectsCount ?? 0) },
+    { label: "Ventures", value: companiesError ? "—" : String(companiesCount ?? 0) },
     {
       label: "Organization Members",
       value: membersError ? "—" : String(membersCount ?? 0),
@@ -83,7 +84,7 @@ export default async function DashboardPage() {
           {organization.name}
         </p>
         <p className="mt-1 text-[13px] text-zinc-500">
-          Your command center for ventures, projects, and operations.
+          Your command center for initiatives, ventures, and operations.
         </p>
       </header>
 
