@@ -55,7 +55,7 @@ Full Registry definition: **[OS Specification §8](./infinity-os-specification.m
 | **Opportunity** | Potential business/asset under evaluation (before initiative) |
 | **Initiative** | Temporary body of work (*DB: `projects`*) |
 | **Venture** | Operating business (*DB: `companies`*) |
-| **Asset** | First-class portfolio primitive — discrete created, acquired, or managed item (*table not yet implemented*) |
+| **Asset** | First-class portfolio primitive — discrete created, acquired, or managed item (*DB: `assets`*, relationships, metrics, valuations) |
 | **Portfolio** | Opportunities, initiatives, ventures, assets, capital, performance |
 
 ```text
@@ -89,8 +89,8 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 | Status | Items |
 | --- | --- |
-| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls |
-| **Not done** | Continuous scheduler, autonomous observation, external evidence, asset persistence, Build Factory, enterprise-value calculations, capital allocation, acquisitions, Memory/Knowledge, AI integrations |
+| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1** |
+| **Not done** | Continuous scheduler, autonomous observation, external evidence, Build Factory, automated valuation models, capital allocation, acquisitions, Memory/Knowledge, AI integrations |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

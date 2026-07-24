@@ -232,7 +232,7 @@ Observe → Discover → Research → Evaluate → Validate → Decide → Alloc
 | **Engine Event** | Append-only audit record (`engine_events`). |
 | **Worker Run** | Single worker execution with inputs, outputs, and cost. |
 | **Venture** | Launched or **operating business**. *Legacy table: `companies`.* |
-| **Asset** | **First-class portfolio primitive** — a discrete item created, acquired, owned, managed, improved, monetized, licensed, sold, retired, or reused by Infinity. May belong to a venture or exist independently. *Table not yet implemented — next core portfolio primitive.* |
+| **Asset** | **First-class portfolio primitive** — discrete created, acquired, owned, managed, improved, monetized, licensed, sold, retired, or reused item. Persisted in `assets` with relationships, metrics, and versioned valuations. May belong to a venture or exist independently. |
 | **Deployment** | Release of an asset to an environment. |
 | **Campaign** | Growth or validation go-to-market execution unit. |
 | **Metric** | Measured performance datapoint. |
@@ -243,13 +243,23 @@ Observe → Discover → Research → Evaluate → Validate → Decide → Alloc
 | **Lesson** | Institutional learning derived from outcomes. |
 | **Knowledge Record** | Structured verified or labeled knowledge entry. |
 
-### Asset primitive (specified; not yet persisted)
+### Asset primitive (implemented — Asset Foundation v1)
 
 An **Asset** is a discrete item created, acquired, owned, managed, improved, monetized, licensed, sold, retired, or reused by Infinity.
 
+**Tables:** `assets`, `asset_relationships`, `asset_metrics`, `asset_valuations`
+
 **Planned asset categories** (non-exhaustive): domain, brand, website, ecommerce store, SaaS application, mobile application, API, database, dataset, AI model, AI worker, automation, content library, article, video, image library, newsletter, email list, social account, community, marketplace, directory, course, book, intellectual property, patent, trademark, customer list, ad account, analytics property, CRM, codebase, infrastructure, legal entity, contract, partnership, acquisition, other.
 
-**Implementation status:** Asset persistence (`assets` table and portfolio APIs) is the **next core portfolio primitive** to implement. Do not treat assets as implemented until that layer ships.
+**Relationships:** explicit edges between assets (`owns`, `depends_on`, `powers`, `monetizes`, etc.)
+
+**Metrics:** append-only time-series measurements (`monthly_revenue`, `traffic`, `active_users`, …)
+
+**Valuations:** versioned valuation records; projected vs verified remain distinct; history is never overwritten in place.
+
+**Registration seam:** server-side `registerAsset()` for future engines (Build Factory, acquisition systems). No manual asset form in v1; no seed assets.
+
+**Not yet implemented:** Build Factory asset creation, external account provisioning, domain purchasing, automated valuation models, acquisition/sale workflows.
 
 ### Asset examples (conceptual)
 
@@ -1004,10 +1014,11 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Discovery scan worker** | Deterministic stub scan (no external sources, no opportunities created) |
 | **Engine events** | `engine_events` producers for Command, Planner, Scheduler, Registry, runtime |
 | **Development Command controls** | Manual cycle trigger, queued-job runner, diagnostics panel |
+| **Asset Foundation v1** | `assets`, `asset_relationships`, `asset_metrics`, `asset_valuations`, summaries, registration seam, read-only portfolio UI |
 
 ### Not yet implemented (planned)
 
-Continuous scheduler or cron, autonomous observation, external evidence collection, real opportunity generation from external sources, **asset persistence** (`assets` table), venture creation workflows, Build Factory, autonomous launching, enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, Memory and Knowledge layer, AI integrations, validation experiments at scale, initiative/venture promotion automation.
+Continuous scheduler or cron, autonomous observation, external evidence collection, real opportunity generation from external sources, **Build Factory**, autonomous launching, automated enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, Memory and Knowledge layer, AI integrations, validation experiments at scale, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
 
 ### Important clarifications
 
@@ -1015,7 +1026,7 @@ Continuous scheduler or cron, autonomous observation, external evidence collecti
 - **Discovery Engine runs a deterministic stub scan only** — no external web search, no AI, no automatic `opportunities` rows.
 - **No background worker or cron is deployed** — development triggers execute queued jobs explicitly.
 - **No service-role keys in the browser** — Worker Runtime uses server-side admin client only.
-- **Assets are specified but not persisted** — next core portfolio primitive.
+- **Assets are persisted (Asset Foundation v1)** — read-only portfolio UI; no seed assets; registration is server-side only.
 
 ---
 

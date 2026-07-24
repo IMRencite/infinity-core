@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation";
+import { AssetsPortfolioSection } from "@/components/dashboard/assets-portfolio-section";
 import { CommandPanel } from "@/components/dashboard/command-panel";
+import {
+  calculateAssetSummary,
+  listAssetsForOrganization,
+} from "@/lib/infinity/assets";
 import { findOldestDueQueuedJob, syncFoundingMissionContent } from "@/lib/infinity/orchestration";
 import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
 import type { ExecutionDiagnostics } from "@/lib/infinity/types";
@@ -157,6 +162,11 @@ export default async function DashboardPage() {
 
   const dueQueuedJob = await findOldestDueQueuedJob(supabase, organizationId);
 
+  const [assetSummary, recentAssets] = await Promise.all([
+    calculateAssetSummary(supabase, organizationId),
+    listAssetsForOrganization(supabase, organizationId, 5),
+  ]);
+
   const summaryCards = [
     { label: "Initiatives", value: projectsError ? "—" : String(projectsCount ?? 0) },
     { label: "Ventures", value: companiesError ? "—" : String(companiesCount ?? 0) },
@@ -201,6 +211,12 @@ export default async function DashboardPage() {
           ))}
         </div>
       </section>
+
+      <AssetsPortfolioSection
+        summary={assetSummary}
+        recentAssets={recentAssets}
+        showViewAllLink
+      />
 
       <CommandPanel
         missionTitle={activeMission?.title ?? null}

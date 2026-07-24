@@ -48,8 +48,8 @@ npm run db:types # regenerate database types
 
 ## Current build (accurate)
 
-**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls.
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1** (persistence, relationships, metrics, valuations, registration seam, read-only portfolio UI).
 
-**Not yet implemented:** continuous scheduler, autonomous observation, external evidence, asset persistence, Build Factory, enterprise-value calculations, Memory/Knowledge.
+**Not yet implemented:** continuous scheduler, autonomous observation, external evidence, Build Factory, external account creation, automated valuation models, Memory/Knowledge.
 
 See **[OS Specification §27](docs/infinity-os-specification.md#section-27--current-state)** for the full list.

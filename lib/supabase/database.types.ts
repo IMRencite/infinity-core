@@ -14,6 +14,324 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_metrics: {
+        Row: {
+          asset_id: string
+          confidence_score: number | null
+          created_at: string
+          id: string
+          measured_at: string
+          metadata: Json
+          metric_key: string
+          metric_text: string | null
+          metric_value: number | null
+          organization_id: string
+          source: string | null
+          unit: string | null
+        }
+        Insert: {
+          asset_id: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          measured_at: string
+          metadata?: Json
+          metric_key: string
+          metric_text?: string | null
+          metric_value?: number | null
+          organization_id: string
+          source?: string | null
+          unit?: string | null
+        }
+        Update: {
+          asset_id?: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          measured_at?: string
+          metadata?: Json
+          metric_key?: string
+          metric_text?: string | null
+          metric_value?: number | null
+          organization_id?: string
+          source?: string | null
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_metrics_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_relationships: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json
+          notes: string | null
+          organization_id: string
+          relationship_type: string
+          source_asset_id: string
+          strength_score: number | null
+          target_asset_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          organization_id: string
+          relationship_type: string
+          source_asset_id: string
+          strength_score?: number | null
+          target_asset_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          organization_id?: string
+          relationship_type?: string
+          source_asset_id?: string
+          strength_score?: number | null
+          target_asset_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_relationships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_relationships_source_asset_id_fkey"
+            columns: ["source_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_relationships_target_asset_id_fkey"
+            columns: ["target_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_valuations: {
+        Row: {
+          asset_id: string
+          assumptions: Json
+          confidence_score: number | null
+          created_at: string
+          currency: string
+          estimated_value: number
+          id: string
+          inputs: Json
+          organization_id: string
+          reasoning: string | null
+          valuation_method: string
+          valuation_type: string
+          valuation_version: string
+          valued_at: string
+        }
+        Insert: {
+          asset_id: string
+          assumptions?: Json
+          confidence_score?: number | null
+          created_at?: string
+          currency: string
+          estimated_value: number
+          id?: string
+          inputs?: Json
+          organization_id: string
+          reasoning?: string | null
+          valuation_method: string
+          valuation_type: string
+          valuation_version: string
+          valued_at?: string
+        }
+        Update: {
+          asset_id?: string
+          assumptions?: Json
+          confidence_score?: number | null
+          created_at?: string
+          currency?: string
+          estimated_value?: number
+          id?: string
+          inputs?: Json
+          organization_id?: string
+          reasoning?: string | null
+          valuation_method?: string
+          valuation_type?: string
+          valuation_version?: string
+          valued_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_valuations_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_valuations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          acquired_at: string | null
+          acquisition_cost: number | null
+          acquisition_source: string | null
+          asset_type: string
+          build_cost: number | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          estimated_value: number | null
+          external_identifier: string | null
+          external_url: string | null
+          id: string
+          initiative_id: string | null
+          launched_at: string | null
+          lifecycle_stage: string
+          metadata: Json
+          monthly_operating_cost: number | null
+          monthly_revenue: number | null
+          name: string
+          organization_id: string
+          ownership_type: string
+          parent_asset_id: string | null
+          provider: string | null
+          retired_at: string | null
+          slug: string
+          status: string
+          updated_at: string
+          valuation_as_of: string | null
+          valuation_method: string | null
+          valuation_version: string | null
+          venture_id: string | null
+          verified_value: number | null
+        }
+        Insert: {
+          acquired_at?: string | null
+          acquisition_cost?: number | null
+          acquisition_source?: string | null
+          asset_type: string
+          build_cost?: number | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          estimated_value?: number | null
+          external_identifier?: string | null
+          external_url?: string | null
+          id?: string
+          initiative_id?: string | null
+          launched_at?: string | null
+          lifecycle_stage?: string
+          metadata?: Json
+          monthly_operating_cost?: number | null
+          monthly_revenue?: number | null
+          name: string
+          organization_id: string
+          ownership_type?: string
+          parent_asset_id?: string | null
+          provider?: string | null
+          retired_at?: string | null
+          slug: string
+          status?: string
+          updated_at?: string
+          valuation_as_of?: string | null
+          valuation_method?: string | null
+          valuation_version?: string | null
+          venture_id?: string | null
+          verified_value?: number | null
+        }
+        Update: {
+          acquired_at?: string | null
+          acquisition_cost?: number | null
+          acquisition_source?: string | null
+          asset_type?: string
+          build_cost?: number | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          estimated_value?: number | null
+          external_identifier?: string | null
+          external_url?: string | null
+          id?: string
+          initiative_id?: string | null
+          launched_at?: string | null
+          lifecycle_stage?: string
+          metadata?: Json
+          monthly_operating_cost?: number | null
+          monthly_revenue?: number | null
+          name?: string
+          organization_id?: string
+          ownership_type?: string
+          parent_asset_id?: string | null
+          provider?: string | null
+          retired_at?: string | null
+          slug?: string
+          status?: string
+          updated_at?: string
+          valuation_as_of?: string | null
+          valuation_method?: string | null
+          valuation_version?: string | null
+          venture_id?: string | null
+          verified_value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_parent_asset_id_fkey"
+            columns: ["parent_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_venture_id_fkey"
+            columns: ["venture_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       capability_registry: {
         Row: {
           capability_key: string
