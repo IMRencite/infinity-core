@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { CommandPanel } from "@/components/dashboard/command-panel";
+import { findOldestDueQueuedJob } from "@/lib/infinity/orchestration";
 import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
+import type { ExecutionDiagnostics } from "@/lib/infinity/types";
 import { createClient } from "@/lib/supabase/server";
 
 type OrganizationMembership = {
@@ -10,6 +12,19 @@ type OrganizationMembership = {
     name: string;
   } | null;
 };
+
+function readLastError(lastError: unknown): string | null {
+  if (
+    typeof lastError === "object" &&
+    lastError !== null &&
+    !Array.isArray(lastError) &&
+    "message" in lastError
+  ) {
+    return String((lastError as Record<string, unknown>).message);
+  }
+
+  return null;
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -51,6 +66,7 @@ export default async function DashboardPage() {
     { data: activeMission },
     { count: pendingDiscoveryJobs },
     { data: lastCycle },
+    { data: latestJob },
   ] = await Promise.all([
     supabase
       .from("projects")
@@ -87,7 +103,57 @@ export default async function DashboardPage() {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
+    supabase
+      .from("engine_jobs")
+      .select(
+        "id, status, capability_key, resolved_version, attempt_count, max_attempts, next_attempt_at, last_error",
+      )
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
+
+  let diagnostics: ExecutionDiagnostics = {
+    engineJobId: null,
+    engineJobStatus: null,
+    capabilityKey: null,
+    resolvedVersion: null,
+    attemptCount: null,
+    maxAttempts: null,
+    nextAttemptAt: null,
+    workerRunId: null,
+    workerRunStatus: null,
+    durationMs: null,
+    lastError: null,
+  };
+
+  if (latestJob) {
+    const { data: latestWorkerRun } = await supabase
+      .from("worker_runs")
+      .select("id, status, duration_ms")
+      .eq("organization_id", organizationId)
+      .eq("engine_job_id", latestJob.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    diagnostics = {
+      engineJobId: latestJob.id,
+      engineJobStatus: latestJob.status,
+      capabilityKey: latestJob.capability_key,
+      resolvedVersion: latestJob.resolved_version,
+      attemptCount: latestJob.attempt_count,
+      maxAttempts: latestJob.max_attempts,
+      nextAttemptAt: latestJob.next_attempt_at,
+      workerRunId: latestWorkerRun?.id ?? null,
+      workerRunStatus: latestWorkerRun?.status ?? null,
+      durationMs: latestWorkerRun?.duration_ms ?? null,
+      lastError: readLastError(latestJob.last_error),
+    };
+  }
+
+  const dueQueuedJob = await findOldestDueQueuedJob(supabase, organizationId);
 
   const summaryCards = [
     { label: "Initiatives", value: projectsError ? "—" : String(projectsCount ?? 0) },
@@ -137,6 +203,8 @@ export default async function DashboardPage() {
         missionTitle={activeMission?.title ?? null}
         pendingDiscoveryJobs={pendingDiscoveryJobs ?? 0}
         lastCycleStatus={lastCycle?.status ?? null}
+        diagnostics={diagnostics}
+        dueQueuedJobId={dueQueuedJob?.id ?? null}
       />
     </div>
   );

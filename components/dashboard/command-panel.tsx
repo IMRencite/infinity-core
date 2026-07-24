@@ -4,8 +4,10 @@ import { useActionState } from "react";
 import {
   activateDefaultMission,
   runCommandCycle,
+  runNextQueuedJobAction,
   type CommandActionState,
 } from "@/app/dashboard/command/actions";
+import type { ExecutionDiagnostics } from "@/lib/infinity/types";
 
 const initialState: CommandActionState = {
   ok: false,
@@ -27,14 +29,77 @@ function ActionFeedback({ state }: { state: CommandActionState }) {
   );
 }
 
+function DiagnosticsPanel({
+  diagnostics,
+}: {
+  diagnostics: ExecutionDiagnostics & { engineJobId: string };
+}) {
+  return (
+    <div className="mt-4 border-t border-white/[0.06] pt-4">
+      <h3 className="text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-600">
+        Development diagnostics
+      </h3>
+      <dl className="mt-3 grid gap-2 text-[12px] sm:grid-cols-2">
+        <div>
+          <dt className="text-zinc-600">Engine job</dt>
+          <dd className="mt-0.5 font-mono text-zinc-300">
+            {diagnostics.engineJobId.slice(0, 8)}… ({diagnostics.engineJobStatus})
+          </dd>
+        </div>
+        <div>
+          <dt className="text-zinc-600">Worker run</dt>
+          <dd className="mt-0.5 font-mono text-zinc-300">
+            {diagnostics.workerRunId
+              ? `${diagnostics.workerRunId.slice(0, 8)}… (${diagnostics.workerRunStatus})`
+              : "None"}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-zinc-600">Capability</dt>
+          <dd className="mt-0.5 text-zinc-300">
+            {diagnostics.capabilityKey}
+            {diagnostics.resolvedVersion ? `@${diagnostics.resolvedVersion}` : ""}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-zinc-600">Attempts</dt>
+          <dd className="mt-0.5 text-zinc-300">
+            {diagnostics.attemptCount ?? 0}/{diagnostics.maxAttempts ?? 0}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-zinc-600">Duration</dt>
+          <dd className="mt-0.5 text-zinc-300">
+            {diagnostics.durationMs !== null ? `${diagnostics.durationMs} ms` : "—"}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-zinc-600">Retry / dead-letter</dt>
+          <dd className="mt-0.5 text-zinc-300">
+            {diagnostics.engineJobStatus === "dead_letter"
+              ? "Dead letter"
+              : diagnostics.nextAttemptAt
+                ? `Retry at ${new Date(diagnostics.nextAttemptAt).toLocaleString()}`
+                : diagnostics.lastError ?? "None"}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 export function CommandPanel({
   missionTitle,
   pendingDiscoveryJobs,
   lastCycleStatus,
+  diagnostics,
+  dueQueuedJobId,
 }: {
   missionTitle: string | null;
   pendingDiscoveryJobs: number;
   lastCycleStatus: string | null;
+  diagnostics: ExecutionDiagnostics;
+  dueQueuedJobId: string | null;
 }) {
   const [missionState, activateMission, missionPending] = useActionState(
     activateDefaultMission,
@@ -42,6 +107,10 @@ export function CommandPanel({
   );
   const [cycleState, triggerCycle, cyclePending] = useActionState(
     runCommandCycle,
+    initialState,
+  );
+  const [queuedJobState, runQueuedJob, queuedJobPending] = useActionState(
+    runNextQueuedJobAction,
     initialState,
   );
 
@@ -98,6 +167,32 @@ export function CommandPanel({
 
         <ActionFeedback state={missionState} />
         <ActionFeedback state={cycleState} />
+        {diagnostics.engineJobId ? (
+          <>
+            <DiagnosticsPanel
+              diagnostics={{
+                ...diagnostics,
+                engineJobId: diagnostics.engineJobId,
+              }}
+            />
+            {dueQueuedJobId ? (
+              <form action={runQueuedJob} className="mt-3">
+                <button
+                  type="submit"
+                  disabled={queuedJobPending}
+                  className="rounded-md border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-[12px] font-medium text-sky-300 transition hover:bg-sky-500/20 disabled:opacity-50"
+                >
+                  {queuedJobPending ? "Running queued job…" : "Run queued job"}
+                </button>
+              </form>
+            ) : null}
+            <ActionFeedback state={queuedJobState} />
+          </>
+        ) : (
+          <p className="mt-4 text-[12px] text-zinc-500">
+            No engine jobs recorded yet.
+          </p>
+        )}
       </div>
     </section>
   );

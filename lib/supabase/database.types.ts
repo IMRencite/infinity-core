@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -14,110 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      companies: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          deleted_at: string | null
-          id: string
-          launched_at: string | null
-          legal_status: string | null
-          name: string
-          organization_id: string
-          project_id: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          deleted_at?: string | null
-          id?: string
-          launched_at?: string | null
-          legal_status?: string | null
-          name: string
-          organization_id: string
-          project_id?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          deleted_at?: string | null
-          id?: string
-          launched_at?: string | null
-          legal_status?: string | null
-          name?: string
-          organization_id?: string
-          project_id?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "companies_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "companies_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      engine_events: {
-        Row: {
-          created_at: string
-          engine_name: string
-          entity_id: string | null
-          entity_type: string
-          event_type: string
-          id: string
-          message: string
-          organization_id: string
-          payload: Json
-          severity: string
-        }
-        Insert: {
-          created_at?: string
-          engine_name: string
-          entity_id?: string | null
-          entity_type: string
-          event_type: string
-          id?: string
-          message: string
-          organization_id: string
-          payload?: Json
-          severity?: string
-        }
-        Update: {
-          created_at?: string
-          engine_name?: string
-          entity_id?: string | null
-          entity_type?: string
-          event_type?: string
-          id?: string
-          message?: string
-          organization_id?: string
-          payload?: Json
-          severity?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "engine_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       capability_registry: {
         Row: {
           capability_key: string
@@ -129,6 +25,7 @@ export type Database = {
           engine_name: string | null
           health_status: string
           id: string
+          implementation_key: string | null
           input_schema: Json
           is_default: boolean
           organization_id: string | null
@@ -150,6 +47,7 @@ export type Database = {
           engine_name?: string | null
           health_status?: string
           id?: string
+          implementation_key?: string | null
           input_schema?: Json
           is_default?: boolean
           organization_id?: string | null
@@ -171,6 +69,7 @@ export type Database = {
           engine_name?: string | null
           health_status?: string
           id?: string
+          implementation_key?: string | null
           input_schema?: Json
           is_default?: boolean
           organization_id?: string | null
@@ -314,10 +213,124 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "command_decisions_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "command_decisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          id: string
+          launched_at: string | null
+          legal_status: string | null
+          name: string
+          organization_id: string
+          project_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          launched_at?: string | null
+          legal_status?: string | null
+          name: string
+          organization_id: string
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          id?: string
+          launched_at?: string | null
+          legal_status?: string | null
+          name?: string
+          organization_id?: string
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "companies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "companies_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      engine_events: {
+        Row: {
+          created_at: string
+          engine_name: string
+          entity_id: string | null
+          entity_type: string
+          event_type: string
+          id: string
+          message: string
+          organization_id: string
+          payload: Json
+          severity: string
+        }
+        Insert: {
+          created_at?: string
+          engine_name: string
+          entity_id?: string | null
+          entity_type: string
+          event_type: string
+          id?: string
+          message: string
+          organization_id: string
+          payload?: Json
+          severity?: string
+        }
+        Update: {
+          created_at?: string
+          engine_name?: string
+          entity_id?: string | null
+          entity_type?: string
+          event_type?: string
+          id?: string
+          message?: string
+          organization_id?: string
+          payload?: Json
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "engine_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       engine_jobs: {
         Row: {
+          attempt_count: number
+          available_at: string
+          cancellation_requested_at: string | null
           capability_key: string
           command_cycle_id: string | null
           completed_at: string | null
@@ -326,6 +339,12 @@ export type Database = {
           error_message: string | null
           id: string
           idempotency_key: string
+          last_error: Json
+          locked_at: string | null
+          locked_by: string | null
+          max_attempts: number
+          mission_id: string | null
+          next_attempt_at: string | null
           organization_id: string
           payload: Json
           plan_id: string | null
@@ -337,9 +356,13 @@ export type Database = {
           result: Json
           started_at: string | null
           status: string
+          timeout_seconds: number
           updated_at: string
         }
         Insert: {
+          attempt_count?: number
+          available_at?: string
+          cancellation_requested_at?: string | null
           capability_key: string
           command_cycle_id?: string | null
           completed_at?: string | null
@@ -348,6 +371,12 @@ export type Database = {
           error_message?: string | null
           id?: string
           idempotency_key: string
+          last_error?: Json
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          mission_id?: string | null
+          next_attempt_at?: string | null
           organization_id: string
           payload?: Json
           plan_id?: string | null
@@ -359,9 +388,13 @@ export type Database = {
           result?: Json
           started_at?: string | null
           status?: string
+          timeout_seconds?: number
           updated_at?: string
         }
         Update: {
+          attempt_count?: number
+          available_at?: string
+          cancellation_requested_at?: string | null
           capability_key?: string
           command_cycle_id?: string | null
           completed_at?: string | null
@@ -370,6 +403,12 @@ export type Database = {
           error_message?: string | null
           id?: string
           idempotency_key?: string
+          last_error?: Json
+          locked_at?: string | null
+          locked_by?: string | null
+          max_attempts?: number
+          mission_id?: string | null
+          next_attempt_at?: string | null
           organization_id?: string
           payload?: Json
           plan_id?: string | null
@@ -381,6 +420,7 @@ export type Database = {
           result?: Json
           started_at?: string | null
           status?: string
+          timeout_seconds?: number
           updated_at?: string
         }
         Relationships: [
@@ -389,6 +429,13 @@ export type Database = {
             columns: ["command_cycle_id"]
             isOneToOne: false
             referencedRelation: "command_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "engine_jobs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
             referencedColumns: ["id"]
           },
           {
@@ -417,6 +464,58 @@ export type Database = {
             columns: ["resolved_capability_id"]
             isOneToOne: false
             referencedRelation: "capability_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_attempt_events: {
+        Row: {
+          created_at: string
+          engine_job_id: string
+          event_type: string
+          id: string
+          organization_id: string
+          payload: Json
+          worker_run_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          engine_job_id: string
+          event_type: string
+          id?: string
+          organization_id: string
+          payload?: Json
+          worker_run_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          engine_job_id?: string
+          event_type?: string
+          id?: string
+          organization_id?: string
+          payload?: Json
+          worker_run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_attempt_events_engine_job_id_fkey"
+            columns: ["engine_job_id"]
+            isOneToOne: false
+            referencedRelation: "engine_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_attempt_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_attempt_events_worker_run_id_fkey"
+            columns: ["worker_run_id"]
+            isOneToOne: false
+            referencedRelation: "worker_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -521,137 +620,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "missions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      plan_steps: {
-        Row: {
-          capability_key: string
-          constraints: Json
-          created_at: string
-          description: string | null
-          id: string
-          organization_id: string
-          plan_id: string
-          status: string
-          step_order: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          capability_key: string
-          constraints?: Json
-          created_at?: string
-          description?: string | null
-          id?: string
-          organization_id: string
-          plan_id: string
-          status?: string
-          step_order: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          capability_key?: string
-          constraints?: Json
-          created_at?: string
-          description?: string | null
-          id?: string
-          organization_id?: string
-          plan_id?: string
-          status?: string
-          step_order?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plan_steps_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plan_steps_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      plans: {
-        Row: {
-          command_cycle_id: string
-          command_decision_id: string
-          created_at: string
-          id: string
-          metadata: Json
-          mission_id: string
-          objectives: Json
-          organization_id: string
-          status: string
-          title: string
-          updated_at: string
-          version: number
-        }
-        Insert: {
-          command_cycle_id: string
-          command_decision_id: string
-          created_at?: string
-          id?: string
-          metadata?: Json
-          mission_id: string
-          objectives?: Json
-          organization_id: string
-          status?: string
-          title: string
-          updated_at?: string
-          version?: number
-        }
-        Update: {
-          command_cycle_id?: string
-          command_decision_id?: string
-          created_at?: string
-          id?: string
-          metadata?: Json
-          mission_id?: string
-          objectives?: Json
-          organization_id?: string
-          status?: string
-          title?: string
-          updated_at?: string
-          version?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plans_command_cycle_id_fkey"
-            columns: ["command_cycle_id"]
-            isOneToOne: false
-            referencedRelation: "command_cycles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plans_command_decision_id_fkey"
-            columns: ["command_decision_id"]
-            isOneToOne: false
-            referencedRelation: "command_decisions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plans_mission_id_fkey"
-            columns: ["mission_id"]
-            isOneToOne: false
-            referencedRelation: "missions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "plans_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1065,6 +1033,137 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_steps: {
+        Row: {
+          capability_key: string
+          constraints: Json
+          created_at: string
+          description: string | null
+          id: string
+          organization_id: string
+          plan_id: string
+          status: string
+          step_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capability_key: string
+          constraints?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id: string
+          plan_id: string
+          status?: string
+          step_order: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capability_key?: string
+          constraints?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          organization_id?: string
+          plan_id?: string
+          status?: string
+          step_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_steps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_steps_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          command_cycle_id: string
+          command_decision_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          mission_id: string
+          objectives: Json
+          organization_id: string
+          status: string
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          command_cycle_id: string
+          command_decision_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          mission_id: string
+          objectives?: Json
+          organization_id: string
+          status?: string
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          command_cycle_id?: string
+          command_decision_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          mission_id?: string
+          objectives?: Json
+          organization_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plans_command_cycle_id_fkey"
+            columns: ["command_cycle_id"]
+            isOneToOne: false
+            referencedRelation: "command_cycles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_command_decision_id_fkey"
+            columns: ["command_decision_id"]
+            isOneToOne: false
+            referencedRelation: "command_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1145,11 +1244,138 @@ export type Database = {
           },
         ]
       }
+      worker_runs: {
+        Row: {
+          attempt_number: number
+          capability_id: string | null
+          completed_at: string | null
+          confidence_score: number | null
+          cost_amount: number | null
+          cost_currency: string | null
+          created_at: string
+          duration_ms: number | null
+          engine_job_id: string
+          engine_name: string
+          error: Json
+          id: string
+          input: Json
+          metrics: Json
+          mission_id: string | null
+          model: string | null
+          organization_id: string
+          output: Json
+          provider: string | null
+          quality_score: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+          worker_name: string
+          worker_version: string | null
+        }
+        Insert: {
+          attempt_number: number
+          capability_id?: string | null
+          completed_at?: string | null
+          confidence_score?: number | null
+          cost_amount?: number | null
+          cost_currency?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          engine_job_id: string
+          engine_name: string
+          error?: Json
+          id?: string
+          input?: Json
+          metrics?: Json
+          mission_id?: string | null
+          model?: string | null
+          organization_id: string
+          output?: Json
+          provider?: string | null
+          quality_score?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_name: string
+          worker_version?: string | null
+        }
+        Update: {
+          attempt_number?: number
+          capability_id?: string | null
+          completed_at?: string | null
+          confidence_score?: number | null
+          cost_amount?: number | null
+          cost_currency?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          engine_job_id?: string
+          engine_name?: string
+          error?: Json
+          id?: string
+          input?: Json
+          metrics?: Json
+          mission_id?: string | null
+          model?: string | null
+          organization_id?: string
+          output?: Json
+          provider?: string | null
+          quality_score?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_name?: string
+          worker_version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_runs_capability_id_fkey"
+            columns: ["capability_id"]
+            isOneToOne: false
+            referencedRelation: "capability_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_runs_engine_job_id_fkey"
+            columns: ["engine_job_id"]
+            isOneToOne: false
+            referencedRelation: "engine_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_runs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      claim_engine_job: {
+        Args: {
+          p_executor_id: string
+          p_job_id: string
+          p_organization_id: string
+        }
+        Returns: Json
+      }
       create_organization_with_owner: {
         Args: { organization_name: string; organization_slug: string }
         Returns: string
