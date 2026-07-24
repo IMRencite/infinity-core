@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import { DISCOVERY_CAPABILITY_KEY } from "./constants";
+import { readMissionScanType } from "./mission-defaults";
 import { recordEngineEvent } from "./events";
 import type { CommandCycle, CommandDecision, Mission, Plan, PlanStep } from "./types";
 
@@ -52,8 +53,8 @@ export async function createPlanFromDecision(
       description:
         "Resolve Discovery capability via Registry and queue deterministic scan job",
       constraints: {
-        scan_type: "broad_market",
-        integration: "foundation_v1_stub",
+        scan_type: readMissionScanType(mission),
+        integration: "discovery_foundation_v1",
       },
       status: "pending",
     })

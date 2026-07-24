@@ -3,7 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import {
   buildFoundingMissionInput,
+  buildDiscoverOpportunitiesMissionInput,
+  DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY,
   FOUNDING_DISCOVERY_POLICY,
+  FOUNDING_MISSION_KEY,
+  isDiscoverOpportunitiesMission,
   isFoundingMission,
   missionNeedsFoundingSync,
 } from "./mission-defaults";
@@ -15,6 +19,83 @@ export type EnsureFoundingMissionResult = {
   mission: Mission;
   action: "created" | "updated" | "unchanged";
 };
+
+export type EnsureDiscoverOpportunitiesMissionResult = {
+  mission: Mission;
+  action: "created" | "updated" | "unchanged";
+};
+
+async function findDiscoverOpportunitiesMission(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<Mission | null> {
+  const { data, error } = await supabase
+    .from("missions")
+    .select("*")
+    .eq("organization_id", organizationId)
+    .is("deleted_at", null)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to load missions: ${error.message}`);
+  }
+
+  return data?.find((mission) => isDiscoverOpportunitiesMission(mission)) ?? null;
+}
+
+async function syncDiscoverOpportunitiesMissionPolicies(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  missionId: string,
+) {
+  const { data: existingPolicy, error: loadError } = await supabase
+    .from("mission_policies")
+    .select("id")
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("policy_category", DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.policy_category)
+    .eq("policy_key", DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.policy_key)
+    .maybeSingle();
+
+  if (loadError) {
+    throw new Error(`Failed to load discover opportunities policy: ${loadError.message}`);
+  }
+
+  if (existingPolicy) {
+    const { error: updateError } = await supabase
+      .from("mission_policies")
+      .update({
+        autonomy_level: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.autonomy_level,
+        config: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.config as unknown as Json,
+        is_active: true,
+      })
+      .eq("id", existingPolicy.id)
+      .eq("organization_id", organizationId);
+
+    if (updateError) {
+      throw new Error(
+        `Failed to update discover opportunities policy: ${updateError.message}`,
+      );
+    }
+
+    return;
+  }
+
+  const { error: insertError } = await supabase.from("mission_policies").insert({
+    organization_id: organizationId,
+    mission_id: missionId,
+    policy_category: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.policy_category,
+    policy_key: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.policy_key,
+    autonomy_level: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.autonomy_level,
+    config: DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY.config as unknown as Json,
+  });
+
+  if (insertError) {
+    throw new Error(
+      `Failed to create discover opportunities policy: ${insertError.message}`,
+    );
+  }
+}
 
 export async function getActiveMission(
   supabase: InfinitySupabase,
@@ -147,6 +228,35 @@ export async function ensureFoundingMission(
   return { mission, action: "created" };
 }
 
+export async function ensureDiscoverOpportunitiesMission(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<EnsureDiscoverOpportunitiesMissionResult> {
+  const existing = await findDiscoverOpportunitiesMission(supabase, organizationId);
+
+  if (existing) {
+    await syncDiscoverOpportunitiesMissionPolicies(
+      supabase,
+      organizationId,
+      existing.id,
+    );
+    return { mission: existing, action: "unchanged" };
+  }
+
+  const mission = await createMission(
+    supabase,
+    buildDiscoverOpportunitiesMissionInput(organizationId),
+  );
+
+  await syncDiscoverOpportunitiesMissionPolicies(
+    supabase,
+    organizationId,
+    mission.id,
+  );
+
+  return { mission, action: "created" };
+}
+
 export async function syncFoundingMissionContent(
   supabase: InfinitySupabase,
   organizationId: string,
@@ -210,7 +320,17 @@ export async function createMission(
     );
   }
 
-  await syncFoundingMissionPolicies(supabase, input.organizationId, mission.id);
+  const constraints = input.constraints ?? {};
+  if (
+    typeof constraints === "object" &&
+    constraints !== null &&
+    !Array.isArray(constraints) &&
+    "founding_mission_key" in constraints &&
+    String((constraints as Record<string, Json>).founding_mission_key) ===
+      FOUNDING_MISSION_KEY
+  ) {
+    await syncFoundingMissionPolicies(supabase, input.organizationId, mission.id);
+  }
 
   return mission;
 }

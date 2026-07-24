@@ -409,6 +409,139 @@ export type Database = {
           },
         ]
       }
+      claim_evidence: {
+        Row: {
+          claim_id: string
+          created_at: string
+          evidence_id: string
+          id: string
+          notes: string | null
+          organization_id: string
+          relationship: string
+          weight_score: number | null
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          evidence_id: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          relationship: string
+          weight_score?: number | null
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          evidence_id?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          relationship?: string
+          weight_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_evidence_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claim_evidence_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claim_evidence_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      claims: {
+        Row: {
+          claim_type: string
+          confidence_score: number | null
+          created_at: string
+          id: string
+          metadata: Json
+          object_entity_id: string | null
+          object_entity_type: string | null
+          object_text: string | null
+          organization_id: string
+          predicate: string
+          reasoning: string | null
+          status: string
+          subject_id: string | null
+          subject_type: string
+          superseded_by_claim_id: string | null
+          updated_at: string
+          validity_end: string | null
+          validity_start: string | null
+        }
+        Insert: {
+          claim_type: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          object_entity_id?: string | null
+          object_entity_type?: string | null
+          object_text?: string | null
+          organization_id: string
+          predicate: string
+          reasoning?: string | null
+          status?: string
+          subject_id?: string | null
+          subject_type: string
+          superseded_by_claim_id?: string | null
+          updated_at?: string
+          validity_end?: string | null
+          validity_start?: string | null
+        }
+        Update: {
+          claim_type?: string
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          object_entity_id?: string | null
+          object_entity_type?: string | null
+          object_text?: string | null
+          organization_id?: string
+          predicate?: string
+          reasoning?: string | null
+          status?: string
+          subject_id?: string | null
+          subject_type?: string
+          superseded_by_claim_id?: string | null
+          updated_at?: string
+          validity_end?: string | null
+          validity_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claims_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claims_superseded_by_claim_id_fkey"
+            columns: ["superseded_by_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       command_cycles: {
         Row: {
           completed_at: string | null
@@ -593,6 +726,135 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discovery_provider_registry: {
+        Row: {
+          config: Json
+          created_at: string
+          display_name: string
+          id: string
+          implementation_key: string
+          metadata: Json
+          organization_id: string | null
+          provider_key: string
+          provider_type: string
+          status: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          display_name: string
+          id?: string
+          implementation_key: string
+          metadata?: Json
+          organization_id?: string | null
+          provider_key: string
+          provider_type: string
+          status?: string
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          display_name?: string
+          id?: string
+          implementation_key?: string
+          metadata?: Json
+          organization_id?: string | null
+          provider_key?: string
+          provider_type?: string
+          status?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_provider_registry_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discovery_signals: {
+        Row: {
+          captured_at: string
+          created_at: string
+          external_signal_id: string | null
+          id: string
+          metadata: Json
+          organization_id: string
+          provider_id: string | null
+          raw_data: Json
+          relevance_score: number | null
+          scan_id: string
+          signal_hash: string
+          signal_type: string
+          source_url: string | null
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          captured_at?: string
+          created_at?: string
+          external_signal_id?: string | null
+          id?: string
+          metadata?: Json
+          organization_id: string
+          provider_id?: string | null
+          raw_data?: Json
+          relevance_score?: number | null
+          scan_id: string
+          signal_hash: string
+          signal_type: string
+          source_url?: string | null
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          captured_at?: string
+          created_at?: string
+          external_signal_id?: string | null
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          provider_id?: string | null
+          raw_data?: Json
+          relevance_score?: number | null
+          scan_id?: string
+          signal_hash?: string
+          signal_type?: string
+          source_url?: string | null
+          summary?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_signals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discovery_signals_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "discovery_provider_registry"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discovery_signals_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_scans"
             referencedColumns: ["id"]
           },
         ]
@@ -786,6 +1048,149 @@ export type Database = {
           },
         ]
       }
+      evidence_records: {
+        Row: {
+          captured_at: string
+          confidence_score: number | null
+          content_hash: string | null
+          created_at: string
+          credibility_score: number | null
+          evidence_type: string
+          freshness_score: number | null
+          id: string
+          language: string | null
+          metadata: Json
+          organization_id: string
+          raw_content: string | null
+          relevance_score: number | null
+          source_id: string
+          source_published_at: string | null
+          structured_data: Json
+          summary: string | null
+          supports_claim: boolean | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          captured_at?: string
+          confidence_score?: number | null
+          content_hash?: string | null
+          created_at?: string
+          credibility_score?: number | null
+          evidence_type: string
+          freshness_score?: number | null
+          id?: string
+          language?: string | null
+          metadata?: Json
+          organization_id: string
+          raw_content?: string | null
+          relevance_score?: number | null
+          source_id: string
+          source_published_at?: string | null
+          structured_data?: Json
+          summary?: string | null
+          supports_claim?: boolean | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          captured_at?: string
+          confidence_score?: number | null
+          content_hash?: string | null
+          created_at?: string
+          credibility_score?: number | null
+          evidence_type?: string
+          freshness_score?: number | null
+          id?: string
+          language?: string | null
+          metadata?: Json
+          organization_id?: string
+          raw_content?: string | null
+          relevance_score?: number | null
+          source_id?: string
+          source_published_at?: string | null
+          structured_data?: Json
+          summary?: string | null
+          supports_claim?: boolean | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_records_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "evidence_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_sources: {
+        Row: {
+          created_at: string
+          credibility_score: number | null
+          external_identifier: string | null
+          external_url: string | null
+          first_seen_at: string
+          id: string
+          last_seen_at: string | null
+          metadata: Json
+          name: string
+          organization_id: string
+          provider: string | null
+          reliability_status: string
+          source_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credibility_score?: number | null
+          external_identifier?: string | null
+          external_url?: string | null
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string | null
+          metadata?: Json
+          name: string
+          organization_id: string
+          provider?: string | null
+          reliability_status?: string
+          source_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credibility_score?: number | null
+          external_identifier?: string | null
+          external_url?: string | null
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string | null
+          metadata?: Json
+          name?: string
+          organization_id?: string
+          provider?: string | null
+          reliability_status?: string
+          source_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_sources_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_attempt_events: {
         Row: {
           created_at: string
@@ -834,6 +1239,199 @@ export type Database = {
             columns: ["worker_run_id"]
             isOneToOne: false
             referencedRelation: "worker_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      knowledge_records: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          id: string
+          knowledge_type: string
+          metadata: Json
+          organization_id: string
+          scope: Json
+          source_claim_ids: Json
+          source_evidence_ids: Json
+          status: string
+          summary: string
+          superseded_by_id: string | null
+          title: string
+          updated_at: string
+          validity_end: string | null
+          validity_start: string | null
+          version: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          knowledge_type: string
+          metadata?: Json
+          organization_id: string
+          scope?: Json
+          source_claim_ids?: Json
+          source_evidence_ids?: Json
+          status?: string
+          summary: string
+          superseded_by_id?: string | null
+          title: string
+          updated_at?: string
+          validity_end?: string | null
+          validity_start?: string | null
+          version: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          knowledge_type?: string
+          metadata?: Json
+          organization_id?: string
+          scope?: Json
+          source_claim_ids?: Json
+          source_evidence_ids?: Json
+          status?: string
+          summary?: string
+          superseded_by_id?: string | null
+          title?: string
+          updated_at?: string
+          validity_end?: string | null
+          validity_start?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "knowledge_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "knowledge_records_superseded_by_id_fkey"
+            columns: ["superseded_by_id"]
+            isOneToOne: false
+            referencedRelation: "knowledge_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          applies_to: Json
+          confidence_score: number | null
+          created_at: string
+          id: string
+          lesson: string
+          lesson_type: string
+          organization_id: string
+          recommended_action: string | null
+          status: string
+          supporting_claim_ids: Json
+          supporting_memory_ids: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          applies_to?: Json
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          lesson: string
+          lesson_type: string
+          organization_id: string
+          recommended_action?: string | null
+          status?: string
+          supporting_claim_ids?: Json
+          supporting_memory_ids?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          applies_to?: Json
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          lesson?: string
+          lesson_type?: string
+          organization_id?: string
+          recommended_action?: string | null
+          status?: string
+          supporting_claim_ids?: Json
+          supporting_memory_ids?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memory_records: {
+        Row: {
+          applies_to: Json
+          confidence_score: number | null
+          content: Json
+          created_at: string
+          id: string
+          importance_score: number | null
+          learned_at: string
+          memory_type: string
+          metadata: Json
+          occurred_at: string | null
+          organization_id: string
+          source_entity_id: string | null
+          source_entity_type: string | null
+          summary: string
+          title: string
+        }
+        Insert: {
+          applies_to?: Json
+          confidence_score?: number | null
+          content?: Json
+          created_at?: string
+          id?: string
+          importance_score?: number | null
+          learned_at?: string
+          memory_type: string
+          metadata?: Json
+          occurred_at?: string | null
+          organization_id: string
+          source_entity_id?: string | null
+          source_entity_type?: string | null
+          summary: string
+          title: string
+        }
+        Update: {
+          applies_to?: Json
+          confidence_score?: number | null
+          content?: Json
+          created_at?: string
+          id?: string
+          importance_score?: number | null
+          learned_at?: string
+          memory_type?: string
+          metadata?: Json
+          occurred_at?: string | null
+          organization_id?: string
+          source_entity_id?: string | null
+          source_entity_type?: string | null
+          summary?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -954,6 +1552,7 @@ export type Database = {
           created_at: string
           decision: string
           discovered_at: string
+          discovery_dedup_key: string | null
           estimated_monthly_revenue: number | null
           estimated_startup_cost_max: number | null
           estimated_startup_cost_min: number | null
@@ -984,6 +1583,7 @@ export type Database = {
           created_at?: string
           decision?: string
           discovered_at?: string
+          discovery_dedup_key?: string | null
           estimated_monthly_revenue?: number | null
           estimated_startup_cost_max?: number | null
           estimated_startup_cost_min?: number | null
@@ -1014,6 +1614,7 @@ export type Database = {
           created_at?: string
           decision?: string
           discovered_at?: string
+          discovery_dedup_key?: string | null
           estimated_monthly_revenue?: number | null
           estimated_startup_cost_max?: number | null
           estimated_startup_cost_min?: number | null
@@ -1049,6 +1650,60 @@ export type Database = {
             columns: ["scan_id"]
             isOneToOne: false
             referencedRelation: "opportunity_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_decisions: {
+        Row: {
+          created_at: string
+          decided_by_type: string
+          decision: string
+          dedup_key: string | null
+          id: string
+          metadata: Json
+          opportunity_id: string
+          organization_id: string
+          previous_decision: string | null
+          reasoning: string | null
+        }
+        Insert: {
+          created_at?: string
+          decided_by_type: string
+          decision: string
+          dedup_key?: string | null
+          id?: string
+          metadata?: Json
+          opportunity_id: string
+          organization_id: string
+          previous_decision?: string | null
+          reasoning?: string | null
+        }
+        Update: {
+          created_at?: string
+          decided_by_type?: string
+          decision?: string
+          dedup_key?: string | null
+          id?: string
+          metadata?: Json
+          opportunity_id?: string
+          organization_id?: string
+          previous_decision?: string | null
+          reasoning?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_decisions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1124,6 +1779,60 @@ export type Database = {
           },
           {
             foreignKeyName: "opportunity_evidence_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_reviews: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          id: string
+          metadata: Json
+          notes: string | null
+          opportunity_id: string
+          organization_id: string
+          review_type: string
+          reviewer_type: string
+          verdict: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          opportunity_id: string
+          organization_id: string
+          review_type: string
+          reviewer_type: string
+          verdict: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          opportunity_id?: string
+          organization_id?: string
+          review_type?: string
+          reviewer_type?: string
+          verdict?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_reviews_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_reviews_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1475,6 +2184,71 @@ export type Database = {
           },
           {
             foreignKeyName: "plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procedures: {
+        Row: {
+          capability_key: string | null
+          confidence_score: number | null
+          created_at: string
+          description: string
+          expected_outputs: Json
+          id: string
+          metadata: Json
+          name: string
+          organization_id: string
+          preconditions: Json
+          source_lesson_ids: Json
+          status: string
+          steps: Json
+          success_metrics: Json
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          capability_key?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          description: string
+          expected_outputs?: Json
+          id?: string
+          metadata?: Json
+          name: string
+          organization_id: string
+          preconditions?: Json
+          source_lesson_ids?: Json
+          status?: string
+          steps?: Json
+          success_metrics?: Json
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          capability_key?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          description?: string
+          expected_outputs?: Json
+          id?: string
+          metadata?: Json
+          name?: string
+          organization_id?: string
+          preconditions?: Json
+          source_lesson_ids?: Json
+          status?: string
+          steps?: Json
+          success_metrics?: Json
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "procedures_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"

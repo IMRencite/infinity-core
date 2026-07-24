@@ -7,7 +7,7 @@ import {
   createCommandCycle,
   createDiscoveryDecision,
 } from "./command";
-import { getActiveMission } from "./missions";
+import { getActiveMission, ensureDiscoverOpportunitiesMission } from "./missions";
 import { createPlanFromDecision } from "./planner";
 import {
   executeJob,
@@ -95,6 +95,8 @@ export async function runDiscoveryCommandCycle(
   triggerSource: "manual" | "scheduled" | "event" | "system" = "manual",
 ): Promise<CommandCycleResult> {
   registerRuntimeWorkers();
+
+  await ensureDiscoverOpportunitiesMission(supabase, organizationId);
 
   const mission = await getActiveMission(supabase, organizationId);
 

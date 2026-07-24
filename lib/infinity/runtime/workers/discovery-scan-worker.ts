@@ -1,4 +1,6 @@
 import type { Json } from "@/lib/supabase/database.types";
+import { runDeterministicDiscoveryFoundation } from "../../discovery";
+import { recordRuntimeValidationIntelligence } from "../../intelligence/validation";
 import { DISCOVERY_CAPABILITY_KEY, DISCOVERY_ENGINE_NAME } from "../../constants";
 import { emitRuntimeEngineEvent } from "../persistence";
 import type {
@@ -53,9 +55,10 @@ export const discoveryScanWorker: WorkerDefinition = {
         status: "running",
         scan_type: scanType,
         objective:
-          "Durable Worker Runtime v1 deterministic discovery scan (no external sources)",
+          "Opportunity Discovery Foundation v1 deterministic scan (labeled stub provider, no ventures)",
         search_scope: {
-          mode: "stub",
+          mode: "deterministic_stub",
+          provider_key: "discovery.deterministic_stub",
           runtime: "durable_worker_runtime_v1",
         },
         constraints: input,
@@ -66,6 +69,8 @@ export const discoveryScanWorker: WorkerDefinition = {
           worker_run_id: context.workerRunId,
           correlation_id: context.correlationId,
           deterministic: true,
+          validation_scope: "discovery_foundation_v1",
+          creates_ventures: false,
           runtime: "durable_worker_runtime_v1",
         },
       })
@@ -84,14 +89,23 @@ export const discoveryScanWorker: WorkerDefinition = {
       eventType: "discovery.scan_started",
       entityType: "opportunity_scan",
       entityId: scan.id,
-      message: "Discovery scan started (durable worker runtime v1)",
+      message: "Discovery scan started (Opportunity Discovery Foundation v1)",
       correlationId: context.correlationId,
       payload: {
         engine_job_id: context.engineJobId,
         worker_run_id: context.workerRunId,
         scan_type: scanType,
+        validation_scope: "discovery_foundation_v1",
         runtime: "durable_worker_runtime_v1",
       },
+    });
+
+    const discoveryResult = await runDeterministicDiscoveryFoundation(context.admin, {
+      organizationId: context.organizationId,
+      scanId: scan.id,
+      correlationId: context.correlationId,
+      engineJobId: context.engineJobId,
+      workerRunId: context.workerRunId,
     });
 
     const completedAt = new Date().toISOString();
@@ -101,12 +115,16 @@ export const discoveryScanWorker: WorkerDefinition = {
       .update({
         status: "completed",
         completed_at: completedAt,
-        opportunities_discovered: 0,
+        opportunities_discovered: discoveryResult.opportunitiesDiscovered,
         metadata: {
           engine_job_id: context.engineJobId,
           worker_run_id: context.workerRunId,
           correlation_id: context.correlationId,
           deterministic: true,
+          validation_scope: "discovery_foundation_v1",
+          creates_ventures: false,
+          provider_id: discoveryResult.providerId,
+          opportunity_id: discoveryResult.opportunityId,
           runtime: "durable_worker_runtime_v1",
         },
       })
@@ -117,15 +135,31 @@ export const discoveryScanWorker: WorkerDefinition = {
       throw new Error(`Failed to complete opportunity scan: ${completeError.message}`);
     }
 
+    await recordRuntimeValidationIntelligence(context.admin, {
+      organizationId: context.organizationId,
+      actorType: "system",
+      sourceEntityType: "worker_run",
+      sourceEntityId: context.workerRunId,
+      correlationId: context.correlationId,
+      engineJobId: context.engineJobId,
+      workerRunId: context.workerRunId,
+      opportunityScanId: scan.id,
+      scanType,
+    });
+
     return {
       output: {
         opportunity_scan_id: scan.id,
-        opportunities_discovered: 0,
+        opportunities_discovered: discoveryResult.opportunitiesDiscovered,
+        opportunity_id: discoveryResult.opportunityId,
         scan_type: scanType,
+        validation_scope: "discovery_foundation_v1",
+        creates_ventures: false,
         runtime: "durable_worker_runtime_v1",
       },
       metrics: {
         scan_duration_ms: Date.parse(completedAt) - Date.parse(startedAt),
+        discovery_already_recorded: discoveryResult.alreadyRecorded,
       },
       confidenceScore: 100,
       qualityScore: 100,

@@ -641,6 +641,22 @@ Market trends, search behavior, customer complaints, social discussions, product
 | **Knowledge Engine** | Structures **verified and reusable** knowledge across opportunities. |
 | **Memory** | Stores institutional **history**: decisions, outcomes, failures, lessons, performance patterns. |
 
+### Implemented primitives (Evidence, Knowledge, and Memory Foundation v1)
+
+| Primitive | Table(s) | Purpose |
+| --- | --- | --- |
+| **Evidence source** | `evidence_sources` | Provenance and reliability of information origins |
+| **Evidence** | `evidence_records` | Raw or processed information supporting/contradicting claims |
+| **Claim** | `claims`, `claim_evidence` | Specific assertions with support/contradiction links |
+| **Knowledge** | `knowledge_records` | Structured reusable conclusions (versioned, supersession preserved) |
+| **Memory** | `memory_records` | Append-only institutional history |
+| **Lesson** | `lessons` | Distilled learning from outcomes |
+| **Procedure** | `procedures` | Reusable operational patterns |
+
+Server-side services in `lib/infinity/intelligence/` write intelligence records via the admin client. Browser clients have **read-only** access.
+
+**Current limitation:** deterministic discovery runtime records **system-validation evidence only** (not real market intelligence). Autonomous observation, external source adapters, embeddings, and AI synthesis remain future work.
+
 ### Memory categories
 
 Semantic, episodic, procedural, portfolio, venture, worker performance, source reliability, decision outcome.
@@ -1015,10 +1031,11 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Engine events** | `engine_events` producers for Command, Planner, Scheduler, Registry, runtime |
 | **Development Command controls** | Manual cycle trigger, queued-job runner, diagnostics panel |
 | **Asset Foundation v1** | `assets`, `asset_relationships`, `asset_metrics`, `asset_valuations`, summaries, registration seam, read-only portfolio UI |
+| **Evidence, Knowledge, and Memory Foundation v1** | `evidence_sources`, `evidence_records`, `claims`, `claim_evidence`, `knowledge_records`, `memory_records`, `lessons`, `procedures`, intelligence services, deterministic runtime validation evidence, read-only Intelligence UI |
 
 ### Not yet implemented (planned)
 
-Continuous scheduler or cron, autonomous observation, external evidence collection, real opportunity generation from external sources, **Build Factory**, autonomous launching, automated enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, Memory and Knowledge layer, AI integrations, validation experiments at scale, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
+Continuous scheduler or cron, autonomous observation, **external source adapters**, real opportunity generation from external sources, **Build Factory**, autonomous launching, automated enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, **semantic embeddings**, **vector search**, **entity extraction**, **knowledge graph traversal**, AI synthesis, automatic lessons from financial outcomes, validation experiments at scale, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
 
 ### Important clarifications
 
@@ -1027,6 +1044,7 @@ Continuous scheduler or cron, autonomous observation, external evidence collecti
 - **No background worker or cron is deployed** — development triggers execute queued jobs explicitly.
 - **No service-role keys in the browser** — Worker Runtime uses server-side admin client only.
 - **Assets are persisted (Asset Foundation v1)** — read-only portfolio UI; no seed assets; registration is server-side only.
+- **Institutional intelligence is persisted (EKM Foundation v1)** — read-only Intelligence UI; deterministic runtime validation evidence only; no external research or AI synthesis yet.
 
 ---
 

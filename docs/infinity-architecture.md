@@ -89,8 +89,8 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 | Status | Items |
 | --- | --- |
-| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1** |
-| **Not done** | Continuous scheduler, autonomous observation, external evidence, Build Factory, automated valuation models, capital allocation, acquisitions, Memory/Knowledge, AI integrations |
+| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1** |
+| **Not done** | Continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, capital allocation, acquisitions, semantic search/embeddings, AI integrations |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

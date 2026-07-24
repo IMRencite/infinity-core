@@ -1,10 +1,21 @@
 import { redirect } from "next/navigation";
 import { AssetsPortfolioSection } from "@/components/dashboard/assets-portfolio-section";
 import { CommandPanel } from "@/components/dashboard/command-panel";
+import { IntelligencePortfolioSection } from "@/components/dashboard/intelligence-portfolio-section";
+import { OpportunitiesPortfolioSection } from "@/components/dashboard/opportunities-portfolio-section";
 import {
   calculateAssetSummary,
   listAssetsForOrganization,
 } from "@/lib/infinity/assets";
+import {
+  calculateIntelligenceSummary,
+  listRecentEvidence,
+  listRecentLessons,
+} from "@/lib/infinity/intelligence";
+import {
+  calculateOpportunitySummary,
+  listOpportunitiesForOrganization,
+} from "@/lib/infinity/opportunities";
 import { findOldestDueQueuedJob, syncFoundingMissionContent } from "@/lib/infinity/orchestration";
 import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
 import type { ExecutionDiagnostics } from "@/lib/infinity/types";
@@ -167,6 +178,17 @@ export default async function DashboardPage() {
     listAssetsForOrganization(supabase, organizationId, 5),
   ]);
 
+  const [opportunitySummary, recentOpportunities] = await Promise.all([
+    calculateOpportunitySummary(supabase, organizationId),
+    listOpportunitiesForOrganization(supabase, organizationId, 5),
+  ]);
+
+  const [intelligenceSummary, recentEvidence, recentLessons] = await Promise.all([
+    calculateIntelligenceSummary(supabase, organizationId),
+    listRecentEvidence(supabase, organizationId, 5),
+    listRecentLessons(supabase, organizationId, 3),
+  ]);
+
   const summaryCards = [
     { label: "Initiatives", value: projectsError ? "—" : String(projectsCount ?? 0) },
     { label: "Ventures", value: companiesError ? "—" : String(companiesCount ?? 0) },
@@ -212,10 +234,22 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      <OpportunitiesPortfolioSection
+        summary={opportunitySummary}
+        opportunities={recentOpportunities}
+        showViewAllLink
+      />
+
       <AssetsPortfolioSection
         summary={assetSummary}
         recentAssets={recentAssets}
         showViewAllLink
+      />
+
+      <IntelligencePortfolioSection
+        summary={intelligenceSummary}
+        recentEvidence={recentEvidence}
+        recentLessons={recentLessons}
       />
 
       <CommandPanel

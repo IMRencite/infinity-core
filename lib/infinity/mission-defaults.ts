@@ -30,6 +30,38 @@ export const FOUNDING_MISSION_CONSTRAINTS = {
   discovery_scan_type: "broad_market",
 } as const;
 
+export const DISCOVER_OPPORTUNITIES_MISSION_KEY = "discover_opportunities";
+
+export const DISCOVER_OPPORTUNITIES_MISSION_TITLE = "Discover Opportunities";
+
+export const DISCOVER_OPPORTUNITIES_MISSION_DESCRIPTION =
+  "Autonomously discover, record, score, review, and recommend business opportunities without creating ventures until explicitly approved.";
+
+export const DISCOVER_OPPORTUNITIES_MISSION_OBJECTIVE = {
+  key: "discover_opportunities",
+  description:
+    "Run durable discovery scans that record signals, evidence, opportunities, scores, reviews, and decisions while keeping venture creation disabled.",
+} as const;
+
+export const DISCOVER_OPPORTUNITIES_MISSION_CONSTRAINTS = {
+  mission_key: DISCOVER_OPPORTUNITIES_MISSION_KEY,
+  discovery_scan_type: "broad_market",
+  creates_ventures: false,
+  foundation_mode: "discovery_v1",
+} as const;
+
+export const DISCOVER_OPPORTUNITIES_DISCOVERY_POLICY = {
+  policy_category: "discovery",
+  policy_key: "discover_opportunities",
+  autonomy_level: "bounded_autonomy" as const,
+  config: {
+    purpose: "durable_opportunity_discovery_without_venture_creation",
+    creates_ventures: false,
+    allow_stub_providers: true,
+    provider_key: "discovery.deterministic_stub",
+  },
+} as const;
+
 export const FOUNDING_DISCOVERY_POLICY = {
   policy_category: "discovery",
   policy_key: "autonomous_scan",
@@ -75,6 +107,25 @@ export function buildFoundingMissionInput(
     constraints: { ...FOUNDING_MISSION_CONSTRAINTS },
     activate: true,
   };
+}
+
+export function buildDiscoverOpportunitiesMissionInput(
+  organizationId: string,
+): CreateMissionInput {
+  return {
+    organizationId,
+    title: DISCOVER_OPPORTUNITIES_MISSION_TITLE,
+    description: DISCOVER_OPPORTUNITIES_MISSION_DESCRIPTION,
+    objectives: [DISCOVER_OPPORTUNITIES_MISSION_OBJECTIVE],
+    constraints: { ...DISCOVER_OPPORTUNITIES_MISSION_CONSTRAINTS },
+    activate: false,
+  };
+}
+
+export function isDiscoverOpportunitiesMission(mission: Mission): boolean {
+  return (
+    readConstraintKey(mission, "mission_key") === DISCOVER_OPPORTUNITIES_MISSION_KEY
+  );
 }
 
 function readConstraintKey(mission: Mission, key: string): string | null {
