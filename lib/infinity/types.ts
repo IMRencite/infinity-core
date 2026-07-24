@@ -26,7 +26,11 @@ export type CommandCycleResult =
     }
   | {
       status: "skipped";
-      reason: "no_active_mission" | "pending_discovery_jobs" | "cycle_not_runnable";
+      reason:
+        | "no_active_mission"
+        | "pending_discovery_jobs"
+        | "cycle_not_runnable"
+        | "no_opportunity_for_evaluation";
       message: string;
     }
   | {

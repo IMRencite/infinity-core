@@ -14,7 +14,7 @@ import {
 } from "@/lib/infinity/intelligence";
 import {
   calculateOpportunitySummary,
-  listOpportunitiesForOrganization,
+  listOpportunitiesWithEvaluations,
 } from "@/lib/infinity/opportunities";
 import { findOldestDueQueuedJob, syncFoundingMissionContent } from "@/lib/infinity/orchestration";
 import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
@@ -180,7 +180,7 @@ export default async function DashboardPage() {
 
   const [opportunitySummary, recentOpportunities] = await Promise.all([
     calculateOpportunitySummary(supabase, organizationId),
-    listOpportunitiesForOrganization(supabase, organizationId, 5),
+    listOpportunitiesWithEvaluations(supabase, organizationId, 5),
   ]);
 
   const [intelligenceSummary, recentEvidence, recentLessons] = await Promise.all([

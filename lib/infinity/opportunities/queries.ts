@@ -1,8 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
+import type { AllocationProposal } from "../allocation/types";
+import type { OpportunityEvaluation } from "../decision/types";
 import type { Opportunity, OpportunitySummary } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
+
+export type OpportunityWithEvaluation = Opportunity & {
+  latestEvaluation: OpportunityEvaluation | null;
+  latestAllocation: AllocationProposal | null;
+};
 
 function readNumeric(value: number | null | undefined): number {
   return typeof value === "number" ? value : Number(value ?? 0);
@@ -105,4 +112,47 @@ export async function calculateOpportunitySummary(
       : 0;
 
   return summary;
+}
+
+export async function listOpportunitiesWithEvaluations(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  limit = 20,
+): Promise<OpportunityWithEvaluation[]> {
+  const opportunities = await listOpportunitiesForOrganization(
+    supabase,
+    organizationId,
+    limit,
+  );
+
+  const enriched = await Promise.all(
+    opportunities.map(async (opportunity) => {
+      const [{ data: evaluation }, { data: allocation }] = await Promise.all([
+        supabase
+          .from("opportunity_evaluations")
+          .select("*")
+          .eq("organization_id", organizationId)
+          .eq("opportunity_id", opportunity.id)
+          .order("evaluated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("allocation_proposals")
+          .select("*")
+          .eq("organization_id", organizationId)
+          .eq("opportunity_id", opportunity.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+      ]);
+
+      return {
+        ...opportunity,
+        latestEvaluation: evaluation,
+        latestAllocation: allocation,
+      };
+    }),
+  );
+
+  return enriched;
 }

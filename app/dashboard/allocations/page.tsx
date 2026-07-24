@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { OpportunitiesPortfolioSection } from "@/components/dashboard/opportunities-portfolio-section";
+import { AllocationsPortfolioSection } from "@/components/dashboard/allocations-portfolio-section";
 import {
-  calculateOpportunitySummary,
-  listOpportunitiesWithEvaluations,
-} from "@/lib/infinity/opportunities";
+  calculateAllocationSummary,
+  listAllocationProposals,
+  listResourcePools,
+} from "@/lib/infinity/allocation";
 import { createClient } from "@/lib/supabase/server";
 
 type OrganizationMembership = {
@@ -14,7 +15,7 @@ type OrganizationMembership = {
   } | null;
 };
 
-export default async function OpportunitiesPage() {
+export default async function AllocationsPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -46,28 +47,28 @@ export default async function OpportunitiesPage() {
 
   const organizationId = membership.organization_id;
 
-  const [summary, opportunities] = await Promise.all([
-    calculateOpportunitySummary(supabase, organizationId),
-    listOpportunitiesWithEvaluations(supabase, organizationId, 20),
+  const [summary, proposals, pools] = await Promise.all([
+    calculateAllocationSummary(supabase, organizationId),
+    listAllocationProposals(supabase, organizationId, 20),
+    listResourcePools(supabase, organizationId),
   ]);
 
   return (
     <div>
       <header className="mb-6">
         <h1 className="text-[1.75rem] font-semibold tracking-tight text-white sm:text-[2.125rem]">
-          Opportunities
+          Allocations
         </h1>
         <p className="mt-2 text-[15px] font-medium text-zinc-300">
           {membership.organizations.name}
         </p>
         <p className="mt-1 text-[13px] text-zinc-500">
-          Read-only view of discovered opportunities with scores, confidence,
-          status, and recommendations. External observation and venture creation
-          are not active yet.
+          Read-only view of allocation proposals, policy blocks, and resource pool
+          capacity. Real financial accounts and unrestricted spending are not connected.
         </p>
       </header>
 
-      <OpportunitiesPortfolioSection summary={summary} opportunities={opportunities} />
+      <AllocationsPortfolioSection summary={summary} proposals={proposals} pools={pools} />
     </div>
   );
 }

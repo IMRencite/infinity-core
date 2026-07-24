@@ -1,5 +1,6 @@
 import { registerWorkerImplementation } from "./worker-registry";
 import { discoveryScanWorker } from "./workers/discovery-scan-worker";
+import { opportunityEvaluationWorker } from "./workers/opportunity-evaluation-worker";
 
 let registered = false;
 
@@ -9,6 +10,7 @@ export function registerRuntimeWorkers() {
   }
 
   registerWorkerImplementation(discoveryScanWorker);
+  registerWorkerImplementation(opportunityEvaluationWorker);
   registered = true;
 }
 

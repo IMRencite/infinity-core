@@ -777,6 +777,8 @@ Autonomy is **organization-specific, mission-specific, action-specific, and budg
 
 ## Section 18 — Capital and Resource Allocation
 
+**Foundation v1 (implemented):** `resource_pools` bootstrap with zero capacity (no fake balances), `allocation_proposals` with policy-blocked and awaiting-approval states, and `resource_reservations` with atomic capacity checks via SQL functions. Proposals are created from evaluation recommendations (`validate`, `approve_initiative`) but do not connect to payment providers or real bank accounts.
+
 Infinity evaluates: available/reserved capital, experiment/build/operating/acquisition budgets, **expected enterprise value**, capital efficiency, downside exposure, opportunity cost, portfolio concentration, worker/API/infrastructure cost, payback period, and portfolio synergy.
 
 ### Enterprise value framework

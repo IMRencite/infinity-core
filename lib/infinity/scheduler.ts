@@ -1,3 +1,4 @@
+import type { Json } from "@/lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import { DISCOVERY_ENGINE_NAME } from "./constants";
@@ -6,6 +7,41 @@ import { resolveCapability } from "./registry";
 import type { CommandCycle, EngineJob, Mission, Plan, PlanStep } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
+
+function buildIdempotencyKey(cycleId: string, stepId: string, capabilityKey: string): string {
+  const prefix = capabilityKey.startsWith("decision.")
+    ? "decision-evaluate"
+    : capabilityKey.startsWith("discovery.")
+      ? "discovery-scan"
+      : capabilityKey.replaceAll(".", "-");
+
+  return `${prefix}:${cycleId}:${stepId}`;
+}
+
+function buildJobPayload(step: PlanStep): Json {
+  const constraints =
+    typeof step.constraints === "object" &&
+    step.constraints !== null &&
+    !Array.isArray(step.constraints)
+      ? (step.constraints as Record<string, unknown>)
+      : {};
+
+  if (step.capability_key.startsWith("decision.")) {
+    return {
+      opportunity_id:
+        typeof constraints.opportunity_id === "string" ? constraints.opportunity_id : null,
+      mission_id: typeof constraints.mission_id === "string" ? constraints.mission_id : null,
+      plan_step_id: step.id,
+      constraints: step.constraints,
+    } satisfies Json as Json;
+  }
+
+  return {
+    scan_type: typeof constraints.scan_type === "string" ? constraints.scan_type : "broad_market",
+    plan_step_id: step.id,
+    constraints: step.constraints,
+  } satisfies Json as Json;
+}
 
 export async function schedulePlanStep(
   supabase: InfinitySupabase,
@@ -21,7 +57,7 @@ export async function schedulePlanStep(
     step.capability_key,
   );
 
-  const idempotencyKey = `discovery-scan:${cycle.id}:${step.id}`;
+  const idempotencyKey = buildIdempotencyKey(cycle.id, step.id, step.capability_key);
 
   const { data: job, error } = await supabase
     .from("engine_jobs")
@@ -42,11 +78,7 @@ export async function schedulePlanStep(
       available_at: new Date().toISOString(),
       max_attempts: 3,
       timeout_seconds: 300,
-      payload: {
-        scan_type: "broad_market",
-        plan_step_id: step.id,
-        constraints: step.constraints,
-      },
+      payload: buildJobPayload(step),
     })
     .select("*")
     .single();

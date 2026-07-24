@@ -9,6 +9,7 @@ export {
   calculateOpportunitySummary,
   getOpportunityById,
   listOpportunitiesForOrganization,
+  listOpportunitiesWithEvaluations,
 } from "./queries";
 export { registerOpportunity } from "./register";
 export { buildUniqueOpportunitySlug, slugifyOpportunityName } from "./slug";
@@ -19,3 +20,4 @@ export type {
   OpportunitySummary,
   RegisterOpportunityInput,
 } from "./types";
+export type { OpportunityWithEvaluation } from "./queries";

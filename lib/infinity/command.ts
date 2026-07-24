@@ -3,11 +3,16 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import {
   COMMAND_DECISION_OUTCOME_DISCOVERY,
+  COMMAND_DECISION_OUTCOME_EVALUATION,
   COMMAND_DECISION_REQUEST_DISCOVERY,
+  COMMAND_DECISION_REQUEST_EVALUATION,
+  DECISION_EVALUATE_CAPABILITY_KEY,
+  DECISION_ENGINE_NAME,
   DISCOVERY_CAPABILITY_KEY,
   DISCOVERY_ENGINE_NAME,
   PENDING_JOB_STATUSES,
 } from "./constants";
+import { findOpportunityNeedingEvaluation } from "./decision/queries";
 import { recordEngineEvent } from "./events";
 import {
   FOUNDING_DISCOVERY_POLICY,
@@ -17,6 +22,24 @@ import {
 import type { CommandCycle, CommandDecision, Mission } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
+
+export async function hasPendingDecisionJobs(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<boolean> {
+  const { count, error } = await supabase
+    .from("engine_jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .like("capability_key", "decision.%")
+    .in("status", [...PENDING_JOB_STATUSES]);
+
+  if (error) {
+    throw new Error(`Failed to check decision jobs: ${error.message}`);
+  }
+
+  return (count ?? 0) > 0;
+}
 
 export async function hasPendingDiscoveryJobs(
   supabase: InfinitySupabase,
@@ -45,9 +68,10 @@ export async function createCommandCycle(
   | { status: "skipped"; reason: "pending_discovery_jobs"; cycle: null }
   | { status: "created"; cycle: CommandCycle }
 > {
-  const pending = await hasPendingDiscoveryJobs(supabase, organizationId);
+  const pendingDiscovery = await hasPendingDiscoveryJobs(supabase, organizationId);
+  const pendingDecision = await hasPendingDecisionJobs(supabase, organizationId);
 
-  if (pending) {
+  if (pendingDiscovery || pendingDecision) {
     return { status: "skipped", reason: "pending_discovery_jobs", cycle: null };
   }
 
@@ -173,6 +197,77 @@ export async function createDiscoveryDecision(
   return decision;
 }
 
+export async function createEvaluateOpportunityDecision(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  cycle: CommandCycle,
+  mission: Mission,
+  opportunity: { id: string; name: string },
+): Promise<CommandDecision> {
+  const reasoning = [
+    `Active mission "${mission.title}" requires structured evaluation of discovered opportunities.`,
+    `Opportunity "${opportunity.name}" is scored or recommended but lacks a completed Decision Engine evaluation.`,
+    "Command is requesting bounded autonomous evaluation without venture creation.",
+  ].join(" ");
+
+  const decisionPayload = {
+    requested_capability: DECISION_EVALUATE_CAPABILITY_KEY,
+    opportunity_id: opportunity.id,
+    opportunity_name: opportunity.name,
+    mission_id: mission.id,
+    optimization_target: "enterprise_value",
+    expected_outcome:
+      "Produce a versioned evaluation, recommendation, and optional allocation proposal under policy constraints.",
+  };
+
+  const { data: decision, error } = await supabase
+    .from("command_decisions")
+    .insert({
+      organization_id: organizationId,
+      command_cycle_id: cycle.id,
+      mission_id: mission.id,
+      decision_type: COMMAND_DECISION_REQUEST_EVALUATION,
+      outcome: COMMAND_DECISION_OUTCOME_EVALUATION,
+      reasoning,
+      confidence: 80,
+      evidence_refs: [],
+      payload: decisionPayload,
+    })
+    .select("*")
+    .single();
+
+  if (error || !decision) {
+    throw new Error(
+      `Failed to create evaluation command decision: ${error?.message ?? "unknown error"}`,
+    );
+  }
+
+  await recordEngineEvent(supabase, {
+    organizationId,
+    engineName: "command",
+    eventType: "command.decision_created",
+    entityType: "command_decision",
+    entityId: decision.id,
+    message: "Command decision created: evaluate discovered opportunity",
+    correlationId: cycle.correlation_id,
+    payload: {
+      command_cycle_id: cycle.id,
+      decision_type: decision.decision_type,
+      outcome: decision.outcome,
+      ...decisionPayload,
+    },
+  });
+
+  return decision;
+}
+
+export async function selectOpportunityForEvaluation(
+  supabase: InfinitySupabase,
+  organizationId: string,
+) {
+  return findOpportunityNeedingEvaluation(supabase, organizationId);
+}
+
 export async function skipCommandCycle(
   supabase: InfinitySupabase,
   organizationId: string,
@@ -239,4 +334,4 @@ export async function completeCommandCycle(
   });
 }
 
-export { DISCOVERY_ENGINE_NAME };
+export { DECISION_ENGINE_NAME, DISCOVERY_ENGINE_NAME };

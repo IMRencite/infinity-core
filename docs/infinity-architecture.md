@@ -85,12 +85,29 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 ---
 
+## Decision Engine and Capital Allocation Foundation v1
+
+**Implemented (deterministic foundation):**
+
+- `decision_models`, `opportunity_evaluations`, `resource_pools`, `allocation_proposals`, `resource_reservations`
+- `lib/infinity/decision/` — model bootstrap, deterministic scoring, policy checks, recommendations, evaluation persistence
+- `lib/infinity/allocation/` — zero-capacity pool bootstrap, allocation proposals, atomic SQL reservation helpers
+- Capability `decision.evaluate_opportunity` + worker `opportunity-evaluation-worker`
+- Command prioritizes unevaluated opportunities; Planner/Scheduler queue evaluation jobs
+- Read-only `/dashboard/opportunities` (evaluation fields) and `/dashboard/allocations`
+
+**Conservative v1 behavior:** missing dimensions tracked as unknown (not zero); sparse validation data cannot produce `approve_build`; zero-capacity pools block reservation; no ventures, assets, or real financial accounts.
+
+**Not yet implemented:** LLM synthesis, real capital accounts, automatic initiative promotion, Build Factory handoff, unrestricted autonomous spending.
+
+---
+
 ## Implementation Status (summary)
 
 | Status | Items |
 | --- | --- |
-| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1** |
-| **Not done** | Continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, capital allocation, acquisitions, semantic search/embeddings, AI integrations |
+| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1** |
+| **Not done** | Continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, real financial accounts, acquisitions, semantic search/embeddings, AI integrations |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

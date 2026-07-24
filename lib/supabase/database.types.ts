@@ -14,6 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
+      allocation_proposals: {
+        Row: {
+          allocation_type: string
+          approved_at: string | null
+          approved_resources: Json
+          confidence_score: number | null
+          created_at: string
+          evaluation_id: string | null
+          expected_outcome: string
+          expected_time_to_value_days: number | null
+          expected_value: number | null
+          expected_value_currency: string | null
+          expires_at: string | null
+          id: string
+          mission_id: string | null
+          opportunity_id: string | null
+          organization_id: string
+          policy_results: Json
+          proposal_key: string
+          rationale: string | null
+          rejected_at: string | null
+          requested_resources: Json
+          risk_score: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          allocation_type: string
+          approved_at?: string | null
+          approved_resources?: Json
+          confidence_score?: number | null
+          created_at?: string
+          evaluation_id?: string | null
+          expected_outcome: string
+          expected_time_to_value_days?: number | null
+          expected_value?: number | null
+          expected_value_currency?: string | null
+          expires_at?: string | null
+          id?: string
+          mission_id?: string | null
+          opportunity_id?: string | null
+          organization_id: string
+          policy_results?: Json
+          proposal_key: string
+          rationale?: string | null
+          rejected_at?: string | null
+          requested_resources?: Json
+          risk_score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          allocation_type?: string
+          approved_at?: string | null
+          approved_resources?: Json
+          confidence_score?: number | null
+          created_at?: string
+          evaluation_id?: string | null
+          expected_outcome?: string
+          expected_time_to_value_days?: number | null
+          expected_value?: number | null
+          expected_value_currency?: string | null
+          expires_at?: string | null
+          id?: string
+          mission_id?: string | null
+          opportunity_id?: string | null
+          organization_id?: string
+          policy_results?: Json
+          proposal_key?: string
+          rationale?: string | null
+          rejected_at?: string | null
+          requested_resources?: Json
+          risk_score?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "allocation_proposals_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_evaluations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "allocation_proposals_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "allocation_proposals_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "allocation_proposals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_metrics: {
         Row: {
           asset_id: string
@@ -726,6 +833,68 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      decision_models: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          decision_thresholds: Json
+          deprecated_at: string | null
+          description: string | null
+          id: string
+          name: string
+          opportunity_type: string | null
+          organization_id: string
+          policy_requirements: Json
+          scoring_dimensions: Json
+          status: string
+          updated_at: string
+          version: string
+          weights: Json
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          decision_thresholds?: Json
+          deprecated_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          opportunity_type?: string | null
+          organization_id: string
+          policy_requirements?: Json
+          scoring_dimensions?: Json
+          status?: string
+          updated_at?: string
+          version: string
+          weights?: Json
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          decision_thresholds?: Json
+          deprecated_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          opportunity_type?: string | null
+          organization_id?: string
+          policy_requirements?: Json
+          scoring_dimensions?: Json
+          status?: string
+          updated_at?: string
+          version?: string
+          weights?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "decision_models_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -1708,6 +1877,110 @@ export type Database = {
           },
         ]
       }
+      opportunity_evaluations: {
+        Row: {
+          assumptions: Json
+          capital_efficiency_score: number | null
+          compounding_score: number | null
+          confidence_score: number | null
+          created_at: string
+          decision_model_id: string
+          dimension_scores: Json
+          evaluated_at: string
+          evaluation_key: string
+          evaluation_status: string
+          expected_value_score: number | null
+          id: string
+          mission_id: string | null
+          opportunity_id: string
+          organization_id: string
+          overall_score: number | null
+          policy_results: Json
+          reasoning: string | null
+          recommendation: string
+          risk_adjusted_score: number | null
+          strategic_fit_score: number | null
+          uncertainty: Json
+        }
+        Insert: {
+          assumptions?: Json
+          capital_efficiency_score?: number | null
+          compounding_score?: number | null
+          confidence_score?: number | null
+          created_at?: string
+          decision_model_id: string
+          dimension_scores?: Json
+          evaluated_at?: string
+          evaluation_key: string
+          evaluation_status?: string
+          expected_value_score?: number | null
+          id?: string
+          mission_id?: string | null
+          opportunity_id: string
+          organization_id: string
+          overall_score?: number | null
+          policy_results?: Json
+          reasoning?: string | null
+          recommendation: string
+          risk_adjusted_score?: number | null
+          strategic_fit_score?: number | null
+          uncertainty?: Json
+        }
+        Update: {
+          assumptions?: Json
+          capital_efficiency_score?: number | null
+          compounding_score?: number | null
+          confidence_score?: number | null
+          created_at?: string
+          decision_model_id?: string
+          dimension_scores?: Json
+          evaluated_at?: string
+          evaluation_key?: string
+          evaluation_status?: string
+          expected_value_score?: number | null
+          id?: string
+          mission_id?: string | null
+          opportunity_id?: string
+          organization_id?: string
+          overall_score?: number | null
+          policy_results?: Json
+          reasoning?: string | null
+          recommendation?: string
+          risk_adjusted_score?: number | null
+          strategic_fit_score?: number | null
+          uncertainty?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_evaluations_decision_model_id_fkey"
+            columns: ["decision_model_id"]
+            isOneToOne: false
+            referencedRelation: "decision_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_evaluations_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_evaluations_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_evaluations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunity_evidence: {
         Row: {
           captured_at: string
@@ -2336,6 +2609,135 @@ export type Database = {
           },
         ]
       }
+      resource_pools: {
+        Row: {
+          consumed_capacity: number
+          created_at: string
+          currency: string | null
+          id: string
+          metadata: Json
+          name: string
+          organization_id: string
+          reserved_capacity: number
+          reset_at: string | null
+          reset_period: string | null
+          resource_type: string
+          status: string
+          total_capacity: number
+          updated_at: string
+        }
+        Insert: {
+          consumed_capacity?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json
+          name: string
+          organization_id: string
+          reserved_capacity?: number
+          reset_at?: string | null
+          reset_period?: string | null
+          resource_type: string
+          status?: string
+          total_capacity: number
+          updated_at?: string
+        }
+        Update: {
+          consumed_capacity?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          metadata?: Json
+          name?: string
+          organization_id?: string
+          reserved_capacity?: number
+          reset_at?: string | null
+          reset_period?: string | null
+          resource_type?: string
+          status?: string
+          total_capacity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_pools_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resource_reservations: {
+        Row: {
+          allocation_proposal_id: string
+          amount: number
+          consumed_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json
+          organization_id: string
+          released_at: string | null
+          reservation_key: string
+          reserved_at: string
+          resource_pool_id: string
+          status: string
+        }
+        Insert: {
+          allocation_proposal_id: string
+          amount: number
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json
+          organization_id: string
+          released_at?: string | null
+          reservation_key: string
+          reserved_at?: string
+          resource_pool_id: string
+          status?: string
+        }
+        Update: {
+          allocation_proposal_id?: string
+          amount?: number
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          released_at?: string | null
+          reservation_key?: string
+          reserved_at?: string
+          resource_pool_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_reservations_allocation_proposal_id_fkey"
+            columns: ["allocation_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "allocation_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_reservations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_reservations_resource_pool_id_fkey"
+            columns: ["resource_pool_id"]
+            isOneToOne: false
+            referencedRelation: "resource_pools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worker_runs: {
         Row: {
           attempt_number: number
@@ -2483,6 +2885,38 @@ export type Database = {
       organization_has_no_active_members: {
         Args: { p_organization_id: string }
         Returns: boolean
+      }
+      release_allocation_resources: {
+        Args: { p_organization_id: string; p_proposal_id: string }
+        Returns: undefined
+      }
+      reserve_allocation_resources: {
+        Args: {
+          p_organization_id: string
+          p_proposal_id: string
+          p_reservation_key: string
+        }
+        Returns: {
+          allocation_proposal_id: string
+          amount: number
+          consumed_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json
+          organization_id: string
+          released_at: string | null
+          reservation_key: string
+          reserved_at: string
+          resource_pool_id: string
+          status: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "resource_reservations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       shares_organization_with: {
         Args: { p_user_id: string }

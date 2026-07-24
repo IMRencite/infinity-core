@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   ensureFoundingMission,
-  runDiscoveryCommandCycle,
+  runAutonomousCommandCycle,
+  runEvaluationCommandCycle,
   runNextQueuedJob,
 } from "@/lib/infinity/orchestration";
 import { createClient } from "@/lib/supabase/server";
@@ -88,7 +89,7 @@ export async function runCommandCycle(
   const { supabase, organizationId, userId } = await getOrganizationContext();
 
   try {
-    const result = await runDiscoveryCommandCycle(
+    const result = await runAutonomousCommandCycle(
       supabase,
       organizationId,
       `user:${userId}`,
@@ -132,6 +133,56 @@ export async function runCommandCycle(
       ok: false,
       message:
         error instanceof Error ? error.message : "Command cycle failed unexpectedly.",
+    };
+  }
+}
+
+export async function runEvaluationCycle(
+  _previous: CommandActionState,
+): Promise<CommandActionState> {
+  void _previous;
+  const { supabase, organizationId, userId } = await getOrganizationContext();
+
+  try {
+    const result = await runEvaluationCommandCycle(
+      supabase,
+      organizationId,
+      `user:${userId}`,
+      "manual",
+    );
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/opportunities");
+    revalidatePath("/dashboard/allocations");
+
+    if (result.status === "completed") {
+      return {
+        ok: true,
+        message: [
+          "Development trigger — evaluation command cycle completed.",
+          `Cycle ${result.cycleId.slice(0, 8)}…`,
+          `Job ${result.jobId.slice(0, 8)}… (${result.jobStatus})`,
+          `Worker run ${result.workerRunId.slice(0, 8)}… (${result.workerRunStatus})`,
+        ].join(" "),
+      };
+    }
+
+    if (result.status === "skipped") {
+      return {
+        ok: true,
+        message: result.message,
+      };
+    }
+
+    return {
+      ok: false,
+      message: result.message,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Evaluation cycle failed unexpectedly.",
     };
   }
 }

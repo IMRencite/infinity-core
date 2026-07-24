@@ -6,9 +6,14 @@ import {
   completeCommandCycle,
   createCommandCycle,
   createDiscoveryDecision,
+  createEvaluateOpportunityDecision,
+  selectOpportunityForEvaluation,
 } from "./command";
+import { ensureDefaultDecisionModel } from "./decision";
+import { ensureDefaultResourcePools } from "./allocation";
 import { getActiveMission, ensureDiscoverOpportunitiesMission } from "./missions";
 import { createPlanFromDecision } from "./planner";
+import { createEvaluationPlanFromDecision } from "./planner-evaluation";
 import {
   executeJob,
   registerRuntimeWorkers,
@@ -27,6 +32,19 @@ function readScanId(output: Json | undefined): string | null {
     "opportunity_scan_id" in output
   ) {
     return String((output as Record<string, Json>).opportunity_scan_id);
+  }
+
+  return null;
+}
+
+function readEvaluationId(output: Json | undefined): string | null {
+  if (
+    typeof output === "object" &&
+    output !== null &&
+    !Array.isArray(output) &&
+    "evaluation_id" in output
+  ) {
+    return String((output as Record<string, Json>).evaluation_id);
   }
 
   return null;
@@ -209,6 +227,168 @@ export async function runDiscoveryCommandCycle(
       message,
     };
   }
+}
+
+export async function runEvaluationCommandCycle(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  executorId: string,
+  triggerSource: "manual" | "scheduled" | "event" | "system" = "manual",
+): Promise<CommandCycleResult> {
+  registerRuntimeWorkers();
+
+  const admin = createAdminClient();
+  await ensureDefaultDecisionModel(admin, organizationId);
+  await ensureDefaultResourcePools(admin, organizationId);
+
+  const mission = await getActiveMission(supabase, organizationId);
+
+  if (!mission) {
+    return {
+      status: "skipped",
+      reason: "no_active_mission",
+      message: "No active mission exists for this organization.",
+    };
+  }
+
+  const opportunity = await selectOpportunityForEvaluation(supabase, organizationId);
+
+  if (!opportunity) {
+    return {
+      status: "skipped",
+      reason: "no_opportunity_for_evaluation",
+      message: "No scored or recommended opportunity requires evaluation.",
+    };
+  }
+
+  const cycleResult = await createCommandCycle(
+    supabase,
+    organizationId,
+    mission,
+    triggerSource,
+  );
+
+  if (cycleResult.status === "skipped") {
+    return {
+      status: "skipped",
+      reason: "pending_discovery_jobs",
+      message: "Discovery or decision jobs are already queued or running.",
+    };
+  }
+
+  const cycle = cycleResult.cycle;
+
+  try {
+    const decision = await createEvaluateOpportunityDecision(
+      supabase,
+      organizationId,
+      cycle,
+      mission,
+      opportunity,
+    );
+
+    const { plan, steps } = await createEvaluationPlanFromDecision(
+      supabase,
+      organizationId,
+      cycle,
+      mission,
+      decision,
+      opportunity.id,
+    );
+
+    const step = steps[0];
+    if (!step) {
+      throw new Error("Evaluation plan was created without steps.");
+    }
+
+    const job = await schedulePlanStep(
+      supabase,
+      organizationId,
+      cycle,
+      mission,
+      plan,
+      step,
+    );
+
+    const execution = await executeJob(admin, {
+      engineJobId: job.id,
+      organizationId,
+      executorId,
+    });
+
+    if (execution.status !== "completed") {
+      throw new Error(
+        execution.status === "already_terminal"
+          ? execution.message
+          : `Worker runtime finished with status ${execution.status}`,
+      );
+    }
+
+    await completeCommandCycle(supabase, organizationId, cycle.id, cycle.correlation_id, {
+      decision_id: decision.id,
+      plan_id: plan.id,
+      plan_step_id: step.id,
+      job_id: job.id,
+      worker_run_id: execution.workerRun.id,
+      opportunity_id: opportunity.id,
+      evaluation_id: readEvaluationId(execution.output),
+      job_status: execution.job.status,
+    });
+
+    return buildCompletedResult(
+      cycle.id,
+      cycle.correlation_id,
+      mission.id,
+      decision.id,
+      plan.id,
+      step.id,
+      job.id,
+      execution,
+    );
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Evaluation command cycle failed unexpectedly.";
+
+    await supabase
+      .from("command_cycles")
+      .update({
+        status: "failed",
+        completed_at: new Date().toISOString(),
+        summary: { error: message },
+      })
+      .eq("id", cycle.id)
+      .eq("organization_id", organizationId);
+
+    return {
+      status: "failed",
+      message,
+    };
+  }
+}
+
+export async function runAutonomousCommandCycle(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  executorId: string,
+  triggerSource: "manual" | "scheduled" | "event" | "system" = "manual",
+): Promise<CommandCycleResult> {
+  const opportunity = await selectOpportunityForEvaluation(supabase, organizationId);
+
+  if (opportunity) {
+    return runEvaluationCommandCycle(
+      supabase,
+      organizationId,
+      executorId,
+      triggerSource,
+    );
+  }
+
+  return runDiscoveryCommandCycle(
+    supabase,
+    organizationId,
+    executorId,
+    triggerSource,
+  );
 }
 
 export async function progressCommandCycle(
