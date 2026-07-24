@@ -1,9 +1,20 @@
 import type { Json } from "@/lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
+import {
+  buildFoundingMissionInput,
+  FOUNDING_DISCOVERY_POLICY,
+  isFoundingMission,
+  missionNeedsFoundingSync,
+} from "./mission-defaults";
 import type { CreateMissionInput, Mission } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
+
+export type EnsureFoundingMissionResult = {
+  mission: Mission;
+  action: "created" | "updated" | "unchanged";
+};
 
 export async function getActiveMission(
   supabase: InfinitySupabase,
@@ -22,6 +33,142 @@ export async function getActiveMission(
   }
 
   return data;
+}
+
+async function syncFoundingMissionPolicies(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  missionId: string,
+) {
+  const { data: existingPolicy, error: loadError } = await supabase
+    .from("mission_policies")
+    .select("id")
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("policy_category", FOUNDING_DISCOVERY_POLICY.policy_category)
+    .eq("policy_key", FOUNDING_DISCOVERY_POLICY.policy_key)
+    .maybeSingle();
+
+  if (loadError) {
+    throw new Error(`Failed to load mission policy: ${loadError.message}`);
+  }
+
+  if (existingPolicy) {
+    const { error: updateError } = await supabase
+      .from("mission_policies")
+      .update({
+        autonomy_level: FOUNDING_DISCOVERY_POLICY.autonomy_level,
+        config: FOUNDING_DISCOVERY_POLICY.config as unknown as Json,
+        is_active: true,
+      })
+      .eq("id", existingPolicy.id)
+      .eq("organization_id", organizationId);
+
+    if (updateError) {
+      throw new Error(`Failed to update mission policy: ${updateError.message}`);
+    }
+
+    return;
+  }
+
+  const { error: insertError } = await supabase.from("mission_policies").insert({
+    organization_id: organizationId,
+    mission_id: missionId,
+    policy_category: FOUNDING_DISCOVERY_POLICY.policy_category,
+    policy_key: FOUNDING_DISCOVERY_POLICY.policy_key,
+    autonomy_level: FOUNDING_DISCOVERY_POLICY.autonomy_level,
+    config: FOUNDING_DISCOVERY_POLICY.config as unknown as Json,
+  });
+
+  if (insertError) {
+    throw new Error(`Failed to create mission policy: ${insertError.message}`);
+  }
+}
+
+async function updateFoundingMissionInPlace(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  missionId: string,
+): Promise<Mission> {
+  const input = buildFoundingMissionInput(organizationId);
+
+  const { data: mission, error } = await supabase
+    .from("missions")
+    .update({
+      title: input.title,
+      description: input.description ?? null,
+      objectives: (input.objectives ?? []) as Json,
+      constraints: (input.constraints ?? {}) as Json,
+    })
+    .eq("id", missionId)
+    .eq("organization_id", organizationId)
+    .eq("status", "active")
+    .select("*")
+    .single();
+
+  if (error || !mission) {
+    throw new Error(
+      `Failed to update founding mission: ${error?.message ?? "unknown error"}`,
+    );
+  }
+
+  await syncFoundingMissionPolicies(supabase, organizationId, mission.id);
+
+  return mission;
+}
+
+export async function ensureFoundingMission(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<EnsureFoundingMissionResult> {
+  const active = await getActiveMission(supabase, organizationId);
+
+  if (active) {
+    if (!isFoundingMission(active)) {
+      return { mission: active, action: "unchanged" };
+    }
+
+    if (!missionNeedsFoundingSync(active)) {
+      await syncFoundingMissionPolicies(supabase, organizationId, active.id);
+      return { mission: active, action: "unchanged" };
+    }
+
+    const mission = await updateFoundingMissionInPlace(
+      supabase,
+      organizationId,
+      active.id,
+    );
+
+    return { mission, action: "updated" };
+  }
+
+  const mission = await createMission(supabase, buildFoundingMissionInput(organizationId));
+
+  return { mission, action: "created" };
+}
+
+export async function syncFoundingMissionContent(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<{ mission: Mission | null; action: "updated" | "unchanged" }> {
+  const active = await getActiveMission(supabase, organizationId);
+
+  if (!active || !isFoundingMission(active)) {
+    return { mission: active, action: "unchanged" };
+  }
+
+  if (!missionNeedsFoundingSync(active)) {
+    await syncFoundingMissionPolicies(supabase, organizationId, active.id);
+    return { mission: active, action: "unchanged" };
+  }
+
+  const mission = await updateFoundingMissionInPlace(
+    supabase,
+    organizationId,
+    active.id,
+  );
+
+  return { mission, action: "updated" };
 }
 
 export async function createMission(
@@ -63,21 +210,7 @@ export async function createMission(
     );
   }
 
-  const { error: policyError } = await supabase.from("mission_policies").insert({
-    organization_id: input.organizationId,
-    mission_id: mission.id,
-    policy_category: "discovery",
-    policy_key: "autonomous_scan",
-    autonomy_level: "bounded_autonomy",
-    config: {
-      max_experiment_usd: 25,
-      allow_stub_scans: true,
-    },
-  });
-
-  if (policyError) {
-    throw new Error(`Failed to create mission policy: ${policyError.message}`);
-  }
+  await syncFoundingMissionPolicies(supabase, input.organizationId, mission.id);
 
   return mission;
 }

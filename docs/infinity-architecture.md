@@ -10,9 +10,19 @@ This document is a **concise navigation guide**. The durable platform specificat
 
 ---
 
+## Founding Purpose
+
+> Infinity is an autonomous enterprise that continuously discovers, builds, acquires, optimizes, and compounds high-value assets to maximize the long-term enterprise value of its owner's portfolio.
+
+**Founding Rule:** Infinity must not require a human prompt in order to create value.
+
+Manual controls exist for governance, approvals, overrides, testing, investigation, policy changes, mission changes, and emergency controls — not as the normal source of work.
+
+---
+
 ## What Infinity Is
 
-**Infinity** is an **Autonomous Venture Operating System** that continuously discovers, evaluates, validates, builds, launches, operates, and improves ventures and digital assets to maximize long-term portfolio value—within organization-defined constraints.
+**Infinity** is an **Autonomous Venture Operating System** that continuously discovers, evaluates, validates, builds, acquires, launches, operates, improves, and compounds ventures and assets to **maximize long-term enterprise value** — within organization-defined constraints.
 
 Infinity initiates work autonomously. Humans govern through mission, policy, and approval—not by submitting every idea manually.
 
@@ -26,8 +36,8 @@ Identity → Mission → Command → Planner → Scheduler → Registry → Engi
 
 | Layer | One-line role |
 | --- | --- |
-| **Mission** | Active strategic objective (organization-specific content) |
-| **Command** | Strategic intelligence; decides priorities and outcomes—does not execute specialized work |
+| **Mission** | Active strategic objective optimizing for enterprise value (organization-specific content) |
+| **Command** | Strategic intelligence; optimizes for enterprise value; decides priorities—does not execute specialized work |
 | **Planner** | Versioned plans from Command decisions; queries Registry for feasible capabilities |
 | **Scheduler** | Durable jobs, retries, locking; resolves capabilities via Registry |
 | **Registry** | Authoritative catalog of engines, workers, builders, and modules—does not decide, plan, schedule, or execute |
@@ -43,32 +53,35 @@ Full Registry definition: **[OS Specification §8](./infinity-os-specification.m
 | Term | Meaning |
 | --- | --- |
 | **Opportunity** | Potential business/asset under evaluation (before initiative) |
-| **Initiative** | Approved or active body of work (*DB: `projects`*) |
-| **Venture** | Launched operating business (*DB: `companies`*) |
-| **Asset** | Discrete created or managed item owned by a venture |
+| **Initiative** | Temporary body of work (*DB: `projects`*) |
+| **Venture** | Operating business (*DB: `companies`*) |
+| **Asset** | First-class portfolio primitive — discrete created, acquired, or managed item (*table not yet implemented*) |
 | **Portfolio** | Opportunities, initiatives, ventures, assets, capital, performance |
 
 ```text
 Opportunity → Initiative → Venture → Assets
 ```
 
+Assets may belong to ventures or exist independently.
+
 ---
 
 ## Autonomous Lifecycle
 
 ```text
-Observe → Discover → Research → Score → Validate → Decide → Plan → Build → Launch → Operate → Grow → Measure → Learn → Observe again
+Observe → Discover → Research → Evaluate → Validate → Decide → Allocate → Plan → Build → Launch → Operate → Grow → Measure → Learn → Compound → Observe again
 ```
 
 Full stage definitions, entry criteria, and audit requirements: **[OS Specification §3](./infinity-os-specification.md#section-3--autonomous-lifecycle)**.
 
 ---
 
-## Discovery Engine (data foundation)
+## Discovery Engine
 
 Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_scans`, `opportunities`, `opportunity_evidence`, `opportunity_scores`, `engine_events`.
 
-**Schema migrated; autonomous discovery not yet running.**
+**Implemented:** deterministic stub discovery scan via Worker Runtime (development milestone).  
+**Not yet implemented:** external sources, autonomous observation, real opportunity generation.
 
 ---
 
@@ -76,8 +89,8 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 | Status | Items |
 | --- | --- |
-| **Done** | Auth, orgs, dashboard, onboarding, Discovery **schema**, RLS, terminology |
-| **Not done** | Command, Planner, Scheduler, **Registry**, AI discovery, validation, Build Factory, Workers |
+| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls |
+| **Not done** | Continuous scheduler, autonomous observation, external evidence, asset persistence, Build Factory, enterprise-value calculations, capital allocation, acquisitions, Memory/Knowledge, AI integrations |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

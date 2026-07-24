@@ -3,8 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
-  createMission,
-  getActiveMission,
+  ensureFoundingMission,
   runDiscoveryCommandCycle,
   runNextQueuedJob,
 } from "@/lib/infinity/orchestration";
@@ -50,38 +49,28 @@ export async function activateDefaultMission(
   void _previous;
   const { supabase, organizationId } = await getOrganizationContext();
 
-  const existing = await getActiveMission(supabase, organizationId);
-
-  if (existing) {
-    return {
-      ok: true,
-      message: `Active mission already set: "${existing.title}".`,
-    };
-  }
-
   try {
-    const mission = await createMission(supabase, {
-      organizationId,
-      title: "Autonomous venture discovery and validation",
-      description:
-        "Continuously discover, evaluate, and validate venture opportunities within bounded autonomy.",
-      objectives: [
-        {
-          key: "maintain_pipeline",
-          description: "Keep an opportunity pipeline under active discovery",
-        },
-      ],
-      constraints: {
-        discovery_scan_type: "broad_market",
-      },
-      activate: true,
-    });
+    const result = await ensureFoundingMission(supabase, organizationId);
 
     revalidatePath("/dashboard");
 
+    if (result.action === "created") {
+      return {
+        ok: true,
+        message: `Founding mission activated: "${result.mission.title}".`,
+      };
+    }
+
+    if (result.action === "updated") {
+      return {
+        ok: true,
+        message: `Founding mission aligned: "${result.mission.title}".`,
+      };
+    }
+
     return {
       ok: true,
-      message: `Mission activated: "${mission.title}".`,
+      message: `Active mission: "${result.mission.title}".`,
     };
   } catch (error) {
     return {

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { CommandPanel } from "@/components/dashboard/command-panel";
-import { findOldestDueQueuedJob } from "@/lib/infinity/orchestration";
+import { findOldestDueQueuedJob, syncFoundingMissionContent } from "@/lib/infinity/orchestration";
 import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
 import type { ExecutionDiagnostics } from "@/lib/infinity/types";
 import { createClient } from "@/lib/supabase/server";
@@ -58,6 +58,8 @@ export default async function DashboardPage() {
 
   const organization = membership.organizations;
   const organizationId = membership.organization_id;
+
+  await syncFoundingMissionContent(supabase, organizationId);
 
   const [
     { count: projectsCount, error: projectsError },
@@ -174,7 +176,8 @@ export default async function DashboardPage() {
           {organization.name}
         </p>
         <p className="mt-1 text-[13px] text-zinc-500">
-          Your command center for initiatives, ventures, and operations.
+          Autonomous venture operating system — portfolio state, opportunity flow,
+          and intervention points for {organization.name}.
         </p>
       </header>
 

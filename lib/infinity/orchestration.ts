@@ -498,6 +498,6 @@ export async function runNextQueuedJob(
 }
 
 export { createCommandCycle, createDiscoveryDecision } from "./command";
-export { createMission, getActiveMission } from "./missions";
+export { createMission, ensureFoundingMission, getActiveMission, syncFoundingMissionContent } from "./missions";
 export { createPlanFromDecision } from "./planner";
 export { schedulePlanStep } from "./scheduler";

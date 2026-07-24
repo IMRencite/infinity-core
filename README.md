@@ -1,6 +1,8 @@
 # Infinity Core
 
-**Infinity** is an Autonomous Venture Operating System — the application core for observing markets, discovering opportunities, validating ventures, building, launching, growing, and learning across a portfolio.
+**Infinity** is an Autonomous Venture Operating System — an autonomous enterprise that continuously discovers, builds, acquires, optimizes, and compounds high-value assets to maximize the long-term enterprise value of its owner's portfolio.
+
+**Founding Rule:** Infinity must not require a human prompt in order to create value.
 
 ## Architecture
 
@@ -23,6 +25,7 @@ Configure Supabase via `.env.local` (see `.env.local.example`):
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (server-side Worker Runtime only; never expose to the browser)
 
 ## Scripts
 
@@ -30,7 +33,10 @@ Configure Supabase via `.env.local` (see `.env.local.example`):
 npm run dev      # development server
 npm run build    # production build
 npm run lint     # ESLint
+npm run test     # Vitest unit tests
 npm run start    # production server
+npm run db:push  # apply Supabase migrations
+npm run db:types # regenerate database types
 ```
 
 ## Stack
@@ -39,3 +45,11 @@ npm run start    # production server
 - TypeScript
 - Tailwind CSS
 - Supabase (Auth, Postgres, RLS)
+
+## Current build (accurate)
+
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls.
+
+**Not yet implemented:** continuous scheduler, autonomous observation, external evidence, asset persistence, Build Factory, enterprise-value calculations, Memory/Knowledge.
+
+See **[OS Specification §27](docs/infinity-os-specification.md#section-27--current-state)** for the full list.

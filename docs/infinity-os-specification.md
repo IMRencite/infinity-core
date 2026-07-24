@@ -7,7 +7,7 @@
 | **Specification version** | 1.0 |
 | **Status** | Architecture Freeze Candidate |
 | **Repository** | `infinity-core` |
-| **Date** | 2026-07-23 (amended: Registry layer) |
+| **Date** | 2026-07-23 (amended: Registry layer; founding purpose) |
 
 **Source of truth:** This document is the durable architectural source of truth for Infinity platform design, autonomous behavior, governance, and implementation sequencing. Product terminology, layer responsibilities, lifecycle stages, and security principles defined here are **locked** under Architecture Freeze v1 unless superseded by an approved ADR in `docs/decisions/`.
 
@@ -54,7 +54,35 @@
 
 ## Core Purpose
 
-Infinity exists to **continuously discover, evaluate, validate, build, launch, operate, and improve ventures and digital assets** in order to **maximize long-term portfolio value** within organization-defined constraints.
+Infinity exists to **continuously discover, evaluate, validate, build, acquire, launch, operate, improve, and compound ventures and assets** in order to **maximize long-term enterprise value** within organization-defined constraints.
+
+## Founding Purpose
+
+> Infinity is an autonomous enterprise that continuously discovers, builds, acquires, optimizes, and compounds high-value assets to maximize the long-term enterprise value of its owner's portfolio.
+
+### Founding Rule
+
+> Infinity must not require a human prompt in order to create value.
+
+Manual commands remain available for governance, approvals, overrides, testing, investigation, policy changes, mission changes, and emergency controls. Manual input is **not** the normal source of work.
+
+### Founding principles
+
+| # | Principle |
+| --- | --- |
+| 1 | Infinity creates value without waiting for user prompts. |
+| 2 | Humans act as owners, board members, approvers, and policy setters. |
+| 3 | Infinity continuously observes, discovers, evaluates, validates, builds, launches, operates, improves, acquires, and retires assets. |
+| 4 | **Enterprise value** is the top-level optimization target. |
+| 5 | Revenue is important but is only one component of enterprise value. |
+| 6 | **Assets** are first-class portfolio objects. |
+| 7 | **Initiatives** are temporary bodies of work. |
+| 8 | **Ventures** are operating businesses. |
+| 9 | Assets may belong to ventures or exist independently. |
+| 10 | Every autonomous action must remain bounded by mission, capital, risk, legal, security, and approval policies. |
+| 11 | Infinity should stop, pause, sell, recycle, or archive underperforming work when evidence supports doing so. |
+| 12 | Everything Infinity learns should eventually improve future decisions. |
+| 13 | No major feature should require a human prompt in order for Infinity to create value. |
 
 ### Operating principles
 
@@ -64,6 +92,7 @@ Infinity exists to **continuously discover, evaluate, validate, build, launch, o
 | **Human governance** | Humans act as owners, board members, approvers, and policy setters—not as the primary workflow engine. |
 | **Bounded autonomy** | Autonomy is limited by mission scope, capital limits, risk policy, legal constraints, security rules, and approval requirements. |
 | **Complete businesses** | Infinity builds complete businesses—brands, products, operations, assets, and growth systems—not merely websites or isolated code snippets. |
+| **Enterprise value first** | Command optimizes for long-term enterprise value, not merely activity volume or queue depth. |
 
 ---
 
@@ -76,7 +105,7 @@ These define **what Infinity is** across all organizations:
 | Concept | Definition |
 | --- | --- |
 | **Identity** | The permanent nature and purpose of Infinity as an Autonomous Venture Operating System. |
-| **Command** | Strategic intelligence and control layer; evaluates state and decides what should happen next. |
+| **Command** | Strategic intelligence; evaluates state and optimizes for enterprise value; decides priorities and outcomes—does not execute specialized work |
 | **Planner** | Transforms Command decisions into structured, versioned plans. |
 | **Scheduler** | Coordinates durable job execution with retries, locking, and recovery. |
 | **Registry** | Authoritative catalog of available execution capabilities (engines, workers, builders, modules, providers). |
@@ -92,7 +121,7 @@ These are **configured per organization** and may differ between tenants:
 | Concept | Definition |
 | --- | --- |
 | **Organization** | Tenant boundary; all business data is scoped here. |
-| **Mission** | Active strategic objective for an organization (e.g., “Build three B2B SaaS ventures in 24 months under $500K total experiment budget”). |
+| **Mission** | Active strategic objective optimizing for long-term enterprise value (organization-specific content) |
 | **Policies** | Autonomy, capital, legal, security, and approval rules for that organization. |
 | **Portfolio composition** | Which ventures, assets, and opportunities exist for that organization. |
 
@@ -144,7 +173,7 @@ flowchart TB
 | --- | --- | --- | --- | --- |
 | **Identity** | Define system purpose and invariant principles | Platform specification | Architectural constraints | Vary by tenant |
 | **Mission** | State active strategic objective | Owner/board direction, portfolio context | Mission record, constraints | Execute work directly |
-| **Command** | Evaluate state; prioritize; decide; escalate | Mission, policies, portfolio, pipeline, memory | Decisions, priorities, plan requests, approvals | Perform specialized research, coding, design, or marketing; hardcode specific engines or workers |
+| **Command** | Evaluate state; prioritize for enterprise value; decide; escalate | Mission, policies, portfolio, pipeline, memory | Decisions, priorities, plan requests, approvals | Perform specialized research, coding, design, or marketing; hardcode specific engines or workers |
 | **Planner** | Structure work from decisions | Command decisions, constraints, Registry capability catalog | Versioned plans, milestones, dependencies, **abstract capability requirements** | Decide organization strategy |
 | **Scheduler** | Run durable jobs reliably | Plans, capability requirements, Registry resolution | Job queue state, resolved engine/worker invocations | Judge strategic worth of opportunities |
 | **Registry** | Catalog and expose execution capabilities | Capability registrations, health signals, policy bindings | Capability records, resolution metadata, availability status | Make strategic decisions, create plans, schedule jobs, or execute work |
@@ -157,20 +186,23 @@ flowchart TB
 
 ## Section 3 — Autonomous Lifecycle
 
-Canonical loop:
+### Permanent operating loop
 
 ```text
-Observe → Discover → Research → Score → Validate → Decide → Plan → Build → Launch → Operate → Grow → Measure → Learn → Observe again
+Observe → Discover → Research → Evaluate → Validate → Decide → Allocate → Plan → Build → Launch → Operate → Grow → Measure → Learn → Compound → Observe again
 ```
+
+**Compound** means strengthening existing ventures; reusing proven assets; sharing knowledge across ventures; reallocating capital; creating distribution advantages; increasing brand, traffic, data, software, audience, revenue, and defensibility; and improving future discovery and build decisions.
 
 | Stage | Purpose | Entry criteria | Output | Possible decisions | Owning engine | Audit | Failure outcomes | Human approval |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **Observe** | Gather external and internal signals | Mission active; observation policy enabled | Signal records, observation events | Continue, pause observation | Discovery (initial), Portfolio Intelligence (later) | `discovery.signal_observed` | Missed signals; stale data | Policy change only |
 | **Discover** | Identify candidate opportunities | Signals or scan policy triggered | `opportunity_scans`, candidate `opportunities` | Queue research, discard duplicate | **Discovery Engine** | `discovery.scan_*`, `discovery.opportunity_found` | Scan failed; zero results | Scan budget override |
 | **Research** | Collect evidence for candidates | Opportunity in `researching` or Command request | `opportunity_evidence`, knowledge candidates | Sufficient evidence, need more, contradict | **Research Engine** | `research.*` | Source unavailable; low credibility | Restricted source access |
-| **Score** | Quantify attractiveness and risk | Minimum evidence threshold met | Versioned `opportunity_scores` | Proceed, hold, reject path | **Scoring Engine** | `scoring.completed` | Model error; incomplete dimensions | Scoring policy change |
+| **Evaluate** | Assess enterprise value, fit, and risk | Research or portfolio signals available | Evaluation records, score inputs | Proceed, hold, reject path | **Command** (+ Decision Support) | `command.decision_created` | Incomplete evaluation | Policy change |
 | **Validate** | Test critical assumptions cheaply | Command/decision to validate | Experiments, results, confidence updates | Pass, fail, inconclusive | **Validation Engine** | `validation.*` | Budget exhausted; invalid test | Experiment spend above threshold |
 | **Decide** | Choose strategic path | Scores, validation, mission fit | Decision record on opportunity | reject, hold, validate, approve initiative, etc. | **Command** (+ Decision Support) | `command.decision_created` | Low confidence; policy block | Required for restricted outcomes |
+| **Allocate** | Assign capital, attention, and capacity | Approved decision with budget envelope | Capital allocation records | Increase, reduce, pause | **Command** (+ Portfolio Intelligence) | `portfolio.allocation_*` | Insufficient capital | Required above threshold |
 | **Plan** | Structure approved work | Approved initiative or build decision | Versioned plan, milestones | Replan, cancel | **Planner** | `planner.plan_created` | Infeasible plan; resource conflict | Major scope change |
 | **Build** | Produce venture assets | Approved plan with build gate passed | Assets, artifacts, deployments | Continue, rollback, pause | **Build Factory** | `build.*` | Partial build; test failure | Production deploy, spend |
 | **Launch** | Go live with controls | Build acceptance met | Launched venture, launch checklist | Launch, delay, abort | **Launch Engine** | `venture.launch_*` | Broken deploy; compliance gap | Public launch, legal filings |
@@ -178,6 +210,7 @@ Observe → Discover → Research → Score → Validate → Decide → Plan →
 | **Grow** | Expand distribution and revenue | Operating venture with growth budget | Campaigns, experiments, content | Scale, stop campaign | **Growth Engine** | `growth.*` | Poor ROAS; channel ban | Ad spend, brand commitments |
 | **Measure** | Capture performance truth | Active venture or initiative | Metrics, financial actuals | Continue measuring | Portfolio Intelligence | `portfolio.metric_updated` | Missing data; attribution error | None typically |
 | **Learn** | Update institutional knowledge | Measured outcomes available | Lessons, memory updates, model feedback | Adjust policies, scoring weights | Memory + Command | `system.lesson_created` | Incorrect attribution | Policy approval for autonomy changes |
+| **Compound** | Reinvest gains across the portfolio | Measured outcomes and active ventures/assets | Reuse plans, capital moves, shared assets | Strengthen, recycle, acquire, sell | **Command** + Portfolio Intelligence | `portfolio.compound_*` | Misallocated capital | Major portfolio moves |
 
 ---
 
@@ -192,14 +225,14 @@ Observe → Discover → Research → Score → Validate → Decide → Plan →
 | **Score** | Versioned multi-dimensional evaluation (`opportunity_scores`); never overwritten in place. |
 | **Validation Experiment** | Structured test of a hypothesis with thresholds and budget. |
 | **Decision** | Command (or approved delegate) outcome with reasoning, confidence, and policy reference. |
-| **Initiative** | Approved or active body of work (research, validation, build, launch prep). *Legacy table: `projects`.* |
+| **Initiative** | Approved or active **temporary body of work** (research, validation, build, launch prep). *Legacy table: `projects`.* |
 | **Plan** | Versioned execution structure from Planner. |
 | **Milestone** | Plan checkpoint with acceptance criteria. |
 | **Job** | Durable Scheduler work unit. |
 | **Engine Event** | Append-only audit record (`engine_events`). |
 | **Worker Run** | Single worker execution with inputs, outputs, and cost. |
-| **Venture** | Launched or operational business. *Legacy table: `companies`.* |
-| **Asset** | Discrete created, acquired, or managed item (see examples below). |
+| **Venture** | Launched or **operating business**. *Legacy table: `companies`.* |
+| **Asset** | **First-class portfolio primitive** — a discrete item created, acquired, owned, managed, improved, monetized, licensed, sold, retired, or reused by Infinity. May belong to a venture or exist independently. *Table not yet implemented — next core portfolio primitive.* |
 | **Deployment** | Release of an asset to an environment. |
 | **Campaign** | Growth or validation go-to-market execution unit. |
 | **Metric** | Measured performance datapoint. |
@@ -210,9 +243,17 @@ Observe → Discover → Research → Score → Validate → Decide → Plan →
 | **Lesson** | Institutional learning derived from outcomes. |
 | **Knowledge Record** | Structured verified or labeled knowledge entry. |
 
-### Asset examples
+### Asset primitive (specified; not yet persisted)
 
-A **venture** may own many **assets**: brand, domain, website, ecommerce store, SaaS application, API, database, mobile application, marketplace, course, newsletter, content library, social account, ad account, email list, dataset, automation, AI worker, documentation, intellectual property.
+An **Asset** is a discrete item created, acquired, owned, managed, improved, monetized, licensed, sold, retired, or reused by Infinity.
+
+**Planned asset categories** (non-exhaustive): domain, brand, website, ecommerce store, SaaS application, mobile application, API, database, dataset, AI model, AI worker, automation, content library, article, video, image library, newsletter, email list, social account, community, marketplace, directory, course, book, intellectual property, patent, trademark, customer list, ad account, analytics property, CRM, codebase, infrastructure, legal entity, contract, partnership, acquisition, other.
+
+**Implementation status:** Asset persistence (`assets` table and portfolio APIs) is the **next core portfolio primitive** to implement. Do not treat assets as implemented until that layer ships.
+
+### Asset examples (conceptual)
+
+A **venture** may own many **assets**, and assets may also exist independently of a single venture.
 
 ### Promotion path
 
@@ -224,11 +265,32 @@ Opportunity → (Decision: approve initiative) → Initiative → (Build + Launc
 
 ## Section 5 — Command
 
-Command is the **central strategic intelligence layer**. It does not perform specialized execution.
+Command is the **central strategic intelligence layer**. It optimizes for **long-term enterprise value**, not merely queue activity or manual user requests. It does not perform specialized execution.
+
+### Enterprise-value evaluation dimensions
+
+Command should eventually evaluate, among others:
+
+- expected enterprise value
+- capital efficiency
+- recurring revenue potential
+- cash-flow potential
+- strategic fit
+- defensibility
+- distribution advantage
+- asset reuse
+- portfolio synergy
+- time to value
+- downside risk
+- operational burden
+- learning value
+- exit or acquisition value
+
+The current deterministic implementation preserves the existing discovery-job rule while tying discovery decisions explicitly to the active enterprise-value mission and portfolio opportunity flow.
 
 ### Responsibilities
 
-- Evaluate the active mission
+- Evaluate the active mission against **enterprise value** objectives
 - Observe system state across portfolio and pipeline
 - Identify strategic gaps and bottlenecks
 - Prioritize opportunities and initiatives
@@ -236,7 +298,7 @@ Command is the **central strategic intelligence layer**. It does not perform spe
 - Request plans from Planner
 - Approve actions permitted by autonomy policy
 - Escalate restricted actions to humans
-- Pause or terminate unproductive work
+- Pause, terminate, recycle, sell, or archive unproductive work when evidence supports it
 - Monitor portfolio outcomes
 - Trigger learning cycles
 
@@ -264,6 +326,7 @@ A **Command cycle** is a bounded evaluation pass: ingest state → analyze → p
 - **Confidence** (0–100 or enumerated)
 - **Reasoning** (structured text + references)
 - **Evidence references** (links to evidence IDs, scores, metrics)
+- **Mission objective**, portfolio-value rationale, expected outcome, and policy context in structured payloads where applicable
 - **Audit trail** (`command.cycle_started`, `command.decision_created`)
 
 Command must never overwrite prior decisions; new decisions append with supersession references where applicable.
@@ -673,7 +736,9 @@ Worker identity, model/implementation version, inputs, outputs, cost, duration, 
 
 ### Policy categories
 
-Capital, legal, security, brand, external communication, purchasing, deployment, data access, account creation, contracts, refunds, hiring, acquisitions.
+Capital, legal, security, brand, external communication, purchasing, deployment, data access, account creation, contracts, refunds, hiring, acquisitions, autonomous spend, validation budgets, build budgets, acquisition budgets, allowed and prohibited industries, jurisdictions, domain purchasing, infrastructure purchasing, paid advertising, public publishing, outbound communication, legal commitments, shutdown and asset disposal.
+
+Policies govern autonomous value creation. They must **not** grant unrestricted autonomy.
 
 ### Examples
 
@@ -686,7 +751,19 @@ Autonomy is **organization-specific, mission-specific, action-specific, and budg
 
 ## Section 18 — Capital and Resource Allocation
 
-Infinity evaluates: available/reserved capital, experiment/build/operating budgets, expected value, downside exposure, opportunity cost, portfolio concentration, worker/API/infrastructure cost, payback period.
+Infinity evaluates: available/reserved capital, experiment/build/operating/acquisition budgets, **expected enterprise value**, capital efficiency, downside exposure, opportunity cost, portfolio concentration, worker/API/infrastructure cost, payback period, and portfolio synergy.
+
+### Enterprise value framework
+
+Enterprise value inputs may include: recurring revenue, gross margin, net cash flow, growth rate, retention, customer concentration, organic traffic, search authority, AI-search visibility, audience size, email list quality, brand strength, intellectual property, software assets, data assets, automation, operational leverage, defensibility, market position, strategic relationships, portfolio synergy, owner dependency, legal and regulatory risk, capital requirements, and liquidation or resale value.
+
+**Rules:**
+
+- Projected enterprise value is an **estimate**; verified financial results must remain distinct from projections.
+- Valuation models must be **versioned**.
+- Command must **not** rely on one universal valuation formula.
+- Different asset and venture types require different valuation models.
+- Revenue is one component of enterprise value, not the sole optimization target.
 
 **All financial projections must distinguish estimates from verified results.**
 
@@ -858,7 +935,7 @@ Historical models and scoring versions are **preserved**—past decisions are no
 | **9 — Execution and Growth** | Workers, campaigns, metrics, optimization, **worker registration and quality feedback to Registry** |
 | **10 — Portfolio Intelligence** | Capital allocation, cross-venture learning, acquisitions/partnerships |
 
-**Current position:** Phase 1 substantially complete (Discovery **schema** foundation; autonomous discovery **not** yet running). **Registry not implemented.**
+**Current position:** Phase 1 complete (Discovery schema foundation). Phase 2 OS Foundation and durable execution runtime substantially implemented in `infinity-core` (missions, Command, Planner, Scheduler seam, Registry seed, Worker Runtime, deterministic discovery scan, development Command controls). Continuous autonomous observation, external evidence, asset persistence, Build Factory, and Memory remain future phases.
 
 ---
 
@@ -867,13 +944,18 @@ Historical models and scoring versions are **preserved**—past decisions are no
 ### Locked under Freeze v1
 
 - Product terminology (Mission, Command, Planner, Scheduler, **Registry**, Engines, Workers, Opportunities, Initiatives, Ventures, Assets, Discovery Engine, Build Factory)
+- **Founding purpose** and **Founding Rule** (autonomous value creation without prompts)
+- **Enterprise value** as the top-level optimization goal
+- **Assets** as a first-class portfolio primitive (specified; persistence is next)
+- **Permanent operating loop** including **Compound**
 - Layer responsibilities and separation (Command ≠ Planner ≠ Scheduler ≠ **Registry** ≠ Engines)
 - **Registry** as authoritative capability catalog between Scheduler and Engines; Registry does not decide, plan, schedule, or execute
 - Distinction between Opportunities, Initiatives, Ventures, and Assets
 - Autonomous lifecycle stages
 - Organization-scoped security model (RLS, no browser service role)
 - Durable job and event principles
-- Human governance and bounded-autonomy principles
+- Human governance, bounded autonomy, and humans as governors rather than routine operators
+- Ability to pause, terminate, recycle, acquire, and sell assets when evidence supports it
 - Epistemic separation (inference ≠ fact)
 - Command requests **outcomes and priorities**, not hardcoded engine/worker bindings
 
@@ -895,7 +977,7 @@ Changes to **locked** items require an ADR and specification version bump.
 
 ## Section 27 — Current State
 
-*Accurate as of specification date. Do not infer capabilities beyond this list.*
+*Accurate as of founding-purpose milestone. Do not infer capabilities beyond this list.*
 
 ### Implemented
 
@@ -907,22 +989,33 @@ Changes to **locked** items require an ADR and specification version bump.
 | Protected dashboard shell | Sidebar, topbar, onboarding |
 | Live dashboard counts | Queries legacy `projects` / `companies` tables; UI labels Initiatives/Ventures |
 | Marketing HQ page (`/`) | Static prototype; redirects authenticated users to dashboard |
-| Supabase migrations | Phase 1 foundation, org RPC, Opportunity Engine v1 tables |
+| Supabase migrations | Phase 1 foundation, Opportunity Engine v1, OS Foundation v1, durable execution runtime v1 |
 | Generated types | `lib/supabase/database.types.ts` (when regenerated from linked project) |
 | RLS | Enabled on all public business tables |
 | Terminology alignment | UI and docs use locked product names |
+| **Mission** | `missions` table, founding mission defaults, idempotent `ensureFoundingMission` |
+| **Mission policies** | `mission_policies` table, bounded discovery policy bootstrap |
+| **Command** | Cycles, decisions, enterprise-value-oriented reasoning and event payloads |
+| **Planner** | Deterministic discovery plan from Command decision |
+| **Scheduler** | Queues durable `engine_jobs` with idempotency keys |
+| **Registry** | `capability_registry` with seeded `discovery.scan` capability |
+| **Durable engine jobs** | Claim RPC, retries, dead-letter, job attempt events |
+| **Worker Runtime** | Service-role execution path, atomic claim, worker runs |
+| **Discovery scan worker** | Deterministic stub scan (no external sources, no opportunities created) |
+| **Engine events** | `engine_events` producers for Command, Planner, Scheduler, Registry, runtime |
+| **Development Command controls** | Manual cycle trigger, queued-job runner, diagnostics panel |
 
-### Not implemented (planned)
+### Not yet implemented (planned)
 
-Mission persistence, Command, Planner, Scheduler, **Registry**, autonomous web discovery, AI research/scoring automation, validation experiments, initiative/venture promotion workflows, assets, Build Factory, execution Workers, portfolio learning, Command cycles, durable jobs beyond schema seam.
+Continuous scheduler or cron, autonomous observation, external evidence collection, real opportunity generation from external sources, **asset persistence** (`assets` table), venture creation workflows, Build Factory, autonomous launching, enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, Memory and Knowledge layer, AI integrations, validation experiments at scale, initiative/venture promotion automation.
 
 ### Important clarifications
 
-- **Registry is specified but not implemented** — no capability catalog, registration API, or health tracking exists yet.
-- **Discovery Engine tables exist; autonomous Discovery Engine does not yet run.**
-- **`engine_events` table exists; canonical event producers are not yet wired.**
-- **No AI integrations are live.**
-- **No cron or background workers are deployed.**
+- **Registry is implemented at foundation level** — capability catalog table and resolution exist; full registration APIs and health automation remain future work.
+- **Discovery Engine runs a deterministic stub scan only** — no external web search, no AI, no automatic `opportunities` rows.
+- **No background worker or cron is deployed** — development triggers execute queued jobs explicitly.
+- **No service-role keys in the browser** — Worker Runtime uses server-side admin client only.
+- **Assets are specified but not persisted** — next core portfolio primitive.
 
 ---
 

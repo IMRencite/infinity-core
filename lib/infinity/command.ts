@@ -9,6 +9,11 @@ import {
   PENDING_JOB_STATUSES,
 } from "./constants";
 import { recordEngineEvent } from "./events";
+import {
+  FOUNDING_DISCOVERY_POLICY,
+  readMissionScanType,
+  readPrimaryMissionObjective,
+} from "./mission-defaults";
 import type { CommandCycle, CommandDecision, Mission } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
@@ -73,11 +78,16 @@ export async function createCommandCycle(
     eventType: "command.cycle_started",
     entityType: "command_cycle",
     entityId: cycle.id,
-    message: `Command cycle started for mission "${mission.title}"`,
+    message: `Command cycle started for enterprise-value mission "${mission.title}"`,
     correlationId: cycle.correlation_id,
     payload: {
       mission_id: mission.id,
+      mission_title: mission.title,
+      mission_objective: readPrimaryMissionObjective(mission),
+      optimization_target: "enterprise_value",
       trigger_source: triggerSource,
+      portfolio_value_rationale:
+        "Command evaluates autonomous actions against the active enterprise-value mission and portfolio opportunity flow.",
     },
   });
 
@@ -90,8 +100,34 @@ export async function createDiscoveryDecision(
   cycle: CommandCycle,
   mission: Mission,
 ): Promise<CommandDecision> {
-  const reasoning =
-    "Active mission exists, no pending discovery jobs, and discovery policy permits a bounded autonomous scan.";
+  const missionObjective = readPrimaryMissionObjective(mission);
+  const scanType = readMissionScanType(mission);
+
+  const reasoning = [
+    `Active mission "${mission.title}" optimizes for long-term enterprise value.`,
+    "No discovery jobs are queued or running, portfolio opportunity flow is insufficient,",
+    "and discovery policy permits a bounded autonomous scan to increase candidate opportunity generation",
+    "within approved constraints.",
+  ].join(" ");
+
+  const decisionPayload = {
+    requested_capability: DISCOVERY_CAPABILITY_KEY,
+    scan_type: scanType,
+    optimization_target: "enterprise_value",
+    mission_id: mission.id,
+    mission_title: mission.title,
+    mission_objective: missionObjective,
+    portfolio_value_rationale:
+      "Increase portfolio opportunity flow to support enterprise-value compounding under bounded autonomy.",
+    expected_outcome:
+      "Generate additional opportunity scan activity without creating duplicate discovery work.",
+    pipeline_state: "insufficient_or_empty",
+    policy_context: {
+      policy_category: FOUNDING_DISCOVERY_POLICY.policy_category,
+      policy_key: FOUNDING_DISCOVERY_POLICY.policy_key,
+      autonomy_level: FOUNDING_DISCOVERY_POLICY.autonomy_level,
+    },
+  };
 
   const { data: decision, error } = await supabase
     .from("command_decisions")
@@ -104,11 +140,7 @@ export async function createDiscoveryDecision(
       reasoning,
       confidence: 85,
       evidence_refs: [],
-      payload: {
-        requested_capability: DISCOVERY_CAPABILITY_KEY,
-        scan_type: "broad_market",
-        rationale: "Maintain opportunity pipeline under active mission",
-      },
+      payload: decisionPayload,
     })
     .select("*")
     .single();
@@ -125,13 +157,16 @@ export async function createDiscoveryDecision(
     eventType: "command.decision_created",
     entityType: "command_decision",
     entityId: decision.id,
-    message: "Command decision created: request discovery scan",
+    message:
+      "Command decision created: bounded discovery scan to increase portfolio opportunity flow",
     correlationId: cycle.correlation_id,
     payload: {
       command_cycle_id: cycle.id,
       decision_type: decision.decision_type,
       outcome: decision.outcome,
-      requested_capability: DISCOVERY_CAPABILITY_KEY,
+      confidence: decision.confidence,
+      decision_reasoning: reasoning,
+      ...decisionPayload,
     },
   });
 
