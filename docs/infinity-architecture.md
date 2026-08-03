@@ -10,7 +10,20 @@ This document is a **concise navigation guide**. The durable platform specificat
 
 ---
 
-## Founding Purpose
+## Mission Runtime (Foundation v1)
+
+**Mission Runtime** (`lib/infinity/mission-runtime/`) is the **lifecycle owner** for active missions. It advances work through durable stages using **bounded ticks** — each tick claims a runtime instance, evaluates at most **one** transition, requests the next unit of Command/Scheduler work, writes checkpoints, and releases locks.
+
+- **Stages:** command → discovery → evaluation → allocation → validation → reasoning → executive → planning → scheduling → execution → review → completed
+- **Status:** separate from stage (running, waiting, blocked, paused, etc.)
+- **Persistence:** `mission_runtime_instances`, append-only `mission_runtime_transitions`, immutable `mission_runtime_checkpoints`
+- **Locking:** lease columns + `claim_mission_runtime_instance` / `release_mission_runtime_instance` (service_role only)
+- **Execution:** deterministic reasoning and existing Worker Runtime only; **mock AI provider** default; **Build Factory** not implemented (execution blocks on `build.*` jobs)
+- **Production trigger:** future cron/queue calls `runMissionRuntimeTick` — not an in-process infinite loop
+
+Dashboard: `/dashboard/runtime` (read-only + development controls).
+
+---
 
 > Infinity is an autonomous enterprise that continuously discovers, builds, acquires, optimizes, and compounds high-value assets to maximize the long-term enterprise value of its owner's portfolio.
 

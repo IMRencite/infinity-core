@@ -224,6 +224,24 @@ export async function selectOpportunityForInitiativePlanning(
       continue;
     }
 
+    const { data: executiveDecision } = await supabase
+      .from("executive_decisions")
+      .select("id, decision, planning_eligible, record_status")
+      .eq("organization_id", organizationId)
+      .eq("opportunity_id", run.opportunity_id)
+      .eq("record_status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (
+      !executiveDecision ||
+      !executiveDecision.planning_eligible ||
+      !["approve", "queue"].includes(executiveDecision.decision)
+    ) {
+      continue;
+    }
+
     const { data: opportunity } = await supabase
       .from("opportunities")
       .select("id, name")

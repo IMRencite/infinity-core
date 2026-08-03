@@ -18,8 +18,12 @@ import {
   PLANNER_INITIATIVE_GATE_CAPABILITY_KEY,
   VALIDATION_CAPABILITY_KEY,
   VALIDATION_ENGINE_NAME,
+  EXECUTIVE_EVALUATE_CAPABILITY_KEY,
+  COMMAND_DECISION_REQUEST_EXECUTIVE,
+  COMMAND_DECISION_OUTCOME_EXECUTIVE,
 } from "./constants";
 import { findOpportunityNeedingEvaluation } from "./decision/queries";
+import { findOpportunityNeedingExecutiveEvaluation } from "./executive/queries";
 import { recordEngineEvent } from "./events";
 import {
   findOpportunityNeedingValidation,
@@ -70,6 +74,24 @@ export async function hasPendingValidationJobs(
   return (count ?? 0) > 0;
 }
 
+export async function hasPendingExecutiveJobs(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<boolean> {
+  const { count, error } = await supabase
+    .from("engine_jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .like("capability_key", "executive.%")
+    .in("status", [...PENDING_JOB_STATUSES]);
+
+  if (error) {
+    throw new Error(`Failed to check executive jobs: ${error.message}`);
+  }
+
+  return (count ?? 0) > 0;
+}
+
 export async function hasPendingDiscoveryJobs(
   supabase: InfinitySupabase,
   organizationId: string,
@@ -100,8 +122,9 @@ export async function createCommandCycle(
   const pendingDiscovery = await hasPendingDiscoveryJobs(supabase, organizationId);
   const pendingDecision = await hasPendingDecisionJobs(supabase, organizationId);
   const pendingValidation = await hasPendingValidationJobs(supabase, organizationId);
+  const pendingExecutive = await hasPendingExecutiveJobs(supabase, organizationId);
 
-  if (pendingDiscovery || pendingDecision || pendingValidation) {
+  if (pendingDiscovery || pendingDecision || pendingValidation || pendingExecutive) {
     return { status: "skipped", reason: "pending_discovery_jobs", cycle: null };
   }
 
@@ -436,6 +459,77 @@ export async function selectOpportunityForInitiativePlanningRecord(
   organizationId: string,
 ) {
   return selectOpportunityForInitiativePlanning(supabase, organizationId);
+}
+
+export async function createExecutiveEvaluationDecision(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  cycle: CommandCycle,
+  mission: Mission,
+  opportunity: { id: string; name: string; validationRunId: string },
+): Promise<CommandDecision> {
+  const reasoning = [
+    `Active mission "${mission.title}" requires deterministic Executive review after validation approval.`,
+    `Opportunity "${opportunity.name}" has validation recommendation approved_for_planning.`,
+    "Command is requesting bounded executive evaluation without ventures, assets, or external spend.",
+  ].join(" ");
+
+  const decisionPayload = {
+    requested_capability: EXECUTIVE_EVALUATE_CAPABILITY_KEY,
+    opportunity_id: opportunity.id,
+    opportunity_name: opportunity.name,
+    validation_run_id: opportunity.validationRunId,
+    mission_id: mission.id,
+    expected_outcome:
+      "Produce a versioned executive decision and enterprise queue entry under policy constraints.",
+  };
+
+  const { data: decision, error } = await supabase
+    .from("command_decisions")
+    .insert({
+      organization_id: organizationId,
+      command_cycle_id: cycle.id,
+      mission_id: mission.id,
+      decision_type: COMMAND_DECISION_REQUEST_EXECUTIVE,
+      outcome: COMMAND_DECISION_OUTCOME_EXECUTIVE,
+      reasoning,
+      confidence: 82,
+      evidence_refs: [],
+      payload: decisionPayload,
+    })
+    .select("*")
+    .single();
+
+  if (error || !decision) {
+    throw new Error(
+      `Failed to create executive command decision: ${error?.message ?? "unknown error"}`,
+    );
+  }
+
+  await recordEngineEvent(supabase, {
+    organizationId,
+    engineName: "command",
+    eventType: "command.decision_created",
+    entityType: "command_decision",
+    entityId: decision.id,
+    message: "Command decision created: executive evaluation after validation approval",
+    correlationId: cycle.correlation_id,
+    payload: {
+      command_cycle_id: cycle.id,
+      decision_type: decision.decision_type,
+      outcome: decision.outcome,
+      ...decisionPayload,
+    },
+  });
+
+  return decision;
+}
+
+export async function selectOpportunityForExecutiveEvaluation(
+  supabase: InfinitySupabase,
+  organizationId: string,
+) {
+  return findOpportunityNeedingExecutiveEvaluation(supabase, organizationId);
 }
 
 export async function skipCommandCycle(

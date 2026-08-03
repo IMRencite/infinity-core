@@ -32,6 +32,7 @@ export type CommandCycleResult =
         | "cycle_not_runnable"
         | "no_opportunity_for_evaluation"
         | "no_opportunity_for_validation"
+        | "no_opportunity_for_executive"
         | "no_opportunity_for_initiative_planning"
         | "validation_required_first";
       message: string;

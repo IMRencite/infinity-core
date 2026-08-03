@@ -10,6 +10,7 @@ describe("planner gate", () => {
     expect(isPlannerGateExemptCapability("discovery.scan")).toBe(true);
     expect(isPlannerGateExemptCapability("decision.evaluate_opportunity")).toBe(true);
     expect(isPlannerGateExemptCapability("validation.run")).toBe(true);
+    expect(isPlannerGateExemptCapability("executive.evaluate_opportunity")).toBe(true);
     expect(isPlannerGateExemptCapability("planner.initiative_gate")).toBe(false);
     expect(isPlannerGateExemptCapability("planner.ai_plan_v1")).toBe(false);
   });

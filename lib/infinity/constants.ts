@@ -12,6 +12,10 @@ export const VALIDATION_CAPABILITY_KEY = "validation.run";
 
 export const VALIDATION_ENGINE_NAME = "validation_engine";
 
+export const EXECUTIVE_EVALUATE_CAPABILITY_KEY = "executive.evaluate_opportunity";
+
+export const EXECUTIVE_ENGINE_NAME = "executive_engine";
+
 export const PLANNER_INITIATIVE_GATE_CAPABILITY_KEY = "planner.initiative_gate";
 
 export const COMMAND_DECISION_REQUEST_INITIATIVE_PLANNING =
@@ -31,5 +35,9 @@ export const COMMAND_DECISION_OUTCOME_EVALUATION = "evaluate_opportunity";
 export const COMMAND_DECISION_REQUEST_VALIDATION = "request_opportunity_validation";
 
 export const COMMAND_DECISION_OUTCOME_VALIDATION = "run_opportunity_validation";
+
+export const COMMAND_DECISION_REQUEST_EXECUTIVE = "request_executive_evaluation";
+
+export const COMMAND_DECISION_OUTCOME_EXECUTIVE = "run_executive_evaluation";
 
 export const PENDING_JOB_STATUSES = ["queued", "running", "waiting"] as const;

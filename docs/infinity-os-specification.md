@@ -422,6 +422,28 @@ If no capability satisfies the requirement within policy, the job enters a **wai
 
 ---
 
+## Section 7A — Mission Runtime (Foundation v1)
+
+Mission Runtime is the **durable lifecycle owner** for active missions. It sits between **Command** (strategic intent) and **Scheduler/Worker Runtime** (execution).
+
+| Rule | Requirement |
+| --- | --- |
+| Lifecycle owner | Mission Runtime advances stages; modules do not call the next stage directly |
+| Bounded ticks | Each `runMissionRuntimeTick` processes a limited batch; each `advanceMissionRuntime` performs at most one durable transition |
+| Durability | Instances, append-only transitions, immutable checkpoints |
+| Locking | Atomic claim via `claim_mission_runtime_instance` (service_role); lease expiry enables recovery |
+| Gates | Validation (`approved_for_planning`), Executive, and Planner gates enforced in stage handlers |
+| AI | Deterministic reasoning default; mock provider only unless explicitly configured; no real provider in v1 production path |
+| Build Factory | Unimplemented — `build.*` capabilities block at execution |
+
+**Stages (sequential):** command → discovery → evaluation → allocation → validation → reasoning → executive → planning → scheduling → execution → review → completed.
+
+**Status (orthogonal):** draft, ready, running, waiting, blocked, paused, completed, failed, cancelled, archived.
+
+Production deployment will invoke bounded ticks via cron/queue; development UI at `/dashboard/runtime` is not the normal operating model.
+
+---
+
 ## Section 8 — Registry
 
 The **Registry** is Infinity's **authoritative catalog of available execution capabilities**. It sits between Scheduler and Engines: Scheduler asks the Registry *what can run*; Engines and Workers *run* what the Registry describes.

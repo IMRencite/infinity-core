@@ -6,6 +6,7 @@ import {
   runCommandCycle,
   runEvaluationCycle,
   runValidationCycle,
+  runExecutiveCycle,
   runNextQueuedJobAction,
   type CommandActionState,
 } from "@/app/dashboard/command/actions";
@@ -123,6 +124,10 @@ export function CommandPanel({
     runValidationCycle,
     initialState,
   );
+  const [executiveState, triggerExecutive, executivePending] = useActionState(
+    runExecutiveCycle,
+    initialState,
+  );
 
   return (
     <section aria-label="Command" className="mt-8">
@@ -208,12 +213,27 @@ export function CommandPanel({
               Development trigger only. Production validation runs autonomously.
             </p>
           </div>
+          <div className="flex flex-col gap-1">
+            <form action={triggerExecutive}>
+              <button
+                type="submit"
+                disabled={executivePending || !missionTitle}
+                className="rounded-md border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-[13px] font-medium text-cyan-300 transition hover:bg-cyan-500/20 disabled:opacity-50"
+              >
+                {executivePending ? "Executive…" : "Run Executive"}
+              </button>
+            </form>
+            <p className="text-[11px] text-zinc-600">
+              Development trigger — production Executive cycles run autonomously.
+            </p>
+          </div>
         </div>
 
         <ActionFeedback state={missionState} />
         <ActionFeedback state={cycleState} />
         <ActionFeedback state={evaluationState} />
         <ActionFeedback state={validationState} />
+        <ActionFeedback state={executiveState} />
         {diagnostics.engineJobId ? (
           <>
             <DiagnosticsPanel

@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import { PLANNER_INITIATIVE_GATE_CAPABILITY_KEY } from "./constants";
 import { recordEngineEvent } from "./events";
+import { assertExecutiveEligibleForInitiativePlanning } from "./executive/gating";
 import { assertPlannerMayExecute } from "./planner-gating";
 import type { CommandCycle, CommandDecision, Mission, Plan, PlanStep } from "./types";
 
@@ -23,6 +24,12 @@ export async function createInitiativePlanningRecordFromDecision(
     supabase,
     organizationId,
     PLANNER_INITIATIVE_GATE_CAPABILITY_KEY,
+    opportunityId,
+  );
+
+  await assertExecutiveEligibleForInitiativePlanning(
+    supabase,
+    organizationId,
     opportunityId,
   );
 

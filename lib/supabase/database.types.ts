@@ -1242,6 +1242,70 @@ export type Database = {
           },
         ]
       }
+      enterprise_queue_entries: {
+        Row: {
+          created_at: string
+          entry_status: string
+          executive_decision_id: string
+          id: string
+          opportunity_id: string
+          ordering_rationale: Json
+          organization_id: string
+          planning_eligible: boolean
+          queue_position: number
+          queue_priority: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entry_status?: string
+          executive_decision_id: string
+          id?: string
+          opportunity_id: string
+          ordering_rationale?: Json
+          organization_id: string
+          planning_eligible?: boolean
+          queue_position?: number
+          queue_priority?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entry_status?: string
+          executive_decision_id?: string
+          id?: string
+          opportunity_id?: string
+          ordering_rationale?: Json
+          organization_id?: string
+          planning_eligible?: boolean
+          queue_position?: number
+          queue_priority?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enterprise_queue_entries_executive_decision_id_fkey"
+            columns: ["executive_decision_id"]
+            isOneToOne: false
+            referencedRelation: "executive_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enterprise_queue_entries_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enterprise_queue_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_records: {
         Row: {
           captured_at: string
@@ -1381,6 +1445,105 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executive_decisions: {
+        Row: {
+          capital_context: Json
+          correlation_id: string | null
+          created_at: string
+          decision: string
+          dedup_key: string
+          executive_policy_version: string
+          id: string
+          mission_id: string | null
+          opportunity_id: string
+          organization_id: string
+          planning_eligible: boolean
+          policy_results: Json
+          priority_score: number
+          rationale: Json
+          reasoning_version: string
+          record_status: string
+          supersedes_id: string | null
+          validation_run_id: string
+        }
+        Insert: {
+          capital_context?: Json
+          correlation_id?: string | null
+          created_at?: string
+          decision: string
+          dedup_key: string
+          executive_policy_version: string
+          id?: string
+          mission_id?: string | null
+          opportunity_id: string
+          organization_id: string
+          planning_eligible?: boolean
+          policy_results?: Json
+          priority_score?: number
+          rationale?: Json
+          reasoning_version: string
+          record_status?: string
+          supersedes_id?: string | null
+          validation_run_id: string
+        }
+        Update: {
+          capital_context?: Json
+          correlation_id?: string | null
+          created_at?: string
+          decision?: string
+          dedup_key?: string
+          executive_policy_version?: string
+          id?: string
+          mission_id?: string | null
+          opportunity_id?: string
+          organization_id?: string
+          planning_eligible?: boolean
+          policy_results?: Json
+          priority_score?: number
+          rationale?: Json
+          reasoning_version?: string
+          record_status?: string
+          supersedes_id?: string | null
+          validation_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executive_decisions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_decisions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_decisions_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "executive_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_decisions_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -1680,6 +1843,279 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_runtime_checkpoints: {
+        Row: {
+          checkpoint_key: string
+          created_at: string
+          id: string
+          mission_id: string
+          organization_id: string
+          payload: Json
+          runtime_instance_id: string
+          stage: string
+          state_version: number
+          status: string
+        }
+        Insert: {
+          checkpoint_key: string
+          created_at?: string
+          id?: string
+          mission_id: string
+          organization_id: string
+          payload?: Json
+          runtime_instance_id: string
+          stage: string
+          state_version: number
+          status: string
+        }
+        Update: {
+          checkpoint_key?: string
+          created_at?: string
+          id?: string
+          mission_id?: string
+          organization_id?: string
+          payload?: Json
+          runtime_instance_id?: string
+          stage?: string
+          state_version?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_runtime_checkpoints_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_checkpoints_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_checkpoints_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_runtime_instances: {
+        Row: {
+          cancelled_at: string | null
+          completed_at: string | null
+          context: Json
+          correlation_id: string | null
+          created_at: string
+          current_stage: string
+          failed_at: string | null
+          heartbeat_at: string | null
+          id: string
+          last_advanced_at: string | null
+          last_error: Json
+          lease_expires_at: string | null
+          locked_at: string | null
+          locked_by: string | null
+          metadata: Json
+          mission_id: string
+          organization_id: string
+          paused_at: string | null
+          previous_stage: string | null
+          resumed_at: string | null
+          runtime_version: string
+          started_at: string | null
+          state_version: number
+          status: string
+          updated_at: string
+          wake_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          completed_at?: string | null
+          context?: Json
+          correlation_id?: string | null
+          created_at?: string
+          current_stage?: string
+          failed_at?: string | null
+          heartbeat_at?: string | null
+          id?: string
+          last_advanced_at?: string | null
+          last_error?: Json
+          lease_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          metadata?: Json
+          mission_id: string
+          organization_id: string
+          paused_at?: string | null
+          previous_stage?: string | null
+          resumed_at?: string | null
+          runtime_version?: string
+          started_at?: string | null
+          state_version?: number
+          status?: string
+          updated_at?: string
+          wake_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          completed_at?: string | null
+          context?: Json
+          correlation_id?: string | null
+          created_at?: string
+          current_stage?: string
+          failed_at?: string | null
+          heartbeat_at?: string | null
+          id?: string
+          last_advanced_at?: string | null
+          last_error?: Json
+          lease_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
+          metadata?: Json
+          mission_id?: string
+          organization_id?: string
+          paused_at?: string | null
+          previous_stage?: string | null
+          resumed_at?: string | null
+          runtime_version?: string
+          started_at?: string | null
+          state_version?: number
+          status?: string
+          updated_at?: string
+          wake_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_runtime_instances_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_instances_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_runtime_transitions: {
+        Row: {
+          command_decision_id: string | null
+          context_snapshot: Json
+          correlation_id: string | null
+          engine_job_id: string | null
+          from_stage: string | null
+          from_status: string | null
+          id: string
+          mission_id: string
+          occurred_at: string
+          organization_id: string
+          plan_id: string | null
+          runtime_instance_id: string
+          to_stage: string
+          to_status: string
+          transition_key: string
+          transition_reason: string
+          worker_run_id: string | null
+        }
+        Insert: {
+          command_decision_id?: string | null
+          context_snapshot?: Json
+          correlation_id?: string | null
+          engine_job_id?: string | null
+          from_stage?: string | null
+          from_status?: string | null
+          id?: string
+          mission_id: string
+          occurred_at?: string
+          organization_id: string
+          plan_id?: string | null
+          runtime_instance_id: string
+          to_stage: string
+          to_status: string
+          transition_key: string
+          transition_reason: string
+          worker_run_id?: string | null
+        }
+        Update: {
+          command_decision_id?: string | null
+          context_snapshot?: Json
+          correlation_id?: string | null
+          engine_job_id?: string | null
+          from_stage?: string | null
+          from_status?: string | null
+          id?: string
+          mission_id?: string
+          occurred_at?: string
+          organization_id?: string
+          plan_id?: string | null
+          runtime_instance_id?: string
+          to_stage?: string
+          to_status?: string
+          transition_key?: string
+          transition_reason?: string
+          worker_run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_runtime_transitions_command_decision_id_fkey"
+            columns: ["command_decision_id"]
+            isOneToOne: false
+            referencedRelation: "command_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_engine_job_id_fkey"
+            columns: ["engine_job_id"]
+            isOneToOne: false
+            referencedRelation: "engine_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runtime_transitions_worker_run_id_fkey"
+            columns: ["worker_run_id"]
+            isOneToOne: false
+            referencedRelation: "worker_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -3216,6 +3652,15 @@ export type Database = {
         }
         Returns: Json
       }
+      claim_mission_runtime_instance: {
+        Args: {
+          p_lease_seconds?: number
+          p_locked_by: string
+          p_organization_id: string
+          p_runtime_instance_id: string
+        }
+        Returns: Json
+      }
       create_organization_with_owner: {
         Args: { organization_name: string; organization_slug: string }
         Returns: string
@@ -3234,6 +3679,14 @@ export type Database = {
       }
       release_allocation_resources: {
         Args: { p_organization_id: string; p_proposal_id: string }
+        Returns: undefined
+      }
+      release_mission_runtime_instance: {
+        Args: {
+          p_locked_by: string
+          p_organization_id: string
+          p_runtime_instance_id: string
+        }
         Returns: undefined
       }
       reserve_allocation_resources: {

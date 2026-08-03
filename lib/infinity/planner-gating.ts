@@ -11,6 +11,7 @@ export const PLANNER_GATE_EXEMPT_CAPABILITY_PREFIXES = [
   "discovery.",
   "decision.",
   "validation.",
+  "executive.",
 ] as const;
 
 export class PlannerGatingError extends Error {

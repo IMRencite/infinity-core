@@ -6,6 +6,7 @@ import {
   ensureFoundingMission,
   runAutonomousCommandCycle,
   runEvaluationCommandCycle,
+  runExecutiveCommandCycle,
   runNextQueuedJob,
   runValidationCommandCycle,
 } from "@/lib/infinity/orchestration";
@@ -234,6 +235,49 @@ export async function runValidationCycle(
       ok: false,
       message:
         error instanceof Error ? error.message : "Validation cycle failed unexpectedly.",
+    };
+  }
+}
+
+export async function runExecutiveCycle(
+  _previous: CommandActionState,
+): Promise<CommandActionState> {
+  void _previous;
+  const { supabase, organizationId, userId } = await getOrganizationContext();
+
+  try {
+    const result = await runExecutiveCommandCycle(
+      supabase,
+      organizationId,
+      `user:${userId}`,
+      "manual",
+    );
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/executive");
+    revalidatePath("/dashboard/validation");
+
+    if (result.status === "completed") {
+      return {
+        ok: true,
+        message: [
+          "Development trigger — production Executive cycles run autonomously.",
+          `Cycle ${result.cycleId.slice(0, 8)}…`,
+          `Job ${result.jobId.slice(0, 8)}… (${result.jobStatus})`,
+        ].join(" "),
+      };
+    }
+
+    if (result.status === "skipped") {
+      return { ok: true, message: result.message };
+    }
+
+    return { ok: false, message: result.message };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Executive cycle failed unexpectedly.",
     };
   }
 }

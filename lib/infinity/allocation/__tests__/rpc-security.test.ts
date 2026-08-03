@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import type { Database } from "@/lib/supabase/database.types";
 
 function loadEnvLocal(): void {
@@ -76,18 +76,32 @@ function isPrivilegedRpcAccessDenied(error: { code?: string; message?: string } 
 async function isLinkedSupabaseReachable(
   url: string,
   publishableKey: string,
-): Promise<boolean> {
+): Promise<{ reachable: boolean; endpoint: string; status: number | null; error: string | null }> {
+  const base = url.replace(/\/$/, "");
+  const endpoint = `${base}/auth/v1/health`;
+
   try {
-    const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/`, {
+    const response = await fetch(endpoint, {
       headers: {
         apikey: publishableKey,
         Authorization: `Bearer ${publishableKey}`,
       },
       signal: AbortSignal.timeout(8_000),
     });
-    return response.status !== 0;
-  } catch {
-    return false;
+
+    return {
+      reachable: response.ok || response.status === 401 || response.status === 404,
+      endpoint,
+      status: response.status,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      reachable: false,
+      endpoint,
+      status: null,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
@@ -150,43 +164,83 @@ describe("privileged allocation RPC migration security", () => {
 describe("authenticated allocation RPC access (live Supabase)", () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  let supabaseReachable = false;
+  let reachabilityReport: {
+    endpoint: string;
+    status: number | null;
+    error: string | null;
+  } = { endpoint: "(not checked)", status: null, error: null };
 
-  beforeAll(async () => {
-    if (!url || !publishableKey) {
-      return;
+  it("reports Supabase reachability diagnostics for live RPC tests", async () => {
+    let reachable = false;
+    if (url && publishableKey) {
+      const result = await isLinkedSupabaseReachable(url, publishableKey);
+      reachable = result.reachable;
+      reachabilityReport = {
+        endpoint: result.endpoint,
+        status: result.status,
+        error: result.error,
+      };
     }
-    supabaseReachable = await isLinkedSupabaseReachable(url, publishableKey);
+
+    expect({
+      urlLoaded: Boolean(url),
+      publishableKeyLoaded: Boolean(publishableKey),
+      endpoint: reachabilityReport.endpoint,
+      httpStatus: reachabilityReport.status,
+      networkError: reachabilityReport.error,
+      supabaseReachable: reachable,
+    }).toMatchObject({
+      urlLoaded: expect.any(Boolean),
+      publishableKeyLoaded: expect.any(Boolean),
+      endpoint: expect.any(String),
+      supabaseReachable: expect.any(Boolean),
+    });
   });
 
-  it.skipIf(!url || !publishableKey || !supabaseReachable)(
-    "denies publishable clients from reserve_allocation_resources",
-    async () => {
-      const client = createClient<Database>(url!, publishableKey!);
+  it("denies publishable clients from reserve_allocation_resources", async (ctx) => {
+    if (!url || !publishableKey) {
+      ctx.skip();
+      return;
+    }
 
-      const { data, error } = await client.rpc("reserve_allocation_resources", {
-        p_organization_id: "00000000-0000-0000-0000-000000000001",
-        p_proposal_id: "00000000-0000-0000-0000-000000000002",
-        p_reservation_key: "test-denied",
-      });
+    const reachability = await isLinkedSupabaseReachable(url, publishableKey);
+    if (!reachability.reachable) {
+      ctx.skip();
+      return;
+    }
 
-      expect(data).toBeNull();
-      expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
-    },
-  );
+    const client = createClient<Database>(url, publishableKey);
 
-  it.skipIf(!url || !publishableKey || !supabaseReachable)(
-    "denies publishable clients from release_allocation_resources",
-    async () => {
-      const client = createClient<Database>(url!, publishableKey!);
+    const { data, error } = await client.rpc("reserve_allocation_resources", {
+      p_organization_id: "00000000-0000-0000-0000-000000000001",
+      p_proposal_id: "00000000-0000-0000-0000-000000000002",
+      p_reservation_key: "test-denied",
+    });
 
-      const { data, error } = await client.rpc("release_allocation_resources", {
-        p_organization_id: "00000000-0000-0000-0000-000000000001",
-        p_proposal_id: "00000000-0000-0000-0000-000000000002",
-      });
+    expect(data).toBeNull();
+    expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
+  });
 
-      expect(data).toBeNull();
-      expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
-    },
-  );
+  it("denies publishable clients from release_allocation_resources", async (ctx) => {
+    if (!url || !publishableKey) {
+      ctx.skip();
+      return;
+    }
+
+    const reachability = await isLinkedSupabaseReachable(url, publishableKey);
+    if (!reachability.reachable) {
+      ctx.skip();
+      return;
+    }
+
+    const client = createClient<Database>(url, publishableKey);
+
+    const { data, error } = await client.rpc("release_allocation_resources", {
+      p_organization_id: "00000000-0000-0000-0000-000000000001",
+      p_proposal_id: "00000000-0000-0000-0000-000000000002",
+    });
+
+    expect(data).toBeNull();
+    expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
+  });
 });

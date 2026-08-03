@@ -8,6 +8,8 @@ const navItems = [
   { label: "Opportunities", href: "/dashboard/opportunities" },
   { label: "Allocations", href: "/dashboard/allocations" },
   { label: "Validation", href: "/dashboard/validation" },
+  { label: "Executive", href: "/dashboard/executive" },
+  { label: "Runtime", href: "/dashboard/runtime" },
   { label: "Assets", href: "/dashboard/assets" },
   { label: "Intelligence", href: "/dashboard/intelligence" },
   { label: "Organizations", href: "#", disabled: true },
