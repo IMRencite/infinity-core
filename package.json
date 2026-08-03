@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:push": "supabase db push",
+    "db:push": "npx supabase@latest db push --yes",
     "db:types": "node scripts/generate-db-types.mjs"
   },
   "dependencies": {

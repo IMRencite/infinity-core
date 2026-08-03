@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import type { Database } from "@/lib/supabase/database.types";
 
 function loadEnvLocal(): void {
@@ -57,12 +57,49 @@ function assertFunctionSecured(migrationSql: string, signature: string) {
   expect(migrationSql).toContain(`GRANT EXECUTE ON FUNCTION ${signature} TO service_role;`);
 }
 
+/** PostgREST / Postgres errors when anon or authenticated may not EXECUTE the RPC. */
+function isPrivilegedRpcAccessDenied(error: { code?: string; message?: string } | null): boolean {
+  if (!error) {
+    return false;
+  }
+
+  const message = error.message ?? "";
+  if (error.code === "42501" || error.code === "PGRST301") {
+    return true;
+  }
+
+  return /permission denied for (function|schema|table)|insufficient_privilege|not authorized to execute/i.test(
+    message,
+  );
+}
+
+async function isLinkedSupabaseReachable(
+  url: string,
+  publishableKey: string,
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/`, {
+      headers: {
+        apikey: publishableKey,
+        Authorization: `Bearer ${publishableKey}`,
+      },
+      signal: AbortSignal.timeout(8_000),
+    });
+    return response.status !== 0;
+  } catch {
+    return false;
+  }
+}
+
 describe("privileged allocation RPC migration security", () => {
   const foundationMigration = readMigration(
     "20260724020000_decision_engine_capital_allocation_foundation_v1.sql",
   );
   const securityMigration = readMigration(
     "20260724030000_secure_decision_allocation_rpcs.sql",
+  );
+  const reassertMigration = readMigration(
+    "20260724050000_reassert_privileged_rpc_execute_grants.sql",
   );
 
   it.each(PRIVILEGED_ALLOCATION_RPCS)(
@@ -76,6 +113,22 @@ describe("privileged allocation RPC migration security", () => {
     "secures $name in the corrective migration",
     ({ signature }) => {
       assertFunctionSecured(securityMigration, signature);
+    },
+  );
+
+  it.each(PRIVILEGED_ALLOCATION_RPCS)(
+    "reasserts $name execute grants in the follow-up migration",
+    ({ signature }) => {
+      expect(reassertMigration).toContain(`REVOKE ALL ON FUNCTION ${signature} FROM PUBLIC;`);
+      expect(reassertMigration).toContain(
+        `REVOKE EXECUTE ON FUNCTION ${signature} FROM anon;`,
+      );
+      expect(reassertMigration).toContain(
+        `REVOKE EXECUTE ON FUNCTION ${signature} FROM authenticated;`,
+      );
+      expect(reassertMigration).toContain(
+        `GRANT EXECUTE ON FUNCTION ${signature} TO service_role;`,
+      );
     },
   );
 
@@ -94,42 +147,46 @@ describe("privileged allocation RPC migration security", () => {
   });
 });
 
-describe("authenticated allocation RPC access", () => {
+describe("authenticated allocation RPC access (live Supabase)", () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  let supabaseReachable = false;
 
-  it.skipIf(!url || !publishableKey)(
-    "denies authenticated/publishable clients from reserve_allocation_resources",
+  beforeAll(async () => {
+    if (!url || !publishableKey) {
+      return;
+    }
+    supabaseReachable = await isLinkedSupabaseReachable(url, publishableKey);
+  });
+
+  it.skipIf(!url || !publishableKey || !supabaseReachable)(
+    "denies publishable clients from reserve_allocation_resources",
     async () => {
       const client = createClient<Database>(url!, publishableKey!);
 
-      const { error } = await client.rpc("reserve_allocation_resources", {
+      const { data, error } = await client.rpc("reserve_allocation_resources", {
         p_organization_id: "00000000-0000-0000-0000-000000000001",
         p_proposal_id: "00000000-0000-0000-0000-000000000002",
         p_reservation_key: "test-denied",
       });
 
-      expect(error).toBeTruthy();
-      expect(error?.code === "42501" || /permission denied|not authorized/i.test(error?.message ?? "")).toBe(
-        true,
-      );
+      expect(data).toBeNull();
+      expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
     },
   );
 
-  it.skipIf(!url || !publishableKey)(
-    "denies authenticated/publishable clients from release_allocation_resources",
+  it.skipIf(!url || !publishableKey || !supabaseReachable)(
+    "denies publishable clients from release_allocation_resources",
     async () => {
       const client = createClient<Database>(url!, publishableKey!);
 
-      const { error } = await client.rpc("release_allocation_resources", {
+      const { data, error } = await client.rpc("release_allocation_resources", {
         p_organization_id: "00000000-0000-0000-0000-000000000001",
         p_proposal_id: "00000000-0000-0000-0000-000000000002",
       });
 
-      expect(error).toBeTruthy();
-      expect(error?.code === "42501" || /permission denied|not authorized/i.test(error?.message ?? "")).toBe(
-        true,
-      );
+      expect(data).toBeNull();
+      expect(isPrivilegedRpcAccessDenied(error)).toBe(true);
     },
   );
 });

@@ -7,6 +7,7 @@ import {
   runAutonomousCommandCycle,
   runEvaluationCommandCycle,
   runNextQueuedJob,
+  runValidationCommandCycle,
 } from "@/lib/infinity/orchestration";
 import { createClient } from "@/lib/supabase/server";
 
@@ -183,6 +184,56 @@ export async function runEvaluationCycle(
       ok: false,
       message:
         error instanceof Error ? error.message : "Evaluation cycle failed unexpectedly.",
+    };
+  }
+}
+
+export async function runValidationCycle(
+  _previous: CommandActionState,
+): Promise<CommandActionState> {
+  void _previous;
+  const { supabase, organizationId, userId } = await getOrganizationContext();
+
+  try {
+    const result = await runValidationCommandCycle(
+      supabase,
+      organizationId,
+      `user:${userId}`,
+      "manual",
+    );
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/validation");
+    revalidatePath("/dashboard/opportunities");
+
+    if (result.status === "completed") {
+      return {
+        ok: true,
+        message: [
+          "Development trigger — validation command cycle completed.",
+          `Cycle ${result.cycleId.slice(0, 8)}…`,
+          `Job ${result.jobId.slice(0, 8)}… (${result.jobStatus})`,
+          `Worker run ${result.workerRunId.slice(0, 8)}… (${result.workerRunStatus})`,
+        ].join(" "),
+      };
+    }
+
+    if (result.status === "skipped") {
+      return {
+        ok: true,
+        message: result.message,
+      };
+    }
+
+    return {
+      ok: false,
+      message: result.message,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Validation cycle failed unexpectedly.",
     };
   }
 }

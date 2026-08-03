@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       allocation_proposals: {
@@ -2738,6 +2763,327 @@ export type Database = {
           },
         ]
       }
+      validation_dimension_results: {
+        Row: {
+          blocking_issues: Json
+          category: string
+          confidence: number | null
+          created_at: string
+          data_status: string
+          findings: Json
+          id: string
+          missing_information: Json
+          organization_id: string
+          score: number | null
+          validation_run_id: string
+        }
+        Insert: {
+          blocking_issues?: Json
+          category: string
+          confidence?: number | null
+          created_at?: string
+          data_status?: string
+          findings?: Json
+          id?: string
+          missing_information?: Json
+          organization_id: string
+          score?: number | null
+          validation_run_id: string
+        }
+        Update: {
+          blocking_issues?: Json
+          category?: string
+          confidence?: number | null
+          created_at?: string
+          data_status?: string
+          findings?: Json
+          id?: string
+          missing_information?: Json
+          organization_id?: string
+          score?: number | null
+          validation_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_dimension_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_dimension_results_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      validation_findings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          finding_type: string
+          id: string
+          is_blocking: boolean
+          metadata: Json
+          organization_id: string
+          severity: string
+          title: string
+          validation_run_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          finding_type?: string
+          id?: string
+          is_blocking?: boolean
+          metadata?: Json
+          organization_id: string
+          severity?: string
+          title: string
+          validation_run_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          finding_type?: string
+          id?: string
+          is_blocking?: boolean
+          metadata?: Json
+          organization_id?: string
+          severity?: string
+          title?: string
+          validation_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_findings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_findings_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      validation_models: {
+        Row: {
+          activated_at: string | null
+          categories: Json
+          created_at: string
+          deprecated_at: string | null
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          requirements: Json
+          status: string
+          thresholds: Json
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          activated_at?: string | null
+          categories?: Json
+          created_at?: string
+          deprecated_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          requirements?: Json
+          status?: string
+          thresholds?: Json
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          activated_at?: string | null
+          categories?: Json
+          created_at?: string
+          deprecated_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          requirements?: Json
+          status?: string
+          thresholds?: Json
+          updated_at?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_models_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      validation_requirements: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          metadata: Json
+          organization_id: string
+          requirement_key: string
+          status: string
+          validation_run_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          metadata?: Json
+          organization_id: string
+          requirement_key: string
+          status?: string
+          validation_run_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          requirement_key?: string
+          status?: string
+          validation_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_requirements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_requirements_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      validation_runs: {
+        Row: {
+          allocation_proposal_id: string | null
+          completed_at: string | null
+          created_at: string
+          evaluation_id: string | null
+          id: string
+          is_sparse_system_validation: boolean
+          mission_id: string | null
+          opportunity_id: string
+          organization_id: string
+          overall_confidence: number | null
+          overall_score: number | null
+          recommendation: string
+          run_key: string
+          run_status: string
+          started_at: string
+          summary: Json
+          validation_model_id: string
+        }
+        Insert: {
+          allocation_proposal_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          evaluation_id?: string | null
+          id?: string
+          is_sparse_system_validation?: boolean
+          mission_id?: string | null
+          opportunity_id: string
+          organization_id: string
+          overall_confidence?: number | null
+          overall_score?: number | null
+          recommendation: string
+          run_key: string
+          run_status?: string
+          started_at?: string
+          summary?: Json
+          validation_model_id: string
+        }
+        Update: {
+          allocation_proposal_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          evaluation_id?: string | null
+          id?: string
+          is_sparse_system_validation?: boolean
+          mission_id?: string | null
+          opportunity_id?: string
+          organization_id?: string
+          overall_confidence?: number | null
+          overall_score?: number | null
+          recommendation?: string
+          run_key?: string
+          run_status?: string
+          started_at?: string
+          summary?: Json
+          validation_model_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "validation_runs_allocation_proposal_id_fkey"
+            columns: ["allocation_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "allocation_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_runs_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_evaluations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_runs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_runs_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "validation_runs_validation_model_id_fkey"
+            columns: ["validation_model_id"]
+            isOneToOne: false
+            referencedRelation: "validation_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worker_runs: {
         Row: {
           attempt_number: number
@@ -3050,6 +3396,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

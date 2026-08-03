@@ -102,12 +102,28 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 ---
 
+## Validation Engine Foundation v1
+
+**Implemented (deterministic foundation):**
+
+- `validation_models`, `validation_runs`, `validation_dimension_results`, `validation_findings`, `validation_requirements`
+- `lib/infinity/validation/` — category scoring, blocking findings, recommendations, run persistence
+- Capability `validation.run` + worker `validation-run-worker`
+- Command enqueues validation after decision; Planner gating via `planner-gating.ts` (`approved_for_planning` only)
+- Read-only `/dashboard/validation`
+
+**Conservative v1 behavior:** unknown remains unknown; missing evidence lowers confidence; system-validation data alone cannot approve planning; validation never approves building or creates ventures/assets.
+
+**AI Reasoning Layer:** intentionally **not implemented**. No LLM, external research, or web search in this milestone.
+
+---
+
 ## Implementation Status (summary)
 
 | Status | Items |
 | --- | --- |
-| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1** |
-| **Not done** | Continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, real financial accounts, acquisitions, semantic search/embeddings, AI integrations |
+| **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1** |
+| **Not done** | AI Reasoning Layer / LLMs, continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, real financial accounts, acquisitions, semantic search/embeddings |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

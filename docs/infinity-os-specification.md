@@ -1034,10 +1034,13 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Development Command controls** | Manual cycle trigger, queued-job runner, diagnostics panel |
 | **Asset Foundation v1** | `assets`, `asset_relationships`, `asset_metrics`, `asset_valuations`, summaries, registration seam, read-only portfolio UI |
 | **Evidence, Knowledge, and Memory Foundation v1** | `evidence_sources`, `evidence_records`, `claims`, `claim_evidence`, `knowledge_records`, `memory_records`, `lessons`, `procedures`, intelligence services, deterministic runtime validation evidence, read-only Intelligence UI |
+| **Opportunity Discovery Foundation v1** | Deterministic stub discovery provider, signals, reviews, opportunity decisions, read-only Opportunities UI |
+| **Decision Engine and Capital Allocation Foundation v1** | `decision_models`, `opportunity_evaluations`, resource pools, allocation proposals, reservations, evaluation worker, read-only Allocations UI |
+| **Validation Engine Foundation v1** | `validation_models`, `validation_runs`, dimension results, findings, requirements, `validation.run` worker, Planner gating (`approved_for_planning`), read-only Validation UI — **deterministic only; AI Reasoning Layer not implemented** |
 
 ### Not yet implemented (planned)
 
-Continuous scheduler or cron, autonomous observation, **external source adapters**, real opportunity generation from external sources, **Build Factory**, autonomous launching, automated enterprise-value calculations, capital allocation, acquisitions, portfolio compounding intelligence, **semantic embeddings**, **vector search**, **entity extraction**, **knowledge graph traversal**, AI synthesis, automatic lessons from financial outcomes, validation experiments at scale, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
+Continuous scheduler or cron, autonomous observation, **external source adapters**, real opportunity generation from external sources, **AI Reasoning Layer (LLMs)**, **Build Factory**, autonomous launching, automated enterprise-value calculations, real financial account integration, acquisitions, portfolio compounding intelligence, **semantic embeddings**, **vector search**, **entity extraction**, **knowledge graph traversal**, AI synthesis, automatic lessons from financial outcomes, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
 
 ### Important clarifications
 
@@ -1047,6 +1050,7 @@ Continuous scheduler or cron, autonomous observation, **external source adapters
 - **No service-role keys in the browser** — Worker Runtime uses server-side admin client only.
 - **Assets are persisted (Asset Foundation v1)** — read-only portfolio UI; no seed assets; registration is server-side only.
 - **Institutional intelligence is persisted (EKM Foundation v1)** — read-only Intelligence UI; deterministic runtime validation evidence only; no external research or AI synthesis yet.
+- **Validation proves assumptions before planning (Validation Foundation v1)** — deterministic categories and findings only; never approves building; Planner accepts opportunities only after `approved_for_planning`. No LLM or external research.
 
 ---
 

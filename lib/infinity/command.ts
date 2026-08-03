@@ -4,16 +4,27 @@ import type { Database } from "@/lib/supabase/database.types";
 import {
   COMMAND_DECISION_OUTCOME_DISCOVERY,
   COMMAND_DECISION_OUTCOME_EVALUATION,
+  COMMAND_DECISION_OUTCOME_INITIATIVE_PLANNING,
+  COMMAND_DECISION_OUTCOME_VALIDATION,
   COMMAND_DECISION_REQUEST_DISCOVERY,
   COMMAND_DECISION_REQUEST_EVALUATION,
+  COMMAND_DECISION_REQUEST_INITIATIVE_PLANNING,
+  COMMAND_DECISION_REQUEST_VALIDATION,
   DECISION_EVALUATE_CAPABILITY_KEY,
   DECISION_ENGINE_NAME,
   DISCOVERY_CAPABILITY_KEY,
   DISCOVERY_ENGINE_NAME,
   PENDING_JOB_STATUSES,
+  PLANNER_INITIATIVE_GATE_CAPABILITY_KEY,
+  VALIDATION_CAPABILITY_KEY,
+  VALIDATION_ENGINE_NAME,
 } from "./constants";
 import { findOpportunityNeedingEvaluation } from "./decision/queries";
 import { recordEngineEvent } from "./events";
+import {
+  findOpportunityNeedingValidation,
+  selectOpportunityForInitiativePlanning,
+} from "./validation";
 import {
   FOUNDING_DISCOVERY_POLICY,
   readMissionScanType,
@@ -36,6 +47,24 @@ export async function hasPendingDecisionJobs(
 
   if (error) {
     throw new Error(`Failed to check decision jobs: ${error.message}`);
+  }
+
+  return (count ?? 0) > 0;
+}
+
+export async function hasPendingValidationJobs(
+  supabase: InfinitySupabase,
+  organizationId: string,
+): Promise<boolean> {
+  const { count, error } = await supabase
+    .from("engine_jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .like("capability_key", "validation.%")
+    .in("status", [...PENDING_JOB_STATUSES]);
+
+  if (error) {
+    throw new Error(`Failed to check validation jobs: ${error.message}`);
   }
 
   return (count ?? 0) > 0;
@@ -70,8 +99,9 @@ export async function createCommandCycle(
 > {
   const pendingDiscovery = await hasPendingDiscoveryJobs(supabase, organizationId);
   const pendingDecision = await hasPendingDecisionJobs(supabase, organizationId);
+  const pendingValidation = await hasPendingValidationJobs(supabase, organizationId);
 
-  if (pendingDiscovery || pendingDecision) {
+  if (pendingDiscovery || pendingDecision || pendingValidation) {
     return { status: "skipped", reason: "pending_discovery_jobs", cycle: null };
   }
 
@@ -268,6 +298,146 @@ export async function selectOpportunityForEvaluation(
   return findOpportunityNeedingEvaluation(supabase, organizationId);
 }
 
+export async function createValidationDecision(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  cycle: CommandCycle,
+  mission: Mission,
+  opportunity: { id: string; name: string },
+): Promise<CommandDecision> {
+  const reasoning = [
+    `Active mission "${mission.title}" requires deterministic validation before planning.`,
+    `Opportunity "${opportunity.name}" has a decision evaluation recommending validation or initiative work.`,
+    "Command is requesting bounded validation without building ventures or assets.",
+  ].join(" ");
+
+  const decisionPayload = {
+    requested_capability: VALIDATION_CAPABILITY_KEY,
+    opportunity_id: opportunity.id,
+    opportunity_name: opportunity.name,
+    mission_id: mission.id,
+    expected_outcome:
+      "Produce a versioned validation run, findings, and planning eligibility recommendation.",
+  };
+
+  const { data: decision, error } = await supabase
+    .from("command_decisions")
+    .insert({
+      organization_id: organizationId,
+      command_cycle_id: cycle.id,
+      mission_id: mission.id,
+      decision_type: COMMAND_DECISION_REQUEST_VALIDATION,
+      outcome: COMMAND_DECISION_OUTCOME_VALIDATION,
+      reasoning,
+      confidence: 78,
+      evidence_refs: [],
+      payload: decisionPayload,
+    })
+    .select("*")
+    .single();
+
+  if (error || !decision) {
+    throw new Error(
+      `Failed to create validation command decision: ${error?.message ?? "unknown error"}`,
+    );
+  }
+
+  await recordEngineEvent(supabase, {
+    organizationId,
+    engineName: "command",
+    eventType: "command.decision_created",
+    entityType: "command_decision",
+    entityId: decision.id,
+    message: "Command decision created: validate opportunity assumptions",
+    correlationId: cycle.correlation_id,
+    payload: {
+      command_cycle_id: cycle.id,
+      decision_type: decision.decision_type,
+      outcome: decision.outcome,
+      ...decisionPayload,
+    },
+  });
+
+  return decision;
+}
+
+export async function selectOpportunityForValidation(
+  supabase: InfinitySupabase,
+  organizationId: string,
+) {
+  return findOpportunityNeedingValidation(supabase, organizationId);
+}
+
+export async function createInitiativePlanningDecision(
+  supabase: InfinitySupabase,
+  organizationId: string,
+  cycle: CommandCycle,
+  mission: Mission,
+  opportunity: { id: string; name: string },
+): Promise<CommandDecision> {
+  const reasoning = [
+    `Active mission "${mission.title}" may record planner eligibility only after validation approval.`,
+    `Opportunity "${opportunity.name}" has validation recommendation approved_for_planning.`,
+    "Command is recording a gated planning record without Build Factory or venture creation.",
+  ].join(" ");
+
+  const decisionPayload = {
+    requested_capability: PLANNER_INITIATIVE_GATE_CAPABILITY_KEY,
+    opportunity_id: opportunity.id,
+    opportunity_name: opportunity.name,
+    mission_id: mission.id,
+    expected_outcome:
+      "Persist a Planner eligibility record for a validation-approved opportunity.",
+  };
+
+  const { data: decision, error } = await supabase
+    .from("command_decisions")
+    .insert({
+      organization_id: organizationId,
+      command_cycle_id: cycle.id,
+      mission_id: mission.id,
+      decision_type: COMMAND_DECISION_REQUEST_INITIATIVE_PLANNING,
+      outcome: COMMAND_DECISION_OUTCOME_INITIATIVE_PLANNING,
+      reasoning,
+      confidence: 85,
+      evidence_refs: [],
+      payload: decisionPayload,
+    })
+    .select("*")
+    .single();
+
+  if (error || !decision) {
+    throw new Error(
+      `Failed to create initiative planning command decision: ${error?.message ?? "unknown error"}`,
+    );
+  }
+
+  await recordEngineEvent(supabase, {
+    organizationId,
+    engineName: "command",
+    eventType: "command.decision_created",
+    entityType: "command_decision",
+    entityId: decision.id,
+    message: "Command decision created: record validation-approved planner eligibility",
+    correlationId: cycle.correlation_id,
+    payload: {
+      command_cycle_id: cycle.id,
+      decision_type: decision.decision_type,
+      outcome: decision.outcome,
+      ...decisionPayload,
+    },
+  });
+
+  return decision;
+}
+
+export async function selectOpportunityForInitiativePlanningRecord(
+  supabase: InfinitySupabase,
+  organizationId: string,
+) {
+  return selectOpportunityForInitiativePlanning(supabase, organizationId);
+}
+
 export async function skipCommandCycle(
   supabase: InfinitySupabase,
   organizationId: string,
@@ -334,4 +504,4 @@ export async function completeCommandCycle(
   });
 }
 
-export { DECISION_ENGINE_NAME, DISCOVERY_ENGINE_NAME };
+export { DECISION_ENGINE_NAME, DISCOVERY_ENGINE_NAME, VALIDATION_ENGINE_NAME };

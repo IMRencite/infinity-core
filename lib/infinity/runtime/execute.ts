@@ -6,6 +6,7 @@ import {
   claimEngineJob,
   emitRuntimeEngineEvent,
 } from "./persistence";
+import { assertPlannerMayExecuteEngineJob } from "../planner-gating";
 import {
   calculateNextAttemptAt,
   defaultClassifyFailure,
@@ -348,6 +349,11 @@ export async function executeJob(
   if (existingJob.cancellation_requested_at) {
     return handleCancellation(admin, existingJob);
   }
+
+  await assertPlannerMayExecuteEngineJob(admin, input.organizationId, {
+    capability_key: existingJob.capability_key,
+    payload: existingJob.payload,
+  });
 
   const { job, workerRun } = await claimEngineJob(
     admin,

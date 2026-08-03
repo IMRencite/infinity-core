@@ -48,8 +48,8 @@ npm run db:types # regenerate database types
 
 ## Current build (accurate)
 
-**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**.
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**.
 
-**Not yet implemented:** continuous scheduler, autonomous observation, external source adapters, Build Factory, venture creation, semantic embeddings, AI synthesis, automated valuation models, real financial accounts.
+**Not yet implemented:** AI Reasoning Layer (LLMs), continuous scheduler, autonomous observation, external source adapters, Build Factory, venture creation, semantic embeddings, automated valuation models, real financial accounts.
 
 See **[OS Specification §27](docs/infinity-os-specification.md#section-27--current-state)** for the full list.

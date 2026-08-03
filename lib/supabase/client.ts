@@ -1,5 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClientOptions } from "@supabase/supabase-js";
+import type { Database } from "./database.types";
+import type { AppSupabaseClient, PublicSupabaseSchemaName } from "./admin";
 
 function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,8 +20,20 @@ function getSupabaseConfig() {
   return { url, publishableKey };
 }
 
-export function createClient(): SupabaseClient {
+export function createClient(): AppSupabaseClient {
   const { url, publishableKey } = getSupabaseConfig();
 
-  return createBrowserClient(url, publishableKey);
+  const clientOptions: SupabaseClientOptions<PublicSupabaseSchemaName> = {
+    db: {
+      schema: "public",
+    },
+  };
+
+  return createBrowserClient<Database, PublicSupabaseSchemaName>(
+    url,
+    publishableKey,
+    clientOptions,
+  );
 }
+
+export type { AppSupabaseClient, PublicSupabaseSchemaName };

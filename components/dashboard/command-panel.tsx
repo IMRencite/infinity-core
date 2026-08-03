@@ -5,6 +5,7 @@ import {
   activateDefaultMission,
   runCommandCycle,
   runEvaluationCycle,
+  runValidationCycle,
   runNextQueuedJobAction,
   type CommandActionState,
 } from "@/app/dashboard/command/actions";
@@ -118,6 +119,10 @@ export function CommandPanel({
     runEvaluationCycle,
     initialState,
   );
+  const [validationState, triggerValidation, validationPending] = useActionState(
+    runValidationCycle,
+    initialState,
+  );
 
   return (
     <section aria-label="Command" className="mt-8">
@@ -189,11 +194,26 @@ export function CommandPanel({
               Development trigger — production evaluations will run autonomously.
             </p>
           </div>
+          <div className="flex flex-col gap-1">
+            <form action={triggerValidation}>
+              <button
+                type="submit"
+                disabled={validationPending || !missionTitle}
+                className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[13px] font-medium text-amber-300 transition hover:bg-amber-500/20 disabled:opacity-50"
+              >
+                {validationPending ? "Validating…" : "Run Validation"}
+              </button>
+            </form>
+            <p className="text-[11px] text-zinc-600">
+              Development trigger only. Production validation runs autonomously.
+            </p>
+          </div>
         </div>
 
         <ActionFeedback state={missionState} />
         <ActionFeedback state={cycleState} />
         <ActionFeedback state={evaluationState} />
+        <ActionFeedback state={validationState} />
         {diagnostics.engineJobId ? (
           <>
             <DiagnosticsPanel

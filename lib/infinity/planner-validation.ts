@@ -1,25 +1,25 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import { DISCOVERY_CAPABILITY_KEY } from "./constants";
+import { VALIDATION_CAPABILITY_KEY } from "./constants";
 import { assertPlannerMayExecute } from "./planner-gating";
-import { readMissionScanType } from "./mission-defaults";
 import { recordEngineEvent } from "./events";
 import type { CommandCycle, CommandDecision, Mission, Plan, PlanStep } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
-export async function createPlanFromDecision(
+export async function createValidationPlanFromDecision(
   supabase: InfinitySupabase,
   organizationId: string,
   cycle: CommandCycle,
   mission: Mission,
   decision: CommandDecision,
+  opportunityId: string,
 ): Promise<{ plan: Plan; steps: PlanStep[] }> {
   await assertPlannerMayExecute(
     supabase,
     organizationId,
-    DISCOVERY_CAPABILITY_KEY,
-    null,
+    VALIDATION_CAPABILITY_KEY,
+    opportunityId,
   );
 
   const { data: plan, error: planError } = await supabase
@@ -31,23 +31,24 @@ export async function createPlanFromDecision(
       command_cycle_id: cycle.id,
       version: 1,
       status: "active",
-      title: "Discovery scan plan",
+      title: "Opportunity validation plan",
       objectives: [
         {
-          key: "run_discovery_scan",
-          description: "Execute a bounded Discovery Engine scan under mission policy",
+          key: "run_validation",
+          description:
+            "Prove or disprove opportunity assumptions deterministically before planning",
         },
       ],
       metadata: {
         source_decision_id: decision.id,
-        requested_outcome: decision.outcome,
+        opportunity_id: opportunityId,
       },
     })
     .select("*")
     .single();
 
   if (planError || !plan) {
-    throw new Error(`Failed to create plan: ${planError?.message ?? "unknown error"}`);
+    throw new Error(`Failed to create validation plan: ${planError?.message ?? "unknown error"}`);
   }
 
   const { data: step, error: stepError } = await supabase
@@ -56,13 +57,14 @@ export async function createPlanFromDecision(
       organization_id: organizationId,
       plan_id: plan.id,
       step_order: 1,
-      capability_key: DISCOVERY_CAPABILITY_KEY,
-      title: "Run Discovery scan",
+      capability_key: VALIDATION_CAPABILITY_KEY,
+      title: "Run opportunity validation",
       description:
-        "Resolve Discovery capability via Registry and queue deterministic scan job",
+        "Deterministic validation using stored evidence, scores, evaluation, and allocation context",
       constraints: {
-        scan_type: readMissionScanType(mission),
-        integration: "discovery_foundation_v1",
+        opportunity_id: opportunityId,
+        mission_id: mission.id,
+        integration: "validation_foundation_v1",
       },
       status: "pending",
     })
@@ -71,7 +73,7 @@ export async function createPlanFromDecision(
 
   if (stepError || !step) {
     throw new Error(
-      `Failed to create plan step: ${stepError?.message ?? "unknown error"}`,
+      `Failed to create validation plan step: ${stepError?.message ?? "unknown error"}`,
     );
   }
 
@@ -81,11 +83,11 @@ export async function createPlanFromDecision(
     eventType: "planner.plan_created",
     entityType: "plan",
     entityId: plan.id,
-    message: "Planner created discovery scan plan",
+    message: "Planner created opportunity validation plan",
     correlationId: cycle.correlation_id,
     payload: {
       command_decision_id: decision.id,
-      plan_version: plan.version,
+      opportunity_id: opportunityId,
       steps: [
         {
           id: step.id,

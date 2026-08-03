@@ -127,11 +127,6 @@ const { count: ventureCount } = await admin
   .select("id", { count: "exact", head: true })
   .eq("organization_id", org.id);
 
-const { count: assetCount } = await admin
-  .from("assets")
-  .select("id", { count: "exact", head: true })
-  .eq("organization_id", org.id);
-
 const duplicateResult = await evaluateOpportunity(admin, {
   organizationId: org.id,
   opportunityId: opportunity.id,

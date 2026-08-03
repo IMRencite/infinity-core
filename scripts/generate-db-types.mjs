@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const output = execSync("npx supabase gen types typescript --linked", {
+const output = execSync("npx supabase@latest gen types typescript --linked", {
   cwd: root,
   encoding: "utf8",
   stdio: ["ignore", "pipe", "inherit"],

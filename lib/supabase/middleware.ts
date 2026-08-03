@@ -1,5 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClientOptions } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
+import type { Database } from "./database.types";
+import type { PublicSupabaseSchemaName } from "./admin";
 
 function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -25,7 +28,22 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
-  const supabase = createServerClient(url, publishableKey, {
+  const clientOptions: SupabaseClientOptions<PublicSupabaseSchemaName> & {
+    cookies: {
+      getAll(): ReturnType<typeof request.cookies.getAll>;
+      setAll(
+        cookiesToSet: {
+          name: string;
+          value: string;
+          options?: Parameters<typeof supabaseResponse.cookies.set>[2];
+        }[],
+        headers: Record<string, string>,
+      ): void;
+    };
+  } = {
+    db: {
+      schema: "public",
+    },
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -48,7 +66,13 @@ export async function updateSession(request: NextRequest) {
         });
       },
     },
-  });
+  };
+
+  const supabase = createServerClient<Database, PublicSupabaseSchemaName>(
+    url,
+    publishableKey,
+    clientOptions,
+  );
 
   await supabase.auth.getUser();
 

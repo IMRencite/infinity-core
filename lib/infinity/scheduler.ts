@@ -1,19 +1,22 @@
 import type { Json } from "@/lib/supabase/database.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import { DISCOVERY_ENGINE_NAME } from "./constants";
+import { DISCOVERY_ENGINE_NAME, VALIDATION_ENGINE_NAME } from "./constants";
 import { recordEngineEvent } from "./events";
+import { assertPlannerMayExecutePlanStep } from "./planner-gating";
 import { resolveCapability } from "./registry";
 import type { CommandCycle, EngineJob, Mission, Plan, PlanStep } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
 function buildIdempotencyKey(cycleId: string, stepId: string, capabilityKey: string): string {
-  const prefix = capabilityKey.startsWith("decision.")
-    ? "decision-evaluate"
-    : capabilityKey.startsWith("discovery.")
-      ? "discovery-scan"
-      : capabilityKey.replaceAll(".", "-");
+  const prefix = capabilityKey.startsWith("validation.")
+    ? "validation-run"
+    : capabilityKey.startsWith("decision.")
+      ? "decision-evaluate"
+      : capabilityKey.startsWith("discovery.")
+        ? "discovery-scan"
+        : capabilityKey.replaceAll(".", "-");
 
   return `${prefix}:${cycleId}:${stepId}`;
 }
@@ -25,6 +28,16 @@ function buildJobPayload(step: PlanStep): Json {
     !Array.isArray(step.constraints)
       ? (step.constraints as Record<string, unknown>)
       : {};
+
+  if (step.capability_key.startsWith("validation.")) {
+    return {
+      opportunity_id:
+        typeof constraints.opportunity_id === "string" ? constraints.opportunity_id : null,
+      mission_id: typeof constraints.mission_id === "string" ? constraints.mission_id : null,
+      plan_step_id: step.id,
+      constraints: step.constraints,
+    } satisfies Json as Json;
+  }
 
   if (step.capability_key.startsWith("decision.")) {
     return {
@@ -51,6 +64,8 @@ export async function schedulePlanStep(
   plan: Plan,
   step: PlanStep,
 ): Promise<EngineJob> {
+  await assertPlannerMayExecutePlanStep(supabase, organizationId, step);
+
   const capability = await resolveCapability(
     supabase,
     organizationId,
@@ -58,6 +73,12 @@ export async function schedulePlanStep(
   );
 
   const idempotencyKey = buildIdempotencyKey(cycle.id, step.id, step.capability_key);
+
+  const resolvedEngine =
+    capability.engine_name ??
+    (step.capability_key.startsWith("validation.")
+      ? VALIDATION_ENGINE_NAME
+      : DISCOVERY_ENGINE_NAME);
 
   const { data: job, error } = await supabase
     .from("engine_jobs")
@@ -69,7 +90,7 @@ export async function schedulePlanStep(
       plan_step_id: step.id,
       capability_key: step.capability_key,
       resolved_capability_id: capability.id,
-      resolved_engine_name: capability.engine_name ?? DISCOVERY_ENGINE_NAME,
+      resolved_engine_name: resolvedEngine,
       resolved_version: capability.version,
       status: "queued",
       priority: 100,

@@ -1,25 +1,29 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import { DISCOVERY_CAPABILITY_KEY } from "./constants";
-import { assertPlannerMayExecute } from "./planner-gating";
-import { readMissionScanType } from "./mission-defaults";
+import { PLANNER_INITIATIVE_GATE_CAPABILITY_KEY } from "./constants";
 import { recordEngineEvent } from "./events";
+import { assertPlannerMayExecute } from "./planner-gating";
 import type { CommandCycle, CommandDecision, Mission, Plan, PlanStep } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
-export async function createPlanFromDecision(
+/**
+ * Foundation v1: records planner eligibility after validation.
+ * Does not create ventures, assets, or Build Factory work.
+ */
+export async function createInitiativePlanningRecordFromDecision(
   supabase: InfinitySupabase,
   organizationId: string,
   cycle: CommandCycle,
   mission: Mission,
   decision: CommandDecision,
+  opportunityId: string,
 ): Promise<{ plan: Plan; steps: PlanStep[] }> {
   await assertPlannerMayExecute(
     supabase,
     organizationId,
-    DISCOVERY_CAPABILITY_KEY,
-    null,
+    PLANNER_INITIATIVE_GATE_CAPABILITY_KEY,
+    opportunityId,
   );
 
   const { data: plan, error: planError } = await supabase
@@ -31,23 +35,26 @@ export async function createPlanFromDecision(
       command_cycle_id: cycle.id,
       version: 1,
       status: "active",
-      title: "Discovery scan plan",
+      title: "Validated initiative planning record",
       objectives: [
         {
-          key: "run_discovery_scan",
-          description: "Execute a bounded Discovery Engine scan under mission policy",
+          key: "planner_gate_validated",
+          description:
+            "Opportunity passed deterministic validation for planning eligibility. Build Factory not invoked.",
         },
       ],
       metadata: {
         source_decision_id: decision.id,
-        requested_outcome: decision.outcome,
+        opportunity_id: opportunityId,
+        planner_gate: "approved_for_planning",
+        build_factory: false,
       },
     })
     .select("*")
     .single();
 
   if (planError || !plan) {
-    throw new Error(`Failed to create plan: ${planError?.message ?? "unknown error"}`);
+    throw new Error(`Failed to create planning record: ${planError?.message ?? "unknown"}`);
   }
 
   const { data: step, error: stepError } = await supabase
@@ -56,22 +63,24 @@ export async function createPlanFromDecision(
       organization_id: organizationId,
       plan_id: plan.id,
       step_order: 1,
-      capability_key: DISCOVERY_CAPABILITY_KEY,
-      title: "Run Discovery scan",
+      capability_key: "planner.initiative_gate",
+      title: "Planner eligibility recorded",
       description:
-        "Resolve Discovery capability via Registry and queue deterministic scan job",
+        "Validation approved planning. Initiative promotion and Build Factory remain future milestones.",
       constraints: {
-        scan_type: readMissionScanType(mission),
-        integration: "discovery_foundation_v1",
+        opportunity_id: opportunityId,
+        integration: "validation_foundation_v1",
+        creates_venture: false,
+        creates_asset: false,
       },
-      status: "pending",
+      status: "completed",
     })
     .select("*")
     .single();
 
   if (stepError || !step) {
     throw new Error(
-      `Failed to create plan step: ${stepError?.message ?? "unknown error"}`,
+      `Failed to create planning record step: ${stepError?.message ?? "unknown error"}`,
     );
   }
 
@@ -81,18 +90,12 @@ export async function createPlanFromDecision(
     eventType: "planner.plan_created",
     entityType: "plan",
     entityId: plan.id,
-    message: "Planner created discovery scan plan",
+    message: "Planner recorded validated opportunity (no build execution)",
     correlationId: cycle.correlation_id,
     payload: {
       command_decision_id: decision.id,
-      plan_version: plan.version,
-      steps: [
-        {
-          id: step.id,
-          capability_key: step.capability_key,
-          step_order: step.step_order,
-        },
-      ],
+      opportunity_id: opportunityId,
+      validation_gate: "approved_for_planning",
     },
   });
 

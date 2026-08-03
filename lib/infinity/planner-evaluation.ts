@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import { DECISION_EVALUATE_CAPABILITY_KEY } from "./constants";
+import { assertPlannerMayExecute } from "./planner-gating";
 import { recordEngineEvent } from "./events";
 import type { CommandCycle, CommandDecision, Mission, Plan, PlanStep } from "./types";
 
@@ -14,6 +15,13 @@ export async function createEvaluationPlanFromDecision(
   decision: CommandDecision,
   opportunityId: string,
 ): Promise<{ plan: Plan; steps: PlanStep[] }> {
+  await assertPlannerMayExecute(
+    supabase,
+    organizationId,
+    DECISION_EVALUATE_CAPABILITY_KEY,
+    opportunityId,
+  );
+
   const { data: plan, error: planError } = await supabase
     .from("plans")
     .insert({

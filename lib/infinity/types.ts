@@ -30,7 +30,10 @@ export type CommandCycleResult =
         | "no_active_mission"
         | "pending_discovery_jobs"
         | "cycle_not_runnable"
-        | "no_opportunity_for_evaluation";
+        | "no_opportunity_for_evaluation"
+        | "no_opportunity_for_validation"
+        | "no_opportunity_for_initiative_planning"
+        | "validation_required_first";
       message: string;
     }
   | {

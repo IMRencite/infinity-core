@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClientOptions } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./database.types";
+import type { AppSupabaseClient, PublicSupabaseSchemaName } from "./admin";
 
 function getSupabaseConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,11 +21,25 @@ function getSupabaseConfig() {
   return { url, publishableKey };
 }
 
-export async function createClient(): Promise<SupabaseClient<Database>> {
+export async function createClient(): Promise<AppSupabaseClient> {
   const cookieStore = await cookies();
   const { url, publishableKey } = getSupabaseConfig();
 
-  return createServerClient(url, publishableKey, {
+  const clientOptions: SupabaseClientOptions<PublicSupabaseSchemaName> & {
+    cookies: {
+      getAll(): ReturnType<typeof cookieStore.getAll>;
+      setAll(
+        cookiesToSet: {
+          name: string;
+          value: string;
+          options?: Parameters<typeof cookieStore.set>[2];
+        }[],
+      ): void;
+    };
+  } = {
+    db: {
+      schema: "public",
+    },
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -43,5 +58,13 @@ export async function createClient(): Promise<SupabaseClient<Database>> {
         }
       },
     },
-  });
+  };
+
+  return createServerClient<Database, PublicSupabaseSchemaName>(
+    url,
+    publishableKey,
+    clientOptions,
+  );
 }
+
+export type { AppSupabaseClient, PublicSupabaseSchemaName };
