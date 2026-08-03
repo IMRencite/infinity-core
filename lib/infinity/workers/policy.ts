@@ -165,11 +165,23 @@ async function checkConcurrencyLimit(
   job: EngineJob,
   limit: number,
 ): Promise<boolean> {
-  const { count } = await admin
+  const { data: runningResults } = await admin
     .from("worker_results")
-    .select("*", { count: "exact", head: true })
+    .select("id, worker_run_id")
     .eq("organization_id", job.organization_id)
     .eq("capability_key", job.capability_key)
+    .eq("status", "running");
+
+  if (!runningResults?.length) {
+    return true;
+  }
+
+  const runIds = runningResults.map((row) => row.worker_run_id);
+  const { count } = await admin
+    .from("worker_runs")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", job.organization_id)
+    .in("id", runIds)
     .eq("status", "running");
 
   return (count ?? 0) < limit;

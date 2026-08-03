@@ -1,0 +1,260 @@
+{
+  "createdAt": "2026-08-03T18:03:14.730Z",
+  "taskGraph": [
+    {
+      "id": "workspace.initialize",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [],
+      "capabilityKey": "build.workspace_initialize",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:workspace.initialize",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "specification.persist",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "workspace.initialize"
+      ],
+      "capabilityKey": "build.persist_specification",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:specification.persist",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "manifest.persist",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "specification.persist"
+      ],
+      "capabilityKey": "build.persist_manifest",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:manifest.persist",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "scaffold.generate",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "manifest.persist"
+      ],
+      "capabilityKey": "build.generate_template_scaffold",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:scaffold.generate",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "file.validate",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "scaffold.generate"
+      ],
+      "capabilityKey": "build.validate_manifest",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:file.validate",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "workspace.snapshot",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "file.validate"
+      ],
+      "capabilityKey": "build.snapshot_workspace",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:workspace.snapshot",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "build.review",
+      "status": "pending",
+      "buildId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+      "maxAttempts": 3,
+      "dependencies": [
+        "workspace.snapshot"
+      ],
+      "capabilityKey": "qa.verify_internal_build",
+      "inputManifest": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+        "mission_id": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a:build.review",
+      "outputContract": {
+        "build_id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "independent_qa"
+    }
+  ],
+  "deniedPaths": [
+    ".env",
+    ".env.local",
+    ".git",
+    "node_modules"
+  ],
+  "projectType": "content_site",
+  "templateKey": "content-site-basic",
+  "workspaceId": ".infinity/workspaces/8ba4459b-e5f5-4ca3-86db-fbe6bbd51494/291f6af3-738d-42d5-916c-f7582d1b5d79/75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+  "allowedPaths": [
+    "src",
+    "app",
+    "content",
+    "tests",
+    "README.md"
+  ],
+  "fileManifest": [
+    {
+      "hash": "",
+      "path": "README.md",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "build-specification.json",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "build-manifest.json",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "src/index.html",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "src/styles.css",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "src/app.js",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "tests/manifest-validation.json",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "content/posts/welcome.md",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "content/posts/manifest.json",
+      "bytes": 0
+    }
+  ],
+  "manifestHash": "fd67af46be8eca05a4a39a36147a8013e9566dd95f1cffac2f9acb5c666e3823",
+  "rollbackPolicy": "restore_snapshot_no_deploy",
+  "snapshotPolicy": "immutable_on_snapshot_worker",
+  "outputContracts": {
+    "internal_build_package": {
+      "label": "Internal build package — not deployed or published."
+    }
+  },
+  "specificationId": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+  "templateVersion": "1",
+  "maximumFileCount": 200,
+  "directoryManifest": [
+    "src",
+    "tests",
+    "content/posts"
+  ],
+  "dependencyManifest": {},
+  "prohibitedCommands": [
+    "npm install",
+    "shell",
+    "curl",
+    "wget",
+    "git push"
+  ],
+  "validationCommands": [],
+  "environmentManifest": {
+    "NODE_ENV": "development",
+    "PUBLIC_DEPLOYMENT": "disabled"
+  },
+  "specificationVersion": "1",
+  "maximumTotalOutputSize": 5000000,
+  "maximumIndividualFileSize": 512000,
+  "requiredReviewCapabilities": [
+    "qa.verify_internal_build"
+  ],
+  "requiredWorkerCapabilities": [
+    "build.workspace_initialize",
+    "build.generate_template_scaffold",
+    "build.validate_manifest"
+  ]
+}

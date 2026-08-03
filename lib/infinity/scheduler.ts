@@ -61,6 +61,8 @@ function buildJobPayload(step: PlanStep): Json {
     step.capability_key.startsWith("research.") ||
     step.capability_key.startsWith("analysis.") ||
     step.capability_key.startsWith("blueprint.") ||
+    step.capability_key.startsWith("build.") ||
+    step.capability_key.startsWith("website.") ||
     step.capability_key.startsWith("qa.")
   ) {
     return {

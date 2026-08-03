@@ -12,6 +12,7 @@ import {
 } from "./persistence";
 import { inspectMissionRuntimeStage } from "./stage-inspection";
 import { observeGovernedWorkerPlanSteps } from "@/lib/infinity/workers/observe-plan-steps";
+import { observeBuildFactoryBuilds } from "@/lib/infinity/build-factory/observe-builds";
 import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
 import { scheduleReasoningAdvisoryJob } from "@/lib/infinity/governed-reasoning/jobs";
 import type { AdvanceMissionRuntimeResult, MissionRuntimeInstance, RuntimeWorkRequest } from "./types";
@@ -102,6 +103,12 @@ export async function advanceMissionRuntime(input: {
   );
 
   await observeGovernedWorkerPlanSteps(
+    input.supabase,
+    input.organizationId,
+    instance.missionId,
+  ).catch(() => undefined);
+
+  await observeBuildFactoryBuilds(
     input.supabase,
     input.organizationId,
     instance.missionId,

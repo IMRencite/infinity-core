@@ -6,6 +6,7 @@ import {
   type ExecutiveQueueSort,
 } from "@/lib/infinity/hq/queries";
 import { loadWorkerCapabilityDiagnostics } from "@/lib/infinity/workers/diagnostics";
+import { loadBuildFactoryDiagnostics } from "@/lib/infinity/build-factory/diagnostics";
 import { syncFoundingMissionContent } from "@/lib/infinity/orchestration";
 import { createClient } from "@/lib/supabase/server";
 
@@ -89,6 +90,7 @@ export default async function DashboardPage({
   };
 
   const workerDiagnostics = await loadWorkerCapabilityDiagnostics(supabase, organizationId);
+  const buildDiagnostics = await loadBuildFactoryDiagnostics(supabase, organizationId, 8);
 
   return (
     <div>
@@ -120,6 +122,7 @@ export default async function DashboardPage({
         eventSeverity={params.eventSeverity}
         missionStage={params.missionStage}
         workerDiagnostics={workerDiagnostics}
+        buildDiagnostics={buildDiagnostics}
       />
     </div>
   );

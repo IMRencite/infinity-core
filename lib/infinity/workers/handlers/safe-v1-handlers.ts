@@ -5,6 +5,8 @@ import type { WorkerExecutionContextBound, WorkerHandlerResult } from "../types"
 import { validateVentureBlueprint } from "@/lib/infinity/venture-factory";
 import type { VentureBlueprint } from "@/lib/infinity/venture-factory/types/blueprint";
 import { VENTURE_TEMPLATE_TYPES } from "@/lib/infinity/venture-factory/constants";
+import { dispatchBuildWorkerHandler } from "./build-v1-handlers";
+import { dispatchWebsiteWorkerHandler } from "./website-v1-handlers";
 
 export async function runResearchSummarizeInternalEvidence(
   admin: AdminSupabaseClient,
@@ -247,6 +249,16 @@ export async function dispatchWorkerHandler(
   admin: AdminSupabaseClient,
   context: WorkerExecutionContextBound,
 ): Promise<WorkerHandlerResult> {
+  const buildResult = await dispatchBuildWorkerHandler(admin, context);
+  if (buildResult) {
+    return buildResult;
+  }
+
+  const websiteResult = await dispatchWebsiteWorkerHandler(admin, context);
+  if (websiteResult) {
+    return websiteResult;
+  }
+
   switch (context.capabilityKey) {
     case "research.summarize_internal_evidence":
       return runResearchSummarizeInternalEvidence(admin, context);

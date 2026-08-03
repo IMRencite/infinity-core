@@ -12,6 +12,7 @@ export const HQ_ROUTES = {
   allocations: "/dashboard/allocations",
   assets: "/dashboard/assets",
   intelligence: "/dashboard/intelligence",
+  builds: "/dashboard/builds",
   missions: (missionId: string) => `/dashboard/missions/${missionId}`,
 } as const;
 

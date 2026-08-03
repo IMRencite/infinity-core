@@ -1,0 +1,88 @@
+{
+  "id": "75f6fe80-bfc9-45a5-aca6-0e2db3d4f71a",
+  "name": "E2E Content Site",
+  "slug": "e2e-content-site",
+  "planId": "f973e850-bc3c-4e6a-9a5d-519f4ebfdf3c",
+  "status": "requested",
+  "createdAt": "2026-08-03T18:03:14.648Z",
+  "missionId": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+  "description": "E2E",
+  "maximumCost": 0,
+  "outputTypes": [
+    "internal_build_package"
+  ],
+  "projectType": "content_site",
+  "templateKey": "content-site-basic",
+  "buildVersion": "1",
+  "businessModel": "content",
+  "estimatedCost": 0,
+  "opportunityId": "819be39f-6236-4195-832a-1873990aaaae",
+  "requiredPages": [
+    "pillar_pages",
+    "topic_clusters"
+  ],
+  "estimatedTasks": 7,
+  "maximumRuntime": 120000,
+  "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+  "targetAudience": "Target audience to be refined during validation.",
+  "SEORequirements": [
+    "no_public_indexing"
+  ],
+  "requiredReviews": [
+    "qa.verify_internal_build"
+  ],
+  "templateVersion": "1",
+  "dataRequirements": [],
+  "requiredFeatures": [],
+  "valueProposition": "Deliver measurable value for Target audience to be refined during validation. via Content Website.",
+  "prohibitedActions": [
+    "deploy",
+    "publish",
+    "purchase",
+    "register_domain",
+    "create_repository",
+    "create_external_account",
+    "npm_install",
+    "shell_execute",
+    "network_request"
+  ],
+  "runtimeInstanceId": null,
+  "specificationHash": "e47cd491641b887eea4451e5f9e36991d0b2fe85a23ebc92fe726a0873e53fbc",
+  "designRequirements": [
+    "accessible_baseline"
+  ],
+  "ventureBlueprintId": "80e5cd5c-131f-4e91-a969-e95b5bcf7d13",
+  "contentRequirements": [
+    "pillar_pages",
+    "topic_clusters"
+  ],
+  "allocationProposalId": "73e51238-e207-4f61-a744-a36b6705e0a5",
+  "approvedCapabilities": [
+    "build.workspace_initialize",
+    "build.persist_specification",
+    "build.persist_manifest",
+    "build.generate_template_scaffold",
+    "build.validate_manifest",
+    "build.snapshot_workspace",
+    "qa.verify_internal_build"
+  ],
+  "securityRequirements": [
+    "no_secrets_in_repo",
+    "sandbox_only"
+  ],
+  "functionalRequirements": [
+    "information_architecture_spec",
+    "cms_requirements"
+  ],
+  "integrationRequirements": [],
+  "performanceRequirements": [
+    "bounded_file_sizes"
+  ],
+  "accessibilityRequirements": [
+    "wcag_baseline_internal"
+  ],
+  "nonFunctionalRequirements": [
+    "internal_only",
+    "zero_external_side_effects"
+  ]
+}

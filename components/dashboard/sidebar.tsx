@@ -13,6 +13,7 @@ const navItems = [
   { label: "Reasoning", href: "/dashboard/reasoning" },
   { label: "Assets", href: "/dashboard/assets" },
   { label: "Intelligence", href: "/dashboard/intelligence" },
+  { label: "Builds", href: "/dashboard/builds" },
   { label: "Organizations", href: "#", disabled: true },
   { label: "Initiatives", href: "#", disabled: true },
   { label: "Ventures", href: "#", disabled: true },

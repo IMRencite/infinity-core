@@ -12,6 +12,8 @@ import { ActivityFeed } from "./activity-feed";
 import { AlertsPanel } from "./alerts-panel";
 import { PortfolioSummaryPanel } from "./portfolio-summary";
 import { WorkerCapabilityDiagnosticsPanel } from "./worker-capability-diagnostics";
+import { BuildFactoryDiagnosticsPanel } from "./build-factory-diagnostics";
+import type { BuildFactoryDiagnosticsRow } from "@/lib/infinity/build-factory/diagnostics";
 import type { WorkerCapabilityDiagnosticsRow } from "@/lib/infinity/workers/types";
 
 export function InfinityHqView({
@@ -20,12 +22,14 @@ export function InfinityHqView({
   eventSeverity,
   missionStage,
   workerDiagnostics,
+  buildDiagnostics,
 }: {
   snapshot: HqDashboardSnapshot;
   queueSort: ExecutiveQueueSort;
   eventSeverity?: string | null;
   missionStage?: string | null;
   workerDiagnostics?: WorkerCapabilityDiagnosticsRow[];
+  buildDiagnostics?: BuildFactoryDiagnosticsRow[];
 }) {
   return (
     <div className="space-y-4">
@@ -52,6 +56,7 @@ export function InfinityHqView({
         <WorkerHealthPanel worker={snapshot.workerHealth} />
         <ReasoningStatusPanel reasoning={snapshot.reasoningStatus} />
       </div>
+      {buildDiagnostics ? <BuildFactoryDiagnosticsPanel rows={buildDiagnostics} /> : null}
       {workerDiagnostics ? (
         <WorkerCapabilityDiagnosticsPanel rows={workerDiagnostics} />
       ) : null}

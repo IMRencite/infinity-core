@@ -54,7 +54,7 @@ npm run db:types # regenerate database types
 
 ## Current build (accurate)
 
-**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**, **Infinity HQ Command Center Foundation v1** (`/dashboard`), **Worker Capability Foundation v1** (governed internal workers).
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**, **Infinity HQ Command Center Foundation v1** (`/dashboard`), **Worker Capability Foundation v1** (governed internal workers), **Build Factory Foundation v1** (internal sandbox builds only — not deployed), **Website Build Worker Foundation v1** (`lib/infinity/website-builder/` — deterministic internal website source for static, Next.js, content, lead-gen, and affiliate types; `website.*` capabilities; no deploy/publish/install/network).
 
 **Not yet implemented:** continuous scheduler, autonomous observation, external source adapters, **Build Factory**, venture execution/launch, semantic embeddings, automated valuation models, real financial accounts, **revenue tracking**.
 

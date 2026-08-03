@@ -6,6 +6,7 @@ import {
   type V1WorkerCapabilityKey,
 } from "./constants";
 import type { WorkerCapabilityContract } from "./types";
+import { WEBSITE_WORKER_CAPABILITY_REGISTRY } from "./website-capabilities";
 
 const BASE: Omit<
   WorkerCapabilityContract,
@@ -25,7 +26,7 @@ const BASE: Omit<
   status: "active",
 };
 
-export const WORKER_CAPABILITY_REGISTRY: Record<V1WorkerCapabilityKey, WorkerCapabilityContract> = {
+const CORE_WORKER_CAPABILITY_REGISTRY = {
   "research.summarize_internal_evidence": {
     ...BASE,
     capabilityKey: "research.summarize_internal_evidence",
@@ -104,7 +105,104 @@ export const WORKER_CAPABILITY_REGISTRY: Record<V1WorkerCapabilityKey, WorkerCap
     reviewRequirement: "independent_qa",
     artifactTypesProduced: ["qa_report"],
   },
+  "build.workspace_initialize": {
+    ...BASE,
+    sideEffectClass: "internal_write",
+    capabilityKey: "build.workspace_initialize",
+    name: "Initialize Build Workspace",
+    description: "Creates internal sandbox workspace metadata and root.",
+    workerType: "software",
+    permissions: ["build.workspace.write", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["workspace_reference", "initialized"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["workspace_file_manifest"],
+  },
+  "build.persist_specification": {
+    ...BASE,
+    sideEffectClass: "internal_write",
+    capabilityKey: "build.persist_specification",
+    name: "Persist Build Specification",
+    description: "Writes immutable specification JSON into workspace.",
+    workerType: "software",
+    permissions: ["build.workspace.write", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["specification_path", "specification_hash"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["build_specification"],
+  },
+  "build.persist_manifest": {
+    ...BASE,
+    sideEffectClass: "internal_write",
+    capabilityKey: "build.persist_manifest",
+    name: "Persist Build Manifest",
+    description: "Writes build manifest JSON into workspace.",
+    workerType: "software",
+    permissions: ["build.workspace.write", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["manifest_path", "manifest_hash"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["build_manifest"],
+  },
+  "build.generate_template_scaffold": {
+    ...BASE,
+    sideEffectClass: "internal_write",
+    capabilityKey: "build.generate_template_scaffold",
+    name: "Generate Template Scaffold",
+    description: "Copies registered internal template files (no npm install).",
+    workerType: "software",
+    permissions: ["build.workspace.write", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["files_written", "template_key"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["internal_build_package"],
+  },
+  "build.validate_manifest": {
+    ...BASE,
+    capabilityKey: "build.validate_manifest",
+    name: "Validate Build Manifest",
+    description: "Verifies workspace files against manifest limits.",
+    workerType: "quality_assurance",
+    permissions: ["build.read", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["valid", "issues"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["validation_report"],
+  },
+  "build.snapshot_workspace": {
+    ...BASE,
+    sideEffectClass: "internal_write",
+    capabilityKey: "build.snapshot_workspace",
+    name: "Snapshot Build Workspace",
+    description: "Creates immutable internal snapshot manifest.",
+    workerType: "software",
+    permissions: ["build.workspace.write", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: { type: "object", required: ["organization_id", "build_id"] },
+    outputSchema: { type: "object", required: ["snapshot_id", "root_hash"] },
+    reviewRequirement: "not_required",
+    artifactTypesProduced: ["snapshot_manifest"],
+  },
+  "qa.verify_internal_build": {
+    ...BASE,
+    capabilityKey: "qa.verify_internal_build",
+    name: "QA Verify Internal Build",
+    description: "Independent QA for internal build workspace (not deployment).",
+    workerType: "quality_assurance",
+    permissions: ["build.read", "worker_result.read", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: {
+      type: "object",
+      required: ["organization_id", "build_id", "plan_step_id", "worker_result_id"],
+    },
+    outputSchema: { type: "object", required: ["verdict"] },
+    reviewRequirement: "independent_qa",
+    artifactTypesProduced: ["qa_report"],
+  },
 };
+
+export const WORKER_CAPABILITY_REGISTRY = {
+  ...CORE_WORKER_CAPABILITY_REGISTRY,
+  ...WEBSITE_WORKER_CAPABILITY_REGISTRY,
+} as unknown as Record<V1WorkerCapabilityKey, WorkerCapabilityContract>;
 
 export function getWorkerCapabilityContract(
   capabilityKey: string,

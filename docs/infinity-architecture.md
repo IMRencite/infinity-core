@@ -23,7 +23,11 @@ This document is a **concise navigation guide**. The durable platform specificat
 
 Dashboard: `/dashboard/runtime` and `/dashboard/reasoning` (read-only session visibility; production reasoning is initiated by Mission Runtime).
 
-**Worker Capability Foundation v1** (`lib/infinity/workers/`) — universal governed worker contract, `worker_results` / `worker_artifacts`, safe internal workers only. Flow: approved plan step → Scheduler → `engine_jobs` → Registry → Worker Runtime dispatcher → validated result → optional QA review → Mission Runtime observes on a later tick. No Build Factory, no network, deployment, or financial side effects.
+**Worker Capability Foundation v1** (`lib/infinity/workers/`) — universal governed worker contract, `worker_results` / `worker_artifacts`, safe internal workers only. Flow: approved plan step → Scheduler → `engine_jobs` → Registry → Worker Runtime dispatcher → validated result → optional QA review → Mission Runtime observes on a later tick.
+
+**Build Factory Foundation v1** (`lib/infinity/build-factory/`) — internal sandbox workspaces; governed build and website worker capabilities.
+
+**Website Build Worker Foundation v1** (`lib/infinity/website-builder/`) — generates **internal website source only** (static HTML or Next.js source files) inside approved sandboxes. Supported types: `static_website`, `nextjs_website`, `content_site`, `lead_generation_site`, `affiliate_site`. Deterministic design system (foundation — refinement pending), explicit content markers (`[CONTENT REQUIRED]`, etc.), bounded validation, independent `qa.verify_internal_website`, snapshot after QA. No npm install, shell, network, real AI, deployment, publishing, domains, hosting, repos, purchases, or external accounts.
 
 ---
 

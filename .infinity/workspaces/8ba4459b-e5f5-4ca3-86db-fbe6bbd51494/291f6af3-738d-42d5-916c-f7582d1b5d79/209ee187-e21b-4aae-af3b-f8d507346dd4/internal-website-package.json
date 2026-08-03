@@ -1,0 +1,176 @@
+{
+  "label": "Internal website source package — not deployed.",
+  "buildId": "209ee187-e21b-4aae-af3b-f8d507346dd4",
+  "snapshotId": null,
+  "framework": "static",
+  "projectType": "content_site",
+  "files": [
+    {
+      "path": "about.html",
+      "hash": "7f0de91f6f21dc42e946f3829df561981746e11f83056cedb2df33d2a080adda",
+      "bytes": 990
+    },
+    {
+      "path": "articles.html",
+      "hash": "a19eff7e91d23e19d37d2630a5d8caea0226bdfd5f19cff21e7f18c2c992910b",
+      "bytes": 1004
+    },
+    {
+      "path": "build-manifest.json",
+      "hash": "0435e83c61c93a714743082143265771325d42713d754fd472a032175bee5574",
+      "bytes": 15366
+    },
+    {
+      "path": "build-specification.json",
+      "hash": "81739ec9cbb58b035770dcd1c927b369a4d4e870f2d09d7fc879fd00e789ad11",
+      "bytes": 7906
+    },
+    {
+      "path": "components/ArticleLayout.html",
+      "hash": "bd89607569990ec35e10e9cf46ec6178cbe0b6477b6664fae8a291720142fba8",
+      "bytes": 158
+    },
+    {
+      "path": "components/Breadcrumbs.html",
+      "hash": "ce5bf08cb0e7240b89622cf06556aa667f9fef14cc08d5c7aa9aa622215c4195",
+      "bytes": 154
+    },
+    {
+      "path": "components/Card.html",
+      "hash": "c4bbf9afe9d04f1871be0ff68d8f60bd9201159a93a2028b901d77a850661f88",
+      "bytes": 140
+    },
+    {
+      "path": "components/ComparisonTable.html",
+      "hash": "5ddddc994e8cb7ae7d513e7e55bcf169eb4aea045f1d3e11540ee33ac3aa868f",
+      "bytes": 162
+    },
+    {
+      "path": "components/ContactFormPlaceholder.html",
+      "hash": "a6b45a5f60bf831decdeed03e0d7c8677889db3b43eed608441d0fd73b91d9ed",
+      "bytes": 176
+    },
+    {
+      "path": "components/ContentSection.html",
+      "hash": "29236cb85ca842f3120f48d5d650f8e46f7a1d38defffe57e07e175843dca8f5",
+      "bytes": 160
+    },
+    {
+      "path": "components/CTASection.html",
+      "hash": "b2dcfa8e29558c14299bf04505546630d9d11491486a0f6ca6b8156d86d8bc4b",
+      "bytes": 152
+    },
+    {
+      "path": "components/FAQSection.html",
+      "hash": "0c037c4ef1d8e702caf98450aca3bef62c93ecd64bfef1c5c90f862c661e774f",
+      "bytes": 152
+    },
+    {
+      "path": "components/FeatureGrid.html",
+      "hash": "2c7c7dec46b88bd30397eed3d667018e542c449a8fe62b1eec4e8f398793f226",
+      "bytes": 154
+    },
+    {
+      "path": "components/Footer.html",
+      "hash": "532e9b037c6cfc8158d1d615ec4ee15fb0179d6266d6ce22d41d14452768b0a5",
+      "bytes": 144
+    },
+    {
+      "path": "components/Header.html",
+      "hash": "9b0803615c6bf85f7af77375129d47cde84d22ee1376e5478489cce8d966b7b7",
+      "bytes": 144
+    },
+    {
+      "path": "components/Hero.html",
+      "hash": "d49218237c6151bd6f813296cd80f579c6865dcd71e4eaa5d7d1ef3a0fc4983d",
+      "bytes": 140
+    },
+    {
+      "path": "components/LegalNotice.html",
+      "hash": "f592d9a2d0c1c9f7aab8d82e84f914be5358b7a7c894ccd7bd58c42fc376e27a",
+      "bytes": 154
+    },
+    {
+      "path": "components/Navigation.html",
+      "hash": "a857caa8741b6d641317bc376f7404143db6e27c33c95be709de71522988fe73",
+      "bytes": 152
+    },
+    {
+      "path": "components/TestimonialPlaceholder.html",
+      "hash": "fe80701d6ff2735a31743b9cf37c69d8c8572fa843b58a251effe467eabb0a05",
+      "bytes": 176
+    },
+    {
+      "path": "contact.html",
+      "hash": "bd846dc149f3921dade6fc8fae7d186083bab15b17a772a48fb65efaf47173b8",
+      "bytes": 998
+    },
+    {
+      "path": "index.html",
+      "hash": "263e9c2ed348d55de81dc073673066543de93c32ca2e2f4202368178af69e088",
+      "bytes": 996
+    },
+    {
+      "path": "metadata-manifest.json",
+      "hash": "6ea2cc8bf69f609b1408bcdf2c5256e0434e00e8a027848bb7f02ca61309b865",
+      "bytes": 757
+    },
+    {
+      "path": "pillar-pages.html",
+      "hash": "f638392cc35ec23ed3c9bbb13d58972413032d16e3ea515fd2b06c0275427b3d",
+      "bytes": 1012
+    },
+    {
+      "path": "robots.txt",
+      "hash": "eb2d688ed0b471b044c254a030dabece4e96774d553965a1cd6b86a6146d9d5b",
+      "bytes": 112
+    },
+    {
+      "path": "site-structure.json",
+      "hash": "117d96fa4e907651f11a4ee4921daf9fb0c904f74b78b2052e9f9e3b64bee89c",
+      "bytes": 834
+    },
+    {
+      "path": "sitemap.xml",
+      "hash": "dad748d5404579d37484ee24c6e1d0e27fae405041a5db0d3b99710daaa47b7f",
+      "bytes": 450
+    },
+    {
+      "path": "src/styles.css",
+      "hash": "bc43a114ea98572c1a2551dac129ca856e7d54766be14836bae7c1cd70913f27",
+      "bytes": 1285
+    },
+    {
+      "path": "styles.css",
+      "hash": "bc43a114ea98572c1a2551dac129ca856e7d54766be14836bae7c1cd70913f27",
+      "bytes": 1285
+    },
+    {
+      "path": "topic-clusters.html",
+      "hash": "fbd652837e8e832f5d0a7a58e56a395e6996770bce2c88889acfa609f5babbcc",
+      "bytes": 1020
+    }
+  ],
+  "totalFiles": 29,
+  "totalBytes": 36333,
+  "validationStatuses": {
+    "website.validate_structure": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_accessibility": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_seo": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_security": {
+      "valid": true,
+      "issues": []
+    }
+  },
+  "qaStatus": "pending",
+  "reproducibilityStatus": "pending"
+}

@@ -464,6 +464,233 @@ export type Database = {
           },
         ]
       }
+      build_snapshots: {
+        Row: {
+          build_id: string
+          created_at: string
+          created_by_worker_result_id: string | null
+          file_manifest: Json
+          id: string
+          organization_id: string
+          previous_snapshot_id: string | null
+          root_hash: string
+          snapshot_version: number
+          total_bytes: number
+          total_files: number
+        }
+        Insert: {
+          build_id: string
+          created_at?: string
+          created_by_worker_result_id?: string | null
+          file_manifest?: Json
+          id?: string
+          organization_id: string
+          previous_snapshot_id?: string | null
+          root_hash: string
+          snapshot_version: number
+          total_bytes?: number
+          total_files?: number
+        }
+        Update: {
+          build_id?: string
+          created_at?: string
+          created_by_worker_result_id?: string | null
+          file_manifest?: Json
+          id?: string
+          organization_id?: string
+          previous_snapshot_id?: string | null
+          root_hash?: string
+          snapshot_version?: number
+          total_bytes?: number
+          total_files?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_snapshots_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_snapshots_created_by_worker_result_id_fkey"
+            columns: ["created_by_worker_result_id"]
+            isOneToOne: false
+            referencedRelation: "worker_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_snapshots_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_snapshots_previous_snapshot_id_fkey"
+            columns: ["previous_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "build_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      builds: {
+        Row: {
+          allocation_proposal_id: string | null
+          build_version: string
+          cancelled_at: string | null
+          completed_at: string | null
+          correlation_id: string | null
+          created_at: string
+          current_snapshot_id: string | null
+          error: Json
+          failed_at: string | null
+          id: string
+          idempotency_key: string
+          manifest: Json
+          manifest_hash: string
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          plan_id: string | null
+          project_type: string
+          review_status: string
+          runtime_instance_id: string | null
+          specification: Json
+          specification_hash: string
+          specification_version: string
+          started_at: string | null
+          status: string
+          template_key: string
+          template_version: string
+          updated_at: string
+          venture_blueprint_id: string
+          workspace_reference: string
+        }
+        Insert: {
+          allocation_proposal_id?: string | null
+          build_version?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          current_snapshot_id?: string | null
+          error?: Json
+          failed_at?: string | null
+          id?: string
+          idempotency_key: string
+          manifest?: Json
+          manifest_hash?: string
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          plan_id?: string | null
+          project_type: string
+          review_status?: string
+          runtime_instance_id?: string | null
+          specification?: Json
+          specification_hash: string
+          specification_version?: string
+          started_at?: string | null
+          status?: string
+          template_key: string
+          template_version: string
+          updated_at?: string
+          venture_blueprint_id: string
+          workspace_reference?: string
+        }
+        Update: {
+          allocation_proposal_id?: string | null
+          build_version?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          current_snapshot_id?: string | null
+          error?: Json
+          failed_at?: string | null
+          id?: string
+          idempotency_key?: string
+          manifest?: Json
+          manifest_hash?: string
+          mission_id?: string
+          opportunity_id?: string
+          organization_id?: string
+          plan_id?: string | null
+          project_type?: string
+          review_status?: string
+          runtime_instance_id?: string | null
+          specification?: Json
+          specification_hash?: string
+          specification_version?: string
+          started_at?: string | null
+          status?: string
+          template_key?: string
+          template_version?: string
+          updated_at?: string
+          venture_blueprint_id?: string
+          workspace_reference?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "builds_allocation_proposal_id_fkey"
+            columns: ["allocation_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "allocation_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_current_snapshot_fkey"
+            columns: ["current_snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "build_snapshots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "builds_venture_blueprint_id_fkey"
+            columns: ["venture_blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "venture_blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       capability_registry: {
         Row: {
           capability_key: string
@@ -3709,6 +3936,78 @@ export type Database = {
           },
           {
             foreignKeyName: "venture_blueprints_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      website_build_metadata: {
+        Row: {
+          accessibility_status: string
+          build_id: string
+          component_manifest: Json
+          created_at: string
+          framework: string
+          id: string
+          internal_package_artifact_id: string | null
+          metadata_manifest: Json
+          organization_id: string
+          project_type: string
+          qa_status: string
+          route_manifest: Json
+          security_status: string
+          seo_status: string
+          sitemap_manifest: Json
+          updated_at: string
+        }
+        Insert: {
+          accessibility_status?: string
+          build_id: string
+          component_manifest?: Json
+          created_at?: string
+          framework: string
+          id?: string
+          internal_package_artifact_id?: string | null
+          metadata_manifest?: Json
+          organization_id: string
+          project_type: string
+          qa_status?: string
+          route_manifest?: Json
+          security_status?: string
+          seo_status?: string
+          sitemap_manifest?: Json
+          updated_at?: string
+        }
+        Update: {
+          accessibility_status?: string
+          build_id?: string
+          component_manifest?: Json
+          created_at?: string
+          framework?: string
+          id?: string
+          internal_package_artifact_id?: string | null
+          metadata_manifest?: Json
+          organization_id?: string
+          project_type?: string
+          qa_status?: string
+          route_manifest?: Json
+          security_status?: string
+          seo_status?: string
+          sitemap_manifest?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_build_metadata_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: true
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "website_build_metadata_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
