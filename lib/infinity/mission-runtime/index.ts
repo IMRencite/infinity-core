@@ -1,6 +1,9 @@
 export {
   MISSION_RUNTIME_VERSION,
+  MISSION_RUNTIME_VERSION_V1,
+  MISSION_RUNTIME_VERSION_V2,
   MISSION_RUNTIME_STAGES,
+  MISSION_RUNTIME_STAGES_V2,
   MISSION_RUNTIME_STATUSES,
   DEFAULT_TICK_LIMIT,
 } from "./constants";
@@ -46,4 +49,5 @@ export {
   resetMissionRuntimeStoreForTests,
 } from "./persistence";
 export { EMPTY_STAGE_INSPECTION } from "./stage-inspection";
-export { listMissionRuntimeEvents, clearMissionRuntimeEvents } from "./events";
+export { CANONICAL_V2_TRANSITIONS, LEGACY_V1_TRANSITIONS } from "./transition-graph";
+export { computeEarliestUnmetStageV2, planLegacyRuntimeRecovery } from "./recovery";

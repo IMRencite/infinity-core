@@ -10,12 +10,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:push": "npx supabase@latest db push --yes",
-    "db:types": "node scripts/generate-db-types.mjs"
+    "db:types": "node scripts/generate-db-types.mjs",
+    "validate:worker-e2e": "node scripts/validate-worker-e2e.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "next": "16.2.11",
+    "openai": "^7.3.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },

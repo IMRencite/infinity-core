@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { MissionRuntimePanel } from "@/components/dashboard/mission-runtime-panel";
 import { buildMissionRuntimeDiagnostics } from "@/lib/infinity/mission-runtime";
+import { inspectMissionRuntimeStage } from "@/lib/infinity/mission-runtime/stage-inspection";
+import { parseRuntimeContext } from "@/lib/infinity/mission-runtime/types";
 import { createClient } from "@/lib/supabase/server";
 
 type OrganizationMembership = {
@@ -75,40 +77,44 @@ export default async function RuntimePage() {
 
   const diagnostics =
     runtimeRows[0] != null
-      ? buildMissionRuntimeDiagnostics({
-          id: String(runtimeRows[0].id),
-          organizationId: String(runtimeRows[0].organization_id),
-          missionId: String(runtimeRows[0].mission_id),
-          runtimeVersion: String(runtimeRows[0].runtime_version),
-          status: runtimeRows[0].status as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["status"],
-          currentStage: runtimeRows[0].current_stage as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["currentStage"],
-          previousStage: (runtimeRows[0].previous_stage as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["currentStage"]) ?? null,
-          stateVersion: Number(runtimeRows[0].state_version),
-          startedAt: runtimeRows[0].started_at as string | null,
-          lastAdvancedAt: runtimeRows[0].last_advanced_at as string | null,
-          pausedAt: runtimeRows[0].paused_at as string | null,
-          resumedAt: runtimeRows[0].resumed_at as string | null,
-          completedAt: runtimeRows[0].completed_at as string | null,
-          failedAt: runtimeRows[0].failed_at as string | null,
-          cancelledAt: runtimeRows[0].cancelled_at as string | null,
-          wakeAt: runtimeRows[0].wake_at as string | null,
-          correlationId: runtimeRows[0].correlation_id as string | null,
-          lockedBy: runtimeRows[0].locked_by as string | null,
-          lockedAt: runtimeRows[0].locked_at as string | null,
-          leaseExpiresAt: runtimeRows[0].lease_expires_at as string | null,
-          heartbeatAt: runtimeRows[0].heartbeat_at as string | null,
-          lastError: runtimeRows[0].last_error ?? {},
-          context: {
-            idempotency: {},
-            stageArtifacts: {},
-            blockingReason: null,
-            lastWorkRequestKey: null,
-            recoveryNotes: [],
-          },
-          metadata: runtimeRows[0].metadata ?? {},
-          createdAt: String(runtimeRows[0].created_at),
-          updatedAt: String(runtimeRows[0].updated_at),
-        })
+      ? await (async () => {
+          const row = runtimeRows[0]!;
+          const instance = {
+            id: String(row.id),
+            organizationId: String(row.organization_id),
+            missionId: String(row.mission_id),
+            runtimeVersion: String(row.runtime_version),
+            status: row.status as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["status"],
+            currentStage: row.current_stage as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["currentStage"],
+            previousStage: (row.previous_stage as import("@/lib/infinity/mission-runtime").MissionRuntimeInstance["currentStage"]) ?? null,
+            stateVersion: Number(row.state_version),
+            startedAt: row.started_at as string | null,
+            lastAdvancedAt: row.last_advanced_at as string | null,
+            pausedAt: row.paused_at as string | null,
+            resumedAt: row.resumed_at as string | null,
+            completedAt: row.completed_at as string | null,
+            failedAt: row.failed_at as string | null,
+            cancelledAt: row.cancelled_at as string | null,
+            wakeAt: row.wake_at as string | null,
+            correlationId: row.correlation_id as string | null,
+            lockedBy: row.locked_by as string | null,
+            lockedAt: row.locked_at as string | null,
+            leaseExpiresAt: row.lease_expires_at as string | null,
+            heartbeatAt: row.heartbeat_at as string | null,
+            lastError: row.last_error ?? {},
+            context: parseRuntimeContext(row.context as import("@/lib/supabase/database.types").Json),
+            metadata: row.metadata ?? {},
+            createdAt: String(row.created_at),
+            updatedAt: String(row.updated_at),
+          };
+          const inspection = await inspectMissionRuntimeStage(
+            supabase,
+            organizationId,
+            instance.missionId,
+            instance.id,
+          );
+          return buildMissionRuntimeDiagnostics(instance, { inspection });
+        })()
       : null;
 
   return (

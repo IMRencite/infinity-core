@@ -1,13 +1,11 @@
 import type { AiProviderEnvConfig } from "../config";
+import { createOpenAiProviderAdapter } from "../openai/provider";
 import { createDisabledLiveAdapter } from "./disabled-live-adapter";
 
-export function createOpenAiAdapter(config: AiProviderEnvConfig) {
-  return createDisabledLiveAdapter({
-    id: "openai",
-    name: "OpenAI",
-    config,
-    supports: { tools: true, vision: true, json: true, reasoning: true },
-  });
+export function createOpenAiAdapter(config: AiProviderEnvConfig, env?: NodeJS.ProcessEnv) {
+  const mergedEnv = env ? { ...process.env, ...env } : process.env;
+  void config;
+  return createOpenAiProviderAdapter(mergedEnv);
 }
 
 export function createAnthropicAdapter(config: AiProviderEnvConfig) {

@@ -16,6 +16,10 @@ export const EXECUTIVE_EVALUATE_CAPABILITY_KEY = "executive.evaluate_opportunity
 
 export const EXECUTIVE_ENGINE_NAME = "executive_engine";
 
+export const REASONING_ADVISORY_CAPABILITY_KEY = "reasoning.execute_advisory";
+
+export const REASONING_ENGINE_NAME = "reasoning_engine";
+
 export const PLANNER_INITIATIVE_GATE_CAPABILITY_KEY = "planner.initiative_gate";
 
 export const COMMAND_DECISION_REQUEST_INITIATIVE_PLANNING =

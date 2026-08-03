@@ -433,14 +433,25 @@ Mission Runtime is the **durable lifecycle owner** for active missions. It sits 
 | Durability | Instances, append-only transitions, immutable checkpoints |
 | Locking | Atomic claim via `claim_mission_runtime_instance` (service_role); lease expiry enables recovery |
 | Gates | Validation (`approved_for_planning`), Executive, and Planner gates enforced in stage handlers |
-| AI | Deterministic reasoning default; mock provider only unless explicitly configured; no real provider in v1 production path |
+| AI | **Governed advisory reasoning** (`lib/infinity/governed-reasoning/`): modes `mock`, `shadow`, `advisory`, `disabled` (default **disabled**). OpenAI is the first real provider (`lib/infinity/ai-providers/openai/`, Responses API + strict JSON schema). Output is **advisory only** — Validation, Executive, Planner gating, and Mission Runtime remain authoritative. No chain-of-thought persistence. Server-only `OPENAI_*` secrets. **Build Factory** still unimplemented |
 | Build Factory | Unimplemented — `build.*` capabilities block at execution |
 
-**Stages (sequential):** command → discovery → evaluation → allocation → validation → reasoning → executive → planning → scheduling → execution → review → completed.
+**Stages (sequential, v2):** command → discovery → evaluation → validation → reasoning → executive → planning → allocation → scheduling → execution → review → completed.
 
 **Status (orthogonal):** draft, ready, running, waiting, blocked, paused, completed, failed, cancelled, archived.
 
-Production deployment will invoke bounded ticks via cron/queue; development UI at `/dashboard/runtime` is not the normal operating model.
+Production deployment will invoke bounded ticks via cron/queue; development UI at `/dashboard/runtime` and read-only `/dashboard/reasoning` are not the normal operating model.
+
+### Governed Reasoning Cycle (OpenAI v1)
+
+| Item | Detail |
+| --- | --- |
+| Capability | `reasoning.execute_advisory` (durable worker) |
+| Persistence | `reasoning_sessions` (immutable when completed; idempotent by org + idempotency key) |
+| Contract | `governed_reasoning_v1` structured output (findings, risks, opportunities, recommendation enum) |
+| Modes | `AI_REASONING_MODE`: mock (offline), shadow (record only), advisory (Executive may review), disabled |
+| Safety | No tools, no browsing, no Build Factory, no ventures/assets/deployments; cost and token policy blocks before provider call |
+| Events | `reasoning.session_*`, `reasoning.executive_review_requested` (no API keys in payloads) |
 
 ---
 
@@ -1059,6 +1070,8 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Opportunity Discovery Foundation v1** | Deterministic stub discovery provider, signals, reviews, opportunity decisions, read-only Opportunities UI |
 | **Decision Engine and Capital Allocation Foundation v1** | `decision_models`, `opportunity_evaluations`, resource pools, allocation proposals, reservations, evaluation worker, read-only Allocations UI |
 | **Validation Engine Foundation v1** | `validation_models`, `validation_runs`, dimension results, findings, requirements, `validation.run` worker, Planner gating (`approved_for_planning`), read-only Validation UI — **deterministic only; AI Reasoning Layer not implemented** |
+| **Infinity HQ Command Center Foundation v1** | `/dashboard` operator observability — read-only query layer `lib/infinity/hq/`, pipelines, health, alerts, mission inspector; **does not** own business logic or bypass Mission Runtime; metrics from durable records only; blueprints labeled **not executed**; **revenue tracking not implemented** |
+| **Worker Capability Foundation v1** | Governed worker contract in `lib/infinity/workers/`; `worker_results` / `worker_artifacts`; safe internal capabilities only (`research.*`, `analysis.*`, `blueprint.validate`, `qa.*`); Scheduler → Registry → Worker Runtime dispatcher; Mission Runtime observes results on later ticks; **no Build Factory**, no network/deployment/financial side effects |
 
 ### Not yet implemented (planned)
 
@@ -1073,6 +1086,8 @@ Continuous scheduler or cron, autonomous observation, **external source adapters
 - **Assets are persisted (Asset Foundation v1)** — read-only portfolio UI; no seed assets; registration is server-side only.
 - **Institutional intelligence is persisted (EKM Foundation v1)** — read-only Intelligence UI; deterministic runtime validation evidence only; no external research or AI synthesis yet.
 - **Validation proves assumptions before planning (Validation Foundation v1)** — deterministic categories and findings only; never approves building; Planner accepts opportunities only after `approved_for_planning`. No LLM or external research.
+- **Infinity HQ is observability only (HQ Foundation v1)** — aggregates read-only org-scoped queries for operators; does not replace engines or add mutation bypasses; **Build Factory** and **revenue tracking** remain not implemented; venture **blueprints** in HQ are planning artifacts, not launched ventures.
+- **Workers are bounded capability executors (Worker Capability Foundation v1)** — Registry resolves capabilities; Scheduler queues durable jobs; Worker Runtime runs the governed dispatcher; workers **do not** advance Mission Runtime stages directly; permissions and policy gates enforced at execution boundary; internal **worker artifacts** are not business assets or deployments.
 
 ---
 

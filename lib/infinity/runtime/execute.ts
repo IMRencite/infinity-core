@@ -20,6 +20,12 @@ import type {
 } from "./types";
 import { resolveWorkerForJob } from "./worker-registry";
 import { WorkerTimeoutError } from "./workers/discovery-scan-worker";
+import { isGovernedWorkerCapabilityKey } from "../workers/capability";
+import {
+  dispatchGovernedWorkerJob,
+  shouldMarkGovernedPlanStepComplete,
+} from "../workers/dispatcher";
+import { isIdempotentWorkerExecutionResult } from "../workers/idempotent-reuse";
 
 type ExecuteJobInput = {
   engineJobId: string;
@@ -391,12 +397,22 @@ export async function executeJob(
     input: job.payload,
   };
 
+  const governed = isGovernedWorkerCapabilityKey(job.capability_key);
+
   try {
-    const result = await withTimeout(
-      worker.execute(job.payload, context),
-      timeoutSeconds * 1000,
-      `Worker timed out after ${timeoutSeconds} seconds`,
-    );
+    const result = governed
+      ? await withTimeout(
+          dispatchGovernedWorkerJob(admin, { job, workerRun }),
+          timeoutSeconds * 1000,
+          `Worker timed out after ${timeoutSeconds} seconds`,
+        )
+      : await withTimeout(
+          worker.execute(job.payload, context),
+          timeoutSeconds * 1000,
+          `Worker timed out after ${timeoutSeconds} seconds`,
+        );
+
+    const idempotentGovernedReuse = governed && isIdempotentWorkerExecutionResult(result);
 
     const completedAt = new Date().toISOString();
     const durationMs =
@@ -444,13 +460,20 @@ export async function executeJob(
       .select("*")
       .single();
 
+    if (!jobUpdateError && completedJob) {
+      const markPlan =
+        !governed ||
+        (shouldMarkGovernedPlanStepComplete(result.output as Json) && !idempotentGovernedReuse);
+      if (markPlan) {
+        await markPlanArtifactsCompleted(admin, completedJob);
+      }
+    }
+
     if (jobUpdateError || !completedJob) {
       throw new Error(
         `Failed to complete engine job: ${jobUpdateError?.message ?? "unknown error"}`,
       );
     }
-
-    await markPlanArtifactsCompleted(admin, completedJob);
 
     await appendJobAttemptEvent(admin, {
       organizationId: job.organization_id,
@@ -472,26 +495,28 @@ export async function executeJob(
       },
     });
 
-    await emitRuntimeEngineEvent(admin, {
-      organizationId: job.organization_id,
-      engineName: worker.engineName,
-      eventType: "discovery.scan_completed",
-      entityType: "opportunity_scan",
-      entityId:
-        typeof result.output === "object" &&
-        result.output !== null &&
-        !Array.isArray(result.output) &&
-        "opportunity_scan_id" in result.output
-          ? String((result.output as Record<string, Json>).opportunity_scan_id)
-          : job.id,
-      message: "Discovery scan completed via Worker Runtime",
-      correlationId: job.correlation_id,
-      payload: {
-        engine_job_id: job.id,
-        worker_run_id: workerRun.id,
-        output: result.output,
-      },
-    });
+    if (!idempotentGovernedReuse && !governed) {
+      await emitRuntimeEngineEvent(admin, {
+        organizationId: job.organization_id,
+        engineName: worker.engineName,
+        eventType: "discovery.scan_completed",
+        entityType: "opportunity_scan",
+        entityId:
+          typeof result.output === "object" &&
+          result.output !== null &&
+          !Array.isArray(result.output) &&
+          "opportunity_scan_id" in result.output
+            ? String((result.output as Record<string, Json>).opportunity_scan_id)
+            : job.id,
+        message: "Discovery scan completed via Worker Runtime",
+        correlationId: job.correlation_id,
+        payload: {
+          engine_job_id: job.id,
+          worker_run_id: workerRun.id,
+          output: result.output,
+        },
+      });
+    }
 
     await emitRuntimeEngineEvent(admin, {
       organizationId: job.organization_id,

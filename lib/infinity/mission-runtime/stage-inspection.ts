@@ -1,6 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import { PENDING_JOB_STATUSES } from "@/lib/infinity/constants";
+import {
+  PENDING_JOB_STATUSES,
+  REASONING_ADVISORY_CAPABILITY_KEY,
+} from "@/lib/infinity/constants";
+import { V1_WORKER_CAPABILITY_KEYS } from "@/lib/infinity/workers/constants";
+import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
 import { BUILD_FACTORY_CAPABILITY_PREFIX } from "./constants";
 import type { StageInspectionSnapshot } from "./types";
 
@@ -13,21 +18,32 @@ export const EMPTY_STAGE_INSPECTION: StageInspectionSnapshot = {
   hasPendingValidationJobs: false,
   hasPendingExecutiveJobs: false,
   hasPendingBuildJobs: false,
+  latestValidationRunCompleted: false,
   latestValidationApprovedForPlanning: false,
   hasExecutiveApproveOrQueue: false,
   hasExecutiveRejectOrDefer: false,
   hasPlannerEligiblePlan: false,
   hasCompletedPlanStepJob: false,
   hasDeterministicReasoningComplete: false,
+  hasPendingReasoningJobs: false,
+  hasCompletedGovernedReasoningSession: false,
+  governedReasoningMode: "disabled",
+  hasExecutiveContext: false,
   allocationProposalRecorded: false,
+  primaryOpportunityId: null,
+  hasPendingWorkerCapabilityJobs: false,
+  hasWorkerResultsAwaitingReview: false,
+  hasCompletedReviewedWorkerResults: false,
 };
 
 export async function inspectMissionRuntimeStage(
   supabase: InfinitySupabase,
   organizationId: string,
   missionId: string,
+  runtimeInstanceId?: string | null,
 ): Promise<StageInspectionSnapshot> {
   const snapshot = { ...EMPTY_STAGE_INSPECTION };
+  snapshot.governedReasoningMode = loadGovernedReasoningMode();
 
   const { data: mission } = await supabase
     .from("missions")
@@ -55,6 +71,16 @@ export async function inspectMissionRuntimeStage(
   snapshot.hasPendingValidationJobs = await pending("validation.");
   snapshot.hasPendingExecutiveJobs = await pending("executive.");
 
+  const { count: reasoningPending } = await supabase
+    .from("engine_jobs")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("capability_key", REASONING_ADVISORY_CAPABILITY_KEY)
+    .in("status", [...PENDING_JOB_STATUSES]);
+
+  snapshot.hasPendingReasoningJobs = (reasoningPending ?? 0) > 0;
+
   const { count: buildCount } = await supabase
     .from("engine_jobs")
     .select("*", { count: "exact", head: true })
@@ -65,14 +91,62 @@ export async function inspectMissionRuntimeStage(
 
   snapshot.hasPendingBuildJobs = (buildCount ?? 0) > 0;
 
+  let workerPending = false;
+  for (const key of V1_WORKER_CAPABILITY_KEYS) {
+    const { count } = await supabase
+      .from("engine_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("mission_id", missionId)
+      .eq("capability_key", key)
+      .in("status", [...PENDING_JOB_STATUSES]);
+    if ((count ?? 0) > 0) {
+      workerPending = true;
+      break;
+    }
+  }
+  snapshot.hasPendingWorkerCapabilityJobs = workerPending;
+
+  const { count: awaitingReview } = await supabase
+    .from("worker_results")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("review_status", "pending");
+
+  snapshot.hasWorkerResultsAwaitingReview = (awaitingReview ?? 0) > 0;
+
+  const { count: reviewedComplete } = await supabase
+    .from("worker_results")
+    .select("*", { count: "exact", head: true })
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("status", "completed")
+    .in("review_status", ["passed", "not_required"]);
+
+  snapshot.hasCompletedReviewedWorkerResults = (reviewedComplete ?? 0) > 0;
+
+  const { data: opportunity } = await supabase
+    .from("opportunities")
+    .select("id")
+    .eq("organization_id", organizationId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  snapshot.primaryOpportunityId = opportunity?.id ?? null;
+
   const { data: validationRun } = await supabase
     .from("validation_runs")
-    .select("recommendation")
+    .select("recommendation, run_status, completed_at")
     .eq("organization_id", organizationId)
     .eq("mission_id", missionId)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  snapshot.latestValidationRunCompleted =
+    validationRun?.run_status === "completed" && validationRun.completed_at != null;
 
   snapshot.latestValidationApprovedForPlanning =
     validationRun?.recommendation === "approved_for_planning";
@@ -86,6 +160,7 @@ export async function inspectMissionRuntimeStage(
     .limit(1)
     .maybeSingle();
 
+  snapshot.hasExecutiveContext = Boolean(executiveDecision);
   const decision = executiveDecision?.decision;
   snapshot.hasExecutiveApproveOrQueue =
     decision === "approve" || decision === "queue";
@@ -117,70 +192,17 @@ export async function inspectMissionRuntimeStage(
 
   snapshot.allocationProposalRecorded = (allocationCount ?? 0) > 0;
 
+  if (runtimeInstanceId) {
+    const { count: completedSessions } = await supabase
+      .from("reasoning_sessions")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("runtime_instance_id", runtimeInstanceId)
+      .eq("status", "completed");
+
+    snapshot.hasCompletedGovernedReasoningSession = (completedSessions ?? 0) > 0;
+    snapshot.hasDeterministicReasoningComplete = snapshot.hasCompletedGovernedReasoningSession;
+  }
+
   return snapshot;
-}
-
-export async function runDeterministicReasoningForMission(input: {
-  organizationId: string;
-  missionId: string;
-  correlationId: string;
-}): Promise<{ complete: boolean }> {
-  const { runReasoningPipeline, createReasoningSession } = await import(
-    "@/lib/infinity/reasoning"
-  );
-
-  const session = createReasoningSession({
-    organizationId: input.organizationId,
-    missionId: input.missionId,
-    opportunityId: "runtime-opportunity",
-    validationRunId: "runtime-validation",
-    executiveDecisionId: "runtime-executive",
-    plannerPlanId: null,
-    correlationId: input.correlationId,
-  });
-
-  const result = runReasoningPipeline(
-    { session },
-    {
-      organizationId: input.organizationId,
-      correlationId: input.correlationId,
-      mission: {
-        missionId: input.missionId,
-        title: "Mission Runtime",
-        objective: "Deterministic advisory reasoning",
-      },
-      opportunity: {
-        opportunityId: "runtime-opportunity",
-        name: "Runtime",
-        industry: "internal",
-        category: "runtime",
-      },
-      validation: {
-        validationRunId: "runtime-validation",
-        recommendation: "approved_for_planning",
-        overallScore: 70,
-        overallConfidence: 70,
-      },
-      executive: {
-        executiveDecisionId: "runtime-executive",
-        decision: "approve",
-        planningEligible: true,
-        priorityScore: 70,
-        rationale: ["Runtime deterministic reasoning."],
-      },
-      planner: {
-        plannerPlanId: null,
-        gateStatus: "eligible",
-        notes: ["Mission runtime deterministic reasoning."],
-      },
-      build: {
-        buildFactoryEnabled: false,
-        notes: ["Build Factory disabled for mission runtime v1."],
-      },
-      policy: { policyKeys: ["founding"], autonomyLevel: "bounded" },
-      memoryRecords: [],
-    },
-  );
-
-  return { complete: result.session.status === "completed" };
 }

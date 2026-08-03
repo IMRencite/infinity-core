@@ -1,19 +1,19 @@
 import {
-  MISSION_RUNTIME_STAGES,
   NON_ADVANCING_RUNTIME_STATUSES,
+  MISSION_RUNTIME_STAGES_V2,
   type MissionRuntimeStage,
   type MissionRuntimeStatus,
 } from "./constants";
+import { MissionRuntimeStateError } from "./errors";
+import {
+  assertStageTransitionAllowed as assertGraphStageTransition,
+  nextStageAfter as graphNextStageAfter,
+} from "./transition-graph";
 
-export class MissionRuntimeStateError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "MissionRuntimeStateError";
-  }
-}
+export { MissionRuntimeStateError } from "./errors";
 
 const STAGE_INDEX = new Map<MissionRuntimeStage, number>(
-  MISSION_RUNTIME_STAGES.map((stage, index) => [stage, index]),
+  MISSION_RUNTIME_STAGES_V2.map((stage, index) => [stage, index]),
 );
 
 export function isValidMissionRuntimeStatus(status: string): status is MissionRuntimeStatus {
@@ -35,39 +35,19 @@ export function isValidMissionRuntimeStage(stage: string): stage is MissionRunti
   return STAGE_INDEX.has(stage as MissionRuntimeStage);
 }
 
-export function nextStageAfter(current: MissionRuntimeStage): MissionRuntimeStage | null {
-  const index = STAGE_INDEX.get(current);
-  if (index === undefined || index >= MISSION_RUNTIME_STAGES.length - 1) {
-    return null;
-  }
-
-  return MISSION_RUNTIME_STAGES[index + 1] ?? null;
+export function nextStageAfter(
+  current: MissionRuntimeStage,
+  runtimeVersion?: string,
+): MissionRuntimeStage | null {
+  return graphNextStageAfter(current, runtimeVersion);
 }
 
 export function assertStageTransitionAllowed(
   from: MissionRuntimeStage,
   to: MissionRuntimeStage,
+  runtimeVersion?: string,
 ): void {
-  if (from === to) {
-    return;
-  }
-
-  if (to === "completed" && from === "review") {
-    return;
-  }
-
-  const fromIndex = STAGE_INDEX.get(from);
-  const toIndex = STAGE_INDEX.get(to);
-
-  if (fromIndex === undefined || toIndex === undefined) {
-    throw new MissionRuntimeStateError(`Unknown stage transition ${from} -> ${to}.`);
-  }
-
-  if (toIndex !== fromIndex + 1 && !(from === "review" && to === "completed")) {
-    throw new MissionRuntimeStateError(
-      `Invalid stage transition ${from} -> ${to}. Only sequential advancement is allowed.`,
-    );
-  }
+  assertGraphStageTransition(from, to, runtimeVersion);
 }
 
 export function assertStatusTransitionAllowed(

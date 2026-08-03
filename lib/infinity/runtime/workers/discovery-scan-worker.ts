@@ -1,5 +1,5 @@
 import type { Json } from "@/lib/supabase/database.types";
-import { runDeterministicDiscoveryFoundation } from "../../discovery";
+import { runDiscoveryEnginePipelineForScan } from "../../discovery/pipeline";
 import { recordRuntimeValidationIntelligence } from "../../intelligence/validation";
 import { DISCOVERY_CAPABILITY_KEY, DISCOVERY_ENGINE_NAME } from "../../constants";
 import { emitRuntimeEngineEvent } from "../persistence";
@@ -55,10 +55,10 @@ export const discoveryScanWorker: WorkerDefinition = {
         status: "running",
         scan_type: scanType,
         objective:
-          "Opportunity Discovery Foundation v1 deterministic scan (labeled stub provider, no ventures)",
+          "Opportunity Discovery Engine v1 scan (multi-provider pipeline, no ventures)",
         search_scope: {
-          mode: "deterministic_stub",
-          provider_key: "discovery.deterministic_stub",
+          mode: "discovery_engine_v1",
+          pipeline: "fetch_normalize_dedupe_score_persist",
           runtime: "durable_worker_runtime_v1",
         },
         constraints: input,
@@ -69,7 +69,7 @@ export const discoveryScanWorker: WorkerDefinition = {
           worker_run_id: context.workerRunId,
           correlation_id: context.correlationId,
           deterministic: true,
-          validation_scope: "discovery_foundation_v1",
+          validation_scope: "discovery_engine_v1",
           creates_ventures: false,
           runtime: "durable_worker_runtime_v1",
         },
@@ -89,24 +89,42 @@ export const discoveryScanWorker: WorkerDefinition = {
       eventType: "discovery.scan_started",
       entityType: "opportunity_scan",
       entityId: scan.id,
-      message: "Discovery scan started (Opportunity Discovery Foundation v1)",
+      message: "Discovery scan started (Discovery Engine v1)",
       correlationId: context.correlationId,
       payload: {
         engine_job_id: context.engineJobId,
         worker_run_id: context.workerRunId,
         scan_type: scanType,
-        validation_scope: "discovery_foundation_v1",
+        validation_scope: "discovery_engine_v1",
         runtime: "durable_worker_runtime_v1",
       },
     });
 
-    const discoveryResult = await runDeterministicDiscoveryFoundation(context.admin, {
+    const pipelineResult = await runDiscoveryEnginePipelineForScan(context.admin, {
       organizationId: context.organizationId,
       scanId: scan.id,
       correlationId: context.correlationId,
       engineJobId: context.engineJobId,
       workerRunId: context.workerRunId,
+      providerIds: ["manual"],
+      manualItems: [
+        {
+          externalId: `scan-${scan.id}-foundation`,
+          title: "Discovery Engine v1 validation opportunity",
+          description:
+            "Labeled manual provider item for Discovery Engine v1 pipeline validation. Not a live market claim.",
+          url: `https://infinity.local/discovery/scans/${scan.id}`,
+          category: "market_signal",
+          market: "b2b",
+          keywords: ["discovery_engine_v1", "manual", "validation"],
+          payload: { validation_scope: "discovery_engine_v1", creates_ventures: false },
+        },
+      ],
     });
+
+    const opportunitiesDiscovered = Math.max(pipelineResult.persistedCount, pipelineResult.opportunityIds.length > 0 ? 1 : 0);
+
+    const primaryOpportunityId = pipelineResult.opportunityIds[0] ?? null;
 
     const completedAt = new Date().toISOString();
 
@@ -115,16 +133,16 @@ export const discoveryScanWorker: WorkerDefinition = {
       .update({
         status: "completed",
         completed_at: completedAt,
-        opportunities_discovered: discoveryResult.opportunitiesDiscovered,
+        opportunities_discovered: opportunitiesDiscovered,
         metadata: {
           engine_job_id: context.engineJobId,
           worker_run_id: context.workerRunId,
           correlation_id: context.correlationId,
-          deterministic: true,
-          validation_scope: "discovery_foundation_v1",
+          discovery_engine_v1: true,
+          pipeline_persisted: pipelineResult.persistedCount,
+          validation_scope: "discovery_engine_v1",
           creates_ventures: false,
-          provider_id: discoveryResult.providerId,
-          opportunity_id: discoveryResult.opportunityId,
+          opportunity_id: primaryOpportunityId,
           runtime: "durable_worker_runtime_v1",
         },
       })
@@ -150,16 +168,17 @@ export const discoveryScanWorker: WorkerDefinition = {
     return {
       output: {
         opportunity_scan_id: scan.id,
-        opportunities_discovered: discoveryResult.opportunitiesDiscovered,
-        opportunity_id: discoveryResult.opportunityId,
+        opportunities_discovered: opportunitiesDiscovered,
+        opportunity_id: primaryOpportunityId,
         scan_type: scanType,
-        validation_scope: "discovery_foundation_v1",
+        validation_scope: "discovery_engine_v1",
+        pipeline_persisted: pipelineResult.persistedCount,
         creates_ventures: false,
         runtime: "durable_worker_runtime_v1",
       },
       metrics: {
         scan_duration_ms: Date.parse(completedAt) - Date.parse(startedAt),
-        discovery_already_recorded: discoveryResult.alreadyRecorded,
+        discovery_pipeline_events: pipelineResult.eventsEmitted,
       },
       confidenceScore: 100,
       qualityScore: 100,

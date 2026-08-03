@@ -27,6 +27,12 @@ Configure Supabase via `.env.local` (see `.env.local.example`):
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` (server-side Worker Runtime only; never expose to the browser)
 
+Optional **governed OpenAI reasoning** (server-only; see `.env.local.example`):
+
+- `OPENAI_API_KEY`, `OPENAI_MODEL` (e.g. `gpt-5.6-terra`), `AI_REASONING_MODE` (`disabled` default; use `mock`/`shadow`/`advisory` in development)
+- Live OpenAI calls also require `AI_PROVIDER_ALLOW_LIVE_EXECUTION=true` for the legacy provider runtime path; governed cycles use `AI_REASONING_MODE` + key for shadow/advisory
+- Gated live tests: `RUN_LIVE_OPENAI_TESTS=true npm run test`
+
 ## Scripts
 
 ```bash
@@ -48,8 +54,8 @@ npm run db:types # regenerate database types
 
 ## Current build (accurate)
 
-**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**.
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**, **Infinity HQ Command Center Foundation v1** (`/dashboard`), **Worker Capability Foundation v1** (governed internal workers).
 
-**Not yet implemented:** AI Reasoning Layer (LLMs), continuous scheduler, autonomous observation, external source adapters, Build Factory, venture creation, semantic embeddings, automated valuation models, real financial accounts.
+**Not yet implemented:** continuous scheduler, autonomous observation, external source adapters, **Build Factory**, venture execution/launch, semantic embeddings, automated valuation models, real financial accounts, **revenue tracking**.
 
 See **[OS Specification §27](docs/infinity-os-specification.md#section-27--current-state)** for the full list.

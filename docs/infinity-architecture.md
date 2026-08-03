@@ -14,14 +14,16 @@ This document is a **concise navigation guide**. The durable platform specificat
 
 **Mission Runtime** (`lib/infinity/mission-runtime/`) is the **lifecycle owner** for active missions. It advances work through durable stages using **bounded ticks** — each tick claims a runtime instance, evaluates at most **one** transition, requests the next unit of Command/Scheduler work, writes checkpoints, and releases locks.
 
-- **Stages:** command → discovery → evaluation → allocation → validation → reasoning → executive → planning → scheduling → execution → review → completed
+- **Stages:** command → discovery → evaluation → validation → reasoning → executive → planning → allocation → scheduling → execution → review → completed
 - **Status:** separate from stage (running, waiting, blocked, paused, etc.)
 - **Persistence:** `mission_runtime_instances`, append-only `mission_runtime_transitions`, immutable `mission_runtime_checkpoints`
 - **Locking:** lease columns + `claim_mission_runtime_instance` / `release_mission_runtime_instance` (service_role only)
-- **Execution:** deterministic reasoning and existing Worker Runtime only; **mock AI provider** default; **Build Factory** not implemented (execution blocks on `build.*` jobs)
+- **Execution:** governed advisory reasoning via `reasoning.execute_advisory` worker; **OpenAI** first real provider (Responses API); default **`AI_REASONING_MODE=disabled`**; mock for offline tests; **Build Factory** not implemented (execution blocks on `build.*` jobs)
 - **Production trigger:** future cron/queue calls `runMissionRuntimeTick` — not an in-process infinite loop
 
-Dashboard: `/dashboard/runtime` (read-only + development controls).
+Dashboard: `/dashboard/runtime` and `/dashboard/reasoning` (read-only session visibility; production reasoning is initiated by Mission Runtime).
+
+**Worker Capability Foundation v1** (`lib/infinity/workers/`) — universal governed worker contract, `worker_results` / `worker_artifacts`, safe internal workers only. Flow: approved plan step → Scheduler → `engine_jobs` → Registry → Worker Runtime dispatcher → validated result → optional QA review → Mission Runtime observes on a later tick. No Build Factory, no network, deployment, or financial side effects.
 
 ---
 
@@ -31,9 +33,11 @@ Dashboard: `/dashboard/runtime` (read-only + development controls).
 
 Manual controls exist for governance, approvals, overrides, testing, investigation, policy changes, mission changes, and emergency controls — not as the normal source of work.
 
----
+## Infinity HQ (`/dashboard`)
 
-## What Infinity Is
+**Infinity HQ** is the operator **observability and control-plane UI** (Foundation v1). It aggregates read-only metrics, pipelines, health, alerts, and activity from durable records via `lib/infinity/hq/`. It does **not** own business logic, replace Mission Runtime, or bypass governance. **Venture blueprints** shown in HQ are **blueprint-only** — execution is not started. **Revenue tracking** is not implemented (no fabricated financial results). **Build Factory** remains future work. Bounded development controls (mission tick, pause/resume runtime, shadow reasoning) remain on `/dashboard/runtime` and existing server actions.
+
+---
 
 **Infinity** is an **Autonomous Venture Operating System** that continuously discovers, evaluates, validates, builds, acquires, launches, operates, improves, and compounds ventures and assets to **maximize long-term enterprise value** — within organization-defined constraints.
 

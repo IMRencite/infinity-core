@@ -21,6 +21,14 @@ function buildIdempotencyKey(cycleId: string, stepId: string, capabilityKey: str
   return `${prefix}:${cycleId}:${stepId}`;
 }
 
+function organizationIdFromConstraints(
+  constraints: Record<string, unknown>,
+  fallback: string,
+): string {
+  const org = constraints.organization_id;
+  return typeof org === "string" && org.length > 0 ? org : fallback;
+}
+
 function buildJobPayload(step: PlanStep): Json {
   const constraints =
     typeof step.constraints === "object" &&
@@ -46,6 +54,23 @@ function buildJobPayload(step: PlanStep): Json {
       mission_id: typeof constraints.mission_id === "string" ? constraints.mission_id : null,
       plan_step_id: step.id,
       constraints: step.constraints,
+    } satisfies Json as Json;
+  }
+
+  if (
+    step.capability_key.startsWith("research.") ||
+    step.capability_key.startsWith("analysis.") ||
+    step.capability_key.startsWith("blueprint.") ||
+    step.capability_key.startsWith("qa.")
+  ) {
+    return {
+      organization_id: organizationIdFromConstraints(constraints, step.organization_id),
+      mission_id: typeof constraints.mission_id === "string" ? constraints.mission_id : null,
+      opportunity_id:
+        typeof constraints.opportunity_id === "string" ? constraints.opportunity_id : null,
+      plan_step_id: step.id,
+      constraints: step.constraints,
+      ...constraints,
     } satisfies Json as Json;
   }
 

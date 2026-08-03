@@ -3,6 +3,8 @@ import { discoveryScanWorker } from "./workers/discovery-scan-worker";
 import { opportunityEvaluationWorker } from "./workers/opportunity-evaluation-worker";
 import { executiveEvaluateWorker } from "./workers/executive-evaluate-worker";
 import { validationRunWorker } from "./workers/validation-run-worker";
+import { reasoningAdvisoryWorker } from "./workers/reasoning-advisory-worker";
+import { governedWorkerBridge } from "./workers/governed-worker-bridge";
 
 let registered = false;
 
@@ -15,6 +17,8 @@ export function registerRuntimeWorkers() {
   registerWorkerImplementation(opportunityEvaluationWorker);
   registerWorkerImplementation(validationRunWorker);
   registerWorkerImplementation(executiveEvaluateWorker);
+  registerWorkerImplementation(reasoningAdvisoryWorker);
+  registerWorkerImplementation(governedWorkerBridge);
   registered = true;
 }
 

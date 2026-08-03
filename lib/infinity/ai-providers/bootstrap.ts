@@ -26,7 +26,7 @@ export function bootstrapAiProviders(options?: {
   const config = loadAiProviderEnvConfig(options?.env);
 
   registerAiProvider(mockProviderAdapter);
-  registerAiProvider(createOpenAiAdapter(config));
+  registerAiProvider(createOpenAiAdapter(config, options?.env ? { ...process.env, ...options.env } : undefined));
   registerAiProvider(createAnthropicAdapter(config));
   registerAiProvider(createGeminiAdapter(config));
   registerAiProvider(createOpenRouterAdapter(config));

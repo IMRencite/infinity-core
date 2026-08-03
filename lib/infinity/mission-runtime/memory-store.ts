@@ -6,6 +6,10 @@ import {
   type MissionRuntimeStatus,
 } from "./constants";
 import {
+  planLegacyRuntimeRecovery,
+  upgradedRuntimeVersionAfterRecovery,
+} from "./recovery";
+import {
   assertStageTransitionAllowed,
   assertStatusTransitionAllowed,
   canAdvanceRuntime,
@@ -338,6 +342,68 @@ export async function advanceMissionRuntimeWithStore(input: {
       };
     }
 
+    const recoveryPlan = planLegacyRuntimeRecovery(instance, input.inspection);
+    if (recoveryPlan) {
+      const transitionKey = `recovery:v1->v2:${instance.currentStage}->${recoveryPlan.targetStage}:v${instance.stateVersion}`;
+      const transition = await input.store.insertTransition({
+        organizationId: instance.organizationId,
+        runtimeInstanceId: instance.id,
+        missionId: instance.missionId,
+        fromStage: instance.currentStage,
+        toStage: recoveryPlan.targetStage,
+        fromStatus: instance.status,
+        toStatus: instance.status,
+        transitionReason: recoveryPlan.reason,
+        transitionKey,
+        correlationId: instance.correlationId,
+        commandDecisionId: null,
+        planId: null,
+        engineJobId: null,
+        workerRunId: null,
+        contextSnapshot: serializeRuntimeContext(instance.context) as Json,
+      });
+
+      if (transition) {
+        instance = await input.store.updateInstance({
+          ...instance,
+          previousStage: instance.currentStage,
+          currentStage: recoveryPlan.targetStage,
+          runtimeVersion: upgradedRuntimeVersionAfterRecovery(),
+          stateVersion: instance.stateVersion + 1,
+          lastAdvancedAt: nowIso(),
+          context: {
+            ...instance.context,
+            recoveryNotes: [
+              ...instance.context.recoveryNotes,
+              recoveryPlan.reason,
+            ],
+            blockingReason: recoveryPlan.reason,
+          },
+        });
+
+        recordMissionRuntimeEvent({
+          eventType: "mission.runtime_recovered",
+          message: recoveryPlan.reason,
+          payload: {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            runtimeInstanceId: instance.id,
+            stage: instance.currentStage,
+            status: instance.status,
+            stateVersion: instance.stateVersion,
+            reason: recoveryPlan.reason,
+          },
+        });
+
+        return {
+          status: "advanced",
+          instance,
+          transition,
+          message: recoveryPlan.reason,
+        };
+      }
+    }
+
     let inspection = { ...input.inspection };
     let evaluation = evaluateStage(instance, inspection);
 
@@ -514,7 +580,11 @@ export async function advanceMissionRuntimeWithStore(input: {
       };
     }
 
-    assertStageTransitionAllowed(instance.currentStage, outcome.nextStage);
+    assertStageTransitionAllowed(
+      instance.currentStage,
+      outcome.nextStage,
+      instance.runtimeVersion,
+    );
     const nextStatus = statusForStageOutcome("advance");
     assertStatusTransitionAllowed(instance.status, nextStatus);
 

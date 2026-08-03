@@ -66,6 +66,7 @@ export const DETERMINISTIC_DISCOVERY_PROVIDER_KEY = "discovery.deterministic_stu
 export const DETERMINISTIC_DISCOVERY_IMPLEMENTATION_KEY =
   "discovery.deterministic_stub.v1";
 export const DISCOVERY_SCORING_VERSION = "discovery.foundation.v1";
+export const DISCOVERY_RULE_SCORING_VERSION = "discovery.rule_scoring_v1";
 
 export function isDiscoverySignalType(value: string): boolean {
   return (DISCOVERY_SIGNAL_TYPES as readonly string[]).includes(value);

@@ -78,24 +78,7 @@ export function evaluateStage(
       }
 
       return {
-        outcome: { kind: "advance", nextStage: "allocation", reason: "Evaluation complete." },
-        workRequest: { kind: "none" },
-      };
-    }
-
-    case "allocation": {
-      if (!inspection.allocationProposalRecorded) {
-        const key = idempotencyKey(instance, "allocation_proposal");
-        if (!hasIdempotency(context, key)) {
-          return {
-            outcome: { kind: "wait", reason: "Allocation proposal required (no spend)." },
-            workRequest: { kind: "command_autonomous", idempotencyKey: key },
-          };
-        }
-      }
-
-      return {
-        outcome: { kind: "advance", nextStage: "validation", reason: "Allocation proposal recorded." },
+        outcome: { kind: "advance", nextStage: "validation", reason: "Evaluation complete." },
         workRequest: { kind: "none" },
       };
     }
@@ -108,11 +91,18 @@ export function evaluateStage(
         };
       }
 
+      if (!inspection.latestValidationRunCompleted) {
+        return {
+          outcome: { kind: "wait", reason: "Validation run must complete before reasoning." },
+          workRequest: { kind: "none" },
+        };
+      }
+
       if (!inspection.latestValidationApprovedForPlanning) {
         return {
           outcome: {
             kind: "block",
-            reason: "Validation must be approved_for_planning before reasoning/executive/planning.",
+            reason: "Validation must be approved_for_planning before reasoning.",
           },
           workRequest: { kind: "none" },
         };
@@ -124,24 +114,108 @@ export function evaluateStage(
       };
     }
 
-    case "reasoning": {
-      const key = idempotencyKey(instance, "deterministic_reasoning");
-      if (!inspection.hasDeterministicReasoningComplete && !hasIdempotency(context, key)) {
+    case "allocation": {
+      if (!inspection.latestValidationApprovedForPlanning) {
         return {
-          outcome: { kind: "wait", reason: "Deterministic reasoning requested." },
-          workRequest: { kind: "deterministic_reasoning", idempotencyKey: key },
+          outcome: {
+            kind: "block",
+            reason: "Allocation requires validation approved_for_planning.",
+          },
+          workRequest: { kind: "none" },
         };
       }
 
-      if (!inspection.hasDeterministicReasoningComplete && hasIdempotency(context, key)) {
+      if (!inspection.hasPlannerEligiblePlan) {
         return {
-          outcome: { kind: "wait", reason: "Deterministic reasoning in progress." },
+          outcome: { kind: "block", reason: "Allocation requires an eligible persisted plan." },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      if (!inspection.allocationProposalRecorded) {
+        const key = idempotencyKey(instance, "allocation_proposal");
+        if (!hasIdempotency(context, key)) {
+          return {
+            outcome: { kind: "wait", reason: "Allocation proposal required (no spend)." },
+            workRequest: { kind: "command_autonomous", idempotencyKey: key },
+          };
+        }
+      }
+
+      return {
+        outcome: { kind: "advance", nextStage: "scheduling", reason: "Allocation proposal recorded." },
+        workRequest: { kind: "none" },
+      };
+    }
+
+    case "reasoning": {
+      if (!inspection.latestValidationApprovedForPlanning) {
+        return {
+          outcome: {
+            kind: "block",
+            reason: "Validation must remain approved_for_planning for governed reasoning.",
+          },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      if (!inspection.hasExecutiveContext) {
+        return {
+          outcome: { kind: "wait", reason: "Executive context required before reasoning." },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      if (inspection.hasPendingReasoningJobs) {
+        return {
+          outcome: { kind: "wait", reason: "Governed reasoning job in progress." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+        };
+      }
+
+      if (!inspection.primaryOpportunityId) {
+        return {
+          outcome: { kind: "block", reason: "No opportunity available for governed reasoning." },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      const jobKey = idempotencyKey(instance, "advisory_job");
+      if (!inspection.hasCompletedGovernedReasoningSession && !hasIdempotency(context, jobKey)) {
+        return {
+          outcome: { kind: "wait", reason: "Governed advisory reasoning job requested." },
+          workRequest: {
+            kind: "reasoning_advisory_job",
+            idempotencyKey: jobKey,
+            opportunityId: inspection.primaryOpportunityId,
+          },
+        };
+      }
+
+      if (!inspection.hasCompletedGovernedReasoningSession) {
+        return {
+          outcome: { kind: "wait", reason: "Waiting for governed reasoning session completion." },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      if (inspection.governedReasoningMode === "shadow") {
+        return {
+          outcome: {
+            kind: "advance",
+            nextStage: "executive",
+            reason: "Shadow reasoning recorded; output does not affect gates.",
+          },
           workRequest: { kind: "none" },
         };
       }
 
       return {
-        outcome: { kind: "advance", nextStage: "executive", reason: "Deterministic reasoning complete." },
+        outcome: {
+          kind: "advance",
+          nextStage: "executive",
+          reason: "Governed advisory reasoning complete; Executive review required.",
+        },
         workRequest: { kind: "none" },
       };
     }
@@ -190,7 +264,7 @@ export function evaluateStage(
       }
 
       return {
-        outcome: { kind: "advance", nextStage: "scheduling", reason: "Planner gate satisfied." },
+        outcome: { kind: "advance", nextStage: "allocation", reason: "Planner gate satisfied." },
         workRequest: { kind: "none" },
       };
     }
@@ -215,6 +289,20 @@ export function evaluateStage(
     }
 
     case "execution": {
+      if (inspection.hasPendingWorkerCapabilityJobs) {
+        return {
+          outcome: { kind: "wait", reason: "Worker capability jobs still pending." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+        };
+      }
+
+      if (inspection.hasWorkerResultsAwaitingReview) {
+        return {
+          outcome: { kind: "wait", reason: "Worker results awaiting independent QA review." },
+          workRequest: { kind: "none" },
+        };
+      }
+
       if (inspection.hasPendingBuildJobs) {
         return {
           outcome: {

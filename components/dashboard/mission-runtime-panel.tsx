@@ -79,6 +79,10 @@ export function MissionRuntimePanel({
         <section className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
           <h2 className="text-sm font-medium text-zinc-200">Diagnostics</h2>
           <dl className="mt-2 grid gap-1 text-[13px] text-zinc-400">
+            <div>Lifecycle: {diagnostics.lifecycleVersionLabel}</div>
+            <div>Expected next: {diagnostics.expectedNextStage ?? "—"}</div>
+            <div>Unmet prerequisite: {diagnostics.unmetPrerequisite ?? "none"}</div>
+            <div>Recovery: {diagnostics.recoveryStatus ?? "none"}</div>
             <div>State version: {diagnostics.stateVersion}</div>
             <div>Lock: {diagnostics.lockedBy ?? "none"}</div>
             <div>Blocking: {diagnostics.blockingReason ?? "none"}</div>

@@ -10,6 +10,7 @@ const navItems = [
   { label: "Validation", href: "/dashboard/validation" },
   { label: "Executive", href: "/dashboard/executive" },
   { label: "Runtime", href: "/dashboard/runtime" },
+  { label: "Reasoning", href: "/dashboard/reasoning" },
   { label: "Assets", href: "/dashboard/assets" },
   { label: "Intelligence", href: "/dashboard/intelligence" },
   { label: "Organizations", href: "#", disabled: true },

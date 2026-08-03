@@ -3070,6 +3070,142 @@ export type Database = {
           },
         ]
       }
+      reasoning_sessions: {
+        Row: {
+          completed_at: string | null
+          confidence: number | null
+          context_hash: string
+          context_manifest: Json
+          correlation_id: string | null
+          created_at: string
+          error: Json
+          estimated_cost: number | null
+          executive_decision_id: string | null
+          failed_at: string | null
+          id: string
+          idempotency_key: string
+          latency_ms: number | null
+          mission_id: string | null
+          mode: string
+          model: string
+          opportunity_id: string | null
+          organization_id: string
+          prompt_version: string
+          provider: string
+          recommendation: string | null
+          runtime_instance_id: string | null
+          schema_version: string
+          started_at: string | null
+          status: string
+          structured_output: Json
+          usage: Json
+          validation_run_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          confidence?: number | null
+          context_hash: string
+          context_manifest?: Json
+          correlation_id?: string | null
+          created_at?: string
+          error?: Json
+          estimated_cost?: number | null
+          executive_decision_id?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key: string
+          latency_ms?: number | null
+          mission_id?: string | null
+          mode: string
+          model: string
+          opportunity_id?: string | null
+          organization_id: string
+          prompt_version: string
+          provider: string
+          recommendation?: string | null
+          runtime_instance_id?: string | null
+          schema_version: string
+          started_at?: string | null
+          status?: string
+          structured_output?: Json
+          usage?: Json
+          validation_run_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          confidence?: number | null
+          context_hash?: string
+          context_manifest?: Json
+          correlation_id?: string | null
+          created_at?: string
+          error?: Json
+          estimated_cost?: number | null
+          executive_decision_id?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key?: string
+          latency_ms?: number | null
+          mission_id?: string | null
+          mode?: string
+          model?: string
+          opportunity_id?: string | null
+          organization_id?: string
+          prompt_version?: string
+          provider?: string
+          recommendation?: string | null
+          runtime_instance_id?: string | null
+          schema_version?: string
+          started_at?: string | null
+          status?: string
+          structured_output?: Json
+          usage?: Json
+          validation_run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reasoning_sessions_executive_decision_id_fkey"
+            columns: ["executive_decision_id"]
+            isOneToOne: false
+            referencedRelation: "executive_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_sessions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_sessions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_sessions_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reasoning_sessions_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_pools: {
         Row: {
           consumed_capacity: number
@@ -3516,6 +3652,270 @@ export type Database = {
             columns: ["validation_model_id"]
             isOneToOne: false
             referencedRelation: "validation_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venture_blueprints: {
+        Row: {
+          blueprint: Json
+          created_at: string
+          id: string
+          idempotency_key: string
+          opportunity_id: string
+          organization_id: string
+          schema_version: string
+          status: string
+          template_key: string
+          template_version: string
+          updated_at: string
+          venture_type: string
+        }
+        Insert: {
+          blueprint?: Json
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          opportunity_id: string
+          organization_id: string
+          schema_version?: string
+          status?: string
+          template_key: string
+          template_version: string
+          updated_at?: string
+          venture_type: string
+        }
+        Update: {
+          blueprint?: Json
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          opportunity_id?: string
+          organization_id?: string
+          schema_version?: string
+          status?: string
+          template_key?: string
+          template_version?: string
+          updated_at?: string
+          venture_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venture_blueprints_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venture_blueprints_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_artifacts: {
+        Row: {
+          artifact_type: string
+          capability_key: string
+          capability_version: string
+          created_at: string
+          id: string
+          mission_id: string | null
+          organization_id: string
+          payload: Json
+          provenance: Json
+          schema_version: string
+          worker_result_id: string
+        }
+        Insert: {
+          artifact_type: string
+          capability_key: string
+          capability_version: string
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          organization_id: string
+          payload?: Json
+          provenance?: Json
+          schema_version?: string
+          worker_result_id: string
+        }
+        Update: {
+          artifact_type?: string
+          capability_key?: string
+          capability_version?: string
+          created_at?: string
+          id?: string
+          mission_id?: string | null
+          organization_id?: string
+          payload?: Json
+          provenance?: Json
+          schema_version?: string
+          worker_result_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_artifacts_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_artifacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_artifacts_worker_result_id_fkey"
+            columns: ["worker_result_id"]
+            isOneToOne: false
+            referencedRelation: "worker_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_results: {
+        Row: {
+          artifact_references: Json
+          attempt_number: number
+          capability_key: string
+          capability_version: string
+          completed_at: string | null
+          created_at: string
+          engine_job_id: string
+          error: Json
+          execution_key: string
+          failed_at: string | null
+          id: string
+          input_hash: string
+          input_manifest: Json
+          mission_id: string | null
+          organization_id: string
+          output_schema_version: string
+          plan_id: string | null
+          plan_step_id: string | null
+          policy_results: Json
+          review_status: string
+          runtime_instance_id: string | null
+          started_at: string | null
+          status: string
+          structured_output: Json
+          updated_at: string
+          validation_results: Json
+          worker_run_id: string
+        }
+        Insert: {
+          artifact_references?: Json
+          attempt_number?: number
+          capability_key: string
+          capability_version: string
+          completed_at?: string | null
+          created_at?: string
+          engine_job_id: string
+          error?: Json
+          execution_key: string
+          failed_at?: string | null
+          id?: string
+          input_hash: string
+          input_manifest?: Json
+          mission_id?: string | null
+          organization_id: string
+          output_schema_version?: string
+          plan_id?: string | null
+          plan_step_id?: string | null
+          policy_results?: Json
+          review_status?: string
+          runtime_instance_id?: string | null
+          started_at?: string | null
+          status?: string
+          structured_output?: Json
+          updated_at?: string
+          validation_results?: Json
+          worker_run_id: string
+        }
+        Update: {
+          artifact_references?: Json
+          attempt_number?: number
+          capability_key?: string
+          capability_version?: string
+          completed_at?: string | null
+          created_at?: string
+          engine_job_id?: string
+          error?: Json
+          execution_key?: string
+          failed_at?: string | null
+          id?: string
+          input_hash?: string
+          input_manifest?: Json
+          mission_id?: string | null
+          organization_id?: string
+          output_schema_version?: string
+          plan_id?: string | null
+          plan_step_id?: string | null
+          policy_results?: Json
+          review_status?: string
+          runtime_instance_id?: string | null
+          started_at?: string | null
+          status?: string
+          structured_output?: Json
+          updated_at?: string
+          validation_results?: Json
+          worker_run_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_results_engine_job_id_fkey"
+            columns: ["engine_job_id"]
+            isOneToOne: false
+            referencedRelation: "engine_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_plan_step_id_fkey"
+            columns: ["plan_step_id"]
+            isOneToOne: false
+            referencedRelation: "plan_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_results_worker_run_id_fkey"
+            columns: ["worker_run_id"]
+            isOneToOne: false
+            referencedRelation: "worker_runs"
             referencedColumns: ["id"]
           },
         ]

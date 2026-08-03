@@ -95,8 +95,9 @@ export type RuntimeWorkRequest =
       idempotencyKey: string;
     }
   | {
-      kind: "deterministic_reasoning";
+      kind: "reasoning_advisory_job";
       idempotencyKey: string;
+      opportunityId: string;
     }
   | { kind: "none" };
 
@@ -161,13 +162,22 @@ export type StageInspectionSnapshot = {
   hasPendingValidationJobs: boolean;
   hasPendingExecutiveJobs: boolean;
   hasPendingBuildJobs: boolean;
+  latestValidationRunCompleted: boolean;
   latestValidationApprovedForPlanning: boolean;
   hasExecutiveApproveOrQueue: boolean;
   hasExecutiveRejectOrDefer: boolean;
   hasPlannerEligiblePlan: boolean;
   hasCompletedPlanStepJob: boolean;
   hasDeterministicReasoningComplete: boolean;
+  hasPendingReasoningJobs: boolean;
+  hasCompletedGovernedReasoningSession: boolean;
+  governedReasoningMode: string;
+  hasExecutiveContext: boolean;
   allocationProposalRecorded: boolean;
+  primaryOpportunityId: string | null;
+  hasPendingWorkerCapabilityJobs: boolean;
+  hasWorkerResultsAwaitingReview: boolean;
+  hasCompletedReviewedWorkerResults: boolean;
 };
 
 export function emptyRuntimeContext(): MissionRuntimeContext {

@@ -10,7 +10,10 @@ import {
   getMissionRuntimeStore,
   recordMissionRuntimeEngineEvent,
 } from "./persistence";
-import { inspectMissionRuntimeStage, runDeterministicReasoningForMission } from "./stage-inspection";
+import { inspectMissionRuntimeStage } from "./stage-inspection";
+import { observeGovernedWorkerPlanSteps } from "@/lib/infinity/workers/observe-plan-steps";
+import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
+import { scheduleReasoningAdvisoryJob } from "@/lib/infinity/governed-reasoning/jobs";
 import type { AdvanceMissionRuntimeResult, MissionRuntimeInstance, RuntimeWorkRequest } from "./types";
 import { recordMissionRuntimeEvent } from "./events";
 import { DEFAULT_TICK_LIMIT } from "./constants";
@@ -22,16 +25,22 @@ type InfinitySupabase = SupabaseClient<Database>;
 export function buildDefaultWorkExecutor(supabase: InfinitySupabase): WorkExecutor {
   return {
     async executeWork(instance, work: RuntimeWorkRequest) {
-      if (work.kind === "deterministic_reasoning") {
-        const result = await runDeterministicReasoningForMission({
+      if (work.kind === "reasoning_advisory_job") {
+        if (!work.opportunityId) {
+          throw new Error("opportunityId required for reasoning advisory job.");
+        }
+
+        await scheduleReasoningAdvisoryJob(supabase, {
           organizationId: instance.organizationId,
           missionId: instance.missionId,
-          correlationId: instance.correlationId ?? instance.id,
+          opportunityId: work.opportunityId,
+          runtimeInstanceId: instance.id,
+          correlationId: instance.correlationId,
+          mode: loadGovernedReasoningMode(),
+          idempotencyKey: `reasoning-advisory:${instance.id}:${work.idempotencyKey}`,
         });
 
-        return {
-          inspectionPatch: { hasDeterministicReasoningComplete: result.complete },
-        };
+        return {};
       }
 
       if (work.kind === "run_next_job") {
@@ -89,7 +98,14 @@ export async function advanceMissionRuntime(input: {
     input.supabase,
     input.organizationId,
     instance.missionId,
+    instance.id,
   );
+
+  await observeGovernedWorkerPlanSteps(
+    input.supabase,
+    input.organizationId,
+    instance.missionId,
+  ).catch(() => undefined);
 
   const result = await advanceMissionRuntimeWithStore({
     store,
