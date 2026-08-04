@@ -70,9 +70,12 @@ export function buildTaskGraph(
   organizationId: string,
   missionId: string,
   projectType?: BuildProjectType,
+  aiGenerationEnabled?: boolean,
 ): BuildTaskNode[] {
   if (projectType && isWebsiteV1ProjectType(projectType)) {
-    return buildWebsiteTaskGraph(buildId, organizationId, missionId);
+    return buildWebsiteTaskGraph(buildId, organizationId, missionId, {
+      aiGenerationEnabled: aiGenerationEnabled ?? false,
+    });
   }
   return TASK_DEFS.map((def) => ({
     id: def.id,
@@ -94,9 +97,12 @@ export function buildTaskGraph(
   }));
 }
 
-export function taskGraphStepOrder(projectType?: BuildProjectType): string[] {
+export function taskGraphStepOrder(
+  projectType?: BuildProjectType,
+  aiGenerationEnabled?: boolean,
+): string[] {
   if (projectType && isWebsiteV1ProjectType(projectType)) {
-    return websiteTaskGraphStepOrder();
+    return websiteTaskGraphStepOrder({ aiGenerationEnabled: aiGenerationEnabled ?? false });
   }
   return TASK_DEFS.map((d) => d.capabilityKey);
 }

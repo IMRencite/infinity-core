@@ -69,11 +69,13 @@ export function buildManifestForSpecification(
   buildId: string,
   workspaceReference: string,
 ): BuildManifest {
+  const aiEnabled = specification.aiWebsiteGeneration?.enabled ?? false;
   const tasks = buildTaskGraph(
     buildId,
     specification.organizationId,
     specification.missionId,
     specification.projectType,
+    aiEnabled,
   );
   return createBuildManifest({
     specification,

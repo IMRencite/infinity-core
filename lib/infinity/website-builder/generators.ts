@@ -14,6 +14,7 @@ import {
   refreshFileManifest,
   stepCompleted,
 } from "./state";
+import { loadTranslatedWebsiteModel } from "./ai-planned";
 
 function routePath(slug: string): string {
   return slug ? `/${slug}` : "/";
@@ -75,9 +76,17 @@ export async function runWebsiteCapability(
   build: PersistedBuild,
   workspace: WorkspaceAdapter,
 ): Promise<WebsiteStepResult> {
-  const website = parseWebsiteExtension(build.specification);
-  if (!website) {
+  const websiteBase = parseWebsiteExtension(build.specification);
+  if (!websiteBase) {
     throw new Error("Website extension missing on build specification");
+  }
+
+  let website = websiteBase;
+  if (capabilityKey === "website.generate_structure") {
+    const translated = await loadTranslatedWebsiteModel(workspace);
+    if (translated?.pageDefinitions?.length) {
+      website = { ...websiteBase, pageDefinitions: translated.pageDefinitions };
+    }
   }
 
   let state = await loadWebsiteBuildState(workspace);

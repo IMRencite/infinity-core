@@ -27,6 +27,14 @@ export const V1_WORKER_CAPABILITY_KEYS = [
   "website.validate_security",
   "website.package_internal_source",
   "qa.verify_internal_website",
+  "ai_website.build_context",
+  "ai_website.generate_plan",
+  "ai_website.validate_plan",
+  "ai_website.request_review",
+  "ai_website.translate_approved_plan",
+  "website.generate_ai_planned_pages",
+  "website.generate_ai_planned_content",
+  "qa.verify_ai_generated_website",
 ] as const;
 
 export type V1WorkerCapabilityKey = (typeof V1_WORKER_CAPABILITY_KEYS)[number];

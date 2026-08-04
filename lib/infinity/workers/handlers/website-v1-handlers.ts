@@ -15,7 +15,7 @@ import { loadWebsiteBuildState } from "@/lib/infinity/website-builder/state";
 import { upsertWebsiteBuildMetadata } from "@/lib/infinity/website-builder/metadata";
 import { isWebsiteV1ProjectType } from "@/lib/infinity/website-builder/types";
 import { WEBSITE_INTERNAL_SOURCE_LABEL } from "@/lib/infinity/website-builder/constants";
-import { verifyBuildReproducibility } from "@/lib/infinity/build-factory/reproducibility";
+import { runAiPlannedContent, runAiPlannedPages } from "@/lib/infinity/website-builder/ai-planned";
 
 async function loadBuildForContext(
   admin: AdminSupabaseClient,
@@ -239,6 +239,7 @@ export async function runQaVerifyInternalWebsite(
     }
   }
 
+  const { verifyBuildReproducibility } = await import("@/lib/infinity/build-factory/reproducibility");
   const repro = await verifyBuildReproducibility(build);
   if (repro.status === "mismatched") {
     issues.push("Reproducibility mismatch");
@@ -300,12 +301,52 @@ export async function runQaVerifyInternalWebsite(
   };
 }
 
+async function runWebsiteAiPlannedPages(
+  admin: AdminSupabaseClient,
+  context: WorkerExecutionContextBound,
+): Promise<WorkerHandlerResult> {
+  const permissions = createPermissionEnforcer(context);
+  permissions.require("build.workspace.write");
+  const build = await loadBuildForContext(admin, context);
+  const workspace = openBuildWorkspace(build);
+  const result = await runAiPlannedPages(build, workspace);
+  await persistMetadataFromState(admin, build);
+  return {
+    structuredOutput: result,
+    artifactType: "workspace_file_manifest",
+    artifactPayload: result,
+  };
+}
+
+async function runWebsiteAiPlannedContent(
+  admin: AdminSupabaseClient,
+  context: WorkerExecutionContextBound,
+): Promise<WorkerHandlerResult> {
+  const permissions = createPermissionEnforcer(context);
+  permissions.require("build.workspace.write");
+  const build = await loadBuildForContext(admin, context);
+  const workspace = openBuildWorkspace(build);
+  const result = await runAiPlannedContent(build, workspace);
+  await persistMetadataFromState(admin, build);
+  return {
+    structuredOutput: result,
+    artifactType: "workspace_file_manifest",
+    artifactPayload: result,
+  };
+}
+
 export async function dispatchWebsiteWorkerHandler(
   admin: AdminSupabaseClient,
   context: WorkerExecutionContextBound,
 ): Promise<WorkerHandlerResult | null> {
   const key = context.capabilityKey;
   if (key.startsWith("website.generate_")) {
+    if (key === "website.generate_ai_planned_pages") {
+      return runWebsiteAiPlannedPages(admin, context);
+    }
+    if (key === "website.generate_ai_planned_content") {
+      return runWebsiteAiPlannedContent(admin, context);
+    }
     return runWebsiteGenerationHandler(admin, context, key);
   }
   if (key.startsWith("website.validate_")) {

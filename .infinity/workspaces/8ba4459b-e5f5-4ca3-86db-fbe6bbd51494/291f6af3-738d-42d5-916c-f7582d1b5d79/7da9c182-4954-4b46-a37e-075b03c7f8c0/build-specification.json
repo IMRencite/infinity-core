@@ -1,0 +1,324 @@
+{
+  "id": "7da9c182-4954-4b46-a37e-075b03c7f8c0",
+  "name": "E2E Content Site",
+  "slug": "e2e-content-site",
+  "planId": "43c5d497-eb49-4fdf-8595-37108f4542a2",
+  "status": "requested",
+  "website": {
+    "forms": [
+      {
+        "id": "contact",
+        "purpose": "lead_capture",
+        "externalSubmit": false
+      }
+    ],
+    "footer": {
+      "links": [
+        {
+          "href": "/privacy",
+          "label": "Privacy"
+        }
+      ],
+      "notice": "Internal website source — not deployed."
+    },
+    "metadata": {
+      "generator": "website_builder_v1"
+    },
+    "siteName": "E2E Content Site",
+    "framework": "static",
+    "navigation": [
+      {
+        "href": "/",
+        "label": "E2E Content Site"
+      },
+      {
+        "href": "/about",
+        "label": "About"
+      },
+      {
+        "href": "/contact",
+        "label": "Contact"
+      },
+      {
+        "href": "/articles",
+        "label": "Articles"
+      },
+      {
+        "href": "/pillar-pages",
+        "label": "pillar_pages"
+      },
+      {
+        "href": "/topic-clusters",
+        "label": "topic_clusters"
+      }
+    ],
+    "projectType": "content_site",
+    "callsToAction": [
+      "Deliver measurable value for Target audience to be refined during validation. via Content Website."
+    ],
+    "routeStrategy": "file_based",
+    "schemaVersion": "website_builder_v1",
+    "spacingTokens": {
+      "base": "1rem"
+    },
+    "brandingTokens": {
+      "siteName": "E2E Content Site"
+    },
+    "contentSections": [
+      "pillar_pages",
+      "topic_clusters"
+    ],
+    "pageDefinitions": [
+      {
+        "slug": "",
+        "title": "E2E Content Site",
+        "purpose": "Primary entry page",
+        "pageType": "home",
+        "sections": [
+          "hero",
+          "features",
+          "cta"
+        ],
+        "primaryCTA": "[CONTENT REQUIRED]",
+        "description": "[CONTENT REQUIRED]",
+        "contentStatus": "placeholder",
+        "validationRequirements": [
+          "single_h1"
+        ]
+      },
+      {
+        "slug": "about",
+        "title": "About",
+        "purpose": "Organization overview",
+        "pageType": "about",
+        "sections": [
+          "hero",
+          "content"
+        ],
+        "primaryCTA": "[CONTENT REQUIRED]",
+        "description": "Organization overview",
+        "contentStatus": "placeholder",
+        "internalLinks": [],
+        "validationRequirements": [
+          "single_h1",
+          "landmarks"
+        ]
+      },
+      {
+        "slug": "contact",
+        "title": "Contact",
+        "purpose": "Contact and inquiries",
+        "pageType": "contact",
+        "sections": [
+          "hero",
+          "content"
+        ],
+        "primaryCTA": "[CONTENT REQUIRED]",
+        "description": "Contact and inquiries",
+        "contentStatus": "placeholder",
+        "internalLinks": [],
+        "validationRequirements": [
+          "single_h1",
+          "landmarks"
+        ]
+      },
+      {
+        "slug": "articles",
+        "title": "Articles",
+        "purpose": "Content category index",
+        "pageType": "category",
+        "sections": [
+          "hero",
+          "content"
+        ],
+        "primaryCTA": "[CONTENT REQUIRED]",
+        "description": "Content category index",
+        "contentStatus": "placeholder",
+        "internalLinks": [],
+        "validationRequirements": [
+          "single_h1",
+          "landmarks"
+        ]
+      },
+      {
+        "slug": "pillar-pages",
+        "title": "pillar_pages",
+        "purpose": "Sample article framework (spec-derived)",
+        "pageType": "article",
+        "sections": [
+          "article"
+        ],
+        "description": "[CONTENT REQUIRED]",
+        "contentStatus": "placeholder",
+        "validationRequirements": [
+          "single_h1"
+        ]
+      },
+      {
+        "slug": "topic-clusters",
+        "title": "topic_clusters",
+        "purpose": "Sample article framework (spec-derived)",
+        "pageType": "article",
+        "sections": [
+          "article"
+        ],
+        "description": "[CONTENT REQUIRED]",
+        "contentStatus": "placeholder",
+        "validationRequirements": [
+          "single_h1"
+        ]
+      }
+    ],
+    "siteDescription": "E2E",
+    "typographyTokens": {
+      "stack": "system-ui"
+    },
+    "prohibitedFeatures": [
+      "deploy",
+      "publish",
+      "purchase",
+      "register_domain",
+      "create_repository",
+      "create_external_account",
+      "npm_install",
+      "shell_execute",
+      "network_request",
+      "external_form_post",
+      "fake_social_proof"
+    ],
+    "schemaRequirements": [
+      "WebSite",
+      "WebPage"
+    ],
+    "componentDefinitions": [
+      "Header",
+      "Navigation",
+      "Footer",
+      "Hero",
+      "ContentSection",
+      "FeatureGrid",
+      "CTASection",
+      "Card",
+      "TestimonialPlaceholder",
+      "FAQSection",
+      "ContactFormPlaceholder",
+      "Breadcrumbs",
+      "ArticleLayout",
+      "ComparisonTable",
+      "LegalNotice"
+    ],
+    "analyticsPlaceholders": [
+      "[ANALYTICS NOT CONFIGURED]"
+    ],
+    "integrationPlaceholders": [
+      "[INTEGRATION NOT CONFIGURED]"
+    ],
+    "performanceRequirements": [
+      "bounded_file_sizes"
+    ],
+    "accessibilityRequirements": [
+      "wcag_baseline_internal"
+    ]
+  },
+  "createdAt": "2026-08-03T20:30:00.164Z",
+  "missionId": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+  "description": "E2E",
+  "maximumCost": 0,
+  "outputTypes": [
+    "internal_website_source_package"
+  ],
+  "projectType": "content_site",
+  "templateKey": "content-site-basic",
+  "buildVersion": "1",
+  "businessModel": "content",
+  "estimatedCost": 0,
+  "opportunityId": "8bfdf7e3-5f87-4d80-a07a-a0cfd39ac27b",
+  "requiredPages": [
+    "pillar_pages",
+    "topic_clusters"
+  ],
+  "estimatedTasks": 23,
+  "maximumRuntime": 120000,
+  "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+  "targetAudience": "Target audience to be refined during validation.",
+  "SEORequirements": [
+    "no_public_indexing"
+  ],
+  "requiredReviews": [
+    "qa.verify_ai_generated_website"
+  ],
+  "templateVersion": "1",
+  "dataRequirements": [],
+  "requiredFeatures": [],
+  "valueProposition": "Deliver measurable value for Target audience to be refined during validation. via Content Website.",
+  "prohibitedActions": [
+    "deploy",
+    "publish",
+    "purchase",
+    "register_domain",
+    "create_repository",
+    "create_external_account",
+    "npm_install",
+    "shell_execute",
+    "network_request"
+  ],
+  "runtimeInstanceId": null,
+  "specificationHash": "69d6bffa865efff3a7ec72c73a4983c9fc812ef80d1334b9e78b06f920b8afe3",
+  "designRequirements": [
+    "accessible_baseline"
+  ],
+  "ventureBlueprintId": "2c09c29b-92ad-42b6-9ab4-93b7e66b61ae",
+  "aiWebsiteGeneration": {
+    "mode": "mock",
+    "enabled": true
+  },
+  "contentRequirements": [
+    "pillar_pages",
+    "topic_clusters"
+  ],
+  "allocationProposalId": "27573978-4480-475c-bff5-9fd08a08433d",
+  "approvedCapabilities": [
+    "build.workspace_initialize",
+    "build.persist_specification",
+    "build.persist_manifest",
+    "ai_website.build_context",
+    "ai_website.generate_plan",
+    "ai_website.validate_plan",
+    "ai_website.request_review",
+    "ai_website.translate_approved_plan",
+    "website.generate_ai_planned_pages",
+    "website.generate_ai_planned_content",
+    "website.generate_structure",
+    "website.generate_components",
+    "website.generate_styles",
+    "website.generate_metadata",
+    "website.generate_sitemap",
+    "website.generate_robots",
+    "website.validate_structure",
+    "website.validate_accessibility",
+    "website.validate_seo",
+    "website.validate_security",
+    "website.package_internal_source",
+    "qa.verify_ai_generated_website",
+    "build.snapshot_workspace"
+  ],
+  "securityRequirements": [
+    "no_secrets_in_repo",
+    "sandbox_only"
+  ],
+  "functionalRequirements": [
+    "information_architecture_spec",
+    "cms_requirements"
+  ],
+  "integrationRequirements": [],
+  "performanceRequirements": [
+    "bounded_file_sizes"
+  ],
+  "accessibilityRequirements": [
+    "wcag_baseline_internal"
+  ],
+  "nonFunctionalRequirements": [
+    "internal_only",
+    "zero_external_side_effects"
+  ]
+}

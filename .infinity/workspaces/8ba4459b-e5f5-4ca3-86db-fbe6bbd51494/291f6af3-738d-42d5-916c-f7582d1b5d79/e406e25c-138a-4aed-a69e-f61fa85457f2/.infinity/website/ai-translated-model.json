@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ai_website_translated_model_v1",
+  "planId": "2e232cc2-0fde-439b-a9fa-a7a36a6624e1",
+  "contextHash": "d42d094d8b5dc0957b7af7a5d51399e659723edaf5922f7f8921fa88466ad5e4",
+  "outputHash": "b7133610179ba09eb76f06b4a09a38236097b9f6cc9e8ac5c55a5f264c1aeac9",
+  "translationHash": "9955569127b54a4e058ba13b78823ea6793a349c284ace7bbe352852b8305ba2",
+  "pageDefinitions": [
+    {
+      "slug": "",
+      "pageType": "home",
+      "title": "E2E Content Site",
+      "description": "[CONTENT REQUIRED]",
+      "purpose": "Primary entry",
+      "sections": [
+        "hero"
+      ],
+      "primaryCTA": "[CONTENT REQUIRED]",
+      "metadata": {
+        "description": "[CONTENT REQUIRED]"
+      },
+      "schemaTypes": [
+        "WebPage"
+      ],
+      "internalLinks": [
+        "/about",
+        "/contact"
+      ],
+      "contentStatus": "placeholder",
+      "validationRequirements": [
+        "single_h1"
+      ]
+    }
+  ],
+  "contentRecords": [
+    {
+      "content": "[CONTENT REQUIRED]",
+      "pageKey": "home",
+      "confidence": 70,
+      "contentKey": "home-hero",
+      "sectionKey": "hero",
+      "assumptions": [
+        "Mock provider — advisory only."
+      ],
+      "contentType": "paragraph",
+      "policyFlags": [],
+      "missingInformation": [
+        "[CONTENT REQUIRED]"
+      ],
+      "requiresHumanReview": true,
+      "evidenceReferenceIds": [
+        "validation_run:806ad345-8879-4db0-8095-5a154c1373c6"
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "href": "/",
+      "label": "Home"
+    },
+    {
+      "href": "/about",
+      "label": "About"
+    },
+    {
+      "href": "/contact",
+      "label": "Contact"
+    }
+  ],
+  "provenance": {
+    "evidenceReferenceIds": [
+      "validation_run:806ad345-8879-4db0-8095-5a154c1373c6"
+    ],
+    "planId": "2e232cc2-0fde-439b-a9fa-a7a36a6624e1"
+  }
+}

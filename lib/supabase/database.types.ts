@@ -39,6 +39,179 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_website_generation_plans: {
+        Row: {
+          approved_at: string | null
+          build_id: string
+          build_specification_id: string
+          completed_at: string | null
+          confidence: number | null
+          context_hash: string
+          context_manifest: Json
+          correlation_id: string | null
+          created_at: string
+          error: string | null
+          estimated_cost: number
+          id: string
+          idempotency_key: string
+          latency_ms: number | null
+          mission_id: string
+          mode: string
+          model: string
+          opportunity_id: string
+          organization_id: string
+          output_hash: string | null
+          plan_version: string
+          policy_results: Json | null
+          prompt_version: string
+          provider: string
+          reasoning_session_id: string | null
+          recommendation: string | null
+          rejected_at: string | null
+          review_status: string
+          runtime_instance_id: string | null
+          schema_version: string
+          started_at: string | null
+          status: string
+          structured_plan: Json | null
+          translation_hash: string | null
+          updated_at: string
+          usage: Json | null
+          validation_results: Json | null
+          venture_blueprint_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          build_id: string
+          build_specification_id: string
+          completed_at?: string | null
+          confidence?: number | null
+          context_hash: string
+          context_manifest?: Json
+          correlation_id?: string | null
+          created_at?: string
+          error?: string | null
+          estimated_cost?: number
+          id?: string
+          idempotency_key: string
+          latency_ms?: number | null
+          mission_id: string
+          mode: string
+          model: string
+          opportunity_id: string
+          organization_id: string
+          output_hash?: string | null
+          plan_version?: string
+          policy_results?: Json | null
+          prompt_version: string
+          provider: string
+          reasoning_session_id?: string | null
+          recommendation?: string | null
+          rejected_at?: string | null
+          review_status?: string
+          runtime_instance_id?: string | null
+          schema_version: string
+          started_at?: string | null
+          status?: string
+          structured_plan?: Json | null
+          translation_hash?: string | null
+          updated_at?: string
+          usage?: Json | null
+          validation_results?: Json | null
+          venture_blueprint_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          build_id?: string
+          build_specification_id?: string
+          completed_at?: string | null
+          confidence?: number | null
+          context_hash?: string
+          context_manifest?: Json
+          correlation_id?: string | null
+          created_at?: string
+          error?: string | null
+          estimated_cost?: number
+          id?: string
+          idempotency_key?: string
+          latency_ms?: number | null
+          mission_id?: string
+          mode?: string
+          model?: string
+          opportunity_id?: string
+          organization_id?: string
+          output_hash?: string | null
+          plan_version?: string
+          policy_results?: Json | null
+          prompt_version?: string
+          provider?: string
+          reasoning_session_id?: string | null
+          recommendation?: string | null
+          rejected_at?: string | null
+          review_status?: string
+          runtime_instance_id?: string | null
+          schema_version?: string
+          started_at?: string | null
+          status?: string
+          structured_plan?: Json | null
+          translation_hash?: string | null
+          updated_at?: string
+          usage?: Json | null
+          validation_results?: Json | null
+          venture_blueprint_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_website_generation_plans_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_reasoning_session_id_fkey"
+            columns: ["reasoning_session_id"]
+            isOneToOne: false
+            referencedRelation: "reasoning_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_website_generation_plans_venture_blueprint_id_fkey"
+            columns: ["venture_blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "venture_blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       allocation_proposals: {
         Row: {
           allocation_type: string

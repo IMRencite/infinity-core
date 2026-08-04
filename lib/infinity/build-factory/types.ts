@@ -44,6 +44,7 @@ export type BuildSpecification = {
   specificationHash: string;
   createdAt: string;
   website?: WebsiteBuildExtension;
+  aiWebsiteGeneration?: { enabled: boolean; mode: string };
 };
 
 export type BuildManifest = {

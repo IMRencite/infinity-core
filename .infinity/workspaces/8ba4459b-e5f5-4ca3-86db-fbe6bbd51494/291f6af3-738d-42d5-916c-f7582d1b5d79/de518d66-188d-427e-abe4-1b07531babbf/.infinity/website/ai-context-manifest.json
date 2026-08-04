@@ -1,0 +1,50 @@
+[
+  {
+    "recordType": "mission",
+    "recordId": "291f6af3-738d-42d5-916c-f7582d1b5d79",
+    "version": "1",
+    "hash": "2b1173f68ae83284e45616c4099c93084340787c1d0fae4d5035571f7fda5eda",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "mission_objective"
+  },
+  {
+    "recordType": "opportunity",
+    "recordId": "5eb36466-b31d-44e1-b3dc-6672f6967ecd",
+    "version": "1",
+    "hash": "461ab4268440719e09d5b4ca75987c5378690f85b0a5000e77ff72a5cd200a31",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "approved_opportunity"
+  },
+  {
+    "recordType": "validation_run",
+    "recordId": "5c3aedfe-cff7-4f09-8cbd-25cf5db669e5",
+    "version": "1",
+    "hash": "c6a8ce8d3422f5ddf2d5933c73282986a06eb77f689e53eb727d470d7ff3e2f8",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "validation_result"
+  },
+  {
+    "recordType": "executive_decision",
+    "recordId": "3d8e54bc-ae3b-41af-afce-73c8c682256c",
+    "version": "1",
+    "hash": "124eaa9069ae1b674213b19b02e17f6821c4df6310d389ebee016e921cd1687b",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "executive_decision"
+  },
+  {
+    "recordType": "venture_blueprint",
+    "recordId": "07f5ce51-62c7-49f5-8ba8-f97914d79c64",
+    "version": "1",
+    "hash": "16a676271f3cc472bce2dd36e3cbafdcf6a931b89008297cb50635733a59a7a5",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "venture_blueprint"
+  },
+  {
+    "recordType": "build_specification",
+    "recordId": "de518d66-188d-427e-abe4-1b07531babbf",
+    "version": "1",
+    "hash": "24af4cc20c7c2f1209bdcc1ef77570c006dd408584f7c45141da482c8f785e4a",
+    "organizationId": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+    "inclusionReason": "build_specification"
+  }
+]

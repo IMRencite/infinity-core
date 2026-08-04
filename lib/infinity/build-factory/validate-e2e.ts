@@ -49,7 +49,7 @@ export function assertBuildFactoryE2EAllowed(): void {
   }
 }
 
-async function runJobToCompletion(
+export async function runJobToCompletion(
   admin: AdminSupabaseClient,
   engineJobId: string,
   organizationId: string,
@@ -356,7 +356,8 @@ export async function runBuildFactoryE2EValidation(
   for (const step of taskSteps ?? []) {
     if (
       step.capability_key === "qa.verify_internal_build" ||
-      step.capability_key === "qa.verify_internal_website"
+      step.capability_key === "qa.verify_internal_website" ||
+      step.capability_key === "qa.verify_ai_generated_website"
     ) {
       continue;
     }
@@ -394,7 +395,8 @@ export async function runBuildFactoryE2EValidation(
   const qaStep = (taskSteps ?? []).find(
     (s) =>
       s.capability_key === "qa.verify_internal_build" ||
-      s.capability_key === "qa.verify_internal_website",
+      s.capability_key === "qa.verify_internal_website" ||
+      s.capability_key === "qa.verify_ai_generated_website",
   );
   let qaResultId = "";
   const qaTargetWorkerResultId = isWebsiteBuild
@@ -435,31 +437,54 @@ export async function runBuildFactoryE2EValidation(
   }
 
   if (isWebsiteBuild) {
-    const snapshotStep = (taskSteps ?? []).find(
-      (s) => s.capability_key === "build.snapshot_workspace",
-    );
-    if (snapshotStep) {
-      const { data: snapFull } = await admin
-        .from("plan_steps")
-        .select("*")
-        .eq("id", snapshotStep.id)
-        .single();
-      if (snapFull) {
-        const snapJob = await schedulePlanStep(admin, orgId, cycle!, mission, plan, snapFull);
-        engineJobIds.push(snapJob.id);
-        const snapExec = await runJobToCompletion(
-          admin,
-          snapJob.id,
-          orgId,
-          "build.snapshot_workspace",
+    const { data: buildBeforeSnapshot } = await admin
+      .from("builds")
+      .select("review_status")
+      .eq("id", build.id)
+      .maybeSingle();
+
+    if (buildBeforeSnapshot?.review_status !== "passed") {
+      if (!qaResultId) {
+        errors.push(
+          `Independent QA did not pass before snapshot (review_status=${buildBeforeSnapshot?.review_status ?? "unknown"}, packageWorkerResultId=${packageWorkerResultId || "missing"})`,
         );
-        if (snapExec.status === "completed") {
-          snapshotWorkerResultId = String(
-            (snapExec.output as Record<string, unknown>).worker_result_id ?? "",
+      } else {
+        const { data: qaWr } = await admin
+          .from("worker_results")
+          .select("structured_output")
+          .eq("id", qaResultId)
+          .maybeSingle();
+        errors.push(
+          `Independent QA did not pass before snapshot: ${JSON.stringify(qaWr?.structured_output ?? {})}`,
+        );
+      }
+    } else {
+      const snapshotStep = (taskSteps ?? []).find(
+        (s) => s.capability_key === "build.snapshot_workspace",
+      );
+      if (snapshotStep) {
+        const { data: snapFull } = await admin
+          .from("plan_steps")
+          .select("*")
+          .eq("id", snapshotStep.id)
+          .single();
+        if (snapFull) {
+          const snapJob = await schedulePlanStep(admin, orgId, cycle!, mission, plan, snapFull);
+          engineJobIds.push(snapJob.id);
+          const snapExec = await runJobToCompletion(
+            admin,
+            snapJob.id,
+            orgId,
+            "build.snapshot_workspace",
           );
-          workerResultIds.push(snapshotWorkerResultId);
-        } else {
-          errors.push("Website snapshot job failed");
+          if (snapExec.status === "completed") {
+            snapshotWorkerResultId = String(
+              (snapExec.output as Record<string, unknown>).worker_result_id ?? "",
+            );
+            workerResultIds.push(snapshotWorkerResultId);
+          } else {
+            errors.push("Website snapshot job failed");
+          }
         }
       }
     }

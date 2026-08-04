@@ -1,0 +1,12 @@
+{
+  "framework": "static",
+  "routes": [
+    {
+      "slug": "",
+      "path": "/",
+      "pageType": "home",
+      "title": "E2E Content Site"
+    }
+  ],
+  "label": "Internal website source — not deployed."
+}

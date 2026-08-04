@@ -15,7 +15,10 @@ export async function createBuildPlanSteps(
     missionId: string;
   },
 ): Promise<string[]> {
-  const order = taskGraphStepOrder(input.build.projectType);
+  const order = taskGraphStepOrder(
+    input.build.projectType,
+    input.build.specification.aiWebsiteGeneration?.enabled ?? false,
+  );
   const createdIds: string[] = [];
 
   const { count } = await admin

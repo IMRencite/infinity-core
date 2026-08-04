@@ -140,6 +140,7 @@ export async function requestBuildFactory(
       input.organizationId,
       input.missionId,
       existing.projectType,
+      existing.specification.aiWebsiteGeneration?.enabled ?? false,
     );
     return { status: "reused", build: existing, tasks };
   }
@@ -155,6 +156,7 @@ export async function requestBuildFactory(
     input.organizationId,
     input.missionId,
     specification.projectType,
+    specification.aiWebsiteGeneration?.enabled ?? false,
   );
   const manifest = buildManifestForSpecification(specification, buildId, workspaceReference);
 

@@ -1,0 +1,29 @@
+{
+  "records": [
+    {
+      "content": "[CONTENT REQUIRED]",
+      "pageKey": "home",
+      "confidence": 70,
+      "contentKey": "home-hero",
+      "sectionKey": "hero",
+      "assumptions": [
+        "Mock provider — advisory only."
+      ],
+      "contentType": "paragraph",
+      "policyFlags": [],
+      "missingInformation": [
+        "[CONTENT REQUIRED]"
+      ],
+      "requiresHumanReview": true,
+      "evidenceReferenceIds": [
+        "validation_run:07150083-2fc9-41ff-baf4-99d311a04dc5"
+      ]
+    }
+  ],
+  "provenance": {
+    "evidenceReferenceIds": [
+      "validation_run:07150083-2fc9-41ff-baf4-99d311a04dc5"
+    ],
+    "planId": "64a59e82-7069-4f4c-9936-d30f51cb4cb1"
+  }
+}

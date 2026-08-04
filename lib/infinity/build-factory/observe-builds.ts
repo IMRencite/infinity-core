@@ -1,6 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
-import { markBuildInternallyComplete } from "./lifecycle";
+import { markBuildInternallyComplete, updateBuildStatus } from "./lifecycle";
+import { loadBuildById } from "./workspace";
+import { verifyAiWebsiteBuildReproducibility } from "@/lib/infinity/ai-website-generation/reproducibility";
+import { emitBuildFactoryEvent } from "./events";
+import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
@@ -30,6 +34,35 @@ export async function observeBuildFactoryBuilds(
     if (build.status === "internally_complete") {
       continue;
     }
+    const full = await loadBuildById(
+      supabase as unknown as AdminSupabaseClient,
+      organizationId,
+      build.id,
+    );
+    if (full?.specification.aiWebsiteGeneration?.enabled) {
+      const repro = await verifyAiWebsiteBuildReproducibility(
+        supabase as unknown as AdminSupabaseClient,
+        full,
+      );
+      if (repro.status === "mismatched") {
+        await updateBuildStatus(
+          supabase as unknown as AdminSupabaseClient,
+          organizationId,
+          build.id,
+          "blocked",
+          { error: { reproducibility_mismatch: repro.issues } },
+        );
+        await emitBuildFactoryEvent(supabase as unknown as AdminSupabaseClient, {
+          organizationId,
+          eventType: "build.reproducibility_mismatch",
+          message: "Build blocked — reproducibility mismatch",
+          correlationId: build.correlation_id ?? crypto.randomUUID(),
+          buildId: build.id,
+          payload: { issues: repro.issues },
+        });
+        continue;
+      }
+    }
     await markBuildInternallyComplete(
       supabase,
       organizationId,
@@ -37,8 +70,7 @@ export async function observeBuildFactoryBuilds(
       undefined,
     );
     if (build.correlation_id) {
-      const { emitBuildFactoryEvent } = await import("./events");
-      const adminClient = supabase as unknown as import("@/lib/supabase/admin").AdminSupabaseClient;
+      const adminClient = supabase as unknown as AdminSupabaseClient;
       await emitBuildFactoryEvent(adminClient, {
         organizationId,
         eventType: "build.internally_completed",

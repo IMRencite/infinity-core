@@ -13,7 +13,8 @@
     "db:types": "node scripts/generate-db-types.mjs",
     "validate:worker-e2e": "node scripts/validate-worker-e2e.mjs",
     "validate:build-factory-e2e": "node scripts/validate-build-factory-e2e.mjs",
-    "validate:website-builder-e2e": "node scripts/validate-website-builder-e2e.mjs"
+    "validate:website-builder-e2e": "node scripts/validate-website-builder-e2e.mjs",
+    "validate:ai-website-generation-e2e": "node scripts/validate-ai-website-generation-e2e.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

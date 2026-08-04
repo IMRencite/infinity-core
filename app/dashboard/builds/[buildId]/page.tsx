@@ -3,9 +3,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadWebsiteBuildMetadataSummary } from "@/lib/infinity/website-builder/metadata";
-import { WEBSITE_INTERNAL_SOURCE_LABEL } from "@/lib/infinity/website-builder/constants";
+import { loadAiWebsitePlanSummary } from "@/lib/infinity/ai-website-generation/persistence";
+import { AI_WEBSITE_INTERNAL_LABEL } from "@/lib/infinity/ai-website-generation/constants";
 import { verifyBuildReproducibility } from "@/lib/infinity/build-factory/reproducibility";
 import { loadBuildById } from "@/lib/infinity/build-factory/workspace";
+import { WEBSITE_INTERNAL_SOURCE_LABEL } from "@/lib/infinity/website-builder/constants";
 
 type Props = { params: Promise<{ buildId: string }> };
 
@@ -39,6 +41,7 @@ export default async function BuildDetailPage({ params }: Props) {
     notFound();
   }
 
+  const aiSummary = await loadAiWebsitePlanSummary(admin, orgId, buildId);
   const meta = await loadWebsiteBuildMetadataSummary(admin, orgId, buildId);
   const repro = await verifyBuildReproducibility(build).catch(() => ({
     status: "unknown" as const,
@@ -61,8 +64,31 @@ export default async function BuildDetailPage({ params }: Props) {
         </Link>
         <h1 className="mt-2 text-lg font-semibold text-white">{build.specification.name}</h1>
         <p className="text-sm font-medium text-amber-200/90">{WEBSITE_INTERNAL_SOURCE_LABEL}</p>
+        <p className="text-xs text-violet-300/90">{AI_WEBSITE_INTERNAL_LABEL}</p>
         <p className="font-mono text-[10px] text-zinc-600">{buildId}</p>
       </header>
+
+      {aiSummary && (
+        <section className="rounded-lg border border-violet-500/20 p-4 text-xs">
+          <h2 className="mb-3 font-medium text-violet-300">AI generation plan</h2>
+          <dl className="grid grid-cols-2 gap-2">
+            <dt className="text-zinc-500">Mode</dt>
+            <dd>{aiSummary.plan.mode}</dd>
+            <dt className="text-zinc-500">Provider</dt>
+            <dd>{aiSummary.plan.provider}</dd>
+            <dt className="text-zinc-500">Status</dt>
+            <dd>{aiSummary.plan.status}</dd>
+            <dt className="text-zinc-500">Review</dt>
+            <dd>{aiSummary.plan.reviewStatus}</dd>
+            <dt className="text-zinc-500">Page plans</dt>
+            <dd>{aiSummary.pageCount}</dd>
+            <dt className="text-zinc-500">Content records</dt>
+            <dd>{aiSummary.contentCount}</dd>
+            <dt className="text-zinc-500">Context hash</dt>
+            <dd className="truncate font-mono text-[10px]">{aiSummary.plan.contextHash}</dd>
+          </dl>
+        </section>
+      )}
 
       <section className="rounded-lg border border-white/10 p-4 text-xs">
         <h2 className="mb-3 font-medium text-zinc-400">Website build summary</h2>

@@ -6,6 +6,7 @@ import { validateVentureBlueprint } from "@/lib/infinity/venture-factory";
 import type { VentureBlueprint } from "@/lib/infinity/venture-factory/types/blueprint";
 import { VENTURE_TEMPLATE_TYPES } from "@/lib/infinity/venture-factory/constants";
 import { dispatchBuildWorkerHandler } from "./build-v1-handlers";
+import { dispatchAiWebsiteWorkerHandler } from "./ai-website-v1-handlers";
 import { dispatchWebsiteWorkerHandler } from "./website-v1-handlers";
 
 export async function runResearchSummarizeInternalEvidence(
@@ -252,6 +253,11 @@ export async function dispatchWorkerHandler(
   const buildResult = await dispatchBuildWorkerHandler(admin, context);
   if (buildResult) {
     return buildResult;
+  }
+
+  const aiWebsiteResult = await dispatchAiWebsiteWorkerHandler(admin, context);
+  if (aiWebsiteResult) {
+    return aiWebsiteResult;
   }
 
   const websiteResult = await dispatchWebsiteWorkerHandler(admin, context);

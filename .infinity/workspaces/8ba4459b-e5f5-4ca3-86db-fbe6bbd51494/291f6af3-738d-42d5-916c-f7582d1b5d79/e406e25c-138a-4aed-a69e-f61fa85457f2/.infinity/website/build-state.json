@@ -1,0 +1,289 @@
+{
+  "completedSteps": [
+    "website.generate_structure",
+    "website.generate_components",
+    "website.generate_ai_planned_pages",
+    "website.generate_ai_planned_content",
+    "website.generate_styles",
+    "website.generate_metadata",
+    "website.generate_sitemap",
+    "website.generate_robots",
+    "website.validate_structure",
+    "website.validate_accessibility",
+    "website.validate_seo",
+    "website.validate_security",
+    "website.package_internal_source"
+  ],
+  "routeManifest": [
+    {
+      "slug": "",
+      "path": "/",
+      "pageType": "home",
+      "title": "E2E Content Site"
+    }
+  ],
+  "componentManifest": [
+    {
+      "name": "Header",
+      "path": "components/Header.html"
+    },
+    {
+      "name": "Navigation",
+      "path": "components/Navigation.html"
+    },
+    {
+      "name": "Footer",
+      "path": "components/Footer.html"
+    },
+    {
+      "name": "Hero",
+      "path": "components/Hero.html"
+    },
+    {
+      "name": "ContentSection",
+      "path": "components/ContentSection.html"
+    },
+    {
+      "name": "FeatureGrid",
+      "path": "components/FeatureGrid.html"
+    },
+    {
+      "name": "CTASection",
+      "path": "components/CTASection.html"
+    },
+    {
+      "name": "Card",
+      "path": "components/Card.html"
+    },
+    {
+      "name": "TestimonialPlaceholder",
+      "path": "components/TestimonialPlaceholder.html"
+    },
+    {
+      "name": "FAQSection",
+      "path": "components/FAQSection.html"
+    },
+    {
+      "name": "ContactFormPlaceholder",
+      "path": "components/ContactFormPlaceholder.html"
+    },
+    {
+      "name": "Breadcrumbs",
+      "path": "components/Breadcrumbs.html"
+    },
+    {
+      "name": "ArticleLayout",
+      "path": "components/ArticleLayout.html"
+    },
+    {
+      "name": "ComparisonTable",
+      "path": "components/ComparisonTable.html"
+    },
+    {
+      "name": "LegalNotice",
+      "path": "components/LegalNotice.html"
+    }
+  ],
+  "metadataManifest": {
+    "origin": "https://example.invalid",
+    "pages": [
+      {
+        "path": "/",
+        "title": "E2E Content Site",
+        "description": "[CONTENT REQUIRED]"
+      },
+      {
+        "path": "/about",
+        "title": "About",
+        "description": "[CONTENT REQUIRED]"
+      },
+      {
+        "path": "/contact",
+        "title": "Contact",
+        "description": "[CONTENT REQUIRED]"
+      },
+      {
+        "path": "/articles",
+        "title": "Articles",
+        "description": "[CONTENT REQUIRED]"
+      },
+      {
+        "path": "/pillar-pages",
+        "title": "pillar_pages",
+        "description": "[CONTENT REQUIRED]"
+      },
+      {
+        "path": "/topic-clusters",
+        "title": "topic_clusters",
+        "description": "[CONTENT REQUIRED]"
+      }
+    ],
+    "openGraphPlaceholder": true
+  },
+  "sitemapManifest": {
+    "urls": [
+      "https://example.invalid/",
+      "https://example.invalid/about",
+      "https://example.invalid/contact",
+      "https://example.invalid/articles",
+      "https://example.invalid/pillar-pages",
+      "https://example.invalid/topic-clusters"
+    ]
+  },
+  "fileManifest": [
+    {
+      "path": "ai-content-manifest.json",
+      "hash": "7f9d99e1228f02de3bf2f93517e2de8ad0adfedb6a1ae32e294a278ca0590f5a",
+      "bytes": 696
+    },
+    {
+      "path": "build-manifest.json",
+      "hash": "2731a499ecb8df36cf24fd8c793ac4800274954d53dc6a3764f1ec51f8741e64",
+      "bytes": 20132
+    },
+    {
+      "path": "build-specification.json",
+      "hash": "fd469e8088361ac9ad11749aa097967b06196f06099b312c42bb747d7014e296",
+      "bytes": 8211
+    },
+    {
+      "path": "components/ArticleLayout.html",
+      "hash": "bd89607569990ec35e10e9cf46ec6178cbe0b6477b6664fae8a291720142fba8",
+      "bytes": 158
+    },
+    {
+      "path": "components/Breadcrumbs.html",
+      "hash": "ce5bf08cb0e7240b89622cf06556aa667f9fef14cc08d5c7aa9aa622215c4195",
+      "bytes": 154
+    },
+    {
+      "path": "components/Card.html",
+      "hash": "c4bbf9afe9d04f1871be0ff68d8f60bd9201159a93a2028b901d77a850661f88",
+      "bytes": 140
+    },
+    {
+      "path": "components/ComparisonTable.html",
+      "hash": "5ddddc994e8cb7ae7d513e7e55bcf169eb4aea045f1d3e11540ee33ac3aa868f",
+      "bytes": 162
+    },
+    {
+      "path": "components/ContactFormPlaceholder.html",
+      "hash": "a6b45a5f60bf831decdeed03e0d7c8677889db3b43eed608441d0fd73b91d9ed",
+      "bytes": 176
+    },
+    {
+      "path": "components/ContentSection.html",
+      "hash": "29236cb85ca842f3120f48d5d650f8e46f7a1d38defffe57e07e175843dca8f5",
+      "bytes": 160
+    },
+    {
+      "path": "components/CTASection.html",
+      "hash": "b2dcfa8e29558c14299bf04505546630d9d11491486a0f6ca6b8156d86d8bc4b",
+      "bytes": 152
+    },
+    {
+      "path": "components/FAQSection.html",
+      "hash": "0c037c4ef1d8e702caf98450aca3bef62c93ecd64bfef1c5c90f862c661e774f",
+      "bytes": 152
+    },
+    {
+      "path": "components/FeatureGrid.html",
+      "hash": "2c7c7dec46b88bd30397eed3d667018e542c449a8fe62b1eec4e8f398793f226",
+      "bytes": 154
+    },
+    {
+      "path": "components/Footer.html",
+      "hash": "532e9b037c6cfc8158d1d615ec4ee15fb0179d6266d6ce22d41d14452768b0a5",
+      "bytes": 144
+    },
+    {
+      "path": "components/Header.html",
+      "hash": "9b0803615c6bf85f7af77375129d47cde84d22ee1376e5478489cce8d966b7b7",
+      "bytes": 144
+    },
+    {
+      "path": "components/Hero.html",
+      "hash": "d49218237c6151bd6f813296cd80f579c6865dcd71e4eaa5d7d1ef3a0fc4983d",
+      "bytes": 140
+    },
+    {
+      "path": "components/LegalNotice.html",
+      "hash": "f592d9a2d0c1c9f7aab8d82e84f914be5358b7a7c894ccd7bd58c42fc376e27a",
+      "bytes": 154
+    },
+    {
+      "path": "components/Navigation.html",
+      "hash": "a857caa8741b6d641317bc376f7404143db6e27c33c95be709de71522988fe73",
+      "bytes": 152
+    },
+    {
+      "path": "components/TestimonialPlaceholder.html",
+      "hash": "fe80701d6ff2735a31743b9cf37c69d8c8572fa843b58a251effe467eabb0a05",
+      "bytes": 176
+    },
+    {
+      "path": "content-drafts/home-hero.txt",
+      "hash": "3e093d467179a82cf1873b99973e6758c2b0c5b2da7dc79838fdf806f62645a2",
+      "bytes": 19
+    },
+    {
+      "path": "index.html",
+      "hash": "0f1fad0da167c50e78411ed463f70f4b3a69ca3244a6f1bf13368cce0f5b781b",
+      "bytes": 754
+    },
+    {
+      "path": "internal-website-package.json",
+      "hash": "1cba8379bf810b50d0fc2e47d41bfc7763003c67ebce5e63ed4cffe418e0438d",
+      "bytes": 4718
+    },
+    {
+      "path": "metadata-manifest.json",
+      "hash": "6ea2cc8bf69f609b1408bcdf2c5256e0434e00e8a027848bb7f02ca61309b865",
+      "bytes": 757
+    },
+    {
+      "path": "robots.txt",
+      "hash": "eb2d688ed0b471b044c254a030dabece4e96774d553965a1cd6b86a6146d9d5b",
+      "bytes": 112
+    },
+    {
+      "path": "site-structure.json",
+      "hash": "43aea877344f39f6ed7190b7ef9ef174920984d13eeb38ac4db7a54cddc07fab",
+      "bytes": 212
+    },
+    {
+      "path": "sitemap.xml",
+      "hash": "dad748d5404579d37484ee24c6e1d0e27fae405041a5db0d3b99710daaa47b7f",
+      "bytes": 450
+    },
+    {
+      "path": "src/styles.css",
+      "hash": "2a6a4fd2ffabf1f6ab5c714bfa838860d5198629095f9c8e64e81ac424c26204",
+      "bytes": 1285
+    },
+    {
+      "path": "styles.css",
+      "hash": "2a6a4fd2ffabf1f6ab5c714bfa838860d5198629095f9c8e64e81ac424c26204",
+      "bytes": 1285
+    }
+  ],
+  "validationReports": {
+    "website.validate_structure": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_accessibility": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_seo": {
+      "valid": true,
+      "issues": []
+    },
+    "website.validate_security": {
+      "valid": true,
+      "issues": []
+    }
+  },
+  "packageArtifactPath": "internal-website-package.json"
+}

@@ -14,6 +14,11 @@ import {
 import { enrichSpecificationWithWebsite } from "@/lib/infinity/website-builder/specifications";
 import { isWebsiteV1ProjectType } from "@/lib/infinity/website-builder/types";
 import { WEBSITE_TASK_CAPABILITY_KEYS } from "@/lib/infinity/website-builder/constants";
+import { websiteTaskGraphStepCount } from "@/lib/infinity/website-builder/task-graph";
+import {
+  loadAiWebsiteGenerationMode,
+  modeEnablesAiWebsiteTasks,
+} from "@/lib/infinity/ai-website-generation/modes";
 
 export function resolveBuildProjectType(blueprint: PersistedVentureBlueprint): BuildProjectType {
   const mapped = VENTURE_TYPE_TO_BUILD_PROJECT[blueprint.ventureType];
@@ -107,17 +112,37 @@ export function createBuildSpecification(input: {
   });
 
   if (isWebsiteV1ProjectType(projectType) && status !== "unsupported_for_build_v1") {
+    const aiMode = loadAiWebsiteGenerationMode();
+    const aiEnabled = modeEnablesAiWebsiteTasks(aiMode);
     const enriched = enrichSpecificationWithWebsite(spec);
+    enriched.aiWebsiteGeneration = { enabled: aiEnabled, mode: aiMode };
+    const aiCaps = aiEnabled
+      ? [
+          "ai_website.build_context",
+          "ai_website.generate_plan",
+          "ai_website.validate_plan",
+          "ai_website.request_review",
+          "ai_website.translate_approved_plan",
+          "website.generate_ai_planned_pages",
+          "website.generate_ai_planned_content",
+        ]
+      : [];
+    const websiteCaps = aiEnabled
+      ? WEBSITE_TASK_CAPABILITY_KEYS.filter((k) => k !== "website.generate_pages")
+      : [...WEBSITE_TASK_CAPABILITY_KEYS];
     enriched.approvedCapabilities = [
       "build.workspace_initialize",
       "build.persist_specification",
       "build.persist_manifest",
-      ...WEBSITE_TASK_CAPABILITY_KEYS,
-      "qa.verify_internal_website",
+      ...aiCaps,
+      ...websiteCaps,
+      aiEnabled ? "qa.verify_ai_generated_website" : "qa.verify_internal_website",
       "build.snapshot_workspace",
     ];
-    enriched.requiredReviews = ["qa.verify_internal_website"];
-    enriched.estimatedTasks = 17;
+    enriched.requiredReviews = [
+      aiEnabled ? "qa.verify_ai_generated_website" : "qa.verify_internal_website",
+    ];
+    enriched.estimatedTasks = websiteTaskGraphStepCount({ aiGenerationEnabled: aiEnabled });
     enriched.outputTypes = ["internal_website_source_package"];
     enriched.specificationHash = hashJson({
       schema: BUILD_SPECIFICATION_SCHEMA_VERSION,
