@@ -160,9 +160,20 @@ export function evaluateStage(
       }
 
       if (!inspection.hasExecutiveContext) {
+        const ctxKey = idempotencyKey(instance, "executive_build_context");
+        if (!hasIdempotency(context, ctxKey)) {
+          return {
+            outcome: { kind: "wait", reason: "Executive context job requested." },
+            workRequest: {
+              kind: "executive_build_context",
+              idempotencyKey: ctxKey,
+              contextHash: inspection.executiveContextHash ?? "pending",
+            },
+          };
+        }
         return {
           outcome: { kind: "wait", reason: "Executive context required before reasoning." },
-          workRequest: { kind: "none" },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
         };
       }
 
@@ -223,12 +234,47 @@ export function evaluateStage(
     case "executive": {
       if (inspection.hasPendingExecutiveJobs) {
         return {
-          outcome: { kind: "wait", reason: "Executive evaluation jobs running." },
+          outcome: { kind: "wait", reason: "Executive selection jobs running." },
           workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
         };
       }
 
-      if (inspection.hasExecutiveRejectOrDefer) {
+      if (inspection.hasExecutiveEscalationPending) {
+        return {
+          outcome: {
+            kind: "wait",
+            reason: "Executive escalation requires human review before planning.",
+          },
+          workRequest: { kind: "none" },
+        };
+      }
+
+      if (
+        inspection.hasExecutiveContext &&
+        !inspection.hasExecutiveSelectionQaPassed &&
+        !inspection.hasExecutiveSelectionPlanningEligible &&
+        inspection.executiveContextId &&
+        inspection.executiveContextHash
+      ) {
+        const key = idempotencyKey(instance, "exec_sel_remainder");
+        if (!hasIdempotency(context, key)) {
+          return {
+            outcome: { kind: "wait", reason: "Executive autonomous selection pipeline requested." },
+            workRequest: {
+              kind: "executive_selection_remainder",
+              idempotencyKey: key,
+              contextHash: inspection.executiveContextHash,
+              executiveContextId: inspection.executiveContextId,
+            },
+          };
+        }
+        return {
+          outcome: { kind: "wait", reason: "Waiting for Executive selection QA." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+        };
+      }
+
+      if (inspection.hasExecutiveRejectOrDefer && !inspection.hasExecutiveSelectionPlanningEligible) {
         return {
           outcome: { kind: "block", reason: "Executive rejected or deferred opportunity." },
           workRequest: { kind: "none" },
@@ -236,9 +282,15 @@ export function evaluateStage(
       }
 
       if (!inspection.hasExecutiveApproveOrQueue) {
+        if (!inspection.hasExecutiveContext) {
+          return {
+            outcome: { kind: "wait", reason: "Executive decision required." },
+            workRequest: { kind: "command_autonomous", idempotencyKey: idempotencyKey(instance, "executive") },
+          };
+        }
         return {
-          outcome: { kind: "wait", reason: "Executive decision required." },
-          workRequest: { kind: "command_autonomous", idempotencyKey: idempotencyKey(instance, "executive") },
+          outcome: { kind: "wait", reason: "Executive autonomous selection in progress." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
         };
       }
 
@@ -257,9 +309,19 @@ export function evaluateStage(
 
     case "planning": {
       if (!inspection.hasPlannerEligiblePlan) {
+        const key = idempotencyKey(instance, "planner_executive_handoff");
+        if (!hasIdempotency(context, key)) {
+          return {
+            outcome: { kind: "wait", reason: "Planner Executive handoff requested." },
+            workRequest: { kind: "planner_executive_handoff", idempotencyKey: key },
+          };
+        }
         return {
-          outcome: { kind: "wait", reason: "Planner gate: eligible plan not ready." },
-          workRequest: { kind: "command_autonomous", idempotencyKey: idempotencyKey(instance, "planning") },
+          outcome: {
+            kind: "wait",
+            reason: inspection.plannerHandoffBlocker ?? "Planner gate: eligible plan not ready.",
+          },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
         };
       }
 

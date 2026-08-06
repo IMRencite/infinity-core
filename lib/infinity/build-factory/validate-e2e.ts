@@ -22,6 +22,7 @@ export type BuildFactoryE2EReport = {
   validationRunId: string;
   executiveDecisionId: string;
   planId: string;
+  allocationId: string;
   blueprintId: string;
   buildId: string;
   specificationVersion: string;
@@ -255,18 +256,32 @@ export async function runBuildFactoryE2EValidation(
     .eq("id", blueprintRecord.id)
     .eq("organization_id", orgId);
 
-  const { data: runtime } = await admin
+  const { data: existingRuntime } = await admin
     .from("mission_runtime_instances")
-    .insert({
-      organization_id: orgId,
-      mission_id: mission.id,
-      status: "running",
-      current_stage: "execution",
-      runtime_version: "v2",
-      context: { e2e: BUILD_E2E_LABEL },
-    })
     .select("id")
-    .single();
+    .eq("mission_id", mission.id)
+    .in("status", ["ready", "running", "waiting", "blocked", "paused"])
+    .maybeSingle();
+
+  let runtimeId = existingRuntime?.id ?? "";
+  if (!runtimeId) {
+    const { data: runtime, error: runtimeError } = await admin
+      .from("mission_runtime_instances")
+      .insert({
+        organization_id: orgId,
+        mission_id: mission.id,
+        status: "running",
+        current_stage: "execution",
+        runtime_version: "v2",
+        context: { e2e: BUILD_E2E_LABEL },
+      })
+      .select("id")
+      .single();
+    if (runtimeError || !runtime) {
+      throw new Error(runtimeError?.message ?? "mission runtime instance required for build E2E");
+    }
+    runtimeId = runtime.id;
+  }
 
   const { data: plan } = await admin
     .from("plans")
@@ -289,7 +304,7 @@ export async function runBuildFactoryE2EValidation(
   const factoryInput = {
     organizationId: orgId,
     missionId: mission.id,
-    runtimeInstanceId: runtime?.id ?? null,
+    runtimeInstanceId: runtimeId,
     opportunityId: opp.id,
     ventureBlueprintId: blueprintRecord.id,
     planId: plan.id,
@@ -304,7 +319,7 @@ export async function runBuildFactoryE2EValidation(
 
   const build = first.status !== "blocked" ? first.build : null;
   if (!build) {
-    return failReport(errors, orgId, mission.id, runtime?.id ?? "", opp.id, validationRun.id, decision.id, plan.id, blueprintRecord.id);
+    return failReport(errors, orgId, mission.id, runtimeId, opp.id, validationRun.id, decision.id, plan.id, blueprintRecord.id);
   }
 
   const spec = build.specification;
@@ -536,11 +551,12 @@ export async function runBuildFactoryE2EValidation(
   return {
     organizationId: orgId,
     missionId: mission.id,
-    runtimeInstanceId: runtime?.id ?? "",
+    runtimeInstanceId: runtimeId,
     opportunityId: opp.id,
     validationRunId: validationRun.id,
     executiveDecisionId: decision.id,
     planId: plan.id,
+    allocationId: allocation.id,
     blueprintId: blueprintRecord.id,
     buildId: build.id,
     specificationVersion: build.specificationVersion,
@@ -587,6 +603,7 @@ function failReport(
     validationRunId,
     executiveDecisionId,
     planId,
+    allocationId: "",
     blueprintId,
     buildId: "",
     specificationVersion: "",

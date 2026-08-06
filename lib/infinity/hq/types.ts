@@ -176,6 +176,8 @@ export type MissionInspectorData = {
   validationRuns: Record<string, unknown>[];
   reasoningSessions: Record<string, unknown>[];
   executiveDecisions: Record<string, unknown>[];
+  executiveSelectionDecisions: Record<string, unknown>[];
+  executivePlannerHandoff: Record<string, unknown> | null;
   allocationProposals: Record<string, unknown>[];
   engineJobs: Record<string, unknown>[];
   workerRuns: Record<string, unknown>[];

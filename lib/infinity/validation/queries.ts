@@ -183,7 +183,7 @@ export async function selectOpportunityForInitiativePlanning(
 ): Promise<{ id: string; name: string } | null> {
   const { data: approvedRuns, error } = await supabase
     .from("validation_runs")
-    .select("opportunity_id, completed_at")
+    .select("opportunity_id, mission_id, completed_at")
     .eq("organization_id", organizationId)
     .eq("run_status", "completed")
     .eq("recommendation", "approved_for_planning")
@@ -222,6 +222,54 @@ export async function selectOpportunityForInitiativePlanning(
 
     if (alreadyRecorded) {
       continue;
+    }
+
+    if (run.mission_id) {
+      const { data: v2Selection } = await supabase
+        .from("executive_selection_decisions")
+        .select("id, opportunity_id, decision, planning_eligible, status, review_status")
+        .eq("organization_id", organizationId)
+        .eq("mission_id", run.mission_id)
+        .eq("opportunity_id", run.opportunity_id)
+        .eq("decision", "select_for_planning")
+        .eq("planning_eligible", true)
+        .eq("status", "finalized")
+        .eq("review_status", "passed")
+        .limit(1)
+        .maybeSingle();
+
+      if (v2Selection) {
+        const { data: v2Plan } = await supabase
+          .from("plans")
+          .select("id, metadata")
+          .eq("organization_id", organizationId)
+          .eq("mission_id", run.mission_id)
+          .eq("status", "active")
+          .limit(20);
+
+        const hasV2Plan = (v2Plan ?? []).some((plan) => {
+          if (typeof plan.metadata !== "object" || plan.metadata === null || Array.isArray(plan.metadata)) {
+            return false;
+          }
+          const metadata = plan.metadata as Record<string, unknown>;
+          return metadata.canonical_executive_selection_decision_id === v2Selection.id;
+        });
+
+        if (hasV2Plan) {
+          continue;
+        }
+
+        const { data: opportunity } = await supabase
+          .from("opportunities")
+          .select("id, name")
+          .eq("organization_id", organizationId)
+          .eq("id", run.opportunity_id)
+          .maybeSingle();
+
+        if (opportunity) {
+          return { id: opportunity.id, name: opportunity.name };
+        }
+      }
     }
 
     const { data: executiveDecision } = await supabase

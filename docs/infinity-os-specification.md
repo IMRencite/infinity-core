@@ -259,7 +259,7 @@ An **Asset** is a discrete item created, acquired, owned, managed, improved, mon
 
 **Registration seam:** server-side `registerAsset()` for future engines (Build Factory, acquisition systems). No manual asset form in v1; no seed assets.
 
-**Not yet implemented:** Build Factory asset creation, external account provisioning, domain purchasing, automated valuation models, acquisition/sale workflows.
+**Not yet implemented:** external account provisioning, domain purchasing, automated valuation models, acquisition/sale workflows, **public deployment and asset launch** (internal Build Factory v2 sandbox builds and snapshots are implemented).
 
 ### Asset examples (conceptual)
 
@@ -433,8 +433,9 @@ Mission Runtime is the **durable lifecycle owner** for active missions. It sits 
 | Durability | Instances, append-only transitions, immutable checkpoints |
 | Locking | Atomic claim via `claim_mission_runtime_instance` (service_role); lease expiry enables recovery |
 | Gates | Validation (`approved_for_planning`), Executive, and Planner gates enforced in stage handlers |
-| AI | **Governed advisory reasoning** (`lib/infinity/governed-reasoning/`): modes `mock`, `shadow`, `advisory`, `disabled` (default **disabled**). OpenAI is the first real provider (`lib/infinity/ai-providers/openai/`, Responses API + strict JSON schema). Output is **advisory only** — Validation, Executive, Planner gating, and Mission Runtime remain authoritative. No chain-of-thought persistence. Server-only `OPENAI_*` secrets. **Build Factory** still unimplemented |
-| Build Factory | Unimplemented — `build.*` capabilities block at execution |
+| Executive → Planner (v1) | Canonical source: immutable `executive_selection_decisions` with `select_for_planning` + `planning_eligible` + independent QA passed. Legacy `executive_decisions` remain for v1 initiative reads via `PlannerExecutiveAuthorization` adapter — not duplicated as a second source of truth. Runtime **executive** stage waits on pending Executive jobs/QA/escalation; advances to **planning** on a later tick only. **Planning** stage runs `planner_executive_handoff` once (idempotent); Planner verifies authorization and creates exactly one durable plan (bounded steps, plan QA, no build/deploy/publish/venture). Runtime observes the plan on a subsequent tick before allocation. |
+| AI | **Governed advisory reasoning** (`lib/infinity/governed-reasoning/`): modes `mock`, `shadow`, `advisory`, `disabled` (default **disabled**). OpenAI is the first real provider (`lib/infinity/ai-providers/openai/`, Responses API + strict JSON schema). Output is **advisory only** — Validation, Executive, Planner gating, and Mission Runtime remain authoritative. No chain-of-thought persistence. Server-only `OPENAI_*` secrets. |
+| Build Factory | **Runtime v2 implemented** for governed **internal** builds (`requestBuildFactoryRuntimeV2`, generic `build_jobs`, Builder Registry adapters). Existing website builders are registered adapters (`website.internal_*`). Scheduler + Worker Runtime execute `build.*` / `website.*` / QA in sandboxes. **Public deployment, publishing, domains, hosting, and launch remain unimplemented.** Internal completion (`internally_complete`) is not deployed, live, or revenue-generating. |
 
 **Stages (sequential, v2):** command → discovery → evaluation → validation → reasoning → executive → planning → allocation → scheduling → execution → review → completed.
 
@@ -625,7 +626,7 @@ Build Factory implementations register at deploy time; Planner references builde
 | 5 | **Validation Engine** | Hypothesis testing | experiments, results | Planned |
 | 6 | **Decision Support Engine** | Analysis for Command decisions | recommendations (labeled) | Planned |
 | 7 | **Business Architect** | Venture blueprint | architecture artifacts | Planned |
-| 8 | **Build Factory** | Asset production and integration | assets, deployments | Planned |
+| 8 | **Build Factory** | Asset production and integration | assets, deployments | **Partial (internal v2)** — governed internal builds; deploy/publish not implemented |
 | 9 | **Launch Engine** | Controlled go-live | launch records | Planned |
 | 10 | **Execution Engine** | Ongoing operations | operational tasks | Planned |
 | 11 | **Growth Engine** | Distribution and revenue growth | campaigns, experiments | Planned |
@@ -765,6 +766,8 @@ Brand, domain, frontend, backend, database, authentication, billing, ecommerce, 
 ### Requirements
 
 Artifact versioning, acceptance tests, rollback procedures, ownership records, deployment records.
+
+**Runtime v2 (implemented foundation):** `lib/infinity/build-factory/` extends v1 with product-neutral `build_jobs`, server-seeded `builder_registry_entries`, `requestBuildFactoryRuntimeV2`, BuilderPlugin adapters (`website.internal_*` wrap Website Build Worker v1), dual QA (`qa.verify_generic_internal_build` + product QA), bounded repair, rollback mode disclosure (`metadata_only` default). Internal completion only — no deploy, publish, shell, network, or package install.
 
 ---
 
@@ -996,7 +999,7 @@ Historical models and scoring versions are **preserved**—past decisions are no
 | **9 — Execution and Growth** | Workers, campaigns, metrics, optimization, **worker registration and quality feedback to Registry** |
 | **10 — Portfolio Intelligence** | Capital allocation, cross-venture learning, acquisitions/partnerships |
 
-**Current position:** Phase 1 complete (Discovery schema foundation). Phase 2 OS Foundation and durable execution runtime substantially implemented in `infinity-core` (missions, Command, Planner, Scheduler seam, Registry seed, Worker Runtime, deterministic discovery scan, development Command controls). Continuous autonomous observation, external evidence, asset persistence, Build Factory, and Memory remain future phases.
+**Current position:** Phase 1 complete (Discovery schema foundation). Phase 2 OS Foundation and durable execution runtime substantially implemented in `infinity-core` (missions, Command, Planner, Scheduler seam, Registry seed, Worker Runtime, deterministic discovery scan, development Command controls, **Build Factory Runtime v2 for internal builds**). Continuous autonomous observation, external evidence, **public deployment/launch**, and Memory remain future phases.
 
 ---
 
@@ -1072,13 +1075,14 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Validation Engine Foundation v1** | `validation_models`, `validation_runs`, dimension results, findings, requirements, `validation.run` worker, Planner gating (`approved_for_planning`), read-only Validation UI — **deterministic only; AI Reasoning Layer not implemented** |
 | **Infinity HQ Command Center Foundation v1** | `/dashboard` operator observability — read-only query layer `lib/infinity/hq/`, pipelines, health, alerts, mission inspector; **does not** own business logic or bypass Mission Runtime; metrics from durable records only; blueprints labeled **not executed**; **revenue tracking not implemented** |
 | **Build Factory Foundation v1** | Internal sandbox workspaces under `.infinity/workspaces/`; `builds` / `build_snapshots`; templates for website project types; governed `build.*`, `website.*`, and independent QA capabilities; **no deploy, publish, npm install, network, or purchases** |
+| **Build Factory Runtime v2** | Generic product-neutral `build_jobs`; Builder Registry adapters (`website.internal_*`); `requestBuildFactoryRuntimeV2`; dual QA (product + `qa.verify_generic_internal_build`); bounded repair; rollback mode labeling; Mission Runtime observes BuildJob completion on later ticks; **internal completion only — not deployed, published, live, or revenue-generating** |
 | **Website Build Worker Foundation v1** | Deterministic internal website source; `website.*` capabilities; `website_build_metadata`; not deployed |
 | **AI Website Generation Foundation v1** | Advisory `WebsiteGenerationPlan` via governed provider (mock default); context manifest + honesty rules; approval before deterministic translation; no AI filesystem writes |
 | **Worker Capability Foundation v1** | Governed worker contract in `lib/infinity/workers/`; `worker_results` / `worker_artifacts`; safe internal capabilities; Scheduler → Registry → Worker Runtime dispatcher; Mission Runtime observes results on later ticks; **no deployment/financial side effects** |
 
 ### Not yet implemented (planned)
 
-Continuous scheduler or cron, autonomous observation, **external source adapters**, real opportunity generation from external sources, **AI Reasoning Layer (LLMs)**, **Build Factory**, autonomous launching, automated enterprise-value calculations, real financial account integration, acquisitions, portfolio compounding intelligence, **semantic embeddings**, **vector search**, **entity extraction**, **knowledge graph traversal**, AI synthesis, automatic lessons from financial outcomes, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
+Continuous scheduler or cron, autonomous observation, **external source adapters**, real opportunity generation from external sources, **AI Reasoning Layer (LLMs)**, **public Build Factory deployment and launch**, autonomous launching, automated enterprise-value calculations, real financial account integration, acquisitions, portfolio compounding intelligence, **semantic embeddings**, **vector search**, **entity extraction**, **knowledge graph traversal**, AI synthesis, automatic lessons from financial outcomes, initiative/venture promotion automation, external account creation, domain purchasing, website deployment, asset sale workflows, evidence-based asset decisions.
 
 ### Important clarifications
 
@@ -1089,7 +1093,7 @@ Continuous scheduler or cron, autonomous observation, **external source adapters
 - **Assets are persisted (Asset Foundation v1)** — read-only portfolio UI; no seed assets; registration is server-side only.
 - **Institutional intelligence is persisted (EKM Foundation v1)** — read-only Intelligence UI; deterministic runtime validation evidence only; no external research or AI synthesis yet.
 - **Validation proves assumptions before planning (Validation Foundation v1)** — deterministic categories and findings only; never approves building; Planner accepts opportunities only after `approved_for_planning`. No LLM or external research.
-- **Infinity HQ is observability only (HQ Foundation v1)** — aggregates read-only org-scoped queries for operators; does not replace engines or add mutation bypasses; **Build Factory** and **revenue tracking** remain not implemented; venture **blueprints** in HQ are planning artifacts, not launched ventures.
+- **Infinity HQ is observability only (HQ Foundation v1)** — aggregates read-only org-scoped queries for operators; does not replace engines or add mutation bypasses; **Build Factory Runtime v2** internal build visibility is supported; **public deployment, publishing, and revenue tracking** remain not implemented; venture **blueprints** in HQ are planning artifacts, not launched ventures.
 - **Workers are bounded capability executors (Worker Capability Foundation v1)** — Registry resolves capabilities; Scheduler queues durable jobs; Worker Runtime runs the governed dispatcher; workers **do not** advance Mission Runtime stages directly; permissions and policy gates enforced at execution boundary; internal **worker artifacts** are not business assets or deployments.
 
 ---

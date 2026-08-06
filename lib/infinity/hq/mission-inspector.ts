@@ -2,6 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import { redactSecrets } from "./formatters";
 import type { MissionInspectorData } from "./types";
+import { loadCanonicalExecutiveSelectionForMission } from "@/lib/infinity/executive-selection/authorization";
+import { missionHasCanonicalHandoffPlan } from "@/lib/infinity/orchestration/mission-planner-handoff";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
@@ -55,6 +57,7 @@ export async function loadMissionInspector(
     { data: validationRuns },
     { data: reasoningSessions },
     { data: executiveDecisions },
+    { data: executiveSelectionDecisions },
     { data: allocationProposals },
     { data: engineJobs },
     { data: workerRuns },
@@ -97,6 +100,15 @@ export async function loadMissionInspector(
     supabase
       .from("executive_decisions")
       .select("*")
+      .eq("organization_id", organizationId)
+      .eq("mission_id", missionId)
+      .order("created_at", { ascending: false })
+      .limit(20),
+    supabase
+      .from("executive_selection_decisions")
+      .select(
+        "id, decision, planning_eligible, review_status, status, opportunity_id, finalized_at, executive_context_id",
+      )
       .eq("organization_id", organizationId)
       .eq("mission_id", missionId)
       .order("created_at", { ascending: false })
@@ -177,6 +189,24 @@ export async function loadMissionInspector(
   const blueprintForMission =
     blueprint && oppIdList.includes(blueprint.opportunity_id) ? blueprint : null;
 
+  const canonicalAuth = await loadCanonicalExecutiveSelectionForMission(
+    supabase,
+    organizationId,
+    missionId,
+  );
+  const handoffPlan = await missionHasCanonicalHandoffPlan(supabase, organizationId, missionId);
+
+  const executivePlannerHandoff = {
+    source: canonicalAuth ? "executive_selection_v2" : "legacy_or_none",
+    canonicalExecutiveSelectionDecisionId: canonicalAuth?.canonicalDecisionId ?? null,
+    selectedOpportunityId: canonicalAuth?.opportunityId ?? null,
+    planningEligible: canonicalAuth?.planningEligible ?? false,
+    executiveQaStatus: canonicalAuth?.reviewStatus ?? null,
+    plannerAuthorizationStatus: handoffPlan.hasPlan ? (handoffPlan.qaPassed ? "verified" : "blocked") : "pending",
+    planId: handoffPlan.planId,
+    handoffBlocker: handoffPlan.hasPlan && !handoffPlan.qaPassed ? "plan_qa_not_passed" : null,
+  };
+
   return {
     mission: sanitizeRecord(mission as unknown as Record<string, unknown>),
     runtime: runtime ? sanitizeRecord(runtime as unknown as Record<string, unknown>) : null,
@@ -192,6 +222,10 @@ export async function loadMissionInspector(
     executiveDecisions: (executiveDecisions ?? []).map((d) =>
       sanitizeRecord(d as unknown as Record<string, unknown>),
     ),
+    executiveSelectionDecisions: (executiveSelectionDecisions ?? []).map((d) =>
+      sanitizeRecord(d as unknown as Record<string, unknown>),
+    ),
+    executivePlannerHandoff: sanitizeRecord(executivePlannerHandoff),
     allocationProposals: (allocationProposals ?? []).map((a) =>
       sanitizeRecord(a as unknown as Record<string, unknown>),
     ),

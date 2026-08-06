@@ -14,6 +14,7 @@ export const V1_WORKER_CAPABILITY_KEYS = [
   "build.validate_manifest",
   "build.snapshot_workspace",
   "qa.verify_internal_build",
+  "qa.verify_generic_internal_build",
   "website.generate_structure",
   "website.generate_components",
   "website.generate_pages",
@@ -35,6 +36,13 @@ export const V1_WORKER_CAPABILITY_KEYS = [
   "website.generate_ai_planned_pages",
   "website.generate_ai_planned_content",
   "qa.verify_ai_generated_website",
+  "executive.build_selection_context",
+  "executive.score_opportunity_set",
+  "executive.request_ai_advisory",
+  "executive.evaluate_constraints",
+  "executive.select_opportunity",
+  "executive.persist_selection_decisions",
+  "qa.verify_executive_selection",
 ] as const;
 
 export type V1WorkerCapabilityKey = (typeof V1_WORKER_CAPABILITY_KEYS)[number];

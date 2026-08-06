@@ -43,6 +43,9 @@ npm run test     # Vitest unit tests
 npm run start    # production server
 npm run db:push  # apply Supabase migrations
 npm run db:types # regenerate database types
+npm run validate:executive-selection-e2e
+npm run validate:executive-planner-handoff-e2e
+npm run validate:build-factory-runtime-v2-e2e
 ```
 
 ## Stack
@@ -54,8 +57,8 @@ npm run db:types # regenerate database types
 
 ## Current build (accurate)
 
-**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**, **Infinity HQ Command Center Foundation v1** (`/dashboard`), **Worker Capability Foundation v1** (governed internal workers), **Build Factory Foundation v1** (internal sandbox builds only — not deployed), **Website Build Worker Foundation v1** (`lib/infinity/website-builder/`) — internal website source in sandboxes; `website.*` workers; independent QA; not deployed. **AI Website Generation Foundation v1** (`lib/infinity/ai-website-generation/`) — advisory plans only; mock/shadow/advisory/disabled; approval before deterministic file generation.
+**Implemented:** Mission, mission policies, Command, Planner, Scheduler, Registry seed, durable engine jobs, Worker Runtime, deterministic discovery scan, development Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1**, **Infinity HQ Command Center Foundation v1** (`/dashboard`), **Worker Capability Foundation v1** (governed internal workers), **Build Factory Foundation v1** (internal sandbox builds only — not deployed), **Website Build Worker Foundation v1** (`lib/infinity/website-builder/`) — internal website source in sandboxes; `website.*` workers; independent QA; not deployed. **AI Website Generation Foundation v1** (`lib/infinity/ai-website-generation/`) — advisory plans only; mock/shadow/advisory/disabled; approval before deterministic file generation. **Executive Context and Autonomous Selection v1** (`lib/infinity/executive-selection/`) — Mission Runtime schedules durable Executive context and worker-driven opportunity selection; ordinary in-policy `select_for_planning` does not require CEO approval; human review only on escalation thresholds. **Build Factory Runtime v2** extends Foundation v1 into a **generic builder-plugin runtime** (`build_jobs`, Builder Registry, `requestBuildFactoryRuntimeV2`) — product-neutral BuildJob contract, website builders as adapters only, dual QA (product + `qa.verify_generic_internal_build`), bounded repair, metadata-only rollback labeling, internal completion only.
 
-**Not yet implemented:** continuous scheduler, autonomous observation, external source adapters, **Build Factory**, venture execution/launch, semantic embeddings, automated valuation models, real financial accounts, **revenue tracking**.
+**Not yet implemented:** continuous scheduler, autonomous observation, external source adapters, **public deployment and venture launch**, semantic embeddings, automated valuation models, real financial accounts, **revenue tracking**. Build Factory Runtime v2 covers **governed internal builds** only; internal completion is not deployed, published, live, or revenue-generating.
 
 See **[OS Specification §27](docs/infinity-os-specification.md#section-27--current-state)** for the full list.

@@ -137,10 +137,12 @@ export function createBuildSpecification(input: {
       ...aiCaps,
       ...websiteCaps,
       aiEnabled ? "qa.verify_ai_generated_website" : "qa.verify_internal_website",
+      "qa.verify_generic_internal_build",
       "build.snapshot_workspace",
     ];
     enriched.requiredReviews = [
       aiEnabled ? "qa.verify_ai_generated_website" : "qa.verify_internal_website",
+      "qa.verify_generic_internal_build",
     ];
     enriched.estimatedTasks = websiteTaskGraphStepCount({ aiGenerationEnabled: aiEnabled });
     enriched.outputTypes = ["internal_website_source_package"];

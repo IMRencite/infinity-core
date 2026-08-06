@@ -637,6 +637,337 @@ export type Database = {
           },
         ]
       }
+      build_jobs: {
+        Row: {
+          allocation_proposal_id: string | null
+          approved_capabilities: Json
+          blocking_reason: string | null
+          build_id: string | null
+          build_manifest_id: string
+          build_specification_id: string
+          build_version: string
+          builder_key: string
+          builder_version: string
+          cancelled_at: string | null
+          completed_at: string | null
+          correlation_id: string | null
+          created_at: string
+          executive_decision_id: string | null
+          failed_at: string | null
+          generic_qa_status: string
+          id: string
+          idempotency_key: string
+          input_manifest: Json
+          lifecycle_stage: string | null
+          max_repair_attempts: number
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          output_contracts: Json
+          plan_id: string | null
+          plan_step_id: string | null
+          policy_manifest: Json
+          product_qa_status: string
+          prohibited_capabilities: Json
+          project_type: string
+          repair_attempt_count: number
+          reproducibility_status: string | null
+          required_reviews: Json
+          resource_budget: Json
+          rollback_mode: string | null
+          runtime_budget: Json
+          runtime_instance_id: string | null
+          started_at: string | null
+          status: string
+          venture_blueprint_id: string
+          workspace_id: string
+        }
+        Insert: {
+          allocation_proposal_id?: string | null
+          approved_capabilities?: Json
+          blocking_reason?: string | null
+          build_id?: string | null
+          build_manifest_id?: string
+          build_specification_id?: string
+          build_version?: string
+          builder_key: string
+          builder_version: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          executive_decision_id?: string | null
+          failed_at?: string | null
+          generic_qa_status?: string
+          id?: string
+          idempotency_key: string
+          input_manifest?: Json
+          lifecycle_stage?: string | null
+          max_repair_attempts?: number
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          output_contracts?: Json
+          plan_id?: string | null
+          plan_step_id?: string | null
+          policy_manifest?: Json
+          product_qa_status?: string
+          prohibited_capabilities?: Json
+          project_type: string
+          repair_attempt_count?: number
+          reproducibility_status?: string | null
+          required_reviews?: Json
+          resource_budget?: Json
+          rollback_mode?: string | null
+          runtime_budget?: Json
+          runtime_instance_id?: string | null
+          started_at?: string | null
+          status?: string
+          venture_blueprint_id: string
+          workspace_id?: string
+        }
+        Update: {
+          allocation_proposal_id?: string | null
+          approved_capabilities?: Json
+          blocking_reason?: string | null
+          build_id?: string | null
+          build_manifest_id?: string
+          build_specification_id?: string
+          build_version?: string
+          builder_key?: string
+          builder_version?: string
+          cancelled_at?: string | null
+          completed_at?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          executive_decision_id?: string | null
+          failed_at?: string | null
+          generic_qa_status?: string
+          id?: string
+          idempotency_key?: string
+          input_manifest?: Json
+          lifecycle_stage?: string | null
+          max_repair_attempts?: number
+          mission_id?: string
+          opportunity_id?: string
+          organization_id?: string
+          output_contracts?: Json
+          plan_id?: string | null
+          plan_step_id?: string | null
+          policy_manifest?: Json
+          product_qa_status?: string
+          prohibited_capabilities?: Json
+          project_type?: string
+          repair_attempt_count?: number
+          reproducibility_status?: string | null
+          required_reviews?: Json
+          resource_budget?: Json
+          rollback_mode?: string | null
+          runtime_budget?: Json
+          runtime_instance_id?: string | null
+          started_at?: string | null
+          status?: string
+          venture_blueprint_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_jobs_allocation_proposal_id_fkey"
+            columns: ["allocation_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "allocation_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_plan_step_id_fkey"
+            columns: ["plan_step_id"]
+            isOneToOne: false
+            referencedRelation: "plan_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_jobs_venture_blueprint_id_fkey"
+            columns: ["venture_blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "venture_blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_repair_attempts: {
+        Row: {
+          attempt_number: number
+          build_id: string | null
+          build_job_id: string
+          created_at: string
+          failing_lifecycle_stage: string
+          failure_classification: string
+          id: string
+          organization_id: string
+          permitted_capabilities: Json
+          result: Json
+          snapshot_reference: string | null
+          status: string
+        }
+        Insert: {
+          attempt_number: number
+          build_id?: string | null
+          build_job_id: string
+          created_at?: string
+          failing_lifecycle_stage: string
+          failure_classification: string
+          id?: string
+          organization_id: string
+          permitted_capabilities?: Json
+          result?: Json
+          snapshot_reference?: string | null
+          status?: string
+        }
+        Update: {
+          attempt_number?: number
+          build_id?: string | null
+          build_job_id?: string
+          created_at?: string
+          failing_lifecycle_stage?: string
+          failure_classification?: string
+          id?: string
+          organization_id?: string
+          permitted_capabilities?: Json
+          result?: Json
+          snapshot_reference?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_repair_attempts_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_repair_attempts_build_job_id_fkey"
+            columns: ["build_job_id"]
+            isOneToOne: false
+            referencedRelation: "build_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_repair_attempts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_rollbacks: {
+        Row: {
+          audit: Json
+          build_id: string
+          build_job_id: string
+          created_at: string
+          id: string
+          organization_id: string
+          rollback_mode: string
+          snapshot_id: string | null
+          status: string
+        }
+        Insert: {
+          audit?: Json
+          build_id: string
+          build_job_id: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          rollback_mode?: string
+          snapshot_id?: string | null
+          status?: string
+        }
+        Update: {
+          audit?: Json
+          build_id?: string
+          build_job_id?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          rollback_mode?: string
+          snapshot_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_rollbacks_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_rollbacks_build_job_id_fkey"
+            columns: ["build_job_id"]
+            isOneToOne: false
+            referencedRelation: "build_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_rollbacks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "build_rollbacks_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "build_snapshots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       build_snapshots: {
         Row: {
           build_id: string
@@ -707,6 +1038,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      builder_registry_entries: {
+        Row: {
+          builder_key: string
+          builder_version: string
+          created_at: string
+          deprecated_at: string | null
+          description: string
+          id: string
+          metadata: Json
+          name: string
+          required_capabilities: Json
+          side_effect_class: string
+          status: string
+          supported_project_types: Json
+          supported_specification_versions: Json
+        }
+        Insert: {
+          builder_key: string
+          builder_version: string
+          created_at?: string
+          deprecated_at?: string | null
+          description?: string
+          id?: string
+          metadata?: Json
+          name: string
+          required_capabilities?: Json
+          side_effect_class?: string
+          status?: string
+          supported_project_types?: Json
+          supported_specification_versions?: Json
+        }
+        Update: {
+          builder_key?: string
+          builder_version?: string
+          created_at?: string
+          deprecated_at?: string | null
+          description?: string
+          id?: string
+          metadata?: Json
+          name?: string
+          required_capabilities?: Json
+          side_effect_class?: string
+          status?: string
+          supported_project_types?: Json
+          supported_specification_versions?: Json
+        }
+        Relationships: []
       }
       builds: {
         Row: {
@@ -1849,6 +2228,105 @@ export type Database = {
           },
         ]
       }
+      executive_contexts: {
+        Row: {
+          completed_at: string | null
+          context_hash: string
+          context_manifest: Json
+          context_version: number
+          correlation_id: string | null
+          created_at: string
+          decision_thresholds: Json
+          error: Json
+          escalation_thresholds: Json
+          failed_at: string | null
+          id: string
+          idempotency_key: string
+          mission_id: string
+          objective: string | null
+          opportunity_ids: string[]
+          organization_id: string
+          policy_version: string
+          portfolio_strategy: string | null
+          resource_constraints: Json
+          risk_constraints: Json
+          runtime_instance_id: string
+          scoring_model_key: string
+          scoring_model_version: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          context_hash: string
+          context_manifest?: Json
+          context_version?: number
+          correlation_id?: string | null
+          created_at?: string
+          decision_thresholds?: Json
+          error?: Json
+          escalation_thresholds?: Json
+          failed_at?: string | null
+          id?: string
+          idempotency_key: string
+          mission_id: string
+          objective?: string | null
+          opportunity_ids?: string[]
+          organization_id: string
+          policy_version?: string
+          portfolio_strategy?: string | null
+          resource_constraints?: Json
+          risk_constraints?: Json
+          runtime_instance_id: string
+          scoring_model_key?: string
+          scoring_model_version?: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          context_hash?: string
+          context_manifest?: Json
+          context_version?: number
+          correlation_id?: string | null
+          created_at?: string
+          decision_thresholds?: Json
+          error?: Json
+          escalation_thresholds?: Json
+          failed_at?: string | null
+          id?: string
+          idempotency_key?: string
+          mission_id?: string
+          objective?: string | null
+          opportunity_ids?: string[]
+          organization_id?: string
+          policy_version?: string
+          portfolio_strategy?: string | null
+          resource_constraints?: Json
+          risk_constraints?: Json
+          runtime_instance_id?: string
+          scoring_model_key?: string
+          scoring_model_version?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executive_contexts_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_contexts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       executive_decisions: {
         Row: {
           capital_context: Json
@@ -1941,6 +2419,163 @@ export type Database = {
           },
           {
             foreignKeyName: "executive_decisions_validation_run_id_fkey"
+            columns: ["validation_run_id"]
+            isOneToOne: false
+            referencedRelation: "validation_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      executive_selection_decisions: {
+        Row: {
+          adjusted_score: number
+          ai_advisory_reference_ids: string[]
+          blockers: Json
+          confidence: number
+          constraint_results: Json
+          context_hash: string
+          created_at: string
+          decision: string
+          decision_model_key: string
+          decision_model_version: string
+          deterministic_score: number
+          escalation_reasons: Json
+          executive_context_id: string
+          finalized_at: string | null
+          id: string
+          idempotency_key: string
+          missing_information: Json
+          mission_id: string
+          opportunity_id: string | null
+          organization_id: string
+          planning_eligible: boolean
+          policy_results: Json
+          policy_version: string
+          rank: number
+          rationale_summary: string
+          reasoning_session_ids: string[]
+          reversible: boolean
+          review_status: string
+          risks: Json
+          runtime_instance_id: string
+          status: string
+          supersedes_decision_id: string | null
+          supporting_evidence_reference_ids: string[]
+          threshold_results: Json
+          validation_run_id: string | null
+        }
+        Insert: {
+          adjusted_score?: number
+          ai_advisory_reference_ids?: string[]
+          blockers?: Json
+          confidence?: number
+          constraint_results?: Json
+          context_hash: string
+          created_at?: string
+          decision: string
+          decision_model_key?: string
+          decision_model_version?: string
+          deterministic_score?: number
+          escalation_reasons?: Json
+          executive_context_id: string
+          finalized_at?: string | null
+          id?: string
+          idempotency_key: string
+          missing_information?: Json
+          mission_id: string
+          opportunity_id?: string | null
+          organization_id: string
+          planning_eligible?: boolean
+          policy_results?: Json
+          policy_version?: string
+          rank?: number
+          rationale_summary?: string
+          reasoning_session_ids?: string[]
+          reversible?: boolean
+          review_status?: string
+          risks?: Json
+          runtime_instance_id: string
+          status?: string
+          supersedes_decision_id?: string | null
+          supporting_evidence_reference_ids?: string[]
+          threshold_results?: Json
+          validation_run_id?: string | null
+        }
+        Update: {
+          adjusted_score?: number
+          ai_advisory_reference_ids?: string[]
+          blockers?: Json
+          confidence?: number
+          constraint_results?: Json
+          context_hash?: string
+          created_at?: string
+          decision?: string
+          decision_model_key?: string
+          decision_model_version?: string
+          deterministic_score?: number
+          escalation_reasons?: Json
+          executive_context_id?: string
+          finalized_at?: string | null
+          id?: string
+          idempotency_key?: string
+          missing_information?: Json
+          mission_id?: string
+          opportunity_id?: string | null
+          organization_id?: string
+          planning_eligible?: boolean
+          policy_results?: Json
+          policy_version?: string
+          rank?: number
+          rationale_summary?: string
+          reasoning_session_ids?: string[]
+          reversible?: boolean
+          review_status?: string
+          risks?: Json
+          runtime_instance_id?: string
+          status?: string
+          supersedes_decision_id?: string | null
+          supporting_evidence_reference_ids?: string[]
+          threshold_results?: Json
+          validation_run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "executive_selection_decisions_executive_context_id_fkey"
+            columns: ["executive_context_id"]
+            isOneToOne: false
+            referencedRelation: "executive_contexts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_selection_decisions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_selection_decisions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_selection_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_selection_decisions_supersedes_decision_id_fkey"
+            columns: ["supersedes_decision_id"]
+            isOneToOne: false
+            referencedRelation: "executive_selection_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "executive_selection_decisions_validation_run_id_fkey"
             columns: ["validation_run_id"]
             isOneToOne: false
             referencedRelation: "validation_runs"
@@ -4060,10 +4695,12 @@ export type Database = {
         Row: {
           blueprint: Json
           created_at: string
+          executive_selection_decision_id: string | null
           id: string
           idempotency_key: string
           opportunity_id: string
           organization_id: string
+          provenance: string
           schema_version: string
           status: string
           template_key: string
@@ -4074,10 +4711,12 @@ export type Database = {
         Insert: {
           blueprint?: Json
           created_at?: string
+          executive_selection_decision_id?: string | null
           id?: string
           idempotency_key: string
           opportunity_id: string
           organization_id: string
+          provenance?: string
           schema_version?: string
           status?: string
           template_key: string
@@ -4088,10 +4727,12 @@ export type Database = {
         Update: {
           blueprint?: Json
           created_at?: string
+          executive_selection_decision_id?: string | null
           id?: string
           idempotency_key?: string
           opportunity_id?: string
           organization_id?: string
+          provenance?: string
           schema_version?: string
           status?: string
           template_key?: string
@@ -4100,6 +4741,13 @@ export type Database = {
           venture_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "venture_blueprints_executive_selection_decision_id_fkey"
+            columns: ["executive_selection_decision_id"]
+            isOneToOne: false
+            referencedRelation: "executive_selection_decisions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "venture_blueprints_opportunity_id_fkey"
             columns: ["opportunity_id"]

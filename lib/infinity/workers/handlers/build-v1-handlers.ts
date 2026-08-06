@@ -353,6 +353,81 @@ export async function runQaVerifyInternalBuild(
   };
 }
 
+async function runQaVerifyGenericInternalBuild(
+  admin: AdminSupabaseClient,
+  context: WorkerExecutionContextBound,
+): Promise<WorkerHandlerResult> {
+  const input = context.approvedInput as Record<string, unknown>;
+  const buildId = requireStringField(input, "build_id");
+  const buildJobId = String(input.build_job_id ?? "");
+
+  const issues: string[] = [];
+  const build = await loadBuildById(admin, context.organizationId, buildId);
+
+  if (!build) {
+    issues.push("build_not_found");
+  }
+  if (!buildJobId) {
+    issues.push("build_job_id_required");
+  }
+
+  if (build && buildJobId) {
+    const { data: job } = await admin
+      .from("build_jobs")
+      .select("id, builder_key, status, product_qa_status")
+      .eq("id", buildJobId)
+      .eq("organization_id", context.organizationId)
+      .maybeSingle();
+
+    if (!job) {
+      issues.push("build_job_not_found");
+    } else if (!job.builder_key.startsWith("website.internal")) {
+      issues.push("builder_adapter_mismatch");
+    }
+
+    if (build.reviewStatus !== "passed") {
+      issues.push("product_qa_not_passed");
+    }
+
+    if (job) {
+      await admin
+        .from("build_jobs")
+        .update({
+          product_qa_status: build.reviewStatus === "passed" ? "passed" : "pending",
+          generic_qa_status: issues.length === 0 ? "passed" : "failed",
+        })
+        .eq("id", buildJobId)
+        .eq("organization_id", context.organizationId);
+    }
+  }
+
+  const verdict = issues.length === 0 ? "pass" : "fail";
+
+  if (build && verdict === "pass") {
+    await emitBuildFactoryEvent(admin, {
+      organizationId: context.organizationId,
+      eventType: "build_factory.qa_completed",
+      message: "Generic Build Factory QA passed",
+      correlationId: context.correlationId,
+      buildId: build.id,
+      payload: { build_job_id: buildJobId, layer: "generic" },
+    });
+  }
+
+  return {
+    structuredOutput: { verdict, issues },
+    artifactType: "qa_report",
+    artifactPayload: {
+      verdict,
+      issues,
+      build_id: buildId,
+      build_job_id: buildJobId,
+      layer: "generic_internal_build",
+    },
+    metrics: { build_job_id: buildJobId },
+  };
+}
+
 export async function dispatchBuildWorkerHandler(
   admin: AdminSupabaseClient,
   context: WorkerExecutionContextBound,
@@ -372,6 +447,8 @@ export async function dispatchBuildWorkerHandler(
       return runBuildSnapshotWorkspace(admin, context);
     case "qa.verify_internal_build":
       return runQaVerifyInternalBuild(admin, context);
+    case "qa.verify_generic_internal_build":
+      return runQaVerifyGenericInternalBuild(admin, context);
     default:
       return null;
   }

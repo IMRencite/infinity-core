@@ -22,6 +22,9 @@ export class PlannerGatingError extends Error {
 }
 
 export function isPlannerGateExemptCapability(capabilityKey: string): boolean {
+  if (capabilityKey === "qa.verify_executive_selection") {
+    return true;
+  }
   return PLANNER_GATE_EXEMPT_CAPABILITY_PREFIXES.some((prefix) =>
     capabilityKey.startsWith(prefix),
   );

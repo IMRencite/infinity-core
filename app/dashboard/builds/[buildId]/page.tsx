@@ -7,6 +7,7 @@ import { loadAiWebsitePlanSummary } from "@/lib/infinity/ai-website-generation/p
 import { AI_WEBSITE_INTERNAL_LABEL } from "@/lib/infinity/ai-website-generation/constants";
 import { verifyBuildReproducibility } from "@/lib/infinity/build-factory/reproducibility";
 import { loadBuildById } from "@/lib/infinity/build-factory/workspace";
+import { loadBuildJobRuntimeDiagnostics } from "@/lib/infinity/build-factory/runtime-v2-diagnostics";
 import { WEBSITE_INTERNAL_SOURCE_LABEL } from "@/lib/infinity/website-builder/constants";
 
 type Props = { params: Promise<{ buildId: string }> };
@@ -47,6 +48,7 @@ export default async function BuildDetailPage({ params }: Props) {
     status: "unknown" as const,
     details: [],
   }));
+  const buildJobDiag = await loadBuildJobRuntimeDiagnostics(admin, orgId, buildId);
 
   const routeCount = Array.isArray(meta?.routeManifest) ? meta!.routeManifest.length : 0;
   const componentCount = Array.isArray(meta?.componentManifest)
@@ -86,6 +88,31 @@ export default async function BuildDetailPage({ params }: Props) {
             <dd>{aiSummary.contentCount}</dd>
             <dt className="text-zinc-500">Context hash</dt>
             <dd className="truncate font-mono text-[10px]">{aiSummary.plan.contextHash}</dd>
+          </dl>
+        </section>
+      )}
+
+      {buildJobDiag && (
+        <section className="rounded-lg border border-cyan-500/20 p-4 text-xs">
+          <h2 className="mb-3 font-medium text-cyan-300">Build Factory Runtime v2</h2>
+          <p className="mb-2 text-amber-200/90">{buildJobDiag.label}</p>
+          <dl className="grid grid-cols-2 gap-2">
+            <dt className="text-zinc-500">BuildJob ID</dt>
+            <dd className="font-mono text-[10px]">{buildJobDiag.buildJobId}</dd>
+            <dt className="text-zinc-500">Builder</dt>
+            <dd>
+              {buildJobDiag.builderKey}@{buildJobDiag.builderVersion}
+            </dd>
+            <dt className="text-zinc-500">Lifecycle</dt>
+            <dd>{buildJobDiag.lifecycleStage ?? buildJobDiag.status}</dd>
+            <dt className="text-zinc-500">Generic QA</dt>
+            <dd>{buildJobDiag.genericQaStatus}</dd>
+            <dt className="text-zinc-500">Product QA</dt>
+            <dd>{buildJobDiag.productQaStatus}</dd>
+            <dt className="text-zinc-500">Rollback mode</dt>
+            <dd>{buildJobDiag.rollbackMode ?? "—"}</dd>
+            <dt className="text-zinc-500">Blocker</dt>
+            <dd>{buildJobDiag.blockingReason ?? "—"}</dd>
           </dl>
         </section>
       )}

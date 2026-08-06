@@ -8,6 +8,7 @@ import { VENTURE_TEMPLATE_TYPES } from "@/lib/infinity/venture-factory/constants
 import { dispatchBuildWorkerHandler } from "./build-v1-handlers";
 import { dispatchAiWebsiteWorkerHandler } from "./ai-website-v1-handlers";
 import { dispatchWebsiteWorkerHandler } from "./website-v1-handlers";
+import { dispatchExecutiveSelectionWorkerHandler } from "./executive-selection-v1-handlers";
 
 export async function runResearchSummarizeInternalEvidence(
   admin: AdminSupabaseClient,
@@ -263,6 +264,11 @@ export async function dispatchWorkerHandler(
   const websiteResult = await dispatchWebsiteWorkerHandler(admin, context);
   if (websiteResult) {
     return websiteResult;
+  }
+
+  const executiveResult = await dispatchExecutiveSelectionWorkerHandler(admin, context);
+  if (executiveResult) {
+    return executiveResult;
   }
 
   switch (context.capabilityKey) {

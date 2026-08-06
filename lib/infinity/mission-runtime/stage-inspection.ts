@@ -7,6 +7,7 @@ import {
 import { V1_WORKER_CAPABILITY_KEYS } from "@/lib/infinity/workers/constants";
 import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
 import { BUILD_FACTORY_CAPABILITY_PREFIX } from "./constants";
+import { missionHasCanonicalHandoffPlan } from "@/lib/infinity/orchestration/mission-planner-handoff";
 import type { StageInspectionSnapshot } from "./types";
 
 type InfinitySupabase = SupabaseClient<Database>;
@@ -29,6 +30,14 @@ export const EMPTY_STAGE_INSPECTION: StageInspectionSnapshot = {
   hasCompletedGovernedReasoningSession: false,
   governedReasoningMode: "disabled",
   hasExecutiveContext: false,
+  hasExecutiveSelectionQaPassed: false,
+  hasExecutiveSelectionPlanningEligible: false,
+  hasExecutiveEscalationPending: false,
+  canonicalExecutiveSelectionDecisionId: null,
+  plannerHandoffPlanId: null,
+  plannerHandoffBlocker: null,
+  executiveContextId: null,
+  executiveContextHash: null,
   allocationProposalRecorded: false,
   primaryOpportunityId: null,
   hasPendingWorkerCapabilityJobs: false,
@@ -160,20 +169,70 @@ export async function inspectMissionRuntimeStage(
     .limit(1)
     .maybeSingle();
 
-  snapshot.hasExecutiveContext = Boolean(executiveDecision);
+  const { data: executiveContext } = await supabase
+    .from("executive_contexts")
+    .select("id, status, context_hash, context_manifest")
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("status", "completed")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  snapshot.hasExecutiveContext = Boolean(executiveContext);
+  snapshot.executiveContextId = executiveContext?.id ?? null;
+  snapshot.executiveContextHash = executiveContext?.context_hash ?? null;
+
+  const manifest = executiveContext?.context_manifest as { qa?: { verdict?: string } } | null;
+  snapshot.hasExecutiveSelectionQaPassed = manifest?.qa?.verdict === "pass";
+
+  const { data: selectionPlanning } = await supabase
+    .from("executive_selection_decisions")
+    .select("id, review_status")
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("decision", "select_for_planning")
+    .eq("planning_eligible", true)
+    .eq("status", "finalized")
+    .eq("review_status", "passed")
+    .limit(1)
+    .maybeSingle();
+
+  snapshot.hasExecutiveSelectionPlanningEligible = Boolean(selectionPlanning);
+  snapshot.canonicalExecutiveSelectionDecisionId = selectionPlanning?.id ?? null;
+
+  const { data: escalationDecision } = await supabase
+    .from("executive_selection_decisions")
+    .select("id, decision, escalation_reasons")
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .eq("status", "finalized")
+    .order("finalized_at", { ascending: false })
+    .limit(5);
+
+  snapshot.hasExecutiveEscalationPending = (escalationDecision ?? []).some((row) => {
+    const reasons = Array.isArray(row.escalation_reasons)
+      ? (row.escalation_reasons as string[])
+      : [];
+    return row.decision === "escalate_for_human_review" || reasons.length > 0;
+  }) && !snapshot.hasExecutiveSelectionPlanningEligible;
+
   const decision = executiveDecision?.decision;
   snapshot.hasExecutiveApproveOrQueue =
-    decision === "approve" || decision === "queue";
+    snapshot.hasExecutiveSelectionPlanningEligible ||
+    decision === "approve" ||
+    decision === "queue";
   snapshot.hasExecutiveRejectOrDefer =
-    decision === "reject" || decision === "defer" || decision === "research";
+    !snapshot.hasExecutiveSelectionPlanningEligible &&
+    !snapshot.hasExecutiveContext &&
+    (decision === "reject" || decision === "defer" || decision === "research");
 
-  const { count: planCount } = await supabase
-    .from("plans")
-    .select("*", { count: "exact", head: true })
-    .eq("organization_id", organizationId)
-    .eq("mission_id", missionId);
-
-  snapshot.hasPlannerEligiblePlan = (planCount ?? 0) > 0;
+  const handoffPlan = await missionHasCanonicalHandoffPlan(supabase, organizationId, missionId);
+  snapshot.hasPlannerEligiblePlan = handoffPlan.hasPlan && handoffPlan.qaPassed;
+  snapshot.plannerHandoffPlanId = handoffPlan.planId;
+  if (handoffPlan.hasPlan && !handoffPlan.qaPassed) {
+    snapshot.plannerHandoffBlocker = "plan_qa_not_passed";
+  }
 
   const { count: completedJobs } = await supabase
     .from("engine_jobs")

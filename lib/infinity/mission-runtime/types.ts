@@ -99,6 +99,21 @@ export type RuntimeWorkRequest =
       idempotencyKey: string;
       opportunityId: string;
     }
+  | {
+      kind: "executive_build_context";
+      idempotencyKey: string;
+      contextHash: string;
+    }
+  | {
+      kind: "executive_selection_remainder";
+      idempotencyKey: string;
+      contextHash: string;
+      executiveContextId: string;
+    }
+  | {
+      kind: "planner_executive_handoff";
+      idempotencyKey: string;
+    }
   | { kind: "none" };
 
 export type StageEvaluation = {
@@ -173,6 +188,14 @@ export type StageInspectionSnapshot = {
   hasCompletedGovernedReasoningSession: boolean;
   governedReasoningMode: string;
   hasExecutiveContext: boolean;
+  hasExecutiveSelectionQaPassed: boolean;
+  hasExecutiveSelectionPlanningEligible: boolean;
+  hasExecutiveEscalationPending: boolean;
+  canonicalExecutiveSelectionDecisionId: string | null;
+  plannerHandoffPlanId: string | null;
+  plannerHandoffBlocker: string | null;
+  executiveContextId: string | null;
+  executiveContextHash: string | null;
   allocationProposalRecorded: boolean;
   primaryOpportunityId: string | null;
   hasPendingWorkerCapabilityJobs: boolean;

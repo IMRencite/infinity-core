@@ -18,12 +18,16 @@ This document is a **concise navigation guide**. The durable platform specificat
 - **Status:** separate from stage (running, waiting, blocked, paused, etc.)
 - **Persistence:** `mission_runtime_instances`, append-only `mission_runtime_transitions`, immutable `mission_runtime_checkpoints`
 - **Locking:** lease columns + `claim_mission_runtime_instance` / `release_mission_runtime_instance` (service_role only)
-- **Execution:** governed advisory reasoning via `reasoning.execute_advisory` worker; **OpenAI** first real provider (Responses API); default **`AI_REASONING_MODE=disabled`**; mock for offline tests; **Build Factory** not implemented (execution blocks on `build.*` jobs)
+- **Execution:** governed advisory reasoning via `reasoning.execute_advisory` worker; **OpenAI** first real provider (Responses API); default **`AI_REASONING_MODE=disabled`**; mock for offline tests; **Build Factory Runtime v2** for governed internal builds via Scheduler + Worker Runtime (website builders as registry adapters); **public deploy/publish/launch unimplemented**
 - **Production trigger:** future cron/queue calls `runMissionRuntimeTick` — not an in-process infinite loop
 
 Dashboard: `/dashboard/runtime` and `/dashboard/reasoning` (read-only session visibility; production reasoning is initiated by Mission Runtime).
 
-**Worker Capability Foundation v1** (`lib/infinity/workers/`) — universal governed worker contract, `worker_results` / `worker_artifacts`, safe internal workers only. Flow: approved plan step → Scheduler → `engine_jobs` → Registry → Worker Runtime dispatcher → validated result → optional QA review → Mission Runtime observes on a later tick.
+**Executive Context and Autonomous Selection v1** (`lib/infinity/executive-selection/`) — Mission Runtime schedules durable `executive.build_selection_context` when reasoning requires Executive context. Worker capabilities assemble org-scoped context, score eligible mission opportunities deterministically, optional mock/shadow/advisory AI (non-authoritative), evaluate constraints, assign dispositions (`select_for_planning`, `reject`, `monitor`, `request_more_validation`, `defer_due_to_constraints`, `escalate_for_human_review`), run independent QA, then finalize immutable `executive_selection_decisions` with planning eligibility. Executive selection does **not** create plans, builds, ventures, or files. Ordinary in-policy zero-cost selections proceed without CEO approval; escalation thresholds route to human review only.
+
+**Executive Selection → Planner Handoff v1** — Canonical planning eligibility reads finalized `executive_selection_decisions` (`select_for_planning`, `planning_eligible`, QA passed) via `PlannerExecutiveAuthorization` (`lib/infinity/executive-selection/authorization.ts`). Legacy `executive_decisions` remain readable for v1 initiative paths only. Mission Runtime **executive** stage advances to **planning** on a bounded tick when canonical selection is eligible (waits on pending Executive jobs, QA, or escalation). **Planning** stage invokes `planner_executive_handoff` → `runMissionExecutivePlannerHandoff` → `createInitiativePlanFromExecutiveAuthorization` (one durable plan, bounded steps, no build/deploy/publish). Plan observation and advance to allocation occur on a **later** tick. Idempotency keys prevent duplicate plans, events, and authorization records. HQ mission inspector exposes compact canonical vs legacy handoff diagnostics.
+
+**Build Factory Runtime v2 Foundation** — Extends `lib/infinity/build-factory/` (same Scheduler, Worker Runtime, workspaces). Generic **BuildJob** (`build_jobs`) is product-neutral; **BuilderPlugin** registry adapters (`website.internal_*`) wrap Website Build Worker v1 without duplicating generators. Entry: `requestBuildFactoryRuntimeV2`. Dual QA (product + `qa.verify_generic_internal_build`), bounded repair, rollback mode labeled (`metadata_only` unless byte-perfect verified). Internal completion only — not deployed or published.
 
 **AI Website Generation Foundation v1** (`lib/infinity/ai-website-generation/`) — bounded context, strict `WebsiteGenerationPlan`, mock/shadow/advisory/disabled modes, governed approval, deterministic translation into Website Builder models. AI never writes source files directly.
 
@@ -39,7 +43,7 @@ Manual controls exist for governance, approvals, overrides, testing, investigati
 
 ## Infinity HQ (`/dashboard`)
 
-**Infinity HQ** is the operator **observability and control-plane UI** (Foundation v1). It aggregates read-only metrics, pipelines, health, alerts, and activity from durable records via `lib/infinity/hq/`. It does **not** own business logic, replace Mission Runtime, or bypass governance. **Venture blueprints** shown in HQ are **blueprint-only** — execution is not started. **Revenue tracking** is not implemented (no fabricated financial results). **Build Factory** remains future work. Bounded development controls (mission tick, pause/resume runtime, shadow reasoning) remain on `/dashboard/runtime` and existing server actions.
+**Infinity HQ** is the operator **observability and control-plane UI** (Foundation v1). It aggregates read-only metrics, pipelines, health, alerts, and activity from durable records via `lib/infinity/hq/`. It does **not** own business logic, replace Mission Runtime, or bypass governance. **Venture blueprints** shown in HQ are **blueprint-only** — execution is not started. **Revenue tracking** is not implemented (no fabricated financial results). **Build Factory Runtime v2** internal build diagnostics are observable in HQ; **public deployment and launch** remain unimplemented. Bounded development controls (mission tick, pause/resume runtime, shadow reasoning) remain on `/dashboard/runtime` and existing server actions.
 
 ---
 
@@ -119,7 +123,7 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 
 **Conservative v1 behavior:** missing dimensions tracked as unknown (not zero); sparse validation data cannot produce `approve_build`; zero-capacity pools block reservation; no ventures, assets, or real financial accounts.
 
-**Not yet implemented:** LLM synthesis, real capital accounts, automatic initiative promotion, Build Factory handoff, unrestricted autonomous spending.
+**Not yet implemented:** LLM synthesis, real capital accounts, automatic initiative promotion, **public Build Factory deploy/launch handoff**, unrestricted autonomous spending.
 
 ---
 
@@ -144,7 +148,7 @@ Product name: **Discovery Engine**. Schema tables (legacy names): `opportunity_s
 | Status | Items |
 | --- | --- |
 | **Done** | Auth, orgs, dashboard, onboarding, Discovery schema, RLS, terminology, Mission, policies, Command, Planner, Scheduler seam, Registry seed, durable jobs, Worker Runtime, dev Command controls, **Asset Foundation v1**, **Evidence/Knowledge/Memory Foundation v1**, **Opportunity Discovery Foundation v1**, **Decision Engine and Capital Allocation Foundation v1**, **Validation Engine Foundation v1** |
-| **Not done** | AI Reasoning Layer / LLMs, continuous scheduler, autonomous observation, external evidence adapters, Build Factory, automated valuation models, real financial accounts, acquisitions, semantic search/embeddings |
+| **Not done** | AI Reasoning Layer / LLMs, continuous scheduler, autonomous observation, external evidence adapters, **public deployment and launch**, automated valuation models, real financial accounts, acquisitions, semantic search/embeddings |
 
 Full current state: **[OS Specification §27](./infinity-os-specification.md#section-27--current-state)**.
 

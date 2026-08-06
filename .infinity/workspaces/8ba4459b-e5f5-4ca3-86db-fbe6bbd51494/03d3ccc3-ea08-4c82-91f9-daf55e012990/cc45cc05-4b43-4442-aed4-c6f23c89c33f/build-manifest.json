@@ -1,0 +1,456 @@
+{
+  "createdAt": "2026-08-05T23:13:20.126Z",
+  "taskGraph": [
+    {
+      "id": "workspace.initialize",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [],
+      "capabilityKey": "build.workspace_initialize",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:workspace.initialize",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "specification.persist",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "workspace.initialize"
+      ],
+      "capabilityKey": "build.persist_specification",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:specification.persist",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "manifest.persist",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "specification.persist"
+      ],
+      "capabilityKey": "build.persist_manifest",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:manifest.persist",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.structure",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "manifest.persist"
+      ],
+      "capabilityKey": "website.generate_structure",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.structure",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.components",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.structure"
+      ],
+      "capabilityKey": "website.generate_components",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.components",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.pages",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.components"
+      ],
+      "capabilityKey": "website.generate_pages",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.pages",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.styles",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.pages"
+      ],
+      "capabilityKey": "website.generate_styles",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.styles",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.metadata",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.styles"
+      ],
+      "capabilityKey": "website.generate_metadata",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.metadata",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.sitemap",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.metadata"
+      ],
+      "capabilityKey": "website.generate_sitemap",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.sitemap",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.robots",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.sitemap"
+      ],
+      "capabilityKey": "website.generate_robots",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.robots",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.validate.structure",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.robots"
+      ],
+      "capabilityKey": "website.validate_structure",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.validate.structure",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.validate.a11y",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.validate.structure"
+      ],
+      "capabilityKey": "website.validate_accessibility",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.validate.a11y",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.validate.seo",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.validate.a11y"
+      ],
+      "capabilityKey": "website.validate_seo",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.validate.seo",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.validate.security",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.validate.seo"
+      ],
+      "capabilityKey": "website.validate_security",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.validate.security",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.package",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.validate.security"
+      ],
+      "capabilityKey": "website.package_internal_source",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.package",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    },
+    {
+      "id": "website.qa",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.package"
+      ],
+      "capabilityKey": "qa.verify_internal_website",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:website.qa",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_read",
+      "reviewRequirement": "independent_qa"
+    },
+    {
+      "id": "workspace.snapshot",
+      "status": "pending",
+      "buildId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+      "maxAttempts": 3,
+      "dependencies": [
+        "website.qa"
+      ],
+      "capabilityKey": "build.snapshot_workspace",
+      "inputManifest": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+        "mission_id": "03d3ccc3-ea08-4c82-91f9-daf55e012990",
+        "organization_id": "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494"
+      },
+      "idempotencyKey": "build-task:cc45cc05-4b43-4442-aed4-c6f23c89c33f:workspace.snapshot",
+      "outputContract": {
+        "build_id": "cc45cc05-4b43-4442-aed4-c6f23c89c33f"
+      },
+      "timeoutSeconds": 120,
+      "sideEffectClass": "internal_write",
+      "reviewRequirement": "not_required"
+    }
+  ],
+  "deniedPaths": [
+    ".env",
+    ".env.local",
+    ".git",
+    "node_modules"
+  ],
+  "projectType": "content_site",
+  "templateKey": "content-site-basic",
+  "workspaceId": ".infinity/workspaces/8ba4459b-e5f5-4ca3-86db-fbe6bbd51494/03d3ccc3-ea08-4c82-91f9-daf55e012990/cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+  "allowedPaths": [
+    "src",
+    "app",
+    "content",
+    "tests",
+    "README.md"
+  ],
+  "fileManifest": [
+    {
+      "hash": "",
+      "path": "site-structure.json",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "metadata-manifest.json",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "sitemap.xml",
+      "bytes": 0
+    },
+    {
+      "hash": "",
+      "path": "robots.txt",
+      "bytes": 0
+    }
+  ],
+  "manifestHash": "a73cbb14db43cd4673a12ebf14e75feb59e0e51373187d918bf73e5e3bed561b",
+  "rollbackPolicy": "restore_snapshot_no_deploy",
+  "snapshotPolicy": "immutable_on_snapshot_worker",
+  "outputContracts": {
+    "internal_build_package": {
+      "label": "Internal build package — not deployed or published."
+    }
+  },
+  "specificationId": "cc45cc05-4b43-4442-aed4-c6f23c89c33f",
+  "templateVersion": "1",
+  "maximumFileCount": 200,
+  "directoryManifest": [
+    "src",
+    "components",
+    "content"
+  ],
+  "dependencyManifest": {},
+  "prohibitedCommands": [
+    "npm install",
+    "shell",
+    "curl",
+    "wget",
+    "git push"
+  ],
+  "validationCommands": [],
+  "environmentManifest": {
+    "NODE_ENV": "development",
+    "PUBLIC_DEPLOYMENT": "disabled"
+  },
+  "specificationVersion": "1",
+  "maximumTotalOutputSize": 5000000,
+  "maximumIndividualFileSize": 512000,
+  "requiredReviewCapabilities": [
+    "qa.verify_internal_website"
+  ],
+  "requiredWorkerCapabilities": [
+    "build.workspace_initialize",
+    "website.generate_structure",
+    "website.package_internal_source",
+    "qa.verify_internal_website"
+  ]
+}

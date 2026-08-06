@@ -7,6 +7,7 @@ import {
 } from "./constants";
 import type { WorkerCapabilityContract } from "./types";
 import { WEBSITE_WORKER_CAPABILITY_REGISTRY } from "./website-capabilities";
+import { EXECUTIVE_WORKER_CAPABILITY_REGISTRY } from "./executive-capabilities";
 
 const BASE: Omit<
   WorkerCapabilityContract,
@@ -197,11 +198,27 @@ const CORE_WORKER_CAPABILITY_REGISTRY = {
     reviewRequirement: "independent_qa",
     artifactTypesProduced: ["qa_report"],
   },
+  "qa.verify_generic_internal_build": {
+    ...BASE,
+    capabilityKey: "qa.verify_generic_internal_build",
+    name: "QA Verify Generic Internal Build",
+    description: "Independent generic Build Factory Runtime v2 QA (internal only).",
+    workerType: "quality_assurance",
+    permissions: ["build.read", "worker_result.read", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: {
+      type: "object",
+      required: ["organization_id", "build_id", "build_job_id"],
+    },
+    outputSchema: { type: "object", required: ["verdict"] },
+    reviewRequirement: "independent_qa",
+    artifactTypesProduced: ["qa_report"],
+  },
 };
 
 export const WORKER_CAPABILITY_REGISTRY = {
   ...CORE_WORKER_CAPABILITY_REGISTRY,
   ...WEBSITE_WORKER_CAPABILITY_REGISTRY,
+  ...EXECUTIVE_WORKER_CAPABILITY_REGISTRY,
 } as unknown as Record<V1WorkerCapabilityKey, WorkerCapabilityContract>;
 
 export function getWorkerCapabilityContract(

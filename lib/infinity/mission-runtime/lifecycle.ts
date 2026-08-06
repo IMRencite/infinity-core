@@ -13,10 +13,18 @@ import {
 import { inspectMissionRuntimeStage } from "./stage-inspection";
 import { observeGovernedWorkerPlanSteps } from "@/lib/infinity/workers/observe-plan-steps";
 import { observeBuildFactoryBuilds } from "@/lib/infinity/build-factory/observe-builds";
+import { observeBuildFactoryJobs } from "@/lib/infinity/build-factory/observe-build-jobs";
 import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
 import { scheduleReasoningAdvisoryJob } from "@/lib/infinity/governed-reasoning/jobs";
+import {
+  scheduleExecutiveBuildContextJob,
+  scheduleExecutiveSelectionRemainderPipeline,
+} from "@/lib/infinity/executive-selection/jobs";
+import { resolveExecutiveContextHash } from "@/lib/infinity/executive-selection/resolve-hash";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { AdvanceMissionRuntimeResult, MissionRuntimeInstance, RuntimeWorkRequest } from "./types";
 import { recordMissionRuntimeEvent } from "./events";
+import { recordEngineEvent } from "@/lib/infinity/events";
 import { DEFAULT_TICK_LIMIT } from "./constants";
 import type { MissionRuntimeTickResult } from "./types";
 import { MissionRuntimeStateError } from "./state-machine";
@@ -44,6 +52,40 @@ export function buildDefaultWorkExecutor(supabase: InfinitySupabase): WorkExecut
         return {};
       }
 
+      if (work.kind === "executive_build_context") {
+        let contextHash = work.contextHash;
+        if (contextHash === "pending") {
+          const admin = createAdminClient();
+          contextHash = await resolveExecutiveContextHash(admin, {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            runtimeInstanceId: instance.id,
+            correlationId: instance.correlationId,
+          });
+        }
+
+        await scheduleExecutiveBuildContextJob(supabase, {
+          organizationId: instance.organizationId,
+          missionId: instance.missionId,
+          runtimeInstanceId: instance.id,
+          contextHash,
+          correlationId: instance.correlationId,
+        });
+        return {};
+      }
+
+      if (work.kind === "executive_selection_remainder") {
+        await scheduleExecutiveSelectionRemainderPipeline(supabase, {
+          organizationId: instance.organizationId,
+          missionId: instance.missionId,
+          runtimeInstanceId: instance.id,
+          contextHash: work.contextHash,
+          executiveContextId: work.executiveContextId,
+          correlationId: instance.correlationId,
+        });
+        return {};
+      }
+
       if (work.kind === "run_next_job") {
         const { runNextQueuedJob } = await import("@/lib/infinity/orchestration");
         await runNextQueuedJob(supabase, instance.organizationId, "mission-runtime");
@@ -59,6 +101,33 @@ export function buildDefaultWorkExecutor(supabase: InfinitySupabase): WorkExecut
           "system",
         );
         return { inspectionPatch: { hasCompletedPlanStepJob: true } };
+      }
+
+      if (work.kind === "planner_executive_handoff") {
+        const { runMissionExecutivePlannerHandoff } = await import(
+          "@/lib/infinity/orchestration/mission-planner-handoff"
+        );
+        const result = await runMissionExecutivePlannerHandoff(supabase, {
+          organizationId: instance.organizationId,
+          missionId: instance.missionId,
+          runtimeInstanceId: instance.id,
+          correlationId: instance.correlationId,
+        });
+
+        if (result.status === "blocked") {
+          await recordEngineEvent(supabase, {
+            organizationId: instance.organizationId,
+            engineName: "executive_engine",
+            eventType: "executive.planning_handoff_blocked",
+            entityType: "mission",
+            entityId: instance.missionId,
+            message: result.message,
+            correlationId: instance.correlationId ?? undefined,
+            payload: { reason: result.reason, runtime_instance_id: instance.id },
+          }).catch(() => undefined);
+        }
+
+        return {};
       }
 
       if (work.kind === "command_autonomous") {
@@ -110,6 +179,12 @@ export async function advanceMissionRuntime(input: {
 
   await observeBuildFactoryBuilds(
     input.supabase,
+    input.organizationId,
+    instance.missionId,
+  ).catch(() => undefined);
+
+  await observeBuildFactoryJobs(
+    input.supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
     input.organizationId,
     instance.missionId,
   ).catch(() => undefined);
