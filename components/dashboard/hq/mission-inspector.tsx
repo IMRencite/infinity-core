@@ -49,6 +49,18 @@ export function MissionInspectorView({
       <JsonBlock title="6. Discovery / opportunities" data={data.opportunities} />
       <JsonBlock title="7. Evaluation output" data={null} />
       <JsonBlock title="8. Allocation state" data={data.allocationProposals} />
+      <JsonBlock
+        title="8b. Autonomous plan execution (read-only)"
+        data={
+          data.planExecution
+            ? {
+                ...data.planExecution,
+                notice:
+                  "Autonomous internal execution — not deployed or published.",
+              }
+            : null
+        }
+      />
       <JsonBlock title="9. Validation runs" data={data.validationRuns} />
       <JsonBlock title="10. Reasoning sessions" data={data.reasoningSessions} />
       <JsonBlock title="11. Executive decisions" data={data.executiveDecisions} />

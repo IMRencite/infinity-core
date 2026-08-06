@@ -306,7 +306,11 @@ export type WorkExecutor = {
   executeWork(
     instance: MissionRuntimeInstance,
     work: RuntimeWorkRequest,
-  ): Promise<{ contextPatch?: Partial<MissionRuntimeContext>; inspectionPatch?: Partial<StageInspectionSnapshot> }>;
+  ): Promise<{
+  contextPatch?: Partial<MissionRuntimeContext>;
+  inspectionPatch?: Partial<StageInspectionSnapshot>;
+  skipIdempotency?: boolean;
+}>;
 };
 
 export async function advanceMissionRuntimeWithStore(input: {
@@ -412,6 +416,7 @@ export async function advanceMissionRuntimeWithStore(input: {
 
       if (key && !instance.context.idempotency[key]) {
         const result = await input.workExecutor.executeWork(instance, evaluation.workRequest);
+        const markIdempotent = result.skipIdempotency !== true;
         instance = {
           ...instance,
           context: {
@@ -419,7 +424,7 @@ export async function advanceMissionRuntimeWithStore(input: {
             ...result.contextPatch,
             idempotency: {
               ...instance.context.idempotency,
-              ...(key ? { [key]: true } : {}),
+              ...(key && markIdempotent ? { [key]: true } : {}),
             },
             lastWorkRequestKey: key,
           },

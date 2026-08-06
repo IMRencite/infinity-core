@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.invalid/</loc></url>
+  <url><loc>https://example.invalid/about</loc></url>
+  <url><loc>https://example.invalid/contact</loc></url>
+  <url><loc>https://example.invalid/articles</loc></url>
+  <url><loc>https://example.invalid/pillar-pages</loc></url>
+  <url><loc>https://example.invalid/topic-clusters</loc></url>
+</urlset>

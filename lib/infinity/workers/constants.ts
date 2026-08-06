@@ -36,6 +36,7 @@ export const V1_WORKER_CAPABILITY_KEYS = [
   "website.generate_ai_planned_pages",
   "website.generate_ai_planned_content",
   "qa.verify_ai_generated_website",
+  "qa.verify_autonomous_plan_execution",
   "executive.build_selection_context",
   "executive.score_opportunity_set",
   "executive.request_ai_advisory",

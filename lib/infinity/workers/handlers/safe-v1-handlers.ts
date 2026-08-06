@@ -9,6 +9,7 @@ import { dispatchBuildWorkerHandler } from "./build-v1-handlers";
 import { dispatchAiWebsiteWorkerHandler } from "./ai-website-v1-handlers";
 import { dispatchWebsiteWorkerHandler } from "./website-v1-handlers";
 import { dispatchExecutiveSelectionWorkerHandler } from "./executive-selection-v1-handlers";
+import { dispatchPlanExecutionWorkerHandler } from "./plan-execution-handlers";
 
 export async function runResearchSummarizeInternalEvidence(
   admin: AdminSupabaseClient,
@@ -269,6 +270,11 @@ export async function dispatchWorkerHandler(
   const executiveResult = await dispatchExecutiveSelectionWorkerHandler(admin, context);
   if (executiveResult) {
     return executiveResult;
+  }
+
+  const planExecutionResult = await dispatchPlanExecutionWorkerHandler(admin, context);
+  if (planExecutionResult) {
+    return planExecutionResult;
   }
 
   switch (context.capabilityKey) {

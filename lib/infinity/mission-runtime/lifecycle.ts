@@ -14,6 +14,7 @@ import { inspectMissionRuntimeStage } from "./stage-inspection";
 import { observeGovernedWorkerPlanSteps } from "@/lib/infinity/workers/observe-plan-steps";
 import { observeBuildFactoryBuilds } from "@/lib/infinity/build-factory/observe-builds";
 import { observeBuildFactoryJobs } from "@/lib/infinity/build-factory/observe-build-jobs";
+import { observePlanExecution } from "@/lib/infinity/plan-execution/observe";
 import { loadGovernedReasoningMode } from "@/lib/infinity/governed-reasoning/modes";
 import { scheduleReasoningAdvisoryJob } from "@/lib/infinity/governed-reasoning/jobs";
 import {
@@ -130,6 +131,103 @@ export function buildDefaultWorkExecutor(supabase: InfinitySupabase): WorkExecut
         return {};
       }
 
+      if (work.kind === "plan_execution_begin") {
+        const {
+          requestPlanExecution,
+          ensureDeferredExternalPlanStep,
+        } = await import("@/lib/infinity/plan-execution/orchestrator");
+        const result = await requestPlanExecution(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            runtimeInstanceId: instance.id,
+            planId: work.planId,
+            ventureBlueprintId: work.ventureBlueprintId,
+            correlationId: instance.correlationId,
+          },
+        );
+        if (result.status !== "blocked") {
+          await ensureDeferredExternalPlanStep(
+            supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+            {
+              organizationId: instance.organizationId,
+              planId: work.planId,
+              missionId: instance.missionId,
+            },
+          );
+          return { inspectionPatch: { allocationProposalRecorded: true } };
+        }
+        return { skipIdempotency: true };
+      }
+
+      if (work.kind === "plan_execution_allocate") {
+        const { approvePlanExecutionAllocation } = await import(
+          "@/lib/infinity/plan-execution/orchestrator"
+        );
+        await approvePlanExecutionAllocation(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            opportunityId: work.opportunityId,
+            planExecutionId: work.planExecutionId,
+            correlationId: instance.correlationId,
+          },
+        );
+        const { loadPlanExecutionById } = await import("@/lib/infinity/plan-execution/persistence");
+        const refreshed = await loadPlanExecutionById(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          instance.organizationId,
+          work.planExecutionId,
+        );
+        if (refreshed?.status === "allocation_approved") {
+          return { inspectionPatch: { allocationProposalRecorded: true } };
+        }
+        return { skipIdempotency: true };
+      }
+
+      if (work.kind === "plan_execution_bootstrap") {
+        const {
+          bootstrapPlanExecutionBuildSegment,
+          ensurePlanExecutionQaStep,
+        } = await import("@/lib/infinity/plan-execution/orchestrator");
+        await bootstrapPlanExecutionBuildSegment(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            runtimeInstanceId: instance.id,
+            planExecutionId: work.planExecutionId,
+            correlationId: instance.correlationId,
+          },
+        );
+        await ensurePlanExecutionQaStep(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          {
+            organizationId: instance.organizationId,
+            planExecutionId: work.planExecutionId,
+          },
+        );
+        return { inspectionPatch: { planExecutionBuildJobLinked: true } };
+      }
+
+      if (work.kind === "plan_execution_schedule") {
+        const { schedulePlanExecutionBatch } = await import(
+          "@/lib/infinity/plan-execution/orchestrator"
+        );
+        await schedulePlanExecutionBatch(
+          supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+          {
+            organizationId: instance.organizationId,
+            missionId: instance.missionId,
+            planExecutionId: work.planExecutionId,
+            maxToSchedule: 1,
+          },
+        );
+        return {};
+      }
+
       if (work.kind === "command_autonomous") {
         const { runAutonomousCommandCycle } = await import("@/lib/infinity/orchestration");
         await runAutonomousCommandCycle(
@@ -184,6 +282,12 @@ export async function advanceMissionRuntime(input: {
   ).catch(() => undefined);
 
   await observeBuildFactoryJobs(
+    input.supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
+    input.organizationId,
+    instance.missionId,
+  ).catch(() => undefined);
+
+  await observePlanExecution(
     input.supabase as import("@/lib/supabase/admin").AdminSupabaseClient,
     input.organizationId,
     instance.missionId,

@@ -5,6 +5,7 @@ import type {
   StageEvaluation,
   StageInspectionSnapshot,
 } from "./types";
+import { missionUsesAutonomousPlanExecution } from "@/lib/infinity/plan-execution/integration";
 
 function idempotencyKey(instance: MissionRuntimeInstance, suffix: string): string {
   return `runtime:${instance.id}:${instance.currentStage}:${suffix}`;
@@ -130,6 +131,64 @@ export function evaluateStage(
           outcome: { kind: "block", reason: "Allocation requires an eligible persisted plan." },
           workRequest: { kind: "none" },
         };
+      }
+
+      const autonomous = missionUsesAutonomousPlanExecution(instance, inspection);
+
+      if (autonomous) {
+        if (!inspection.planExecutionVentureBlueprintId) {
+          return {
+            outcome: {
+              kind: "block",
+              reason: "Autonomous plan execution requires venture_blueprint_id on plan metadata.",
+            },
+            workRequest: { kind: "none" },
+          };
+        }
+
+        if (!inspection.planExecutionId) {
+          const key = idempotencyKey(instance, "plan_execution_begin");
+          if (!hasIdempotency(context, key)) {
+            return {
+              outcome: { kind: "wait", reason: "Plan execution coordination requested." },
+              workRequest: {
+                kind: "plan_execution_begin",
+                idempotencyKey: key,
+                planId: inspection.plannerHandoffPlanId ?? "",
+                ventureBlueprintId: inspection.planExecutionVentureBlueprintId,
+              },
+            };
+          }
+          return {
+            outcome: {
+              kind: "block",
+              reason: "Plan execution coordination did not produce a durable record.",
+            },
+            workRequest: { kind: "none" },
+          };
+        }
+
+        if (!inspection.planExecutionAllocationApproved) {
+          const key = idempotencyKey(instance, "plan_execution_allocate");
+          if (!hasIdempotency(context, key) && inspection.planExecutionId) {
+            return {
+              outcome: { kind: "wait", reason: "Zero-cost allocation for plan execution requested." },
+              workRequest: {
+                kind: "plan_execution_allocate",
+                idempotencyKey: key,
+                planExecutionId: inspection.planExecutionId,
+                opportunityId: inspection.primaryOpportunityId ?? "",
+              },
+            };
+          }
+        }
+
+        if (inspection.planExecutionAllocationApproved) {
+          return {
+            outcome: { kind: "advance", nextStage: "scheduling", reason: "Plan execution allocation approved." },
+            workRequest: { kind: "none" },
+          };
+        }
       }
 
       if (!inspection.allocationProposalRecorded) {
@@ -332,6 +391,68 @@ export function evaluateStage(
     }
 
     case "scheduling": {
+      const autonomous = missionUsesAutonomousPlanExecution(instance, inspection);
+
+      if (autonomous && inspection.planExecutionId) {
+        if (!inspection.planExecutionBuildJobLinked) {
+          const key = idempotencyKey(instance, "plan_execution_bootstrap");
+          if (!hasIdempotency(context, key)) {
+            return {
+              outcome: { kind: "wait", reason: "Internal build segment bootstrap requested." },
+              workRequest: {
+                kind: "plan_execution_bootstrap",
+                idempotencyKey: key,
+                planExecutionId: inspection.planExecutionId,
+              },
+            };
+          }
+        }
+
+        const schedKey = idempotencyKey(
+          instance,
+          `plan_execution_schedule:${inspection.planExecutionEngineJobCount}`,
+        );
+        if (
+          inspection.hasPendingDiscoveryJobs ||
+          inspection.hasPendingDecisionJobs ||
+          inspection.hasPendingValidationJobs ||
+          inspection.hasPendingExecutiveJobs
+        ) {
+          return {
+            outcome: { kind: "wait", reason: "Scheduled engine jobs still pending." },
+            workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+          };
+        }
+
+        if (!hasIdempotency(context, schedKey)) {
+          return {
+            outcome: { kind: "wait", reason: "Plan execution step scheduling requested." },
+            workRequest: {
+              kind: "plan_execution_schedule",
+              idempotencyKey: schedKey,
+              planExecutionId: inspection.planExecutionId,
+            },
+          };
+        }
+
+        if (
+          inspection.planExecutionBuildJobLinked &&
+          inspection.planExecutionSchedulingComplete
+        ) {
+          return {
+            outcome: { kind: "advance", nextStage: "execution", reason: "Plan execution scheduled." },
+            workRequest: { kind: "none" },
+          };
+        }
+
+        if (inspection.planExecutionBuildJobLinked) {
+          return {
+            outcome: { kind: "wait", reason: "Plan execution scheduling in progress." },
+            workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+          };
+        }
+      }
+
       if (
         inspection.hasPendingDiscoveryJobs ||
         inspection.hasPendingDecisionJobs ||
@@ -351,9 +472,18 @@ export function evaluateStage(
     }
 
     case "execution": {
+      const autonomous = missionUsesAutonomousPlanExecution(instance, inspection);
+
       if (inspection.hasPendingWorkerCapabilityJobs) {
         return {
           outcome: { kind: "wait", reason: "Worker capability jobs still pending." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+        };
+      }
+
+      if (inspection.hasPendingBuildJobs && autonomous) {
+        return {
+          outcome: { kind: "wait", reason: "Build Factory jobs still pending." },
           workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
         };
       }
@@ -365,7 +495,7 @@ export function evaluateStage(
         };
       }
 
-      if (inspection.hasPendingBuildJobs) {
+      if (!autonomous && inspection.hasPendingBuildJobs) {
         return {
           outcome: {
             kind: "block",
@@ -373,6 +503,38 @@ export function evaluateStage(
           },
           workRequest: { kind: "none" },
         };
+      }
+
+      if (autonomous && inspection.planExecutionId) {
+        if (
+          inspection.planExecutionStatus === "running" ||
+          inspection.planExecutionStatus === "scheduling" ||
+          inspection.planExecutionStatus === "awaiting_review"
+        ) {
+          if (!inspection.planExecutionSchedulingComplete) {
+            const schedKey = idempotencyKey(
+              instance,
+              `plan_execution_schedule:${inspection.planExecutionEngineJobCount}`,
+            );
+            if (!hasIdempotency(context, schedKey)) {
+              return {
+                outcome: { kind: "wait", reason: "Continuing plan execution scheduling." },
+                workRequest: {
+                  kind: "plan_execution_schedule",
+                  idempotencyKey: schedKey,
+                  planExecutionId: inspection.planExecutionId,
+                },
+              };
+            }
+          }
+        }
+
+        if (inspection.planExecutionStatus === "awaiting_review") {
+          return {
+            outcome: { kind: "advance", nextStage: "review", reason: "Plan execution awaiting review." },
+            workRequest: { kind: "none" },
+          };
+        }
       }
 
       if (
@@ -387,13 +549,28 @@ export function evaluateStage(
         };
       }
 
+      if (!autonomous) {
+        return {
+          outcome: { kind: "advance", nextStage: "review", reason: "Execution observations complete." },
+          workRequest: { kind: "none" },
+        };
+      }
+
       return {
-        outcome: { kind: "advance", nextStage: "review", reason: "Execution observations complete." },
-        workRequest: { kind: "none" },
+        outcome: { kind: "wait", reason: "Plan execution in progress." },
+        workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
       };
     }
 
     case "review": {
+      const autonomous = missionUsesAutonomousPlanExecution(instance, inspection);
+      if (autonomous && !inspection.planExecutionInternallyComplete) {
+        return {
+          outcome: { kind: "wait", reason: "Plan execution review pending internal completion." },
+          workRequest: { kind: "run_next_job", idempotencyKey: idempotencyKey(instance, "run_job") },
+        };
+      }
+
       return {
         outcome: { kind: "advance", nextStage: "completed", reason: "Review recorded deterministically." },
         workRequest: { kind: "none" },

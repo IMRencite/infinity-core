@@ -213,6 +213,21 @@ const CORE_WORKER_CAPABILITY_REGISTRY = {
     reviewRequirement: "independent_qa",
     artifactTypesProduced: ["qa_report"],
   },
+  "qa.verify_autonomous_plan_execution": {
+    ...BASE,
+    capabilityKey: "qa.verify_autonomous_plan_execution",
+    name: "QA Verify Autonomous Plan Execution",
+    description: "Independent QA for governed autonomous internal plan execution.",
+    workerType: "quality_assurance",
+    permissions: ["worker_result.read", "worker_result.write", "internal_artifact.write", "event.emit"],
+    inputSchema: {
+      type: "object",
+      required: ["organization_id", "mission_id", "plan_execution_id"],
+    },
+    outputSchema: { type: "object", required: ["verdict"] },
+    reviewRequirement: "independent_qa",
+    artifactTypesProduced: ["qa_report"],
+  },
 };
 
 export const WORKER_CAPABILITY_REGISTRY = {

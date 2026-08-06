@@ -43,6 +43,14 @@ export const EMPTY_STAGE_INSPECTION: StageInspectionSnapshot = {
   hasPendingWorkerCapabilityJobs: false,
   hasWorkerResultsAwaitingReview: false,
   hasCompletedReviewedWorkerResults: false,
+  planExecutionId: null,
+  planExecutionStatus: null,
+  planExecutionAllocationApproved: false,
+  planExecutionBuildJobLinked: false,
+  planExecutionInternallyComplete: false,
+  planExecutionVentureBlueprintId: null,
+  planExecutionEngineJobCount: 0,
+  planExecutionSchedulingComplete: false,
 };
 
 export async function inspectMissionRuntimeStage(
@@ -188,7 +196,7 @@ export async function inspectMissionRuntimeStage(
 
   const { data: selectionPlanning } = await supabase
     .from("executive_selection_decisions")
-    .select("id, review_status")
+    .select("id, review_status, opportunity_id")
     .eq("organization_id", organizationId)
     .eq("mission_id", missionId)
     .eq("decision", "select_for_planning")
@@ -200,6 +208,9 @@ export async function inspectMissionRuntimeStage(
 
   snapshot.hasExecutiveSelectionPlanningEligible = Boolean(selectionPlanning);
   snapshot.canonicalExecutiveSelectionDecisionId = selectionPlanning?.id ?? null;
+  if (selectionPlanning?.opportunity_id) {
+    snapshot.primaryOpportunityId = selectionPlanning.opportunity_id;
+  }
 
   const { data: escalationDecision } = await supabase
     .from("executive_selection_decisions")
@@ -250,6 +261,94 @@ export async function inspectMissionRuntimeStage(
     .eq("mission_id", missionId);
 
   snapshot.allocationProposalRecorded = (allocationCount ?? 0) > 0;
+
+  const { data: planExecution } = await supabase
+    .from("plan_executions")
+    .select(
+      "id, status, allocation_proposal_id, build_job_id, venture_blueprint_id, plan_id, executable_step_ids, blocked_step_ids, completed_step_ids",
+    )
+    .eq("organization_id", organizationId)
+    .eq("mission_id", missionId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  snapshot.planExecutionId = planExecution?.id ?? null;
+  snapshot.planExecutionStatus = planExecution?.status ?? null;
+  snapshot.planExecutionVentureBlueprintId = planExecution?.venture_blueprint_id ?? null;
+
+  if (snapshot.plannerHandoffPlanId && !snapshot.planExecutionVentureBlueprintId) {
+    const { data: planMeta } = await supabase
+      .from("plans")
+      .select("metadata")
+      .eq("id", snapshot.plannerHandoffPlanId)
+      .maybeSingle();
+    const meta =
+      typeof planMeta?.metadata === "object" &&
+      planMeta.metadata !== null &&
+      !Array.isArray(planMeta.metadata)
+        ? (planMeta.metadata as Record<string, unknown>)
+        : {};
+    if (typeof meta.venture_blueprint_id === "string") {
+      snapshot.planExecutionVentureBlueprintId = meta.venture_blueprint_id;
+    }
+  }
+
+  snapshot.planExecutionBuildJobLinked = Boolean(planExecution?.build_job_id);
+  snapshot.planExecutionAllocationApproved =
+    Boolean(planExecution?.allocation_proposal_id) &&
+    ["allocation_approved", "scheduling", "running", "awaiting_review", "internally_complete"].includes(
+      planExecution?.status ?? "",
+    );
+  snapshot.planExecutionInternallyComplete = planExecution?.status === "internally_complete";
+
+  if (planExecution?.plan_id) {
+    const { count: planJobCount } = await supabase
+      .from("engine_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("organization_id", organizationId)
+      .eq("plan_id", planExecution.plan_id);
+
+    snapshot.planExecutionEngineJobCount = planJobCount ?? 0;
+
+    const executableIds = Array.isArray(planExecution.executable_step_ids)
+      ? (planExecution.executable_step_ids as string[])
+      : [];
+    const blockedIds = new Set(
+      Array.isArray(planExecution.blocked_step_ids)
+        ? (planExecution.blocked_step_ids as string[])
+        : [],
+    );
+    const completedIds = new Set(
+      Array.isArray(planExecution.completed_step_ids)
+        ? (planExecution.completed_step_ids as string[])
+        : [],
+    );
+
+    if (executableIds.length === 0) {
+      snapshot.planExecutionSchedulingComplete = snapshot.planExecutionBuildJobLinked;
+    } else {
+      const internalExecutable = executableIds.filter((id) => !blockedIds.has(id));
+      let covered = 0;
+      for (const stepId of internalExecutable) {
+        if (completedIds.has(stepId)) {
+          covered += 1;
+          continue;
+        }
+        const { count: stepJobs } = await supabase
+          .from("engine_jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("organization_id", organizationId)
+          .eq("plan_step_id", stepId)
+          .in("status", [...PENDING_JOB_STATUSES, "completed"]);
+        if ((stepJobs ?? 0) > 0) {
+          covered += 1;
+        }
+      }
+      snapshot.planExecutionSchedulingComplete =
+        snapshot.planExecutionBuildJobLinked && covered >= internalExecutable.length;
+    }
+  }
 
   if (runtimeInstanceId) {
     const { count: completedSessions } = await supabase

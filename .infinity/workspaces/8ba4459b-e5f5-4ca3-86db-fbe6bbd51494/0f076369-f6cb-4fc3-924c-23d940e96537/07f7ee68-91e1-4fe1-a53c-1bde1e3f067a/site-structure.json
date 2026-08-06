@@ -1,0 +1,42 @@
+{
+  "framework": "static",
+  "routes": [
+    {
+      "slug": "",
+      "path": "/",
+      "pageType": "home",
+      "title": "executive_selection_e2e_v1 strong_in_policy"
+    },
+    {
+      "slug": "about",
+      "path": "/about",
+      "pageType": "about",
+      "title": "About"
+    },
+    {
+      "slug": "contact",
+      "path": "/contact",
+      "pageType": "contact",
+      "title": "Contact"
+    },
+    {
+      "slug": "articles",
+      "path": "/articles",
+      "pageType": "category",
+      "title": "Articles"
+    },
+    {
+      "slug": "pillar-pages",
+      "path": "/pillar-pages",
+      "pageType": "article",
+      "title": "pillar_pages"
+    },
+    {
+      "slug": "topic-clusters",
+      "path": "/topic-clusters",
+      "pageType": "article",
+      "title": "topic_clusters"
+    }
+  ],
+  "label": "Internal website source — not deployed."
+}

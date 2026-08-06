@@ -114,6 +114,28 @@ export type RuntimeWorkRequest =
       kind: "planner_executive_handoff";
       idempotencyKey: string;
     }
+  | {
+      kind: "plan_execution_begin";
+      idempotencyKey: string;
+      planId: string;
+      ventureBlueprintId: string;
+    }
+  | {
+      kind: "plan_execution_allocate";
+      idempotencyKey: string;
+      planExecutionId: string;
+      opportunityId: string;
+    }
+  | {
+      kind: "plan_execution_bootstrap";
+      idempotencyKey: string;
+      planExecutionId: string;
+    }
+  | {
+      kind: "plan_execution_schedule";
+      idempotencyKey: string;
+      planExecutionId: string;
+    }
   | { kind: "none" };
 
 export type StageEvaluation = {
@@ -201,6 +223,14 @@ export type StageInspectionSnapshot = {
   hasPendingWorkerCapabilityJobs: boolean;
   hasWorkerResultsAwaitingReview: boolean;
   hasCompletedReviewedWorkerResults: boolean;
+  planExecutionId: string | null;
+  planExecutionStatus: string | null;
+  planExecutionAllocationApproved: boolean;
+  planExecutionBuildJobLinked: boolean;
+  planExecutionInternallyComplete: boolean;
+  planExecutionVentureBlueprintId: string | null;
+  planExecutionEngineJobCount: number;
+  planExecutionSchedulingComplete: boolean;
 };
 
 export function emptyRuntimeContext(): MissionRuntimeContext {

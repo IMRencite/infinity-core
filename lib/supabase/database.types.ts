@@ -3829,6 +3829,190 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_executions: {
+        Row: {
+          active_step_id: string | null
+          allocation_proposal_id: string | null
+          approved_capabilities: Json
+          approved_cost: number
+          blocked_step_ids: Json
+          blocking_reason: string | null
+          build_id: string | null
+          build_job_id: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          completed_step_ids: Json
+          correlation_id: string | null
+          created_at: string
+          current_phase: string
+          estimated_cost: number
+          executable_step_ids: Json
+          execution_policy_version: string
+          execution_version: number
+          executive_decision_id: string
+          failed_at: string | null
+          failed_step_ids: Json
+          id: string
+          idempotency_key: string
+          maximum_concurrency: number
+          maximum_runtime_ms: number
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          plan_id: string
+          plan_version: number
+          prohibited_capabilities: Json
+          runtime_instance_id: string | null
+          scheduler_policy_version: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          venture_blueprint_id: string | null
+        }
+        Insert: {
+          active_step_id?: string | null
+          allocation_proposal_id?: string | null
+          approved_capabilities?: Json
+          approved_cost?: number
+          blocked_step_ids?: Json
+          blocking_reason?: string | null
+          build_id?: string | null
+          build_job_id?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          completed_step_ids?: Json
+          correlation_id?: string | null
+          created_at?: string
+          current_phase?: string
+          estimated_cost?: number
+          executable_step_ids?: Json
+          execution_policy_version?: string
+          execution_version?: number
+          executive_decision_id: string
+          failed_at?: string | null
+          failed_step_ids?: Json
+          id?: string
+          idempotency_key: string
+          maximum_concurrency?: number
+          maximum_runtime_ms?: number
+          mission_id: string
+          opportunity_id: string
+          organization_id: string
+          plan_id: string
+          plan_version?: number
+          prohibited_capabilities?: Json
+          runtime_instance_id?: string | null
+          scheduler_policy_version?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          venture_blueprint_id?: string | null
+        }
+        Update: {
+          active_step_id?: string | null
+          allocation_proposal_id?: string | null
+          approved_capabilities?: Json
+          approved_cost?: number
+          blocked_step_ids?: Json
+          blocking_reason?: string | null
+          build_id?: string | null
+          build_job_id?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          completed_step_ids?: Json
+          correlation_id?: string | null
+          created_at?: string
+          current_phase?: string
+          estimated_cost?: number
+          executable_step_ids?: Json
+          execution_policy_version?: string
+          execution_version?: number
+          executive_decision_id?: string
+          failed_at?: string | null
+          failed_step_ids?: Json
+          id?: string
+          idempotency_key?: string
+          maximum_concurrency?: number
+          maximum_runtime_ms?: number
+          mission_id?: string
+          opportunity_id?: string
+          organization_id?: string
+          plan_id?: string
+          plan_version?: number
+          prohibited_capabilities?: Json
+          runtime_instance_id?: string | null
+          scheduler_policy_version?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          venture_blueprint_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_executions_allocation_proposal_id_fkey"
+            columns: ["allocation_proposal_id"]
+            isOneToOne: false
+            referencedRelation: "allocation_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_build_job_id_fkey"
+            columns: ["build_job_id"]
+            isOneToOne: false
+            referencedRelation: "build_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_runtime_instance_id_fkey"
+            columns: ["runtime_instance_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runtime_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_executions_venture_blueprint_id_fkey"
+            columns: ["venture_blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "venture_blueprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_steps: {
         Row: {
           capability_key: string

@@ -17,7 +17,8 @@
     "validate:website-builder-e2e": "node scripts/validate-website-builder-e2e.mjs",
     "validate:ai-website-generation-e2e": "node scripts/validate-ai-website-generation-e2e.mjs",
     "validate:executive-selection-e2e": "node scripts/validate-executive-selection-e2e.mjs",
-    "validate:executive-planner-handoff-e2e": "node scripts/validate-executive-planner-handoff-e2e.mjs"
+    "validate:executive-planner-handoff-e2e": "node scripts/validate-executive-planner-handoff-e2e.mjs",
+    "validate:autonomous-plan-execution-e2e": "node scripts/validate-autonomous-plan-execution-e2e.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",

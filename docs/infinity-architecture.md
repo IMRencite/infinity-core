@@ -29,6 +29,8 @@ Dashboard: `/dashboard/runtime` and `/dashboard/reasoning` (read-only session vi
 
 **Build Factory Runtime v2 Foundation** — Extends `lib/infinity/build-factory/` (same Scheduler, Worker Runtime, workspaces). Generic **BuildJob** (`build_jobs`) is product-neutral; **BuilderPlugin** registry adapters (`website.internal_*`) wrap Website Build Worker v1 without duplicating generators. Entry: `requestBuildFactoryRuntimeV2`. Dual QA (product + `qa.verify_generic_internal_build`), bounded repair, rollback mode labeled (`metadata_only` unless byte-perfect verified). Internal completion only — not deployed or published.
 
+**Autonomous Plan Execution Integration v1** (`lib/infinity/plan-execution/`, `plan_executions`) — Coordinates Mission Runtime **v2** stages (planning → allocation → scheduling → execution → review) with canonical Executive selection, zero-cost allocation, existing Scheduler, Build Factory v2, and Worker Runtime. One bounded transition per tick; workers do not advance Mission Runtime. Independent `qa.verify_autonomous_plan_execution`. Legacy v1 missions and missions with `disable_autonomous_plan_execution` metadata skip this path.
+
 **AI Website Generation Foundation v1** (`lib/infinity/ai-website-generation/`) — bounded context, strict `WebsiteGenerationPlan`, mock/shadow/advisory/disabled modes, governed approval, deterministic translation into Website Builder models. AI never writes source files directly.
 
 **Website Build Worker Foundation v1** (`lib/infinity/website-builder/`) — internal website source in approved sandboxes; deterministic templates, honest markers, foundation validation, independent QA; not deployed or published.

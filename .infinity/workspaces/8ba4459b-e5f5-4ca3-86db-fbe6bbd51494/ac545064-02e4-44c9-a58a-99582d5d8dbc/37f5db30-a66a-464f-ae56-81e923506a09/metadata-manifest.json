@@ -1,0 +1,36 @@
+{
+  "origin": "https://example.invalid",
+  "pages": [
+    {
+      "path": "/",
+      "title": "executive_selection_e2e_v1 strong_in_policy",
+      "description": "[CONTENT REQUIRED]"
+    },
+    {
+      "path": "/about",
+      "title": "About",
+      "description": "[CONTENT REQUIRED]"
+    },
+    {
+      "path": "/contact",
+      "title": "Contact",
+      "description": "[CONTENT REQUIRED]"
+    },
+    {
+      "path": "/articles",
+      "title": "Articles",
+      "description": "[CONTENT REQUIRED]"
+    },
+    {
+      "path": "/pillar-pages",
+      "title": "pillar_pages",
+      "description": "[CONTENT REQUIRED]"
+    },
+    {
+      "path": "/topic-clusters",
+      "title": "topic_clusters",
+      "description": "[CONTENT REQUIRED]"
+    }
+  ],
+  "openGraphPlaceholder": true
+}
