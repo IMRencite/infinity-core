@@ -287,6 +287,23 @@ Organic feedback should eventually track indexation, impressions, clicks, rank, 
 
 Media feedback should eventually track impressions, CTR, hook retention, watch time, completion, subscriber conversion, traffic, leads, revenue, creative cost, and ROI.
 
+## 15. Operator Observability — Live Venture Operator Console V1 Verified
+
+Infinity HQ is the operator-facing observability layer at `/dashboard/ventures/[ventureId]`. It is **not** an autonomous reasoning engine — it visualizes persisted state from verified engines.
+
+### Architecture
+- **Server-side operator read model** (`lib/infinity/operator-console/`) aggregates truth from existing engine tables
+- **Secure boundary**: browser → Next.js API route → `createAdminClient()` → sanitized snapshot JSON
+- **No client-side access** to RLS-protected internal operational tables
+- **Polling** (~4s) via `/api/operator-console/ventures/[ventureId]` — no direct Supabase realtime subscriptions from browser
+
+### Infinity HQ department model
+Verified engines map into business-readable departments (Opportunity Lab, Research, Strategy & Finance, Company Operations, Growth, Creative Studio, Product Lab, Quality Control, Launch Operations, Intelligence Center, Executive Office).
+
+Both **HQ View** (spatial department floor) and **System View** (technical IDs, JSON panels) read from the same canonical snapshot.
+
+Closed-loop routing visualizes Performance Intelligence → LearningDecision → Mission → target department when persisted decision payload includes `missionTargetEngine`.
+
 ## 15. Persistence and Lineage
 Infinity should preserve lineage across decisions and artifacts rather than creating disconnected outputs.
 

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "lib/infinity/operator-console/**/*.ts",
+    "lib/supabase/admin.ts",
+    "lib/supabase/server.ts",
+    "lib/supabase/database.types.ts"
+  ]
+}

@@ -40,10 +40,12 @@
     "run:organic-growth-v1-test": "node scripts/run-organic-growth-v1-test.mjs",
     "run:creative-media-v1-test": "node scripts/run-creative-media-v1-test.mjs",
     "run:performance-intelligence-v1-test": "node scripts/run-performance-intelligence-v1-test.mjs",
+    "run:operator-console-v1-test": "node scripts/run-operator-console-v1-test.mjs",
     "typecheck": "tsc --noEmit",
     "typecheck:organic-growth": "tsc --noEmit -p tsconfig.organic-growth.json",
     "typecheck:creative-media": "tsc --noEmit -p tsconfig.creative-media.json",
-    "typecheck:performance-intelligence": "tsc --noEmit -p tsconfig.performance-intelligence.json"
+    "typecheck:performance-intelligence": "tsc --noEmit -p tsconfig.performance-intelligence.json",
+    "typecheck:operator-console": "tsc --noEmit -p tsconfig.operator-console.json"
   },
   "dependencies": {
     "@google/genai": "^2.17.1",
