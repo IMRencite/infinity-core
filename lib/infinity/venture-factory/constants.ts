@@ -19,6 +19,7 @@ export const VENTURE_TEMPLATE_TYPES = [
   "digital_product",
   "agency",
   "marketplace",
+  "controlled_nextjs_website",
 ] as const;
 
 export type VentureTemplateType = (typeof VENTURE_TEMPLATE_TYPES)[number];

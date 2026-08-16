@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "lib/infinity/organic-growth-engine/**/*.ts",
+    "lib/infinity/company-builder/load/load-handoffs.ts",
+    "lib/infinity/company-builder/types.ts",
+    "lib/infinity/venture-selection/load/load-candidates.ts",
+    "lib/infinity/venture-selection/types.ts",
+    "lib/infinity/product-asset-builder/v2/types.ts",
+    "lib/infinity/product-asset-builder/v2.1/types.ts",
+    "lib/infinity/research/**/*.ts",
+    "lib/supabase/admin.ts"
+  ]
+}

@@ -8,6 +8,7 @@ import {
 import { createSupabaseMissionRuntimeStore } from "@/lib/infinity/mission-runtime/persistence";
 import { generateVentureBlueprint } from "@/lib/infinity/venture-factory/generators/generate-blueprint";
 import { mapOpportunityRow } from "@/lib/infinity/venture-factory/validation/validate-opportunity";
+import type { VentureTemplateType } from "@/lib/infinity/venture-factory/constants";
 import { getVentureBlueprintTemplate } from "@/lib/infinity/venture-factory/registry/template-registry";
 import { persistVentureBlueprint } from "@/lib/infinity/venture-factory/blueprints/persist";
 import { planExecutionIdempotencyKey, planExecutionAllocationKey } from "@/lib/infinity/plan-execution/idempotency";
@@ -223,6 +224,12 @@ async function proveUnsupportedExternalStep(
 
 export async function runAutonomousPlanExecutionE2EValidation(
   admin: AdminSupabaseClient,
+  options?: {
+    skipDuplicateProof?: boolean;
+    skipRepairProof?: boolean;
+    skipExternalStepProof?: boolean;
+    ventureTemplateKey?: VentureTemplateType;
+  },
 ): Promise<AutonomousPlanExecutionE2EReport> {
   registerRuntimeWorkers();
   const errors: string[] = [];
@@ -256,7 +263,9 @@ export async function runAutonomousPlanExecutionE2EValidation(
   }
 
   t = phaseStart();
-  const template = getVentureBlueprintTemplate("content_website");
+  const template = getVentureBlueprintTemplate(
+    options?.ventureTemplateKey ?? "content_website",
+  );
   const { data: oppRow } = await admin
     .from("opportunities")
     .select("*")
@@ -584,16 +593,22 @@ export async function runAutonomousPlanExecutionE2EValidation(
   await observeMissionScoped(admin, handoff.organizationId, handoff.missionId);
   phaseEnd(phaseTimingsMs, "completion_observation_tick", t);
 
-  const externalStepProof = await proveUnsupportedExternalStep(admin, {
-    organizationId: handoff.organizationId,
-    missionId: handoff.missionId,
-    planId: handoff.planId,
-    planVersion: planRow?.version ?? 1,
-  });
+  const externalStepProof = options?.skipExternalStepProof
+    ? { passed: true, capabilityKey: "skipped", eligibilityStatus: "skipped", engineJobsForStep: 0, fixtureStepId: null }
+    : await proveUnsupportedExternalStep(admin, {
+        organizationId: handoff.organizationId,
+        missionId: handoff.missionId,
+        planId: handoff.planId,
+        planVersion: planRow?.version ?? 1,
+      });
   if (!externalStepProof.passed) {
     errors.push("unsupported external step isolation proof failed");
   }
 
+  let duplicateCountsBefore: ScopedDuplicateCounts | null = null;
+  let duplicateCountsAfter: ScopedDuplicateCounts | null = null;
+
+  if (!options?.skipDuplicateProof) {
   const idempotencyKey = planExecutionIdempotencyKey({
     organizationId: handoff.organizationId,
     missionId: handoff.missionId,
@@ -611,7 +626,7 @@ export async function runAutonomousPlanExecutionE2EValidation(
     planExecutionId: planExecutionId ?? "pending",
   }).split(":")[0] ?? APE_E2E_LABEL;
 
-  const duplicateCountsBefore = await countScopedDuplicates(admin, {
+  const duplicateCountsBeforeInner = await countScopedDuplicates(admin, {
     organizationId: handoff.organizationId,
     missionId: handoff.missionId,
     planId: handoff.planId,
@@ -619,6 +634,8 @@ export async function runAutonomousPlanExecutionE2EValidation(
     allocationProposalKeyPrefix: "plan_execution_allocation",
     buildId,
   });
+
+  duplicateCountsBefore = duplicateCountsBeforeInner;
 
   t = phaseStart();
   for (let i = 0; i < 6; i += 1) {
@@ -637,7 +654,7 @@ export async function runAutonomousPlanExecutionE2EValidation(
   }
   phaseEnd(phaseTimingsMs, "duplicate_replay_ticks", t);
 
-  const duplicateCountsAfter = await countScopedDuplicates(admin, {
+  duplicateCountsAfter = await countScopedDuplicates(admin, {
     organizationId: handoff.organizationId,
     missionId: handoff.missionId,
     planId: handoff.planId,
@@ -645,10 +662,11 @@ export async function runAutonomousPlanExecutionE2EValidation(
     allocationProposalKeyPrefix: "plan_execution_allocation",
     buildId,
   });
+  }
 
   let repairProof: AutonomousPlanExecutionE2EReport["repairProof"] = null;
   const elapsed = Date.now() - startedAt;
-  if (elapsed < 8 * 60 * 1000 && peFinal?.status === "internally_complete") {
+  if (!options?.skipRepairProof && elapsed < 8 * 60 * 1000 && peFinal?.status === "internally_complete") {
     t = phaseStart();
     const v2Repair = await runBuildFactoryRuntimeV2E2EValidation(admin);
     phaseEnd(phaseTimingsMs, "isolated_repair_branch_build_factory_v2", t);
@@ -661,7 +679,7 @@ export async function runAutonomousPlanExecutionE2EValidation(
     if (!repairProof.passed) {
       errors.push("isolated repair branch did not prove bounded repair exhaustion");
     }
-  } else {
+  } else if (!options?.skipRepairProof) {
     repairProof = {
       passed: false,
       repairAttemptIds: [],
@@ -759,14 +777,16 @@ export async function runAutonomousPlanExecutionE2EValidation(
     }
   }
 
-  if (duplicateCountsAfter.planExecutions > duplicateCountsBefore.planExecutions) {
-    errors.push("duplicate PlanExecution after replay");
-  }
-  if (duplicateCountsAfter.buildJobs > duplicateCountsBefore.buildJobs) {
-    errors.push("duplicate BuildJob after replay");
-  }
-  if (duplicateCountsAfter.engineJobs > duplicateCountsBefore.engineJobs) {
-    errors.push("duplicate engine jobs after replay");
+  if (duplicateCountsBefore && duplicateCountsAfter) {
+    if (duplicateCountsAfter.planExecutions > duplicateCountsBefore.planExecutions) {
+      errors.push("duplicate PlanExecution after replay");
+    }
+    if (duplicateCountsAfter.buildJobs > duplicateCountsBefore.buildJobs) {
+      errors.push("duplicate BuildJob after replay");
+    }
+    if (duplicateCountsAfter.engineJobs > duplicateCountsBefore.engineJobs) {
+      errors.push("duplicate engine jobs after replay");
+    }
   }
 
   if (pauseResumeProof && !pauseResumeProof.passed) {
@@ -807,7 +827,10 @@ export async function runAutonomousPlanExecutionE2EValidation(
     genericQaStatus: jobFinal?.generic_qa_status ?? null,
     executionQaResultId: execQaWr?.id ?? null,
     blockedExternalStepId: externalStepProof.fixtureStepId,
-    duplicatePlanExecutionCount: Math.max(0, duplicateCountsAfter.planExecutions - 1),
+    duplicatePlanExecutionCount: Math.max(
+      0,
+      (duplicateCountsAfter?.planExecutions ?? 1) - 1,
+    ),
     runtimeStages,
     finalPlanExecutionStatus: peFinal?.status ?? null,
     finalRuntimeStage: rtFinal?.current_stage ?? null,

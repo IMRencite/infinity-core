@@ -4,10 +4,13 @@ export type AiProviderEnvConfig = {
   openaiApiKey: string | null;
   anthropicApiKey: string | null;
   googleApiKey: string | null;
+  geminiApiKey: string | null;
+  xaiApiKey: string | null;
   openrouterApiKey: string | null;
   ollamaUrl: string | null;
-  /** When false, only mock may execute (default). */
   allowLiveProviderExecution: boolean;
+  anthropicEnabled: boolean;
+  xaiEnabled: boolean;
   defaultProviderId: AiProviderId;
   requestTimeoutMs: number;
   maxRetries: number;
@@ -19,12 +22,16 @@ export function loadAiProviderEnvConfig(
   return {
     openaiApiKey: env.OPENAI_API_KEY?.trim() || null,
     anthropicApiKey: env.ANTHROPIC_API_KEY?.trim() || null,
-    googleApiKey: env.GOOGLE_API_KEY?.trim() || null,
+    googleApiKey: env.GOOGLE_API_KEY?.trim() || env.GEMINI_API_KEY?.trim() || null,
+    geminiApiKey: env.GEMINI_API_KEY?.trim() || env.GOOGLE_API_KEY?.trim() || null,
+    xaiApiKey: env.XAI_API_KEY?.trim() || null,
     openrouterApiKey: env.OPENROUTER_API_KEY?.trim() || null,
     ollamaUrl: env.OLLAMA_URL?.trim() || null,
     allowLiveProviderExecution: env.AI_PROVIDER_ALLOW_LIVE_EXECUTION === "true",
+    anthropicEnabled: env.AI_PROVIDER_ANTHROPIC_ENABLED === "true",
+    xaiEnabled: env.AI_PROVIDER_XAI_ENABLED === "true",
     defaultProviderId: (env.AI_PROVIDER_DEFAULT as AiProviderId | undefined) ?? "mock",
-    requestTimeoutMs: Number(env.AI_PROVIDER_TIMEOUT_MS ?? 30_000),
+    requestTimeoutMs: Number(env.AI_PROVIDER_TIMEOUT_MS ?? 60_000),
     maxRetries: Number(env.AI_PROVIDER_MAX_RETRIES ?? 2),
   };
 }
@@ -39,9 +46,11 @@ export function isProviderConfigured(
     case "openai":
       return Boolean(config.openaiApiKey);
     case "anthropic":
-      return Boolean(config.anthropicApiKey);
+      return Boolean(config.anthropicApiKey) && config.anthropicEnabled;
     case "google_gemini":
-      return Boolean(config.googleApiKey);
+      return Boolean(config.googleApiKey || config.geminiApiKey);
+    case "xai":
+      return Boolean(config.xaiApiKey) && config.xaiEnabled;
     case "openrouter":
       return Boolean(config.openrouterApiKey);
     case "ollama":

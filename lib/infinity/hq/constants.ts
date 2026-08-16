@@ -13,6 +13,8 @@ export const HQ_ROUTES = {
   assets: "/dashboard/assets",
   intelligence: "/dashboard/intelligence",
   builds: "/dashboard/builds",
+  ventures: "/dashboard/ventures",
+  launch: "/dashboard/launch",
   missions: (missionId: string) => `/dashboard/missions/${missionId}`,
 } as const;
 

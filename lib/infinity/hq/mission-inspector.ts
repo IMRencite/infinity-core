@@ -5,6 +5,7 @@ import type { MissionInspectorData } from "./types";
 import { loadCanonicalExecutiveSelectionForMission } from "@/lib/infinity/executive-selection/authorization";
 import { missionHasCanonicalHandoffPlan } from "@/lib/infinity/orchestration/mission-planner-handoff";
 import { loadHqPlanExecutionSummary } from "./plan-execution";
+import { loadHqVentureAssemblySummary } from "./venture-assembly";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
@@ -197,6 +198,11 @@ export async function loadMissionInspector(
   );
   const handoffPlan = await missionHasCanonicalHandoffPlan(supabase, organizationId, missionId);
   const planExecutionSummary = await loadHqPlanExecutionSummary(supabase, organizationId, missionId);
+  const ventureAssemblySummary = await loadHqVentureAssemblySummary(
+    supabase,
+    organizationId,
+    missionId,
+  );
 
   const executivePlannerHandoff = {
     source: canonicalAuth ? "executive_selection_v2" : "legacy_or_none",
@@ -229,6 +235,7 @@ export async function loadMissionInspector(
     ),
     executivePlannerHandoff: sanitizeRecord(executivePlannerHandoff),
     planExecution: sanitizeRecord(planExecutionSummary as unknown as Record<string, unknown>),
+    ventureAssembly: sanitizeRecord(ventureAssemblySummary as unknown as Record<string, unknown>),
     allocationProposals: (allocationProposals ?? []).map((a) =>
       sanitizeRecord(a as unknown as Record<string, unknown>),
     ),

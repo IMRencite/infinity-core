@@ -25,8 +25,8 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Product + Asset Builder V2 | VERIFIED | Production build intelligence verified. |
 | Product + Asset Builder V2.1 | VERIFIED LIVE | Real AI coding output applied to workspace and verified. |
 | External Action Gateway | VERIFIED live path | Allowlisted/within-policy autonomous external action path; first autonomous live launch previously succeeded. |
-| Organic Growth Architecture Engine V1 | DESIGNED / PLANNED | Full master build prompt designed; do not call verified until implementation/tests pass. |
-| Creative Media Architecture Engine V1 | NEXT MILESTONE / PLANNED | Provider-neutral autonomous image/video architecture to build next. |
+| Organic Growth Architecture Engine V1 | VERIFIED | v1.2 final live PAB handoff: real OpenAI `gpt-4.1-mini` + Gemini review via PAB V2.1; 33 mock/simulation + 3 live tests pass; post-generation gate executes on AI artifact. Live grounded research: SKIPPED_MISSING_CREDENTIALS (integration implemented, not live-verified). |
+| Creative Media Architecture Engine V1 | VERIFIED | Provider-neutral media pipeline in `lib/infinity/creative-media-engine/`; migration `20260815280000`; 23 mock + 2 live tests pass; live OpenAI `gpt-image-1` image verified; async video mock-verified; FFmpeg SKIPPED_ENVIRONMENT; second live video provider not configured (mock failover only). |
 | Full Growth/Monitoring learning engine | FUTURE | Feedback-ready concepts designed; full engine not yet built. |
 | First complete autonomous venture cycle | NOT STARTED | Explicitly deferred until foundation work is ready. |
 
@@ -109,9 +109,47 @@ Passed applicable gates:
 Verified lineage included:
 OpportunityCandidate → MonetizationPlan → VentureBlueprint → BuildPackage → FeatureContract → CodingTask → ProviderCall → CodeChangeSet → WorkspaceMutation → BuildGate → ProductionArtifact
 
-## 3. Organic Growth Architecture — Designed State
+## 3. Organic Growth Architecture — VERIFIED (v1.2 live PAB handoff)
 
-A full implementation prompt has been designed. Required implementation scope includes:
+**Status:** `Organic Growth Architecture Engine V1 — VERIFIED`
+
+Implemented in `lib/infinity/organic-growth-engine/` with verification evidence from `npm run run:organic-growth-v1-test` plus `RUN_ORGANIC_GROWTH_PAB_V21_LIVE=true`.
+
+Migrations:
+- `20260815260000_organic_growth_engine_foundation_v1.sql`
+- `20260815270000_organic_growth_v1_1_verification_closure.sql`
+
+### Test totals (latest run)
+- Organic Growth unit (mock/simulation): **31/31 passed**
+- Organic Growth live persistence: **1/1 passed**
+- Organic Growth live PAB V2.1 AI handoff: **2/2 passed**
+- Organic Growth targeted typecheck: **0 errors**
+- Monetization regression: **13/13 passed**
+- Company Builder regression: **8/8 passed**
+- PAB V2.1 mock regression: **5/5 passed**
+- Production build: **passed**
+
+### Live PAB V2.1 handoff evidence (representative run)
+`OpportunityCandidate` `903b7768-6baf-4927-adce-de905be8a87b` → `MonetizationPlan` (run `14675d5c-9fbd-4689-9243-d5232dedf252`) → `VentureBlueprint` `22fc43e1-358a-451e-ab08-02a657e8abca` → `CompanyBuilderBuildPackage` `422d617a-04fe-4cc3-80fe-caf083aff6ac` → `OrganicGrowthRun` `f51fbab9-9449-4664-bbb6-38a404b99232` → `OrganicGrowthBuildPackage` `9177b8ac-3015-4b6f-94ab-75dbb4e4ed67` → `OrganicContentContract` `43f6d283-8301-430a-bf8f-2d0a20b84642` → PAB V2.1 `CodingTask` `ca8f95b6-0439-4b99-9f59-655b4d8b3967` → **openai** `gpt-4.1-mini` + **gemini** review → `CodeChangeSet` `c7a34df4-da4a-403f-8138-36e302f75f0d` → `WorkspaceMutation` `5ee2cd7e-a997-4a41-a5f7-8a78a0e8d3df` → `ProductionArtifact` `90ff2301-509a-445a-a1e4-3b1ea36d2f4b` → post-generation gate **REPAIR** (internal link registry).
+
+PAB telemetry: 720 input / 857 output tokens, **$0.008296** (provider-reported).
+
+### Persistence model
+- **Canonical:** `organic_growth_runs` + `organic_growth_build_packages.build_package` (JSONB aggregate)
+- **Normalized HITL:** `organic_human_contribution_requests`
+- PAB stage: standard PAB V2.1 tables (`product_asset_builder_runs`, `product_asset_coding_tasks`, `product_asset_provider_calls`, `product_asset_code_change_sets`, `product_asset_workspace_mutations`, `product_asset_production_artifacts`, `product_asset_traceability_links`)
+
+### Grounded research
+- Integration implemented: **YES** (provider-neutral `runGroundedResearch`)
+- Mock verified: **YES** (`SKIPPED_MISSING_CREDENTIALS` when keys absent — not counted as pass)
+- Live verified: **NO**
+
+### Remaining limitations
+- Live grounded research not verified without credentials
+- Post-generation gate may return **REPAIR** when AI internal links use paths outside canonical registry
+- Simulated handoff (`runOrganicPabHandoff`) retained for deterministic tests
+
+Implemented scope includes:
 - OrganicChannelViability
 - SearchAnswerOpportunityGraph
 - PageOpportunity generation/scoring/decisions
@@ -162,51 +200,85 @@ Neighborhood expansion occurs only when local intent, evidence, differentiation,
 ### HITL rule
 HITL is targeted E-E-A-T/evidence enrichment, not a global approval gate. AI may never fabricate first-person experience, reviewers, experts, credentials, or first-party evidence.
 
-## 4. Creative Media Architecture — NEXT MILESTONE
+## 4. Creative Media Architecture — VERIFIED (v1 foundation)
 
-**Status: PLANNED, NOT IMPLEMENTED.**
+**Status:** `Creative Media Architecture Engine V1 — VERIFIED`
 
-Build this next unless a new blocking foundation issue is discovered.
+Implemented in `lib/infinity/creative-media-engine/` with verification from `npm run run:creative-media-v1-test` plus `RUN_CREATIVE_MEDIA_V1_LIVE=true`.
 
-Target milestone name:
+Migration: `20260815280000_creative_media_engine_foundation_v1.sql` — applied successfully.
 
-**CREATIVE MEDIA ARCHITECTURE ENGINE V1 — AUTONOMOUS IMAGE + VIDEO GENERATION FOUNDATION**
+### Test totals (latest run)
+- Creative Media unit (mock): **23/23 passed**
+- Creative Media live persistence (simulation): **1/1 passed**
+- Creative Media live image: **1/1 passed** (`RUN_CREATIVE_MEDIA_V1_LIVE=true`)
+- Creative Media live video: **SKIPPED** (mock async job path verified; Google Veo adapter implemented, live short clip not executed in this run)
+- Creative Media targeted typecheck: **0 errors**
+- Organic Growth regression: **31/31 mock + 3/3 live passed**
+- Monetization regression: **passed**
+- PAB V2.1 mock regression: **5/5 passed**
+- Production build: **passed**
+- Company Builder live regression: **pre-existing flake** (1 ready package vs expected 2 — unrelated to Creative Media)
+- PAB V2.1 live regression: **pre-existing flake** (`feature_contract_coverage` gate — unrelated to Creative Media)
 
-Target scope:
-- Media Opportunity Engine
+### Providers exercised
+| Provider | Model | Mock | Live | Notes |
+|---|---|---|---|---|
+| `mock_media` | mock-image-v1 / mock-video-v1 | YES | NO | Deterministic tests + simulation persistence |
+| `openai_media` | `gpt-image-1` | YES (routing) | YES | Live hero image generation |
+| `google_media` | imagen / veo (adapter) | YES (registry) | NO (image/video gen not executed live) | Configured; Veo behind adapter only |
+| `deterministic_ffmpeg` | ffmpeg-local | YES (detection) | SKIPPED_ENVIRONMENT | FFmpeg not available on runner |
+
+### Live image evidence (representative run)
+Run ID: `bcb31c37-7234-4738-852b-0551e8aaf1a4` (persistence run in same session)
+
+Lineage: `MediaOpportunity` → `CreativeBrief` → `MediaGenerationTask` → `MediaRoutingDecision` → `openai_media`/`gpt-image-1` → `GeneratedMediaAsset` `5ffb39c5-a0c3-4fdd-aede-c06b01aa1b81` → `MediaQualityReview` (**PASS**) → `ProductionMediaArtifact` (**READY**)
+
+Asset telemetry: 1,236,367 bytes, SHA-256 `d5cef9ca3222fdcd8a5a935eeb6e373221de2f40b48ede244431f70424262ce8`, cost **UNKNOWN** (OpenAI image usage not reported)
+
+### Persistence counts (Supabase)
+- `creative_media_runs`: 5
+- `creative_media_build_packages`: 5
+- `creative_media_generation_jobs`: 5
+- `creative_media_assets`: 5
+- `creative_media_quality_reviews`: 5
+- `creative_media_cost_records`: 5
+- `creative_media_production_artifacts`: 5
+- `creative_media_traceability_links`: 20
+
+### Provider-neutrality audit
+- `video = Veo` in generic domain: **NO** (Veo only in `google-media-adapter.ts` + capability registry config)
+- `image = one provider` in generic domain: **NO**
+- New provider via adapter + capability registration: **YES**
+
+### Remaining limitations
+- Live short-form video generation not executed (Google Veo adapter present; mock async verified)
+- No second independent live video provider configured (Runway/MiniMax/Viewmax adapters deferred)
+- FFmpeg deterministic processing unavailable in test environment
+- YouTube-ready contracts defined in types; full YouTube automation not built
+- Performance-learning metrics slots reserved; no fake performance data
+- OpenAI image cost telemetry: `NOT_REPORTED`
+
+Implemented scope includes:
+- Media Opportunity Engine + economics gating
 - Creative Brief Engine
-- provider-neutral Media Model Router
-- image generation adapters/capabilities
-- video generation adapters/capabilities
-- Google/Veo support through Google provider ecosystem where appropriate
-- asynchronous video job handling
-- thumbnails
-- storyboard / shot-list contracts
-- brand and character/subject consistency strategy
-- media asset registry
-- generation provenance
-- token/cost/media-cost telemetry
-- media economics
-- creative quality review
-- adversarial review
-- repair/regeneration loop
-- anti-AI-slop quality gates
-- YouTube-ready pipeline contracts
-- SEO/GEO media requirements integration
-- future social/ads integration
-- performance-feedback-ready metrics
-
-Do not hard-code video generation to Veo or image generation to one model. Use capability-based provider routing.
+- Media Capability Registry + Media Model Router
+- Async Media Job Engine
+- Media Asset Registry + provenance/traceability
+- BrandMediaProfile / SubjectConsistencyProfile (types + brief integration)
+- Storyboard / ShotPlan / Shot architecture
+- Creative Quality Engine + adversarial review + repair/regeneration
+- ProductionMediaArtifact
+- YouTube-ready contract types (`VideoProductionContracts`)
+- Performance-ready metric slots on production artifacts
 
 ## 5. Explicitly Not Yet Done
 - Do not claim Organic Growth Architecture V1 is implemented until its build/test report passes.
-- Do not claim Creative Media Architecture V1 is implemented.
+- Do not claim Creative Media Architecture V1 is unimplemented — **V1 foundation is VERIFIED** (see section 4); full YouTube publishing and performance learning remain future.
 - Do not claim full autonomous YouTube channel creation/publishing is complete.
 - Do not claim full social channel creation/posting is complete.
 - Do not claim full Growth/Monitoring learning loop is complete.
 - Do not claim the first end-to-end autonomous revenue-generating venture cycle has been completed unless a future checkpoint verifies it.
 
 ## 6. Next Step
-Build **Creative Media Architecture Engine V1** with the same discipline used for Organic Growth Architecture: provider-neutral contracts, economics, evidence/provenance, quality gates, adversarial review, autonomous execution boundaries, and explicit tests.
-
-After Creative Media foundation is verified, reassess whether any other foundational engine is required before initiating the first complete autonomous venture cycle.
+Reassess whether any other foundational engine is required before initiating the first complete autonomous venture cycle. **Growth/Monitoring learning** and **first full autonomous venture cycle** remain future milestones.

@@ -44,6 +44,12 @@ export const V1_WORKER_CAPABILITY_KEYS = [
   "executive.select_opportunity",
   "executive.persist_selection_decisions",
   "qa.verify_executive_selection",
+  "venture.assemble_internal_package",
+  "qa.verify_venture_assembly",
+  "launch.generate_plan",
+  "launch.simulate_external_action",
+  "launch.execute_external_action",
+  "launch.evaluate_external_authorization",
 ] as const;
 
 export type V1WorkerCapabilityKey = (typeof V1_WORKER_CAPABILITY_KEYS)[number];
@@ -116,6 +122,15 @@ export const WORKER_PERMISSIONS = [
   "worker_result.write",
   "internal_artifact.write",
   "event.emit",
+  "network.read",
+  "network.write",
+  "publish.website",
+  "domain.register",
+  "repository.create",
+  "email.send",
+  "payment.configure",
+  "purchase",
+  "social.publish",
 ] as const;
 
 export type WorkerPermission = (typeof WORKER_PERMISSIONS)[number];
@@ -132,6 +147,7 @@ export const INTERNAL_ARTIFACT_TYPES = [
   "snapshot_manifest",
   "internal_build_package",
   "internal_website_package",
+  "venture_assembly_package",
 ] as const;
 
 export type InternalArtifactType = (typeof INTERNAL_ARTIFACT_TYPES)[number];

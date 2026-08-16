@@ -7,6 +7,15 @@ import {
   INTERNAL_CANONICAL_ORIGIN,
   WEBSITE_INTERNAL_SOURCE_LABEL,
 } from "./constants";
+import {
+  buildDeployableNextJsPackageJson,
+  CONTROLLED_AUTONOMOUS_SITE_SUBTITLE,
+  CONTROLLED_AUTONOMOUS_SITE_TITLE,
+  deployableNextJsTsConfigJson,
+  DEPLOYABLE_NEXT_CONFIG,
+  DEPLOYABLE_NEXT_ENV_DTS,
+  loadPinnedPackageLockJson,
+} from "./nextjs-deployable";
 import type { RouteManifestEntry, WebsiteBuildState, WebsitePageDefinition } from "./types";
 import {
   loadWebsiteBuildState,
@@ -156,8 +165,10 @@ export async function runWebsiteCapability(
           `export default function HomePage() {
   return (
     <main>
-      <h1>${escapeHtml(website.siteName)}</h1>
+      <h1>${escapeHtml(CONTROLLED_AUTONOMOUS_SITE_TITLE)}</h1>
+      <p>${escapeHtml(CONTROLLED_AUTONOMOUS_SITE_SUBTITLE)}</p>
       <p className="placeholder">${CONTENT_MARKERS.contentRequired}</p>
+      <p data-infinity-build="${escapeHtml(build.id)}">${WEBSITE_INTERNAL_SOURCE_LABEL}</p>
     </main>
   );
 }\n`,
@@ -188,21 +199,15 @@ export async function runWebsiteCapability(
         }
         await workspace.writeTextFile(
           "package.json",
-          JSON.stringify(
-            {
-              name: build.specification.slug,
-              private: true,
-              scripts: { build: "echo internal-only-no-install" },
-            },
-            null,
-            2,
-          ) + "\n",
+          `${JSON.stringify(buildDeployableNextJsPackageJson(build.specification.slug), null, 2)}\n`,
         );
+        await workspace.writeTextFile("package-lock.json", loadPinnedPackageLockJson());
         await workspace.writeTextFile(
           "tsconfig.json",
-          JSON.stringify({ compilerOptions: { jsx: "preserve", strict: true } }, null, 2) + "\n",
+          `${JSON.stringify(deployableNextJsTsConfigJson(), null, 2)}\n`,
         );
-        await workspace.writeTextFile("next.config.ts", "export default { output: 'export' };\n");
+        await workspace.writeTextFile("next.config.mjs", DEPLOYABLE_NEXT_CONFIG);
+        await workspace.writeTextFile("next-env.d.ts", DEPLOYABLE_NEXT_ENV_DTS);
         await workspace.writeTextFile(
           "app/robots.ts",
           `export default function robots() { return { rules: { userAgent: '*', allow: '/' } }; }\n`,

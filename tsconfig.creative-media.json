@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "lib/infinity/creative-media-engine/**/*.ts",
+    "lib/infinity/ai-providers/**/*.ts",
+    "lib/infinity/product-asset-builder/paths.ts",
+    "lib/infinity/research/redaction.ts",
+    "lib/supabase/admin.ts"
+  ],
+  "exclude": [
+    "lib/infinity/ai-providers/**/__tests__/**"
+  ]
+}

@@ -3,6 +3,7 @@ export const AI_PROVIDER_IDS = [
   "openai",
   "anthropic",
   "google_gemini",
+  "xai",
   "openrouter",
   "ollama",
 ] as const;

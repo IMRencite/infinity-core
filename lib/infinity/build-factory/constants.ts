@@ -109,6 +109,7 @@ export const VENTURE_TYPE_TO_BUILD_PROJECT: Record<string, BuildProjectType> = {
   local_service_business: "internal_tool",
   ecommerce: "saas_application",
   agency: "internal_tool",
+  controlled_nextjs_website: "nextjs_website",
 };
 
 export const BUILD_E2E_LABEL = "build_factory_e2e_dev_v1";

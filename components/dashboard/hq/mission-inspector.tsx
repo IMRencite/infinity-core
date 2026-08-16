@@ -61,6 +61,17 @@ export function MissionInspectorView({
             : null
         }
       />
+      <JsonBlock
+        title="8c. Venture assembly (read-only)"
+        data={
+          data.ventureAssembly
+            ? {
+                ...data.ventureAssembly,
+                notice: "Internal venture package — not launched or published.",
+              }
+            : null
+        }
+      />
       <JsonBlock title="9. Validation runs" data={data.validationRuns} />
       <JsonBlock title="10. Reasoning sessions" data={data.reasoningSessions} />
       <JsonBlock title="11. Executive decisions" data={data.executiveDecisions} />

@@ -10,6 +10,8 @@ import { dispatchAiWebsiteWorkerHandler } from "./ai-website-v1-handlers";
 import { dispatchWebsiteWorkerHandler } from "./website-v1-handlers";
 import { dispatchExecutiveSelectionWorkerHandler } from "./executive-selection-v1-handlers";
 import { dispatchPlanExecutionWorkerHandler } from "./plan-execution-handlers";
+import { dispatchVentureAssemblyWorkerHandler } from "./venture-assembly-handlers";
+import { dispatchLaunchGatewayWorkerHandler } from "./launch-gateway-handlers";
 
 export async function runResearchSummarizeInternalEvidence(
   admin: AdminSupabaseClient,
@@ -275,6 +277,16 @@ export async function dispatchWorkerHandler(
   const planExecutionResult = await dispatchPlanExecutionWorkerHandler(admin, context);
   if (planExecutionResult) {
     return planExecutionResult;
+  }
+
+  const ventureAssemblyResult = await dispatchVentureAssemblyWorkerHandler(admin, context);
+  if (ventureAssemblyResult) {
+    return ventureAssemblyResult;
+  }
+
+  const launchGatewayResult = await dispatchLaunchGatewayWorkerHandler(admin, context);
+  if (launchGatewayResult) {
+    return launchGatewayResult;
   }
 
   switch (context.capabilityKey) {

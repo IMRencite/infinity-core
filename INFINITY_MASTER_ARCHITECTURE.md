@@ -27,7 +27,7 @@ Opportunity Discovery / Scanner
 → Company Builder
 → Acquisition Architecture
 → Organic Growth Architecture (when justified)
-→ Creative Media Architecture (planned)
+→ Creative Media Architecture (verified foundation)
 → Product + Asset Builder
 → Production Artifact
 → External Action Gateway / Launch
@@ -210,8 +210,8 @@ AI must never fabricate first-person experience, fake experts, fake credentials,
 
 Only a specific artifact that truly requires verified expertise may be blocked; Infinity continues other autonomous work.
 
-## 12. Creative Media Architecture Engine V1 — Planned Next Milestone
-This is the next planned architectural milestone before the first complete autonomous venture cycle.
+## 12. Creative Media Architecture Engine V1 — VERIFIED Foundation
+Implemented in `lib/infinity/creative-media-engine/` (August 2026). This milestone is verified for provider-neutral media opportunity/economics, briefs, capability registry, routing, async jobs, asset registry, provenance, quality/repair, and production artifacts. Live verification includes OpenAI image generation; Google media adapters (Imagen/Veo) remain behind `google_media` without leaking provider assumptions into domain contracts.
 
 Purpose: create a provider-neutral autonomous image/video/creative system analogous to the AI Brain and Organic Growth Architecture.
 

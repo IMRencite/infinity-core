@@ -40,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Dependencies anywhere in the repository
+node_modules/
+**/node_modules/
+
+# Infinity generated/runtime workspaces
+.infinity/media/
+.infinity/venture-workspaces/
+.infinity/vw/
+.infinity/workspaces/
