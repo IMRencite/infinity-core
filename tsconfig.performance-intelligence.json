@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "lib/infinity/performance-intelligence-engine/**/*.ts",
+    "lib/infinity/missions.ts",
+    "lib/infinity/mission-defaults.ts",
+    "lib/infinity/types.ts",
+    "lib/supabase/admin.ts",
+    "lib/supabase/database.types.ts",
+    "lib/infinity/research/redaction.ts"
+  ]
+}

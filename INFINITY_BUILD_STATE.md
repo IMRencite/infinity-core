@@ -26,8 +26,9 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Product + Asset Builder V2.1 | VERIFIED LIVE | Real AI coding output applied to workspace and verified. |
 | External Action Gateway | VERIFIED live path | Allowlisted/within-policy autonomous external action path; first autonomous live launch previously succeeded. |
 | Organic Growth Architecture Engine V1 | VERIFIED | v1.2 final live PAB handoff: real OpenAI `gpt-4.1-mini` + Gemini review via PAB V2.1; 33 mock/simulation + 3 live tests pass; post-generation gate executes on AI artifact. Live grounded research: SKIPPED_MISSING_CREDENTIALS (integration implemented, not live-verified). |
-| Creative Media Architecture Engine V1 | VERIFIED | Provider-neutral media pipeline in `lib/infinity/creative-media-engine/`; migration `20260815280000`; 23 mock + 2 live tests pass; live OpenAI `gpt-image-1` image verified; async video mock-verified; FFmpeg SKIPPED_ENVIRONMENT; second live video provider not configured (mock failover only). |
-| Full Growth/Monitoring learning engine | FUTURE | Feedback-ready concepts designed; full engine not yet built. |
+| Creative Media Architecture Engine V1 | VERIFIED | Provider-neutral media pipeline; migration `20260815280000`; 23 mock + 2 live tests pass. |
+| Performance Intelligence & Learning Engine V1 | VERIFIED | V1.1 verification closure complete; population-correct execution success rate; RLS hardening migration `20260816040000`; 31 mock + 1 live + 3 RLS tests pass. |
+| Full Growth/Monitoring learning engine | FUTURE | Superseded at foundation level by Performance Intelligence V1; full autonomous learning loop not yet complete. |
 | First complete autonomous venture cycle | NOT STARTED | Explicitly deferred until foundation work is ready. |
 
 ## 2. Product + Asset Builder V2.1 — Verified Checkpoint
@@ -272,13 +273,73 @@ Implemented scope includes:
 - YouTube-ready contract types (`VideoProductionContracts`)
 - Performance-ready metric slots on production artifacts
 
-## 5. Explicitly Not Yet Done
+## 5. Performance Intelligence & Learning — VERIFIED (v1.1 verification closure)
+
+**Status:** `Performance Intelligence & Learning Engine V1 — VERIFIED`
+
+Implemented in `lib/infinity/performance-intelligence-engine/` with verification from `npm run run:performance-intelligence-v1-test`.
+
+Migrations:
+- `20260816030000_performance_intelligence_engine_foundation_v1.sql` — applied successfully
+- `20260816040000_infinity_engine_rls_hardening_v1.sql` — RLS enabled on Performance Intelligence, Creative Media, and Organic Growth internal tables (service_role only; no anon/authenticated policies)
+
+### V1.1 closure evidence (2026-08-16)
+- **Metric semantics fix:** execution success rate now derives from `execution_successes / execution_attempts` (population ratio), not unweighted average of per-item ratio events
+- **RLS hardening:** anon/publishable client returns zero rows on all 8 Performance Intelligence tables (live verified)
+- **No Performance Intelligence regressions** in cross-system regression matrix
+
+### Test totals (latest V1.1 run)
+- Performance Intelligence unit (mock): **31/31 passed**
+- Performance Intelligence live (internal Infinity data): **1/1 passed**
+- Performance Intelligence RLS security: **3/3 passed** (migration static audit + anon blocked + service_role read)
+- Performance Intelligence targeted typecheck: **0 errors**
+- Production build: **passed**
+
+### Source adapters verified
+| Adapter | Type | Mock | Live | Notes |
+|---|---|---|---|---|
+| `internal_infinity` | INTERNAL | YES | **YES** | Emits count-based execution_successes/execution_attempts; reads creative media costs, PAB costs, external actions, media artifacts |
+| `mock_web_analytics` | WEB_ANALYTICS | YES | simulation only | Proves external adapter boundary without GA4 credentials |
+
+### Live internal lineage (V1.1 verification run)
+Run ID: `703b6ab8-a497-47e8-98f9-7487db834dbc`
+
+`InternalInfinityPerformanceAdapter` → 58 observations → 58 normalized events → metric aggregates (execution success rate **48.15%** = 13/27) → diagnoses (TECHNICAL_FAILURE, ECONOMIC_MODEL) → optimization opportunities → LearningDecision `9c028e56-8ec5-4fea-85a9-aa2a151a6b78` (**READY**, REPAIR) → Mission `e4774ad7-c775-4401-b6f6-db3368388a9b` (draft handoff, non-executing)
+
+Economic gate demo: upside $10 / cost $40 → **DEFER**; upside $2,000 / cost $50 → **EXECUTE_NOW**
+
+### Metric aggregation audit (V1.1)
+| Metric | Aggregation | Notes |
+|---|---|---|
+| CTR | `sum(clicks) / sum(impressions)` | Derived in `deriveRatioAggregates` |
+| conversion_rate | `sum(conversions) / sum(sessions)` | Derived |
+| CAC | `sum(acquisition_spend) / sum(new_customers)` | Derived |
+| ROAS | `sum(gross_revenue) / sum(ad_spend)` | Derived (uses gross_revenue as revenue proxy in V1) |
+| AOV | `sum(gross_revenue) / sum(orders)` | Derived |
+| execution_success_rate | `sum(execution_successes) / sum(execution_attempts)` | **Fixed in V1.1** (was incorrect unweighted ratio average) |
+| repair_count | sum | Count metric; repair_rate formula available but not auto-derived in V1 |
+| provider_cost | sum | USD sum across provider cost events |
+
+### Source-neutrality audit
+- Web analytics hard-coded to one provider: **NO**
+- Revenue hard-coded to Stripe: **NO**
+- New source via adapter without core redesign: **YES**
+
+### Remaining limitations
+- No live GA4/Stripe/YouTube/Search Console integrations (adapter-ready only)
+- AI diagnosis/review not live-verified (deterministic rules used; AI gated by economics)
+- Full statistical experimentation platform not built
+- First autonomous venture cycle not started
+- `repair_rate` not auto-derived from repair_count/execution_attempts in aggregation pipeline (repair_count sum only)
+
+## 6. Explicitly Not Yet Done
 - Do not claim Organic Growth Architecture V1 is implemented until its build/test report passes.
 - Do not claim Creative Media Architecture V1 is unimplemented — **V1 foundation is VERIFIED** (see section 4); full YouTube publishing and performance learning remain future.
 - Do not claim full autonomous YouTube channel creation/publishing is complete.
 - Do not claim full social channel creation/posting is complete.
 - Do not claim full Growth/Monitoring learning loop is complete.
+- Do not claim Performance Intelligence V1 is unimplemented — **V1 foundation is VERIFIED** (see section 5); first autonomous venture cycle not started.
 - Do not claim the first end-to-end autonomous revenue-generating venture cycle has been completed unless a future checkpoint verifies it.
 
-## 6. Next Step
-Reassess whether any other foundational engine is required before initiating the first complete autonomous venture cycle. **Growth/Monitoring learning** and **first full autonomous venture cycle** remain future milestones.
+## 7. Next Step
+Reassess with the external Infinity architect whether the foundation is sufficient to begin the **first complete autonomous venture cycle**. Do not start that cycle without architect approval.

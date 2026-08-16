@@ -32,7 +32,7 @@ Opportunity Discovery / Scanner
 → Production Artifact
 → External Action Gateway / Launch
 → Marketing & Growth
-→ Monitoring / Measurement
+→ Monitoring / Measurement (Performance Intelligence V1 verified foundation)
 → Learning / Iteration
 → Expansion, repair, prune, pivot, or shutdown
 
@@ -262,8 +262,12 @@ The long-term Marketing/Growth system should orchestrate organic growth, paid ac
 
 Planned capabilities include autonomous social-channel creation/posting where APIs, platform policy, permissions, and risk controls permit it, including channels such as Facebook pages and YouTube.
 
-## 14. Monitoring and Iteration
-Infinity's terminal state is not launch. It should monitor venture and asset performance and feed evidence back into strategy.
+## 14. Monitoring and Iteration — Performance Intelligence V1 Verified
+Infinity's terminal state is not launch. The **Performance Intelligence & Learning Engine V1** (`lib/infinity/performance-intelligence-engine/`) establishes the closed-loop foundation: source-neutral ingestion → normalized events → deterministic metrics → venture KPI models → expected-vs-actual analysis → diagnosis → optimization opportunities → economically prioritized learning decisions → mission handoff into existing execution systems.
+
+Initial verified sources: `InternalInfinityPerformanceAdapter` (real Infinity operational data) plus mock external web analytics adapter. Future adapters (GA4, Search Console, Stripe, YouTube, etc.) register without core redesign.
+
+Infinity should monitor venture and asset performance and feed evidence back into strategy.
 
 Potential decisions:
 - expand

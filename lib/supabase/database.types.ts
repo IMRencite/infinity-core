@@ -7902,6 +7902,521 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_events: {
+        Row: {
+          build_package_id: string | null
+          created_at: string
+          event_id: string
+          event_payload: Json
+          id: string
+          metric: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_id: string
+          source_reference: string
+          unit: string
+          value: number
+          venture_id: string | null
+        }
+        Insert: {
+          build_package_id?: string | null
+          created_at?: string
+          event_id: string
+          event_payload?: Json
+          id?: string
+          metric: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_id: string
+          source_reference: string
+          unit: string
+          value: number
+          venture_id?: string | null
+        }
+        Update: {
+          build_package_id?: string | null
+          created_at?: string
+          event_id?: string
+          event_payload?: Json
+          id?: string
+          metric?: string
+          organization_id?: string
+          performance_intelligence_run_id?: string
+          source_id?: string
+          source_reference?: string
+          unit?: string
+          value?: number
+          venture_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_events_build_package_id_fkey"
+            columns: ["build_package_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_build_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_events_performance_intelligence_run_id_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_intelligence_build_packages: {
+        Row: {
+          build_package: Json
+          created_at: string
+          decisions_created: number
+          events_normalized: number
+          id: string
+          observations_ingested: number
+          organization_id: string
+          package_version: string
+          performance_intelligence_run_id: string
+          source_lineage: Json
+          status: string
+          venture_id: string
+        }
+        Insert: {
+          build_package?: Json
+          created_at?: string
+          decisions_created?: number
+          events_normalized?: number
+          id?: string
+          observations_ingested?: number
+          organization_id: string
+          package_version?: string
+          performance_intelligence_run_id: string
+          source_lineage?: Json
+          status?: string
+          venture_id: string
+        }
+        Update: {
+          build_package?: Json
+          created_at?: string
+          decisions_created?: number
+          events_normalized?: number
+          id?: string
+          observations_ingested?: number
+          organization_id?: string
+          package_version?: string
+          performance_intelligence_run_id?: string
+          source_lineage?: Json
+          status?: string
+          venture_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_intelligence_buil_performance_intelligence_run_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_intelligence_build_packages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_intelligence_runs: {
+        Row: {
+          build_packages_created: number
+          capability_test: boolean
+          completed_at: string | null
+          correlation_id: string
+          created_at: string
+          engine_report: Json
+          engine_version: string
+          error_message: string | null
+          failed_at: string | null
+          failure_classification: string | null
+          id: string
+          idempotency_key: string
+          organization_id: string
+          simulation_only: boolean
+          source_lineage: Json
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          build_packages_created?: number
+          capability_test?: boolean
+          completed_at?: string | null
+          correlation_id: string
+          created_at?: string
+          engine_report?: Json
+          engine_version?: string
+          error_message?: string | null
+          failed_at?: string | null
+          failure_classification?: string | null
+          id?: string
+          idempotency_key: string
+          organization_id: string
+          simulation_only?: boolean
+          source_lineage?: Json
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          build_packages_created?: number
+          capability_test?: boolean
+          completed_at?: string | null
+          correlation_id?: string
+          created_at?: string
+          engine_report?: Json
+          engine_version?: string
+          error_message?: string | null
+          failed_at?: string | null
+          failure_classification?: string | null
+          id?: string
+          idempotency_key?: string
+          organization_id?: string
+          simulation_only?: boolean
+          source_lineage?: Json
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_intelligence_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_learning_decisions: {
+        Row: {
+          build_package_id: string | null
+          created_at: string
+          decision_id: string
+          decision_payload: Json
+          decision_type: string
+          id: string
+          mission_id: string | null
+          organization_id: string
+          performance_intelligence_run_id: string
+          status: string
+          venture_id: string
+        }
+        Insert: {
+          build_package_id?: string | null
+          created_at?: string
+          decision_id: string
+          decision_payload?: Json
+          decision_type: string
+          id?: string
+          mission_id?: string | null
+          organization_id: string
+          performance_intelligence_run_id: string
+          status: string
+          venture_id: string
+        }
+        Update: {
+          build_package_id?: string | null
+          created_at?: string
+          decision_id?: string
+          decision_payload?: Json
+          decision_type?: string
+          id?: string
+          mission_id?: string | null
+          organization_id?: string
+          performance_intelligence_run_id?: string
+          status?: string
+          venture_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_learning_decision_performance_intelligence_run_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_learning_decisions_build_package_id_fkey"
+            columns: ["build_package_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_build_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_learning_decisions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_learning_decisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_metric_aggregates: {
+        Row: {
+          aggregate_id: string
+          aggregate_payload: Json
+          build_package_id: string | null
+          created_at: string
+          id: string
+          metric: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          time_window: string
+          unit: string
+          value: number
+          venture_id: string | null
+        }
+        Insert: {
+          aggregate_id: string
+          aggregate_payload?: Json
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          metric: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          time_window: string
+          unit: string
+          value: number
+          venture_id?: string | null
+        }
+        Update: {
+          aggregate_id?: string
+          aggregate_payload?: Json
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          metric?: string
+          organization_id?: string
+          performance_intelligence_run_id?: string
+          time_window?: string
+          unit?: string
+          value?: number
+          venture_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_metric_aggregates_build_package_id_fkey"
+            columns: ["build_package_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_build_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_metric_aggregates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_metric_aggregates_performance_intelligence_run_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_observations: {
+        Row: {
+          build_package_id: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          observation_id: string
+          observation_payload: Json
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_id: string
+          source_reference: string
+          venture_id: string | null
+        }
+        Insert: {
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          observation_id: string
+          observation_payload?: Json
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_id: string
+          source_reference: string
+          venture_id?: string | null
+        }
+        Update: {
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          observation_id?: string
+          observation_payload?: Json
+          organization_id?: string
+          performance_intelligence_run_id?: string
+          source_id?: string
+          source_reference?: string
+          venture_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_observations_build_package_id_fkey"
+            columns: ["build_package_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_build_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_observations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_observations_performance_intelligence_run_id_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_sources: {
+        Row: {
+          created_at: string
+          health: string
+          id: string
+          ingestion_mode: string
+          organization_id: string
+          performance_intelligence_run_id: string | null
+          provider: string
+          source_id: string
+          source_payload: Json
+          source_type: string
+          status: string
+          venture_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          health?: string
+          id?: string
+          ingestion_mode: string
+          organization_id: string
+          performance_intelligence_run_id?: string | null
+          provider: string
+          source_id: string
+          source_payload?: Json
+          source_type: string
+          status?: string
+          venture_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          health?: string
+          id?: string
+          ingestion_mode?: string
+          organization_id?: string
+          performance_intelligence_run_id?: string | null
+          provider?: string
+          source_id?: string
+          source_payload?: Json
+          source_type?: string
+          status?: string
+          venture_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_sources_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_sources_performance_intelligence_run_id_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      performance_traceability_links: {
+        Row: {
+          build_package_id: string | null
+          created_at: string
+          id: string
+          link_type: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_ref: string
+          target_ref: string
+        }
+        Insert: {
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          link_type: string
+          organization_id: string
+          performance_intelligence_run_id: string
+          source_ref: string
+          target_ref: string
+        }
+        Update: {
+          build_package_id?: string | null
+          created_at?: string
+          id?: string
+          link_type?: string
+          organization_id?: string
+          performance_intelligence_run_id?: string
+          source_ref?: string
+          target_ref?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_traceability_link_performance_intelligence_run_fkey"
+            columns: ["performance_intelligence_run_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_traceability_links_build_package_id_fkey"
+            columns: ["build_package_id"]
+            isOneToOne: false
+            referencedRelation: "performance_intelligence_build_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "performance_traceability_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_executions: {
         Row: {
           active_step_id: string | null
