@@ -50,3 +50,5 @@ node_modules/
 .infinity/venture-workspaces/
 .infinity/vw/
 .infinity/workspaces/
+
+**/.next/
