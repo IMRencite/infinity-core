@@ -1,84 +1,81 @@
 "use client";
 
 import type { OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
+import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
 import { departmentStateLabel } from "@/lib/infinity/operator-console/status-derivation";
-import { StatusBadge } from "@/components/dashboard/hq/status-badge";
+import { HQ_WELCOME_SUBTITLE, HQ_WELCOME_TITLE } from "@/lib/infinity/operator-console/room-naming";
+import { VentureSelector } from "./venture-selector";
 
 type Props = {
   snapshot: OperatorVentureSnapshot;
   view: "hq" | "system";
   onViewChange: (view: "hq" | "system") => void;
+  ventureOptions?: OperatorVentureListItem[];
+  onVentureChange?: (id: string) => void;
+  live?: boolean;
 };
 
-export function VentureCommandBar({ snapshot, view, onViewChange }: Props) {
-  const { venture, pipeline, costs, closedLoopRoute } = snapshot;
-
+export function VentureCommandBar({
+  snapshot,
+  view,
+  onViewChange,
+  ventureOptions = [],
+  onVentureChange,
+  live = true,
+}: Props) {
   return (
-    <header className="rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-4">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] uppercase tracking-widest text-zinc-500">Infinity HQ</p>
-          <h1 className="text-xl font-semibold text-white">{venture.ventureName}</h1>
-          <p className="font-mono text-[10px] text-zinc-600">{venture.ventureAssemblyId}</p>
-          <div className="mt-2 flex flex-wrap gap-2 text-xs text-zinc-400">
-            <span>Mission: <span className="font-mono text-zinc-500">{venture.missionId.slice(0, 8)}…</span></span>
-            <span>Assembly: {venture.assemblyStatus}</span>
-            {venture.launchStage ? <span>Launch: {venture.launchStage}</span> : null}
-          </div>
+    <header className="relative">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/40 pb-2">
+        <div className="flex flex-wrap items-center gap-3">
+          {ventureOptions.length > 0 && onVentureChange ? (
+            <VentureSelector
+              ventures={ventureOptions}
+              currentVentureId={snapshot.venture.ventureAssemblyId}
+              onVentureChange={onVentureChange}
+            />
+          ) : null}
+          <span className="rounded border border-zinc-800/70 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-zinc-500">
+            {departmentStateLabel(snapshot.overallStatus)}
+          </span>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex rounded-lg border border-zinc-700/60 p-0.5">
+
+        <div className="flex items-center gap-2">
+          {live ? (
+            <span className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-wider text-emerald-400/90">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" aria-hidden />
+              Live
+            </span>
+          ) : (
+            <span className="text-[9px] uppercase tracking-wider text-zinc-600">Stale</span>
+          )}
+          <div className="flex rounded-md border border-zinc-800/70 bg-zinc-950/50 p-0.5">
             <button
               type="button"
               onClick={() => onViewChange("hq")}
-              className={`rounded-md px-3 py-1 text-xs ${view === "hq" ? "bg-sky-500/20 text-sky-200" : "text-zinc-400 hover:text-zinc-200"}`}
+              aria-pressed={view === "hq"}
+              className={`rounded px-2 py-0.5 text-[10px] font-medium ${view === "hq" ? "bg-sky-500/20 text-sky-100" : "text-zinc-500 hover:text-zinc-300"}`}
             >
-              HQ View
+              HQ
             </button>
             <button
               type="button"
               onClick={() => onViewChange("system")}
-              className={`rounded-md px-3 py-1 text-xs ${view === "system" ? "bg-sky-500/20 text-sky-200" : "text-zinc-400 hover:text-zinc-200"}`}
+              aria-pressed={view === "system"}
+              className={`rounded px-2 py-0.5 text-[10px] font-medium ${view === "system" ? "bg-sky-500/20 text-sky-100" : "text-zinc-500 hover:text-zinc-300"}`}
             >
-              System View
+              System
             </button>
           </div>
-          <StatusBadge status={snapshot.overallStatus.toLowerCase()} label={departmentStateLabel(snapshot.overallStatus)} />
         </div>
       </div>
 
-      <dl className="mt-4 grid grid-cols-2 gap-3 text-xs md:grid-cols-4 lg:grid-cols-6">
-        <div>
-          <dt className="text-zinc-500">Stages</dt>
-          <dd className="text-zinc-200">{pipeline.stagesCompleted} of {pipeline.stagesTotal}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Known spend</dt>
-          <dd className="text-zinc-200">
-            {costs.knownSpendUsd > 0 ? `$${costs.knownSpendUsd.toFixed(4)}` : "—"}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Unpriced calls</dt>
-          <dd className="text-zinc-200">{costs.unpricedProviderCalls || "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Latest decision</dt>
-          <dd className="text-zinc-200">{closedLoopRoute.decisionType ?? "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Active dept(s)</dt>
-          <dd className="text-zinc-200">
-            {snapshot.currentDepartments.length
-              ? snapshot.currentDepartments.map((d) => d.replace(/_/g, " ")).join(", ")
-              : "None"}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Next mission</dt>
-          <dd className="font-mono text-[10px] text-zinc-400">{closedLoopRoute.missionId?.slice(0, 8) ?? "—"}</dd>
-        </div>
-      </dl>
+      <div className="relative px-4 py-5 text-center md:py-6">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-28 max-w-2xl bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(56,189,248,0.12),transparent)]" aria-hidden />
+        <h1 className="relative text-2xl font-semibold tracking-[0.12em] text-white sm:text-3xl md:text-4xl lg:text-[2.65rem] lg:leading-tight">
+          {HQ_WELCOME_TITLE.toUpperCase()}
+        </h1>
+        <p className="relative mt-2 text-xs tracking-wide text-zinc-500 sm:text-sm">{HQ_WELCOME_SUBTITLE}</p>
+      </div>
     </header>
   );
 }

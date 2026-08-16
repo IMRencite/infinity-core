@@ -9,6 +9,7 @@ import {
   resolveNextMissionTarget,
 } from "./build-snapshot";
 import { loadRawEngineData, loadVentureContext } from "./load-raw-data";
+import { enrichOperatorSnapshot } from "./enrich-snapshot";
 import { sanitizeOperatorSnapshot } from "./sanitize";
 import {
   countCompletedStages,
@@ -97,7 +98,7 @@ export async function loadOperatorVentureSnapshot(
     },
   };
 
-  return sanitizeOperatorSnapshot(snapshot);
+  return enrichOperatorSnapshot(sanitizeOperatorSnapshot(snapshot));
 }
 
 export async function loadOperatorVentureList(

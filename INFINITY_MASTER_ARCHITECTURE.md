@@ -302,6 +302,8 @@ Verified engines map into business-readable departments (Opportunity Lab, Resear
 
 Both **HQ View** (spatial department floor) and **System View** (technical IDs, JSON panels) read from the same canonical snapshot.
 
+**Primary surface:** `/dashboard` resolves the active/default venture and renders Infinity HQ immediately after login. Deep links remain at `/dashboard/ventures/[ventureId]`. Portfolio-wide mission pipeline observability lives at `/dashboard/portfolio`.
+
 Closed-loop routing visualizes Performance Intelligence → LearningDecision → Mission → target department when persisted decision payload includes `missionTargetEngine`.
 
 ## 15. Persistence and Lineage

@@ -34,6 +34,12 @@ const unit = spawnSync(
     "run",
     "lib/infinity/operator-console/__tests__/operator-console.test.ts",
     "lib/infinity/operator-console/__tests__/operator-console-security.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.1.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.2.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.3.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.4.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.5.test.ts",
+    "lib/infinity/operator-console/__tests__/hq-dashboard-v1.6.test.ts",
   ],
   { cwd: root, stdio: "inherit", env: process.env, timeout: 120000 },
 );

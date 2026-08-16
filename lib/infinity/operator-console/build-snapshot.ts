@@ -1,5 +1,9 @@
 import { DEPARTMENTS, getDepartmentForMissionTargetEngine } from "./department-registry";
-import { deriveDepartmentState, deriveUiStateFromEngineStatus } from "./status-derivation";
+import {
+  computeFurthestLifecycleIndex,
+  deriveDepartmentStateWithSemantics,
+  deriveUiStateFromEngineStatus,
+} from "./status-derivation";
 import type { RawEngineData } from "./load-raw-data";
 import { parseCostUsd, rowStatus, rowTimestamp } from "./load-raw-data";
 import type {
@@ -21,6 +25,13 @@ function latestRow(rows: Record<string, unknown>[]): Record<string, unknown> | n
   })[0] ?? null;
 }
 
+function rowsToTimeline(rows: Record<string, unknown>[]) {
+  return rows.map((row) => ({
+    status: rowStatus(row) ?? "unknown",
+    timestamp: rowTimestamp(row),
+  }));
+}
+
 function runningRow(rows: Record<string, unknown>[]): Record<string, unknown> | null {
   return rows.find((r) => deriveUiStateFromEngineStatus(rowStatus(r)) === "RUNNING") ?? null;
 }
@@ -29,7 +40,25 @@ export function buildDepartments(
   raw: RawEngineData,
   nextMissionTargetDept: DepartmentId | null,
 ): OperatorDepartmentSnapshot[] {
-  return DEPARTMENTS.map((def) => {
+  type DeptPartial = {
+    def: (typeof DEPARTMENTS)[number];
+    timeline: ReturnType<typeof rowsToTimeline>;
+    hasRecords: boolean;
+    detail: Record<string, unknown>;
+    summary: string | null;
+    currentTask: string | null;
+    provider: string | null;
+    model: string | null;
+    costUsd: number | null;
+    costKnown: boolean;
+    startedAt: string | null;
+    lastActivityAt: string | null;
+    recordCount: number;
+    runStatuses: string[];
+  };
+
+  const partials: DeptPartial[] = DEPARTMENTS.map((def) => {
+    let timeline: ReturnType<typeof rowsToTimeline> = [];
     let runStatuses: string[] = [];
     let hasRecords = false;
     let detail: Record<string, unknown> = {};
@@ -49,6 +78,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         summary = raw.opportunity ? String(raw.opportunity.name ?? raw.opportunity.summary ?? "Opportunity tracked") : null;
         detail = { opportunity: raw.opportunity, candidates: raw.opportunityCandidates };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
@@ -59,6 +89,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         const active = runningRow(rows) ?? latestRow(rows);
         if (active) {
           provider = typeof active.provider === "string" ? active.provider : null;
@@ -74,6 +105,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         summary = raw.monetizationPlans[0] ? String(raw.monetizationPlans[0].title ?? "Monetization plan") : null;
         detail = { monetizationRuns: raw.monetizationRuns, plans: raw.monetizationPlans, ventureSelection: raw.ventureSelectionRuns };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
@@ -84,6 +116,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         detail = { runs: raw.companyBuilderRuns, blueprints: raw.companyBuilderBlueprints };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
         break;
@@ -93,6 +126,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         detail = { runs: raw.organicGrowthRuns, packages: raw.organicGrowthPackages };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
         break;
@@ -102,6 +136,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         const activeJob = runningRow(raw.creativeMediaJobs) ?? latestRow(raw.creativeMediaJobs);
         if (activeJob) {
           provider = typeof activeJob.provider === "string" ? activeJob.provider : null;
@@ -126,6 +161,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         const activeRun = runningRow(raw.pabRuns) ?? latestRow(raw.pabRuns);
         if (activeRun) {
           currentTask = "PAB V2.1 build task";
@@ -154,6 +190,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? String(r.quality_outcome ?? "unknown"));
+        timeline = rowsToTimeline(rows);
         detail = { reviews: raw.creativeMediaReviews, artifacts: raw.pabProductionArtifacts, productionArtifacts: raw.productionArtifacts };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
         break;
@@ -163,6 +200,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         detail = { externalActions: raw.externalActions, launchPlans: raw.launchPlans };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
         break;
@@ -172,6 +210,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         const execRate = raw.performanceAggregates.find((a) => a.metric === "execution_success_rate");
         if (execRate) summary = `execution_success_rate: ${execRate.value}`;
         detail = {
@@ -187,6 +226,7 @@ export function buildDepartments(
         recordCount = rows.length;
         hasRecords = recordCount > 0;
         runStatuses = rows.map((r) => rowStatus(r) ?? "unknown");
+        timeline = rowsToTimeline(rows);
         const latestDecision = latestRow(raw.performanceDecisions);
         if (latestDecision) {
           summary = String(latestDecision.decision_type ?? "Learning decision");
@@ -198,12 +238,11 @@ export function buildDepartments(
       }
     }
 
-    const state = deriveDepartmentState({ runStatuses, hasRecords });
     return {
-      id: def.id,
-      label: def.label,
-      state,
-      engines: def.engines,
+      def,
+      timeline,
+      hasRecords,
+      detail,
       summary,
       currentTask,
       provider,
@@ -213,9 +252,54 @@ export function buildDepartments(
       startedAt,
       lastActivityAt,
       recordCount,
-      detail,
+      runStatuses,
+    };
+  });
+
+  const preliminary = partials.map((partial) => {
+    const derived = deriveDepartmentStateWithSemantics({
+      timeline: partial.timeline,
+      runStatuses: partial.runStatuses,
+      hasRecords: partial.hasRecords,
+      departmentLifecycleOrder: partial.def.lifecycleOrder,
+    });
+    return {
+      lifecycleOrder: partial.def.lifecycleOrder,
+      state: derived.state,
+      recordCount: partial.recordCount,
+    };
+  });
+
+  const furthestLifecycleIndex = computeFurthestLifecycleIndex(preliminary);
+
+  return partials.map((partial) => {
+    const derived = deriveDepartmentStateWithSemantics({
+      timeline: partial.timeline,
+      runStatuses: partial.runStatuses,
+      hasRecords: partial.hasRecords,
+      departmentLifecycleOrder: partial.def.lifecycleOrder,
+      furthestVentureLifecycleIndex: furthestLifecycleIndex,
+    });
+    const state = derived.state;
+    return {
+      id: partial.def.id,
+      label: partial.def.label,
+      state,
+      engines: partial.def.engines,
+      summary: partial.summary,
+      currentTask: partial.currentTask,
+      provider: partial.provider,
+      model: partial.model,
+      costUsd: partial.costUsd,
+      costKnown: partial.costKnown,
+      startedAt: partial.startedAt,
+      lastActivityAt: partial.lastActivityAt,
+      recordCount: partial.recordCount,
+      detail: partial.detail,
       isActive: state === "RUNNING",
-      isNextMissionTarget: nextMissionTargetDept === def.id,
+      isNextMissionTarget: nextMissionTargetDept === partial.def.id,
+      failureSemantics: derived.failureSemantics,
+      latestRawStatus: derived.latestRawStatus,
     };
   });
 }

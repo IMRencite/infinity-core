@@ -1,11 +1,13 @@
 "use client";
 
 import type { OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
+import type { PortfolioSummary } from "@/lib/infinity/operator-console/portfolio/portfolio-types";
 import { HqSection } from "@/components/dashboard/hq/empty-state";
 import { CopyIdButton } from "./copy-id-button";
 
 type Props = {
   snapshot: OperatorVentureSnapshot;
+  portfolioSummary?: PortfolioSummary;
 };
 
 function IdRow({ label, value }: { label: string; value: string | null | undefined }) {
@@ -18,7 +20,7 @@ function IdRow({ label, value }: { label: string; value: string | null | undefin
   );
 }
 
-export function SystemView({ snapshot }: Props) {
+export function SystemView({ snapshot, portfolioSummary }: Props) {
   const { venture, system, lineage, costs, closedLoopRoute } = snapshot;
 
   return (
@@ -35,6 +37,38 @@ export function SystemView({ snapshot }: Props) {
           <IdRow label="Next mission" value={closedLoopRoute.missionId} />
         </div>
       </HqSection>
+
+      {portfolioSummary ? (
+        <HqSection title="Portfolio aggregation" subtitle="Server-side read model trace">
+          <div className="space-y-2 px-4 py-3 text-xs text-zinc-400">
+            <p>Profit data quality: {portfolioSummary.profitDataQuality}</p>
+            <p>Revenue data quality: {portfolioSummary.revenueDataQuality}</p>
+            <p>Cost data quality: {portfolioSummary.costDataQuality}</p>
+            <p>Included ventures: {portfolioSummary.includedVentureIds.length}</p>
+            <p>Excluded ventures: {portfolioSummary.excludedVentureIds.length}</p>
+            {portfolioSummary.excludedVentureIds.length ? (
+              <pre className="max-h-32 overflow-auto text-[10px] text-zinc-600">
+                {JSON.stringify(portfolioSummary.excludedVentureIds, null, 2)}
+              </pre>
+            ) : null}
+            <pre className="max-h-48 overflow-auto text-[10px] text-zinc-600">
+              {JSON.stringify(
+                portfolioSummary.ventures.map((v) => ({
+                  id: v.ventureAssemblyId,
+                  excluded: v.excludedFromPortfolio,
+                  reason: v.exclusionReason,
+                  revenue: v.revenueUsd,
+                  costs: v.knownCostsUsd,
+                  profit: v.profitUsd,
+                  trace: v.traceability,
+                })),
+                null,
+                2,
+              )}
+            </pre>
+          </div>
+        </HqSection>
+      ) : null}
 
       <HqSection title="Cost observability">
         <div className="px-4 py-3 text-xs text-zinc-300">

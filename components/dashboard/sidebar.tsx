@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "HQ", href: "/dashboard" },
+  { label: "Ventures", href: "/dashboard/ventures" },
+  { label: "Portfolio", href: "/dashboard/portfolio" },
+  { label: "Launch (sim)", href: "/dashboard/launch" },
   { label: "Opportunities", href: "/dashboard/opportunities" },
   { label: "Allocations", href: "/dashboard/allocations" },
   { label: "Validation", href: "/dashboard/validation" },
@@ -16,8 +19,6 @@ const navItems = [
   { label: "Builds", href: "/dashboard/builds" },
   { label: "Organizations", href: "#", disabled: true },
   { label: "Initiatives", href: "#", disabled: true },
-  { label: "Ventures", href: "/dashboard/ventures" },
-  { label: "Launch (sim)", href: "/dashboard/launch" },
   { label: "Workers", href: "#", disabled: true },
   { label: "Activity", href: "#", disabled: true },
   { label: "Settings", href: "#", disabled: true },
@@ -25,7 +26,7 @@ const navItems = [
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/dashboard") {
-    return pathname === "/dashboard";
+    return pathname === "/dashboard" || pathname.startsWith("/dashboard/ventures/");
   }
 
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -39,11 +40,12 @@ export function Sidebar() {
       <nav className="flex flex-1 flex-col gap-px overflow-y-auto p-2" aria-label="Dashboard">
         {navItems.map((item) => {
           const active = !item.disabled && isActive(pathname, item.href);
+          const key = item.href === "#" ? `${item.label}-${item.href}` : item.href;
 
           if (item.disabled) {
             return (
               <span
-                key={item.label}
+                key={key}
                 className="rounded-md px-2.5 py-2 text-[12px] font-medium text-zinc-700"
               >
                 {item.label}
@@ -53,7 +55,7 @@ export function Sidebar() {
 
           return (
             <Link
-              key={item.label}
+              key={key}
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={`rounded-md px-2.5 py-2 text-[12px] font-medium transition-colors ${

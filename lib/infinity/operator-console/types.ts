@@ -23,6 +23,12 @@ export type DepartmentUiState =
   | "PAUSED"
   | "SHUTDOWN";
 
+export type FailureSemantics =
+  | "CURRENT_BLOCKING_FAILURE"
+  | "HISTORICAL_FAILURE"
+  | "RECOVERED"
+  | "UNKNOWN";
+
 export type EngineId =
   | "opportunity_discovery"
   | "opportunity_scanner"
@@ -54,6 +60,8 @@ export type OperatorActivityEvent = {
   model: string | null;
   costUsd: number | null;
   costKnown: boolean;
+  displaySummary?: string;
+  displayStatus?: string | null;
 };
 
 export type OperatorProviderSession = {
@@ -69,6 +77,30 @@ export type OperatorProviderSession = {
   costKnown: boolean;
   startedAt: string | null;
   filesChanged: string[];
+  displayRole?: string;
+  displayTask?: string | null;
+  displayStatus?: string;
+};
+
+export type OperatorRoomArtifact = {
+  id: string;
+  label: string;
+  tone: "neutral" | "success" | "warning" | "pending";
+};
+
+export type OperatorWorkerNode = {
+  nodeId: string;
+  departmentId: DepartmentId;
+  role: string;
+  displayRole: string;
+  status: DepartmentUiState;
+  task: string | null;
+  displayTask: string | null;
+  provider: string | null;
+  model: string | null;
+  isActive: boolean;
+  isDormant: boolean;
+  motionActive: boolean;
 };
 
 export type OperatorDepartmentSnapshot = {
@@ -88,6 +120,14 @@ export type OperatorDepartmentSnapshot = {
   detail: Record<string, unknown>;
   isActive: boolean;
   isNextMissionTarget: boolean;
+  displayHeadline?: string;
+  displayTask?: string | null;
+  displaySummary?: string | null;
+  displayName?: string;
+  supportingLabel?: string;
+  artifacts?: OperatorRoomArtifact[];
+  failureSemantics?: FailureSemantics;
+  latestRawStatus?: string | null;
 };
 
 export type OperatorCostSummary = {
@@ -113,6 +153,9 @@ export type OperatorCurrentActivity = {
   artifactStatus: string | null;
   latestActivitySummary: string | null;
   latestActivityAt: string | null;
+  displayNarration?: string | null;
+  displayTask?: string | null;
+  departmentDisplayName?: string | null;
 };
 
 export type OperatorLineageNode = {
@@ -172,6 +215,7 @@ export type OperatorVentureSnapshot = {
     performance: Record<string, unknown>;
     learning: Record<string, unknown>;
   };
+  workerNodes?: OperatorWorkerNode[];
 };
 
 export type OperatorVentureListItem = {

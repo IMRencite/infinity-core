@@ -14,7 +14,7 @@ export function DashboardShell({
       <div className="flex pt-14">
         <Sidebar />
         <main className="min-h-[calc(100vh-3.5rem)] flex-1 lg:ml-44">
-          <div className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
+          <div className="mx-auto w-full max-w-[100rem] px-4 py-5 sm:px-6 sm:py-6">
             {children}
           </div>
         </main>

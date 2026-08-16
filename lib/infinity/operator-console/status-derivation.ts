@@ -1,3 +1,4 @@
+import type { FailureSemantics } from "./types";
 import type { DepartmentUiState } from "./types";
 
 const RUNNING = new Set([
@@ -47,26 +48,170 @@ export function deriveUiStateFromEngineStatus(status: string | null | undefined)
   return "UNKNOWN";
 }
 
+export type StatusTimelineEntry = {
+  status: string;
+  timestamp: string | null;
+};
+
+export type DepartmentOperationalState = {
+  state: DepartmentUiState;
+  failureSemantics: FailureSemantics;
+  latestRawStatus: string | null;
+};
+
+function sortTimeline(entries: StatusTimelineEntry[]): StatusTimelineEntry[] {
+  return [...entries].sort((a, b) => {
+    const ta = a.timestamp ?? "";
+    const tb = b.timestamp ?? "";
+    if (ta && tb) return tb.localeCompare(ta);
+    if (ta && !tb) return -1;
+    if (!ta && tb) return 1;
+    return 0;
+  });
+}
+
+function resolveLatestEntry(
+  sorted: StatusTimelineEntry[],
+  original: StatusTimelineEntry[],
+): StatusTimelineEntry | null {
+  const timestamped = sorted.filter((e) => e.timestamp);
+  if (timestamped.length > 0) return timestamped[0] ?? null;
+  return original[original.length - 1] ?? null;
+}
+
+export function deriveDepartmentOperationalState(input: {
+  timeline: StatusTimelineEntry[];
+  hasRecords: boolean;
+  explicitPaused?: boolean;
+  explicitShutdown?: boolean;
+  departmentLifecycleOrder?: number;
+  furthestVentureLifecycleIndex?: number;
+}): DepartmentOperationalState {
+  if (input.explicitShutdown) {
+    return { state: "SHUTDOWN", failureSemantics: "UNKNOWN", latestRawStatus: null };
+  }
+  if (input.explicitPaused) {
+    return { state: "PAUSED", failureSemantics: "UNKNOWN", latestRawStatus: null };
+  }
+  if (!input.hasRecords || input.timeline.length === 0) {
+    return { state: "NOT_STARTED", failureSemantics: "UNKNOWN", latestRawStatus: null };
+  }
+
+  const sorted = sortTimeline(input.timeline);
+  const latestEntry = resolveLatestEntry(sorted, input.timeline);
+  const latestRawStatus = latestEntry?.status ?? null;
+  const uiStates = input.timeline.map((e) => deriveUiStateFromEngineStatus(e.status));
+  const hadFailure = uiStates.some((s) => s === "FAILED");
+  const latestState = deriveUiStateFromEngineStatus(latestRawStatus);
+
+  if (uiStates.some((s) => s === "RUNNING")) {
+    return { state: "RUNNING", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+  if (uiStates.some((s) => s === "BLOCKED")) {
+    return { state: "BLOCKED", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+  if (uiStates.some((s) => s === "WAITING")) {
+    return { state: "WAITING", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+
+  const lifecycleOrder = input.departmentLifecycleOrder ?? 0;
+  const furthestIndex = input.furthestVentureLifecycleIndex ?? lifecycleOrder;
+  const ventureMovedBeyond =
+    furthestIndex > lifecycleOrder &&
+    (latestState === "FAILED" || (hadFailure && latestState !== "RUNNING"));
+
+  if (latestState === "FAILED") {
+    if (ventureMovedBeyond) {
+      const fallback = uiStates.some((s) => s === "COMPLETE") ? "COMPLETE" : "WAITING";
+      return { state: fallback, failureSemantics: "HISTORICAL_FAILURE", latestRawStatus };
+    }
+    return { state: "FAILED", failureSemantics: "CURRENT_BLOCKING_FAILURE", latestRawStatus };
+  }
+
+  if (latestState === "COMPLETE" && hadFailure) {
+    return { state: "COMPLETE", failureSemantics: "RECOVERED", latestRawStatus };
+  }
+
+  if (hadFailure) {
+    return { state: latestState, failureSemantics: "HISTORICAL_FAILURE", latestRawStatus };
+  }
+
+  if (uiStates.every((s) => s === "SKIPPED")) {
+    return { state: "SKIPPED", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+  if (uiStates.every((s) => s === "NOT_STARTED")) {
+    return { state: "NOT_STARTED", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+  if (uiStates.every((s) => s === "COMPLETE" || s === "SKIPPED")) {
+    return { state: "COMPLETE", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+  if (uiStates.some((s) => s === "UNKNOWN")) {
+    return { state: "UNKNOWN", failureSemantics: "UNKNOWN", latestRawStatus };
+  }
+
+  return { state: latestState, failureSemantics: "UNKNOWN", latestRawStatus };
+}
+
+export function computeFurthestLifecycleIndex(
+  departments: Array<{ lifecycleOrder: number; state: DepartmentUiState; recordCount: number }>,
+): number {
+  let max = 0;
+  for (const dept of departments) {
+    if (
+      dept.state === "RUNNING" ||
+      dept.state === "COMPLETE" ||
+      dept.state === "WAITING" ||
+      dept.state === "BLOCKED" ||
+      (dept.recordCount > 0 && dept.state !== "NOT_STARTED")
+    ) {
+      max = Math.max(max, dept.lifecycleOrder);
+    }
+  }
+  return max;
+}
+
 export function deriveDepartmentState(input: {
   runStatuses: string[];
   hasRecords: boolean;
   explicitPaused?: boolean;
   explicitShutdown?: boolean;
+  timeline?: StatusTimelineEntry[];
+  departmentLifecycleOrder?: number;
+  furthestVentureLifecycleIndex?: number;
 }): DepartmentUiState {
-  if (input.explicitShutdown) return "SHUTDOWN";
-  if (input.explicitPaused) return "PAUSED";
-  if (!input.hasRecords) return "NOT_STARTED";
+  const timeline =
+    input.timeline ??
+    input.runStatuses.map((status) => ({ status, timestamp: null as string | null }));
+  return deriveDepartmentOperationalState({
+    timeline,
+    hasRecords: input.hasRecords,
+    explicitPaused: input.explicitPaused,
+    explicitShutdown: input.explicitShutdown,
+    departmentLifecycleOrder: input.departmentLifecycleOrder,
+    furthestVentureLifecycleIndex: input.furthestVentureLifecycleIndex,
+  }).state;
+}
 
-  const states = input.runStatuses.map((s) => deriveUiStateFromEngineStatus(s));
-  if (states.some((s) => s === "RUNNING")) return "RUNNING";
-  if (states.some((s) => s === "FAILED")) return "FAILED";
-  if (states.some((s) => s === "BLOCKED")) return "BLOCKED";
-  if (states.some((s) => s === "WAITING")) return "WAITING";
-  if (states.every((s) => s === "SKIPPED")) return "SKIPPED";
-  if (states.every((s) => s === "NOT_STARTED")) return "NOT_STARTED";
-  if (states.every((s) => s === "COMPLETE" || s === "SKIPPED")) return "COMPLETE";
-  if (states.some((s) => s === "UNKNOWN")) return "UNKNOWN";
-  return "COMPLETE";
+export function deriveDepartmentStateWithSemantics(input: {
+  runStatuses: string[];
+  hasRecords: boolean;
+  explicitPaused?: boolean;
+  explicitShutdown?: boolean;
+  timeline?: StatusTimelineEntry[];
+  departmentLifecycleOrder?: number;
+  furthestVentureLifecycleIndex?: number;
+}): { state: DepartmentUiState; failureSemantics: FailureSemantics; latestRawStatus: string | null } {
+  const timeline =
+    input.timeline ??
+    input.runStatuses.map((status) => ({ status, timestamp: null as string | null }));
+  return deriveDepartmentOperationalState({
+    timeline,
+    hasRecords: input.hasRecords,
+    explicitPaused: input.explicitPaused,
+    explicitShutdown: input.explicitShutdown,
+    departmentLifecycleOrder: input.departmentLifecycleOrder,
+    furthestVentureLifecycleIndex: input.furthestVentureLifecycleIndex,
+  });
 }
 
 export function deriveOverallVentureStatus(departments: Array<{ state: DepartmentUiState }>): DepartmentUiState {
@@ -94,10 +239,38 @@ export function countCompletedStages(states: DepartmentUiState[]): { completed: 
 }
 
 export function departmentStateLabel(state: DepartmentUiState): string {
-  return state.replace(/_/g, " ");
+  const labels: Record<DepartmentUiState, string> = {
+    RUNNING: "In progress",
+    COMPLETE: "Complete",
+    WAITING: "Waiting",
+    BLOCKED: "Blocked",
+    FAILED: "Failed",
+    SKIPPED: "Skipped",
+    NOT_STARTED: "Not started",
+    UNKNOWN: "Unknown",
+    PAUSED: "Paused",
+    SHUTDOWN: "Shutdown",
+  };
+  return labels[state] ?? state.replace(/_/g, " ");
 }
 
-export function departmentStateClasses(state: DepartmentUiState): string {
+export function departmentVisualState(
+  state: DepartmentUiState,
+  failureSemantics?: FailureSemantics,
+): DepartmentUiState {
+  if (failureSemantics === "HISTORICAL_FAILURE" && state !== "RUNNING") {
+    return state === "FAILED" ? "COMPLETE" : state;
+  }
+  return state;
+}
+
+export function departmentStateClasses(state: DepartmentUiState, failureSemantics?: FailureSemantics): string {
+  if (failureSemantics === "HISTORICAL_FAILURE") {
+    return "border-amber-500/20 bg-zinc-900/40";
+  }
+  if (failureSemantics === "RECOVERED") {
+    return "border-emerald-500/25 bg-emerald-500/5";
+  }
   switch (state) {
     case "RUNNING":
       return "border-sky-500/40 bg-sky-500/10 ring-1 ring-sky-400/30";

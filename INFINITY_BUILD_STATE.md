@@ -29,7 +29,13 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Creative Media Architecture Engine V1 | VERIFIED | Provider-neutral media pipeline; migration `20260815280000`; 23 mock + 2 live tests pass. |
 | Performance Intelligence & Learning Engine V1 | VERIFIED | V1.1 verification closure complete; population-correct execution success rate; RLS hardening migration `20260816040000`; 31 mock + 1 live + 3 RLS tests pass. |
 | Full Growth/Monitoring learning engine | FUTURE | Superseded at foundation level by Performance Intelligence V1; full autonomous learning loop not yet complete. |
-| Live Venture Operator Console V1 | VERIFIED | Infinity HQ at `/dashboard/ventures/[ventureId]`; server-side operator read model; HQ + System views; 29 unit/security tests pass; production build pass. |
+| Live Venture Operator Console V1 | VERIFIED | Server-side operator read model; see section 6 |
+| Infinity HQ Dashboard V1.1 | VERIFIED | Primary `/dashboard` HQ; spatial floor redesign; venture selector |
+| Infinity HQ Dashboard V1.2 | VERIFIED | Room-based interiors; worker nodes; human-friendly language |
+| Infinity HQ Dashboard V1.3 | VERIFIED | Welcome header; premium room naming; moving orbs; Jarvis-like narration |
+| Infinity HQ Dashboard V1.4 | VERIFIED | Centered welcome hero; Command-first layout; simplified above-the-fold |
+| Infinity HQ Dashboard V1.5 | VERIFIED | Continuous spatial floor; workstation zones; failure-state clarity; compact Command |
+| Infinity HQ Dashboard V1.6 | VERIFIED | Portfolio performance strip; Top Earners; final spatial polish; honest profit semantics |
 | First complete autonomous venture cycle | NOT STARTED | Explicitly deferred until foundation work is ready. |
 
 ## 2. Product + Asset Builder V2.1 — Verified Checkpoint
@@ -337,31 +343,105 @@ Economic gate demo: upside $10 / cost $40 → **DEFER**; upside $2,000 / cost $5
 
 **Status:** `Live Venture Operator Console V1 — VERIFIED`
 
-Operator observability infrastructure (not an autonomous reasoning engine).
+## 6b. Infinity HQ Dashboard — VERIFIED (v1.1)
 
-### Routes
-- `/dashboard/ventures` — venture list with HQ links
-- `/dashboard/ventures/[ventureId]` — Infinity HQ operator console (HQ View + System View)
-- `/api/operator-console/ventures/[ventureId]` — secure polling endpoint (4s interval)
+**Status:** `Infinity HQ Dashboard V1.1 — VERIFIED`
 
-### Architecture
-- Server-side read model: `lib/infinity/operator-console/`
-- Admin client server-only; sanitized JSON to browser
-- 11 departments mapped from verified Infinity engines
-- Activity feed from persisted records (limit 100)
-- No demo/fixture fallback data
+- `/dashboard` is the primary Infinity HQ entry (login → HQ)
+- Premium spatial operations floor replaces basic 2-column card grid
+- Venture selector with in-HQ switching (deep-link `/dashboard/ventures/[ventureId]` preserved)
+- Default venture resolution: RUNNING → READY mission → recent active → newest
+- Portfolio command view preserved at `/dashboard/portfolio`
+- Server read model unchanged; 4s polling; RLS boundary intact
 
-### Test totals (latest run)
-- Operator console unit: **24/24 passed**
-- Operator console security: **5/5 passed**
+### Test totals (V1.1)
+- Operator + HQ dashboard tests: **35/35 passed** (includes V1.1 resolution tests)
 - Targeted typecheck: **0 errors**
 - Production build: **passed**
 
-### Remaining limitations
-- Live verification requires authenticated session + env credentials
-- Department correlation uses venture assembly lineage (some org-wide engine runs filtered in memory)
-- No WebGL/canvas HQ — DOM/CSS grid implementation
-- Read-only — no mission activation or launch actions from console
+## 6c. Infinity HQ Dashboard — VERIFIED (v1.2)
+
+**Status:** `Infinity HQ Dashboard V1.2 — VERIFIED`
+
+- Department blocks redesigned as architectural **rooms** (interior workspace, status rail, floor texture)
+- **Worker node** visualization from real provider sessions + department state (no fake busy states)
+- Deterministic **human-friendly language layer** (`humanize.ts`) for HQ view; System View retains raw technical detail
+- Current Activity bar uses mission-control narration
+- Room detail panel: human summary + technical details section
+- Mission log uses display summaries alongside raw event data
+
+### Test totals (V1.2)
+- Operator + HQ dashboard tests: **48/48 passed**
+- Targeted typecheck: **0 errors**
+- Production build: **passed**
+
+## 6d. Infinity HQ Dashboard — VERIFIED (v1.3)
+
+**Status:** `Infinity HQ Dashboard V1.3 — VERIFIED`
+
+- Top command bar: **Welcome to Infinity OS** + Autonomous Venture Operating Headquarters subtitle
+- Premium cinematic room naming (`SIGNAL FORGE`, `BUILD LAB`, `COMMAND NODE`, etc.) with supporting labels
+- Room environment upgrade: layered frames, interior grid, chamber workflow zones (intake → process → output)
+- **Moving worker orbs** along internal paths when work is `RUNNING` (CSS motion, `prefers-reduced-motion` safe)
+- Inter-room connector flow animation on active routes
+- Refined V1.3 human narration phrasing
+- System View unchanged; raw technical fields preserved
+
+### Test totals (V1.3)
+- Operator + HQ dashboard tests: **60/60 passed** (includes V1.3 naming + motion tests)
+- Targeted typecheck: **0 errors**
+- Production build: **passed**
+
+## 6e. Infinity HQ Dashboard — VERIFIED (v1.4)
+
+**Status:** `Infinity HQ Dashboard V1.4 — VERIFIED`
+
+- **Centered Welcome to Infinity OS** hero — large, dominant, above-the-fold
+- **Command chamber** moved to top of HQ floor (wide mission control node)
+- Final locked room names: Venture Radar → … → Signal Intelligence + Command
+- Simplified room surfaces (no provider/model/cost on fold)
+- Technical metadata moved below fold: Operations Summary, System Health, Costs, Technical Activity
+- Signal Intelligence → Command → target closed-loop routing emphasized
+- Orb motion preserved; `prefers-reduced-motion` safe
+
+### Test totals (V1.4)
+- Operator + HQ dashboard tests: **68/68 passed**
+- Targeted typecheck: **0 errors**
+- Production build: **passed**
+
+## 6f. Infinity HQ Dashboard — VERIFIED (v1.5)
+
+**Status:** `Infinity HQ Dashboard V1.5 — VERIFIED`
+
+- **Continuous spatial HQ floor** — shared floor grid, partition walls, corridors, production wing grouping (no card-grid feel)
+- **Workstation/work-zone visuals** per room (intake → process → output) with subtle room motifs
+- **Larger moving worker orbs** with glow, pulse, purposeful intake→process→output transit
+- **Active path illumination** — corridor glow, room floor spill, connector animation
+- **Compact Command chamber** (~35% height reduction) — mission, decision, next route, decision core only
+- **Current vs historical failure distinction** — `CURRENT_BLOCKING_FAILURE`, `HISTORICAL_FAILURE`, `RECOVERED`, `UNKNOWN` via timestamp-aware lineage derivation
+- **Render/polling stability** — stable worker-node keys; department keys by id; no polling remount churn
+
+### Test totals (V1.5)
+- Operator + HQ dashboard tests: **94/94 passed**
+- Targeted typecheck: **0 errors**
+- Production build: **passed**
+
+## 6g. Infinity HQ Dashboard — VERIFIED (v1.6)
+
+**Status:** `Infinity HQ Dashboard V1.6 — VERIFIED`
+
+- **Final spatial HQ polish** — wing organization (Discovery / Production / Deployment & Intelligence), stronger wall/corridor contrast, floor tracks, doorway cuts
+- **Larger active department orbs** (48px prominent) with enhanced halo and motion trail
+- **Compact venture selector** — OS-style inline control, demoted from form-field dominance
+- **Portfolio executive performance strip** — holographic readout: profit/contribution, companies built, active ventures, top venture
+- **Top Earners ranking** — horizontal bar chart from server-side portfolio read model; links to venture HQ
+- **Honest financial semantics** — revenue ≠ profit; missing data shows "Not available yet" not $0; test/e2e ventures excluded from portfolio totals
+- **Portfolio read model** — `lib/infinity/operator-console/portfolio/` batched server aggregation with traceability
+
+### Test totals (V1.6)
+- Operator + HQ dashboard tests: **124/124 passed**
+- Targeted typecheck: **0 errors**
+- Production build: **passed**
 
 ## 7. Explicitly Not Yet Done
 - Do not claim Organic Growth Architecture V1 is implemented until its build/test report passes.

@@ -14,6 +14,7 @@ export const HQ_ROUTES = {
   intelligence: "/dashboard/intelligence",
   builds: "/dashboard/builds",
   ventures: "/dashboard/ventures",
+  portfolio: "/dashboard/portfolio",
   ventureDetail: (ventureId: string) => `/dashboard/ventures/${ventureId}`,
   launch: "/dashboard/launch",
   missions: (missionId: string) => `/dashboard/missions/${missionId}`,
