@@ -10,6 +10,8 @@ export type HqDashboardContext = {
   defaultVentureId: string | null;
   snapshot: OperatorVentureSnapshot | null;
   snapshots: Map<string, OperatorVentureSnapshot>;
+  favc1CycleMode: boolean;
+  followFavc1Cycle: boolean;
 };
 
 export async function loadHqDashboardContext(
@@ -58,5 +60,7 @@ export async function loadHqDashboardContext(
     defaultVentureId: resolvedId,
     snapshot,
     snapshots,
+    favc1CycleMode: false,
+    followFavc1Cycle: false,
   };
 }

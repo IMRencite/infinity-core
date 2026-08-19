@@ -21,6 +21,9 @@ type Props = {
   };
   selectedDepartment: DepartmentId | null;
   onSelectDepartment: (id: DepartmentId) => void;
+  handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
+  handoffLineageColorKey?: string | null;
+  isTerminalCycle?: boolean;
 };
 
 export const FLOW_SEQUENCE = [...LIFECYCLE_ROOM_SEQUENCE, "executive_office"] as DepartmentId[];
@@ -84,6 +87,9 @@ export function HqSpatialFloor({
   closedLoopRoute,
   selectedDepartment,
   onSelectDepartment,
+  handoffStage: _handoffStage = null,
+  handoffLineageColorKey: _handoffLineageColorKey = null,
+  isTerminalCycle: _isTerminalCycle = false,
 }: Props) {
   const deptMap = new Map(departments.map((d) => [d.id, d]));
   const activeSet = new Set(activeDepartments);

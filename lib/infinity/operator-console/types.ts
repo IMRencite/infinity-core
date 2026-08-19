@@ -1,3 +1,7 @@
+import type { Favc1CycleSnapshotMeta } from "./favc1-cycle/types";
+import type { HqRoomArtifactMap, HqWorkArtifact } from "./artifacts/types";
+import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+
 export type DepartmentId =
   | "opportunity_lab"
   | "research_department"
@@ -126,6 +130,7 @@ export type OperatorDepartmentSnapshot = {
   displayName?: string;
   supportingLabel?: string;
   artifacts?: OperatorRoomArtifact[];
+  workArtifacts?: HqWorkArtifact[];
   failureSemantics?: FailureSemantics;
   latestRawStatus?: string | null;
 };
@@ -216,6 +221,11 @@ export type OperatorVentureSnapshot = {
     learning: Record<string, unknown>;
   };
   workerNodes?: OperatorWorkerNode[];
+  favc1Cycle?: Favc1CycleSnapshotMeta;
+  roomArtifacts?: HqRoomArtifactMap;
+  handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
+  handoffLineageColorKey?: string | null;
+  treasury?: TreasuryHqReadModel;
 };
 
 export type OperatorVentureListItem = {

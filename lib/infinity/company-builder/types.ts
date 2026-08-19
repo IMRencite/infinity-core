@@ -18,6 +18,8 @@ export type SourceLineage = {
   ventureSelectionHandoffId?: string | null;
   companyBuilderRunId?: string | null;
   ventureBlueprintId?: string | null;
+  founderIdeaSubmissionId?: string | null;
+  ventureOrigin?: "AUTONOMOUS_DISCOVERY" | "FOUNDER_SUBMITTED" | "FOUNDER_OVERRIDE" | null;
   capabilityTest?: boolean;
   inputMode?: "handoff" | "simulation";
 };

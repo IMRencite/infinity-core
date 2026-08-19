@@ -1,6 +1,8 @@
 "use client";
 
 import type { DepartmentId, OperatorCurrentActivity, OperatorDepartmentSnapshot, OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
+import type { Favc1CycleSnapshotMeta } from "@/lib/infinity/operator-console/favc1-cycle/types";
+import type { CommandSystemIndicator } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
 import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
 import { WorkerNode } from "./worker-node";
 import { closedLoopTargetLabel } from "./hq-flow-connectors";
@@ -19,6 +21,8 @@ type Props = {
   };
   isSelected: boolean;
   onSelect: () => void;
+  cycleMeta?: Favc1CycleSnapshotMeta | null;
+  systemReadiness?: CommandSystemIndicator[];
 };
 
 export function CommandChamber({
@@ -28,6 +32,8 @@ export function CommandChamber({
   closedLoopRoute,
   isSelected,
   onSelect,
+  cycleMeta = null,
+  systemReadiness = [],
 }: Props) {
   const names = getRoomDisplayNames("executive_office");
   const missionText =

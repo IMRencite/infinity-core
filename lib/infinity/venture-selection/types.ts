@@ -20,6 +20,9 @@ export type AssumptionRecord = {
   impactScore: number;
   uncertaintyScore: number;
   fatalRiskContribution: number;
+  fallbackUsed: boolean;
+  fallbackReason: string | null;
+  evidenceSources: string[];
 };
 
 export type ValidationExperimentPriority = {

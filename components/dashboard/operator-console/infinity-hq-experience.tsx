@@ -19,9 +19,9 @@ type Props = {
 
 export async function InfinityHqExperience({ ventureId, showPortfolioLink = true }: Props) {
   const result = await getOperatorOrgContext();
-  if (result.status !== "ok") return null;
+  if (!result) return null;
 
-  const orgContext = result.context;
+  const orgContext = result;
 
   const admin = createAdminClient();
   const [ctx, portfolioSummary, founderArtifacts] = await Promise.all([
@@ -80,9 +80,9 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
 
 export async function loadVentureHqSnapshot(ventureId: string) {
   const result = await getOperatorOrgContext();
-  if (result.status !== "ok") return null;
+  if (!result) return null;
 
-  const orgContext = result.context;
+  const orgContext = result;
   const admin = createAdminClient();
   const [snapshot, ventureList] = await Promise.all([
     loadOperatorVentureSnapshot(admin, orgContext.organizationId, ventureId),
