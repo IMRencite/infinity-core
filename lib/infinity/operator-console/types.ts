@@ -231,6 +231,15 @@ export type OperatorVentureSnapshot = {
 export type OperatorVentureListItem = {
   ventureAssemblyId: string;
   ventureName: string;
+  ventureDisplayName?: string;
+  ventureDisplayNumber?: number | null;
+  ventureDisplayLabel?: string;
+  ventureDisplaySource?: string;
+  candidateId?: string | null;
+  blueprintId?: string | null;
+  operatorAllocatable?: boolean;
+  exclusionReason?: string | null;
+  idempotencyKey?: string | null;
   status: string;
   activeDepartment: string | null;
   latestActivity: string | null;

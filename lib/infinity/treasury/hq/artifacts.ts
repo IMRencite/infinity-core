@@ -1,14 +1,23 @@
 import { buildArtifactRenderId } from "@/lib/infinity/operator-console/artifacts/artifact-identity";
 import type { HqRoomArtifactMap, HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
+import { resolveVentureDisplayName } from "@/lib/infinity/operator-console/resolve-venture-display-name";
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 import type { TreasuryHqReadModel } from "./read-model";
+
+export type TreasuryVentureNameLookup = {
+  displayNameForVenture?: (ventureId: string) => string;
+  lineageForVenture?: (ventureId: string) => { candidateId?: string | null; blueprintId?: string | null };
+};
 
 function push(map: HqRoomArtifactMap, roomId: DepartmentId, artifact: HqWorkArtifact): void {
   if (!map[roomId]) map[roomId] = [];
   map[roomId]!.push(artifact);
 }
 
-export function buildTreasuryHqArtifacts(model: TreasuryHqReadModel): HqRoomArtifactMap {
+export function buildTreasuryHqArtifacts(
+  model: TreasuryHqReadModel,
+  names?: TreasuryVentureNameLookup,
+): HqRoomArtifactMap {
   const map: HqRoomArtifactMap = {};
 
   push(map, "executive_office", {
@@ -27,10 +36,16 @@ export function buildTreasuryHqArtifacts(model: TreasuryHqReadModel): HqRoomArti
     sourceRecordId: model.organizationId,
     metadata: {
       totalCash: model.cards.totalCash.display,
+      internalCapital: model.cards.internalCapital.display,
       availableCapital: model.cards.availableCapital.display,
+      allocatedCapital: model.cards.infinityAllocatedCapital.display,
+      unallocatedCapital: model.cards.unallocatedCapital.display,
       reservedCapital: model.cards.reservedCapital.display,
       committedCapital: model.cards.committedCapital.display,
+      treasurySource: model.treasurySource,
+      bankingProvider: model.bankingProvider,
       freshness: model.freshnessLabel,
+      fundingClass: "INTERNAL / MANUAL / NON-BANK",
     },
   });
 
@@ -59,6 +74,9 @@ export function buildTreasuryHqArtifacts(model: TreasuryHqReadModel): HqRoomArti
   }
 
   for (const venture of model.ventures) {
+    const displayName =
+      names?.displayNameForVenture?.(venture.ventureId) ?? resolveVentureDisplayName({ id: venture.ventureId });
+    const lineage = names?.lineageForVenture?.(venture.ventureId) ?? {};
     push(map, "strategy_finance", {
       id: buildArtifactRenderId({
         artifactType: "venture_capital_allocation",
@@ -67,19 +85,33 @@ export function buildTreasuryHqArtifacts(model: TreasuryHqReadModel): HqRoomArti
       }),
       roomId: "strategy_finance",
       artifactType: "venture_capital_allocation",
-      title: "Venture allocation",
-      subtitle: venture.status,
+      title: displayName,
+      subtitle: `${venture.status} · allocated ${venture.allocated.display}`,
       state: "READY",
-      createdAt: null,
+      createdAt: venture.updatedAt,
       sourceRecordType: "venture_capital_allocation",
       sourceRecordId: venture.ventureId,
       metadata: {
+        ventureDisplayName: displayName,
+        ventureId: venture.ventureId,
+        candidateId: lineage.candidateId ?? null,
+        blueprintId: lineage.blueprintId ?? null,
         allocated: venture.allocated.display,
+        reserved: venture.reserved.display,
+        committed: venture.committed.display,
+        spent: venture.spent.display,
         available: venture.available.display,
+        expectedRevenue: venture.expectedRevenue.display,
+        actualRevenue: venture.actualRevenue.display,
+        expectedProfit: venture.expectedProfit.display,
+        actualProfit: venture.actualProfit.display,
         revenue: venture.revenue.display,
         profit: venture.profit.display,
         roi: venture.roi.display,
+        origin: venture.origin,
         stage: venture.stage,
+        updatedAt: venture.updatedAt,
+        fundingClass: "INTERNAL / MANUAL / NON-BANK",
       },
     });
   }
@@ -176,4 +208,20 @@ export function mergeTreasuryArtifacts(base: HqRoomArtifactMap | undefined, trea
     out[key] = [...(out[key] ?? []), ...(artifacts ?? [])];
   }
   return out;
+}
+
+export function replaceTreasuryArtifacts(base: HqRoomArtifactMap | undefined, treasury: HqRoomArtifactMap): HqRoomArtifactMap {
+  const treasuryTypes = new Set([
+    "treasury_state",
+    "treasury_budget",
+    "venture_capital_allocation",
+    "financial_action",
+    "treasury_transaction",
+    "recurring_commitment",
+  ]);
+  const stripped: HqRoomArtifactMap = {};
+  for (const [roomId, artifacts] of Object.entries(base ?? {})) {
+    stripped[roomId as DepartmentId] = (artifacts ?? []).filter((artifact) => !treasuryTypes.has(artifact.artifactType));
+  }
+  return mergeTreasuryArtifacts(stripped, treasury);
 }

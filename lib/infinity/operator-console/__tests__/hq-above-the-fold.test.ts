@@ -140,8 +140,11 @@ describe("HQ above-the-fold command restructure", () => {
 
     const strip = readSource("treasury-capital-strip.tsx");
     expect(strip).toContain("View Treasury");
-    expect(strip).toContain("Total cash");
+    expect(strip).toContain("Internal capital");
     expect(strip).toContain("Available capital");
+    expect(strip).toContain("Allocated capital");
+    expect(strip).toContain("Unallocated capital");
+    expect(strip).toContain("Bank cash");
     expect(strip).toContain("Monthly budget");
     expect(strip).toContain("Monthly spend");
     expect(strip).toContain('data-infrastructure-presentation={presentation}');
@@ -221,6 +224,7 @@ describe("HQ above-the-fold command restructure", () => {
   it("does not regress Treasury, Coding, or deep linking", () => {
     const consoleSource = readSource("venture-operator-console.tsx");
     expect(consoleSource).toContain("TreasuryCapitalStrip");
+    expect(consoleSource).toContain("TreasuryControlCenter");
     expect(consoleSource).toContain("CodingIntelligenceStrip");
     expect(consoleSource).toContain("CommercializationReadinessStrip");
     expect(consoleSource).toContain("detailFromUrl");

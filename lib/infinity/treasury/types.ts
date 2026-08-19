@@ -358,6 +358,8 @@ export type TreasuryControlState = {
 export type TreasuryState = {
   organizationId: string;
   totalCash: EpistemicAmount;
+  internalCapital: EpistemicAmount;
+  unallocatedCapital: EpistemicAmount;
   infinityAllocatedCapital: EpistemicAmount;
   availableCapital: EpistemicAmount;
   reservedCapital: EpistemicAmount;

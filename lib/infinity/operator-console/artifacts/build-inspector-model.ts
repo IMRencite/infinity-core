@@ -160,6 +160,26 @@ export type ArtifactDetailPayload = {
     knownSpendUsd: number | null;
     spendKnown: boolean;
   };
+  treasury?: {
+    treasurySource: string;
+    bankingProvider: string;
+    fundingClass: string;
+    ventureDisplayName?: string | null;
+    ventureId?: string | null;
+    allocated: string;
+    reserved: string;
+    committed: string;
+    spent: string;
+    available: string;
+    expectedRevenue: string;
+    actualRevenue: string;
+    expectedProfit: string;
+    actualProfit: string;
+    budgetConstraints: Array<{ label: string; allocated: string; available: string; scope: string }>;
+    recentFunding: Array<{ amount: string; source: string; memo: string; at: string }>;
+    recentAllocations: Array<{ amount: string; note: string; at: string }>;
+    relatedActions: Array<{ purpose: string; status: string; amount: string; provider: string }>;
+  };
 };
 
 function fmt(value: unknown, suffix = "", kind: "estimate" | "actual" | "score" = "score"): string {
@@ -804,16 +824,32 @@ export function buildArtifactInspectorModel(
     case "financial_authorization":
     case "treasury_transaction":
     case "recurring_commitment": {
+      const treasury = detail?.treasury;
+      const ventureDisplayName =
+        treasury?.ventureDisplayName ??
+        (typeof artifact.metadata.ventureDisplayName === "string" ? artifact.metadata.ventureDisplayName : null);
+      const ventureId =
+        treasury?.ventureId ?? (typeof artifact.metadata.ventureId === "string" ? artifact.metadata.ventureId : null);
+      const isAllocation = artifact.artifactType === "venture_capital_allocation";
+      const candidateId = typeof artifact.metadata.candidateId === "string" ? artifact.metadata.candidateId : null;
+      const blueprintId = typeof artifact.metadata.blueprintId === "string" ? artifact.metadata.blueprintId : null;
       summary = artifact.subtitle ?? artifact.title;
       sections = [
         {
           id: "overview",
           title: "Overview",
           rows: [
-            { label: "Entity", value: artifact.title },
+            { label: isAllocation ? "Venture" : "Entity", value: ventureDisplayName ?? artifact.title },
+            ...(ventureId ? [{ label: isAllocation ? "Venture ID" : "ID", value: ventureId }] : []),
+            ...(candidateId ? [{ label: "Candidate ID", value: candidateId }] : []),
+            ...(blueprintId ? [{ label: "Blueprint ID", value: blueprintId }] : []),
             { label: "Status", value: artifact.state },
+            { label: "Treasury source", value: treasury?.treasurySource ?? "Internal manual ledger" },
+            { label: "Banking provider", value: treasury?.bankingProvider ?? fmt(artifact.metadata.bankingProvider) },
+            { label: "Funding class", value: treasury?.fundingClass ?? "INTERNAL / MANUAL / NON-BANK" },
             ...Object.entries(artifact.metadata)
               .filter(([key]) => !/secret|token|credential|password|card|cvv/i.test(key))
+              .filter(([key]) => key !== "ventureDisplayName" && key !== "ventureId" && key !== "candidateId" && key !== "blueprintId")
               .map(([label, value]) => ({
                 label: label.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
                 value: fmt(value),
@@ -821,11 +857,46 @@ export function buildArtifactInspectorModel(
           ],
         },
         {
+          id: "capital",
+          title: "Capital",
+          rows: [
+            { label: "Allocated capital", value: treasury?.allocated ?? fmt(artifact.metadata.allocated) },
+            { label: "Reserved capital", value: treasury?.reserved ?? fmt(artifact.metadata.reserved) },
+            { label: "Committed capital", value: treasury?.committed ?? fmt(artifact.metadata.committed) },
+            { label: "Spent", value: treasury?.spent ?? fmt(artifact.metadata.spent) },
+            { label: "Available capital", value: treasury?.available ?? fmt(artifact.metadata.available) },
+            { label: "Expected economics", value: treasury?.expectedRevenue ?? fmt(artifact.metadata.expectedRevenue) },
+            { label: "Actual economics", value: treasury?.actualRevenue ?? fmt(artifact.metadata.actualRevenue) },
+          ],
+        },
+        {
+          id: "budgets",
+          title: "Budget limits",
+          rows: (treasury?.budgetConstraints ?? []).length
+            ? treasury!.budgetConstraints.map((row) => ({
+                label: `${row.scope} ${row.label}`,
+                value: `Limit ${row.allocated} · available ${row.available}`,
+              }))
+            : [{ label: "Budget limits", value: "UNKNOWN" }],
+        },
+        {
           id: "evidence",
           title: "Evidence",
           rows: [
             { label: "Source record", value: `${artifact.sourceRecordType}:${artifact.sourceRecordId}` },
             { label: "Idempotency", value: fmt(artifact.metadata.idempotencyKey) },
+            ...(treasury?.recentFunding ?? []).map((entry) => ({
+              label: `Funding ${entry.at}`,
+              value: `${entry.amount} · ${entry.source} · ${entry.memo}`,
+            })),
+            ...(treasury?.recentAllocations ?? []).map((entry) => ({
+              label: `Allocation ${entry.at}`,
+              value: `${entry.amount} · ${entry.note}`,
+            })),
+            ...(treasury?.relatedActions ?? []).map((entry) => ({
+              label: entry.purpose,
+              value: `${entry.status} · ${entry.amount} · ${entry.provider}`,
+            })),
           ],
         },
         {
@@ -834,6 +905,7 @@ export function buildArtifactInspectorModel(
           rows: [
             { label: "Artifact type", value: artifact.artifactType },
             { label: "Room", value: ROOM_LABELS[artifact.roomId] ?? artifact.roomId },
+            { label: "Bank transfer", value: "NONE — internal manual ledger only" },
           ],
         },
       ];

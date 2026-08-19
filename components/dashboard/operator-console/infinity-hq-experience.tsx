@@ -4,6 +4,7 @@ import { loadHqDashboardContext } from "@/lib/infinity/operator-console/load-hq-
 import { loadPortfolioSummary } from "@/lib/infinity/operator-console/portfolio/load-portfolio-summary";
 import { loadOperatorVentureSnapshot } from "@/lib/infinity/operator-console";
 import { emptyTreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import { loadTreasuryHqForOrg } from "@/lib/infinity/treasury/hq/load";
 import { buildTreasuryHqArtifacts, mergeTreasuryArtifacts } from "@/lib/infinity/treasury/hq/artifacts";
 import { loadFounderIdeaHqArtifacts } from "@/lib/infinity/founder-idea-lab/hq/load";
 import { mergeRoomArtifacts } from "@/lib/infinity/founder-idea-lab/hq/merge";
@@ -24,17 +25,18 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
   const orgContext = result;
 
   const admin = createAdminClient();
-  const [ctx, portfolioSummary, founderArtifacts] = await Promise.all([
+  const [ctx, portfolioSummary, founderArtifacts, loadedTreasury] = await Promise.all([
     loadHqDashboardContext(admin, orgContext.organizationId, ventureId ?? null),
     loadPortfolioSummary(admin, orgContext.organizationId),
     loadFounderIdeaHqArtifacts(admin as never, orgContext.organizationId),
+    loadTreasuryHqForOrg(admin, orgContext.organizationId),
   ]);
 
   if (!ctx.defaultVentureId || !ctx.snapshot) {
     return <HqIdleShell ventures={ctx.ventureList} showPortfolioLink={showPortfolioLink} />;
   }
 
-  const treasurySummary = emptyTreasuryHqReadModel(orgContext.organizationId);
+  const treasurySummary = loadedTreasury ?? emptyTreasuryHqReadModel(orgContext.organizationId);
   const treasuryArtifacts = buildTreasuryHqArtifacts(treasurySummary);
   const codingSummary = emptyCodingHqReadModel(orgContext.organizationId);
   const codingArtifacts = buildCodingHqArtifacts(codingSummary);

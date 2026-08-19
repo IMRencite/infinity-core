@@ -24,16 +24,35 @@ export type TreasuryHqConstraintRow = {
 export type TreasuryHqVentureRow = {
   ventureId: string;
   stage: string;
+  origin: string;
   allocated: TruthfulHqValue;
   spent: TruthfulHqValue;
   reserved: TruthfulHqValue;
   committed: TruthfulHqValue;
   available: TruthfulHqValue;
+  expectedRevenue: TruthfulHqValue;
+  actualRevenue: TruthfulHqValue;
+  expectedProfit: TruthfulHqValue;
+  actualProfit: TruthfulHqValue;
   revenue: TruthfulHqValue;
   profit: TruthfulHqValue;
   roi: TruthfulHqValue;
   monthlyBurn: TruthfulHqValue;
   status: string;
+  updatedAt: string;
+};
+
+export type TreasuryHqBudgetRow = {
+  budgetId: string;
+  ventureId: string | null;
+  scopeType: string;
+  category: string | null;
+  period: string | null;
+  allocated: TruthfulHqValue;
+  spent: TruthfulHqValue;
+  reserved: TruthfulHqValue;
+  committed: TruthfulHqValue;
+  available: TruthfulHqValue;
 };
 
 export type TreasuryHqTransactionRow = {
@@ -56,6 +75,8 @@ export type TreasuryHqReadModel = {
   state: TreasuryState;
   cards: {
     totalCash: TruthfulHqValue;
+    internalCapital: TruthfulHqValue;
+    unallocatedCapital: TruthfulHqValue;
     infinityAllocatedCapital: TruthfulHqValue;
     availableCapital: TruthfulHqValue;
     reservedCapital: TruthfulHqValue;
@@ -67,8 +88,11 @@ export type TreasuryHqReadModel = {
     expenses: TruthfulHqValue;
     netProfit: TruthfulHqValue;
   };
+  treasurySource: string;
+  bankingProvider: string;
   freshnessLabel: string;
   constraints: TreasuryHqConstraintRow[];
+  ventureBudgets: TreasuryHqBudgetRow[];
   ventures: TreasuryHqVentureRow[];
   transactions: TreasuryHqTransactionRow[];
   commitments: RecurringCommitment[];
@@ -77,8 +101,8 @@ export type TreasuryHqReadModel = {
   requests: FinancialActionRequest[];
 };
 
-export function formatHqAmount(amount: EpistemicAmount, stale = false): TruthfulHqValue {
-  if (amount.actuality === "UNKNOWN" || amount.value == null || !Number.isFinite(amount.value)) {
+export function formatHqAmount(amount: EpistemicAmount | null | undefined, stale = false): TruthfulHqValue {
+  if (!amount || amount.actuality === "UNKNOWN" || amount.value == null || !Number.isFinite(amount.value)) {
     return { display: stale ? "UNKNOWN · STALE" : "UNKNOWN", actuality: "UNKNOWN", stale };
   }
   const formatted = new Intl.NumberFormat("en-US", { style: "currency", currency: amount.currency || "USD" }).format(amount.value);
@@ -108,7 +132,12 @@ export function buildTreasuryHqReadModel(
   );
 
   const constraints = buildConstraintRows(store, organizationId, policy);
+  const connection = store.scoped(organizationId, store.connections)[0] ?? null;
   const ventures = store.scoped(organizationId, store.allocations).map((allocation) => toVentureRow(allocation));
+  const ventureBudgets = store
+    .budgetsForOrg(organizationId)
+    .filter((budget) => budget.scope.scopeType === "VENTURE" || budget.scope.scopeType === "MONTHLY" || budget.scope.ventureId)
+    .map((budget) => toBudgetRow(budget));
   const authorizations = store.scoped(organizationId, store.authorizations);
   const transactions = store.scoped(organizationId, store.transactions).map((txn) => toTxnRow(txn, authorizations, store.requests.get(txn.financialActionRequestId ?? "") ?? null));
   const commitments = store.scoped(organizationId, store.commitments);
@@ -123,6 +152,8 @@ export function buildTreasuryHqReadModel(
     state,
     cards: {
       totalCash: formatHqAmount(state.totalCash, stale && state.totalCash.actuality !== "UNKNOWN"),
+      internalCapital: formatHqAmount(state.internalCapital),
+      unallocatedCapital: formatHqAmount(state.unallocatedCapital),
       infinityAllocatedCapital: formatHqAmount(state.infinityAllocatedCapital),
       availableCapital: formatHqAmount(state.availableCapital),
       reservedCapital: formatHqAmount(state.reservedCapital),
@@ -138,6 +169,8 @@ export function buildTreasuryHqReadModel(
       expenses: formatHqAmount(state.expenses),
       netProfit: formatHqAmount(state.profit),
     },
+    treasurySource: "Internal manual ledger",
+    bankingProvider: connection?.provider ?? "Not configured",
     freshnessLabel:
       state.providerFreshness === "FRESH"
         ? "FRESH"
@@ -147,6 +180,7 @@ export function buildTreasuryHqReadModel(
             ? "UNAVAILABLE · DEGRADED"
             : "NOT CONFIGURED",
     constraints,
+    ventureBudgets,
     ventures,
     transactions,
     commitments,
@@ -219,16 +253,37 @@ function toVentureRow(allocation: VentureCapitalAllocation): TreasuryHqVentureRo
   return {
     ventureId: allocation.ventureId,
     stage: allocation.stage ?? "UNKNOWN",
+    origin: "UNKNOWN",
     allocated: formatHqAmount(allocation.capitalAllocated),
     spent: formatHqAmount(allocation.capitalSpent),
     reserved: formatHqAmount(allocation.capitalReserved),
     committed: formatHqAmount(allocation.capitalCommitted),
     available: formatHqAmount(allocation.capitalAvailable),
+    expectedRevenue: formatHqAmount(allocation.expectedRevenue),
+    actualRevenue: formatHqAmount(allocation.actualRevenue),
+    expectedProfit: formatHqAmount(allocation.expectedProfit),
+    actualProfit: formatHqAmount(allocation.actualProfit),
     revenue: formatHqAmount(allocation.actualRevenue),
     profit: formatHqAmount(allocation.actualProfit),
     roi: formatHqAmount(allocation.actualROI),
     monthlyBurn: formatHqAmount(allocation.capitalSpent),
     status: measured ? "MEASURED" : "NOT YET MEASURED",
+    updatedAt: allocation.updatedAt,
+  };
+}
+
+function toBudgetRow(budget: TreasuryBudget): TreasuryHqBudgetRow {
+  return {
+    budgetId: budget.budgetId,
+    ventureId: budget.scope.ventureId ?? null,
+    scopeType: budget.scope.scopeType,
+    category: budget.scope.category ?? null,
+    period: budget.scope.period ?? null,
+    allocated: formatHqAmount(budget.allocated),
+    spent: formatHqAmount(budget.spent),
+    reserved: formatHqAmount(budget.reserved),
+    committed: formatHqAmount(budget.committed),
+    available: formatHqAmount(budget.available),
   };
 }
 

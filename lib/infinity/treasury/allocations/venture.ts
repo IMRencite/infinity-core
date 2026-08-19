@@ -61,6 +61,33 @@ export function createVentureAllocation(
   return allocation;
 }
 
+export function applyVentureAllocationIncrease(
+  store: TreasuryStore,
+  input: {
+    organizationId: string;
+    ventureId: string;
+    deltaUsd: number;
+    stage?: string | null;
+  },
+): VentureCapitalAllocation {
+  const existing = [...store.allocations.values()].find(
+    (a) => a.organizationId === input.organizationId && a.ventureId === input.ventureId,
+  );
+  if (!existing) {
+    return createVentureAllocation(store, {
+      organizationId: input.organizationId,
+      ventureId: input.ventureId,
+      capitalAllocated: actualAmount(input.deltaUsd),
+      stage: input.stage,
+    });
+  }
+  const current = knownValue(existing.capitalAllocated) ?? 0;
+  existing.capitalAllocated = actualAmount(current + input.deltaUsd, existing.capitalAllocated.currency);
+  const next = refreshVentureAllocation(existing);
+  store.allocations.set(next.allocationId, next);
+  return next;
+}
+
 export function refreshVentureAllocation(allocation: VentureCapitalAllocation): VentureCapitalAllocation {
   return {
     ...allocation,

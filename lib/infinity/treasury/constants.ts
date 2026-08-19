@@ -130,6 +130,8 @@ export const LEDGER_SUBTYPES = [
   "NET_REVENUE",
   "FOUNDER_CAPITAL",
   "INVESTOR_CAPITAL",
+  "OPERATOR_CAPITAL",
+  "MANUAL_TREASURY_ADJUSTMENT",
   "INTERNAL_TRANSFER",
 ] as const;
 
@@ -206,8 +208,22 @@ export const FORBIDDEN_TREASURY_SERIALIZATION_FIELDS = [
 
 export const TREASURY_HQ_SECTIONS = [
   "TREASURY_AND_CAPITAL",
-  "BUDGET_CONSTRAINTS",
+  "FUND_TREASURY",
+  "CAPITAL_OVERVIEW",
+  "ALLOCATE_CAPITAL",
+  "BUDGET_CONTROLS",
   "VENTURE_ALLOCATIONS",
+  "BUDGET_CONSTRAINTS",
   "TRANSACTIONS",
   "COMMITMENTS",
 ] as const;
+
+export const MANUAL_FUNDING_SOURCES = [
+  "founder_contribution",
+  "operator_funding",
+  "manual_treasury_adjustment",
+] as const;
+
+export type ManualFundingSource = (typeof MANUAL_FUNDING_SOURCES)[number];
+
+export const INTERNAL_TREASURY_PROVIDER = "internal_manual_ledger";

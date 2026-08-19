@@ -1,6 +1,8 @@
 "use client";
 
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import { resolveTreasuryVentureLabel } from "@/lib/infinity/operator-console/resolve-venture-display-name";
+import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
 import { treasuryAttentionLabel, treasuryPresentation } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
@@ -8,6 +10,7 @@ import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspecto
 type Props = {
   model: TreasuryHqReadModel;
   inspectArtifact?: HqWorkArtifact | null;
+  ventureOptions?: OperatorVentureListItem[];
 };
 
 function Cell({ label, value, hint }: { label: string; value: string; hint?: string | null }) {
@@ -59,19 +62,23 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
         ) : null}
       </div>
       <div className="relative grid grid-cols-2 gap-px bg-zinc-800/40 md:grid-cols-4">
-        <Cell label="Total cash" value={model.cards.totalCash.display} hint={stale ? "Provider state not current" : null} />
+        <Cell label="Internal capital" value={model.cards.internalCapital.display} />
         <Cell label="Available capital" value={model.cards.availableCapital.display} />
-        <Cell label="Monthly budget" value={model.cards.monthlyBudget.display} />
-        <Cell label="Monthly spend" value={model.cards.monthlySpend.display} />
+        <Cell label="Allocated capital" value={model.cards.infinityAllocatedCapital.display} />
+        <Cell label="Unallocated capital" value={model.cards.unallocatedCapital.display} />
       </div>
       {presentation === "EXPANDED" ? (
         <div className="relative grid grid-cols-2 gap-px border-t border-zinc-800/60 bg-zinc-800/40 md:grid-cols-4 xl:grid-cols-7">
-          <Cell label="Infinity allocated capital" value={model.cards.infinityAllocatedCapital.display} />
+          <Cell
+            label="Bank cash"
+            value={model.cards.totalCash.display}
+            hint={stale ? "Provider state not current" : model.state.providerFreshness === "NOT_CONFIGURED" ? "Banking provider not configured" : null}
+          />
           <Cell label="Reserved capital" value={model.cards.reservedCapital.display} />
           <Cell label="Committed capital" value={model.cards.committedCapital.display} />
-          <Cell label="Today's spend" value={model.cards.todaySpend.display} />
+          <Cell label="Monthly budget" value={model.cards.monthlyBudget.display} />
+          <Cell label="Monthly spend" value={model.cards.monthlySpend.display} />
           <Cell label="Revenue" value={model.cards.revenue.display} />
-          <Cell label="Expenses" value={model.cards.expenses.display} />
           <Cell label="Net profit" value={model.cards.netProfit.display} />
         </div>
       ) : null}
@@ -111,7 +118,7 @@ export function TreasuryBudgetConstraintsPanel({ model }: Props) {
   );
 }
 
-export function TreasuryVentureAllocationsPanel({ model }: Props) {
+export function TreasuryVentureAllocationsPanel({ model, ventureOptions = [] }: Props) {
   return (
     <section aria-label="Venture Allocations" className="border border-zinc-800/70 bg-zinc-950/60 px-4 py-3">
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Venture Allocations</h2>
@@ -138,7 +145,9 @@ export function TreasuryVentureAllocationsPanel({ model }: Props) {
             <tbody>
               {model.ventures.map((row) => (
                 <tr key={row.ventureId} className="border-t border-zinc-800/80">
-                  <td className="py-1.5">{row.ventureId}</td>
+                  <td className="py-1.5" title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
+                    {resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}
+                  </td>
                   <td>{row.stage}</td>
                   <td>{row.allocated.display}</td>
                   <td>{row.spent.display}</td>
@@ -159,7 +168,7 @@ export function TreasuryVentureAllocationsPanel({ model }: Props) {
   );
 }
 
-export function TreasuryTransactionsPanel({ model }: Props) {
+export function TreasuryTransactionsPanel({ model, ventureOptions = [] }: Props) {
   return (
     <section aria-label="Treasury Transactions" className="border border-zinc-800/70 bg-zinc-950/60 px-4 py-3">
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Transactions</h2>
@@ -190,7 +199,9 @@ export function TreasuryTransactionsPanel({ model }: Props) {
                   <td>{row.amount.display}</td>
                   <td>{row.merchant}</td>
                   <td>{row.category}</td>
-                  <td>{row.ventureId}</td>
+                  <td title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
+                    {resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}
+                  </td>
                   <td>{row.purpose}</td>
                   <td>{row.provider}</td>
                   <td>{row.financialActionId}</td>

@@ -1,5 +1,5 @@
 import { DEFAULT_CURRENCY } from "../constants";
-import { knownValue } from "../budgets/engine";
+import { computeAvailable, knownValue } from "../budgets/engine";
 import { commitmentTotals } from "../commitments/recurring";
 import { actualProfitOrUnknown } from "../economics";
 import { netRevenue, sumLedger } from "../ledger/engine";
@@ -62,14 +62,18 @@ export function composeTreasuryState(store: TreasuryStore, input: ComposeTreasur
 
   const globalBudget = [...store.budgets.values()].find((b) => b.scope.organizationId === orgId && b.scope.scopeType === "GLOBAL");
   const infinityAllocated = globalBudget ? globalBudget.allocated : allocated;
-  const availableCapital = globalBudget ? globalBudget.available : availableFromAlloc;
-  const reservedCapital = globalBudget ? globalBudget.reserved : reserved;
-  const committedCapital = globalBudget ? globalBudget.committed : committed;
 
   const expenses = sumLedger(store, orgId, "EXPENSE");
   const revenue = netRevenue(store, orgId);
   const capital = sumLedger(store, orgId, "CAPITAL_CONTRIBUTION");
   const profit = actualProfitOrUnknown(revenue, expenses.amount);
+  const allocatedToVentures = allocations.length === 0 ? actualAmount(0) : allocated;
+  const reservedKnown = allocations.length === 0 ? actualAmount(0) : reserved;
+  const committedKnown = allocations.length === 0 ? actualAmount(0) : committed;
+  const internalPool = capital.complete ? capital.amount : globalBudget?.allocated ?? unknownAmount();
+  const unallocatedCapital = computeAvailable(internalPool, allocatedToVentures, reservedKnown, committedKnown);
+  const availableFromBudget = globalBudget ? globalBudget.available : availableFromAlloc;
+  const availableForAllocation = unallocatedCapital.actuality !== "UNKNOWN" ? unallocatedCapital : availableFromBudget;
 
   const dailySpend = spendSince(store, orgId, startOfUtcDay(now));
   const monthlySpend = spendSince(store, orgId, startOfUtcMonth(now));
@@ -78,15 +82,15 @@ export function composeTreasuryState(store: TreasuryStore, input: ComposeTreasur
   const pending = store.scoped(orgId, store.transactions).filter((t) => t.status === "PENDING").length;
   const commitmentCount = store.scoped(orgId, store.commitments).filter((c) => c.status === "ACTIVE").length;
 
-  void capital;
-
   return {
     organizationId: orgId,
     totalCash,
-    infinityAllocatedCapital: infinityAllocated,
-    availableCapital,
-    reservedCapital,
-    committedCapital,
+    internalCapital: capital.complete ? capital.amount : unknownAmount(),
+    unallocatedCapital: availableForAllocation,
+    infinityAllocatedCapital: allocatedToVentures.actuality !== "UNKNOWN" ? allocatedToVentures : infinityAllocated,
+    availableCapital: availableForAllocation,
+    reservedCapital: reservedKnown,
+    committedCapital: committedKnown,
     dailySpend,
     monthlySpend,
     lifetimeSpend,

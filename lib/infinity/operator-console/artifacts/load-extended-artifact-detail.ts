@@ -236,5 +236,64 @@ export async function loadExtendedArtifactDetail(
     };
   }
 
+  const treasuryTypes = new Set([
+    "treasury_state",
+    "treasury_budget",
+    "venture_capital_allocation",
+    "financial_action",
+    "financial_authorization",
+    "treasury_transaction",
+    "recurring_commitment",
+  ]);
+  if (treasuryTypes.has(type)) {
+    try {
+      const { loadTreasuryStore } = await import("@/lib/infinity/treasury/persistence");
+      const { buildTreasuryInspectorPayload } = await import("@/lib/infinity/treasury/hq/inspector-payload");
+      const store = await loadTreasuryStore(admin, organizationId);
+      const built = buildTreasuryInspectorPayload(store, organizationId, artifact.sourceRecordType, artifact.sourceRecordId);
+      payload.treasury = {
+        treasurySource: built.treasurySource,
+        bankingProvider: built.bankingProvider,
+        fundingClass: built.fundingClass,
+        ventureDisplayName: built.ventureDisplayName,
+        ventureId: built.ventureId,
+        allocated: built.allocated.display,
+        reserved: built.reserved.display,
+        committed: built.committed.display,
+        spent: built.spent.display,
+        available: built.available.display,
+        expectedRevenue: built.expectedRevenue.display,
+        actualRevenue: built.actualRevenue.display,
+        expectedProfit: built.expectedProfit.display,
+        actualProfit: built.actualProfit.display,
+        budgetConstraints: built.budgetConstraints,
+        recentFunding: built.recentFunding,
+        recentAllocations: built.recentAllocations,
+        relatedActions: built.relatedActions,
+      };
+    } catch {
+      payload.treasury = {
+        treasurySource: "Internal manual ledger",
+        bankingProvider: "Not configured",
+        fundingClass: "INTERNAL / MANUAL / NON-BANK",
+        ventureDisplayName: typeof artifact.metadata.ventureDisplayName === "string" ? artifact.metadata.ventureDisplayName : null,
+        ventureId: typeof artifact.metadata.ventureId === "string" ? artifact.metadata.ventureId : artifact.sourceRecordId,
+        allocated: String(artifact.metadata.allocated ?? "UNKNOWN"),
+        reserved: String(artifact.metadata.reserved ?? "UNKNOWN"),
+        committed: String(artifact.metadata.committed ?? "UNKNOWN"),
+        spent: String(artifact.metadata.spent ?? "UNKNOWN"),
+        available: String(artifact.metadata.available ?? "UNKNOWN"),
+        expectedRevenue: String(artifact.metadata.expectedRevenue ?? "UNKNOWN"),
+        actualRevenue: String(artifact.metadata.actualRevenue ?? "UNKNOWN"),
+        expectedProfit: String(artifact.metadata.expectedProfit ?? "UNKNOWN"),
+        actualProfit: String(artifact.metadata.actualProfit ?? "UNKNOWN"),
+        budgetConstraints: [],
+        recentFunding: [],
+        recentAllocations: [],
+        relatedActions: [],
+      };
+    }
+  }
+
   return payload;
 }

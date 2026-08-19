@@ -20,10 +20,11 @@ import {
   TreasuryCapitalStrip,
   TreasuryCommitmentsPanel,
   TreasuryTransactionsPanel,
-  TreasuryVentureAllocationsPanel,
 } from "./treasury-capital-strip";
+import { TreasuryControlCenter } from "./treasury-control-center";
 import type { PortfolioSummary } from "@/lib/infinity/operator-console/portfolio/portfolio-types";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import { buildTreasuryHqArtifacts, replaceTreasuryArtifacts } from "@/lib/infinity/treasury/hq/artifacts";
 import type { CodingHqReadModel } from "@/lib/infinity/coding-agents/hq/read-model";
 import type { ZtpHqReadModel } from "@/lib/infinity/zero-to-production/hq/read-model";
 import { CodingIntelligenceStrip } from "./coding-intelligence-strip";
@@ -94,6 +95,7 @@ function VentureOperatorConsoleInner({
   const detailFromUrl = searchParams.get("detail") ?? searchParams.get("artifact");
   const [view, setView] = useState<"hq" | "system">("hq");
   const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const [treasury, setTreasury] = useState(treasurySummary);
   const [selectedDepartment, setSelectedDepartment] = useState<DepartmentId | null>(null);
   const [pollError, setPollError] = useState<string | null>(null);
   const [live, setLive] = useState(true);
@@ -141,6 +143,20 @@ function VentureOperatorConsoleInner({
   useEffect(() => {
     setSnapshot(initialSnapshot);
   }, [initialSnapshot]);
+
+  useEffect(() => {
+    setTreasury(treasurySummary);
+  }, [treasurySummary]);
+
+  const handleTreasuryChange = useCallback((model: TreasuryHqReadModel) => {
+    setTreasury(model);
+    const nextTreasuryArtifacts = buildTreasuryHqArtifacts(model);
+    setSnapshot((prev) => ({
+      ...prev,
+      treasury: model,
+      roomArtifacts: replaceTreasuryArtifacts(prev.roomArtifacts, nextTreasuryArtifacts),
+    }));
+  }, []);
 
   const handleVentureChange = (id: string) => {
     router.push(`/dashboard/ventures/${id}`);
@@ -197,7 +213,7 @@ function VentureOperatorConsoleInner({
                 cycleMeta={snapshot.favc1Cycle ?? null}
                 systemReadiness={deriveCommandSystemReadiness({
                   snapshot,
-                  treasury: treasurySummary,
+                  treasury: treasury,
                   coding: codingSummary,
                 })}
               />
@@ -222,9 +238,9 @@ function VentureOperatorConsoleInner({
 
           <div className="space-y-3 border-t border-zinc-800/60 pt-4" data-hq-region="infrastructure">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-600">System Infrastructure</p>
-            {treasurySummary ? (
+            {treasury ? (
               <TreasuryCapitalStrip
-                model={treasurySummary}
+                model={treasury}
                 inspectArtifact={findRoomArtifact(snapshot, "treasury_state")}
               />
             ) : null}
@@ -252,12 +268,16 @@ function VentureOperatorConsoleInner({
             ) : null}
             <SystemHealthStrip snapshot={snapshot} />
             <TopEarnersPanel summary={portfolioSummary} />
-            {treasurySummary ? (
+            {treasury ? (
               <>
-                <TreasuryBudgetConstraintsPanel model={treasurySummary} />
-                <TreasuryVentureAllocationsPanel model={treasurySummary} />
-                <TreasuryTransactionsPanel model={treasurySummary} />
-                <TreasuryCommitmentsPanel model={treasurySummary} />
+                <TreasuryControlCenter
+                  model={treasury}
+                  ventureOptions={ventureOptions}
+                  onModelChange={handleTreasuryChange}
+                />
+                <TreasuryBudgetConstraintsPanel model={treasury} />
+                <TreasuryTransactionsPanel model={treasury} />
+                <TreasuryCommitmentsPanel model={treasury} />
               </>
             ) : null}
             <OperationsSummaryStrip snapshot={snapshot} />

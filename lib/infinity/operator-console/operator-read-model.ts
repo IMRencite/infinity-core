@@ -17,6 +17,14 @@ import {
   deriveOverallVentureStatus,
 } from "./status-derivation";
 import { listDepartmentsInLifecycleOrder } from "./department-registry";
+import {
+  blueprintIdFromManifest,
+  candidateIdFromIdentity,
+  candidateIdFromManifest,
+  loadVentureDisplayNameRelations,
+} from "./load-venture-display-names";
+import { classifyVentureForPortfolio } from "./portfolio/venture-classification";
+import { resolveVentureDisplay } from "./resolve-venture-display-name";
 import type { DepartmentId, OperatorVentureListItem, OperatorVentureSnapshot } from "./types";
 
 export async function loadOperatorVentureSnapshot(
@@ -108,7 +116,9 @@ export async function loadOperatorVentureList(
 ): Promise<OperatorVentureListItem[]> {
   const { data } = await admin
     .from("venture_assemblies")
-    .select("id, mission_id, status, readiness_status, launch_stage, identity_package, manifest, updated_at")
+    .select(
+      "id, mission_id, status, readiness_status, launch_stage, identity_package, manifest, updated_at, opportunity_id, venture_blueprint_id, company_id, idempotency_key",
+    )
     .eq("organization_id", organizationId)
     .order("updated_at", { ascending: false })
     .limit(limit);
@@ -120,19 +130,82 @@ export async function loadOperatorVentureList(
     .order("created_at", { ascending: false })
     .limit(100);
 
-  return (data ?? []).map((row) => {
-    const identity = row.identity_package as Record<string, unknown> | null;
-    const manifest = row.manifest as Record<string, unknown> | null;
+  const assemblyRows = (data ?? []).map((row) => ({
+    ...row,
+    identity_package: (row.identity_package ?? null) as Record<string, unknown> | null,
+    manifest: (row.manifest ?? null) as Record<string, unknown> | null,
+  }));
+
+  let relations = {
+    opportunityNameById: new Map<string, string>(),
+    candidateTitleById: new Map<string, string>(),
+    candidateRankById: new Map<string, number>(),
+    queueRankByCandidateId: new Map<string, number>(),
+    blueprintNameById: new Map<string, string>(),
+    companyNameById: new Map<string, string>(),
+  };
+  try {
+    relations = await loadVentureDisplayNameRelations(admin, organizationId, assemblyRows);
+  } catch {
+    relations = {
+      opportunityNameById: new Map(),
+      candidateTitleById: new Map(),
+      candidateRankById: new Map(),
+      queueRankByCandidateId: new Map(),
+      blueprintNameById: new Map(),
+      companyNameById: new Map(),
+    };
+  }
+
+  return assemblyRows.map((row, index) => {
+    const identity = row.identity_package;
+    const manifest = row.manifest;
     const ventureIdentity = manifest?.ventureIdentity as Record<string, unknown> | undefined;
     const latestDecision = (decisions ?? []).find(
       (d) => d.venture_id === row.id || d.venture_id === row.mission_id,
     );
+    const workingName =
+      (typeof identity?.workingName === "string" ? identity.workingName : null) ??
+      (typeof ventureIdentity?.workingName === "string" ? ventureIdentity.workingName : null) ??
+      row.id.slice(0, 8);
+    const blueprintId = row.venture_blueprint_id ?? blueprintIdFromManifest(manifest);
+    const candidateId = candidateIdFromManifest(manifest) ?? candidateIdFromIdentity(identity);
+    const resolved = resolveVentureDisplay({
+      id: row.id,
+      index,
+      rank: candidateId
+        ? relations.candidateRankById.get(candidateId) ?? relations.queueRankByCandidateId.get(candidateId) ?? null
+        : null,
+      identity,
+      manifest,
+      workingName,
+      candidateTitle: candidateId ? relations.candidateTitleById.get(candidateId) ?? null : null,
+      opportunityName: row.opportunity_id ? relations.opportunityNameById.get(row.opportunity_id) ?? null : null,
+      opportunityTitle: row.opportunity_id ? relations.candidateTitleById.get(row.opportunity_id) ?? null : null,
+      blueprintName: blueprintId ? relations.blueprintNameById.get(blueprintId) ?? null : null,
+      companyName: row.company_id ? relations.companyNameById.get(row.company_id) ?? null : null,
+    });
+    const classification = classifyVentureForPortfolio({
+      id: row.id,
+      mission_id: row.mission_id,
+      status: row.status,
+      venture_blueprint_id: row.venture_blueprint_id,
+      identity_package: identity,
+      manifest,
+      idempotency_key: row.idempotency_key ?? null,
+    });
     return {
       ventureAssemblyId: row.id,
-      ventureName:
-        (typeof identity?.workingName === "string" ? identity.workingName : null) ??
-        (typeof ventureIdentity?.workingName === "string" ? ventureIdentity.workingName : null) ??
-        row.id.slice(0, 8),
+      ventureName: workingName,
+      ventureDisplayName: resolved.name,
+      ventureDisplayNumber: resolved.number,
+      ventureDisplayLabel: resolved.label,
+      ventureDisplaySource: resolved.source,
+      candidateId,
+      blueprintId,
+      operatorAllocatable: classification.includeInPortfolio,
+      exclusionReason: classification.exclusionReason,
+      idempotencyKey: row.idempotency_key ?? null,
       status: row.status,
       activeDepartment: null,
       latestActivity: latestDecision ? `LearningDecision: ${latestDecision.decision_type}` : row.status,

@@ -94,6 +94,16 @@ export function classifyVentureForPortfolio(
   return { includeInPortfolio: true, exclusionReason: null, isTestFixture: false };
 }
 
+export function isOperatorAllocatableVenture(
+  row: VentureAssemblyRow,
+  opts?: {
+    blueprintSimulationOnly?: boolean;
+    allRunsSimulationOrTest?: boolean;
+  },
+): boolean {
+  return classifyVentureForPortfolio(row, opts).includeInPortfolio;
+}
+
 export function isVentureBuilt(row: VentureAssemblyRow, blueprintCompleted: boolean): boolean {
   return Boolean(row.venture_blueprint_id) || blueprintCompleted;
 }
