@@ -389,6 +389,46 @@ function buildCandidateSections(
   return sections;
 }
 
+function providerReadinessInspector(artifact: HqWorkArtifact): {
+  summary: string;
+  sections: InspectorSection[];
+} {
+  return {
+    summary: `${artifact.title} is ${String(artifact.metadata.displayStatus ?? "NOT CONFIGURED")}. Mutation authority remains LOCKED.`,
+    sections: [
+      {
+        id: "overview",
+        title: "Provider readiness",
+        rows: [
+          { label: "Provider", value: fmt(artifact.metadata.provider) },
+          { label: "Environment", value: fmt(artifact.metadata.environment) },
+          { label: "Capabilities", value: fmt(artifact.metadata.capabilities) },
+          { label: "Verification timestamp", value: fmt(artifact.metadata.verifiedAt) },
+          { label: "Freshness", value: fmt(artifact.metadata.freshness) },
+          { label: "Readiness", value: fmt(artifact.metadata.readiness) },
+          { label: "Blocking reason", value: fmt(artifact.metadata.blockingReason) },
+          { label: "Mutation authority", value: fmt(artifact.metadata.mutationAuthority) },
+          { label: "Mode", value: fmt(artifact.metadata.mode) },
+        ],
+      },
+      {
+        id: "system",
+        title: "System View",
+        rows: [
+          { label: "Provider key", value: fmt(artifact.metadata.providerKey) },
+          { label: "Verification ID", value: fmt(artifact.metadata.verificationId) },
+          { label: "Environment", value: fmt(artifact.metadata.environment) },
+          { label: "Mode", value: fmt(artifact.metadata.mode) },
+          { label: "Capability names", value: fmt(artifact.metadata.capabilities) },
+          { label: "Verified at", value: fmt(artifact.metadata.verifiedAt) },
+          { label: "Failure code", value: fmt(artifact.metadata.failureCode) },
+          { label: "Freshness", value: fmt(artifact.metadata.freshness) },
+        ],
+      },
+    ],
+  };
+}
+
 export function buildArtifactInspectorModel(
   artifact: HqWorkArtifact,
   allArtifacts: HqWorkArtifact[],
@@ -408,7 +448,14 @@ export function buildArtifactInspectorModel(
   let journeyOverride: InspectorJourney | null = null;
   let hotTakesOverride: string[] | null = null;
 
-  switch (artifact.artifactType) {
+  if (artifact.sourceRecordType === "provider_readiness") {
+    const built = providerReadinessInspector(artifact);
+    summary = built.summary;
+    sections = built.sections;
+    decision = "MUTATION AUTHORITY LOCKED";
+    decisionWhy = "Read-only provider verification does not authorize writes.";
+  } else {
+    switch (artifact.artifactType) {
     case "opportunity_candidate": {
       const c = detail?.candidate;
       summary =
@@ -1031,6 +1078,7 @@ export function buildArtifactInspectorModel(
           ],
         },
       ];
+    }
   }
 
   const hotTakes = hotTakesOverride ?? deriveHotTakes({
