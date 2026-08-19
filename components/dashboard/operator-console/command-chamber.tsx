@@ -7,7 +7,11 @@ import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming
 import { WorkerNode } from "./worker-node";
 import { closedLoopTargetLabel } from "./hq-flow-connectors";
 import { partitionCommandDecisionOrbs } from "@/lib/infinity/operator-console/command-chamber-layout";
-import { RoomWorkflowStage } from "./room-workflow-stage";
+import { DecisionToken } from "./artifacts/primitives";
+import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
+import { handleCardKeyboardInspect } from "./infinity-room/room-keyboard";
+import { InfinityRoomShell } from "./infinity-room/infinity-room-shell";
+import { buildFavc1TerminalDisplay } from "@/lib/infinity/operator-console/favc1-cycle/terminal-messaging";
 
 type Props = {
   snapshot?: OperatorDepartmentSnapshot;
@@ -25,6 +29,24 @@ type Props = {
   systemReadiness?: CommandSystemIndicator[];
 };
 
+function formatCost(meta: Favc1CycleSnapshotMeta): string {
+  if (meta.knownCycleCostUsd == null) return "Unknown";
+  return `$${meta.knownCycleCostUsd.toFixed(4)}`;
+}
+
+function cycleTerminal(meta: Favc1CycleSnapshotMeta | null | undefined) {
+  if (!meta || meta.terminalOutcome === "RUNNING") return null;
+  return (
+    meta.terminalDisplay ??
+    buildFavc1TerminalDisplay({
+      terminalOutcome: meta.terminalOutcome,
+      selectionStopReasonPath: meta.selectionStopReasonPath,
+      validationOutcome: meta.validationOutcome,
+      failureMessage: meta.failureMessage,
+    })
+  );
+}
+
 export function CommandChamber({
   snapshot,
   workerNodes,
@@ -36,102 +58,186 @@ export function CommandChamber({
   systemReadiness = [],
 }: Props) {
   const names = getRoomDisplayNames("executive_office");
-  const missionText =
-    currentActivity.displayNarration ??
-    currentActivity.displayTask ??
-    snapshot?.displayHeadline ??
-    "Standing by for the next mission";
-
-  const nextRoute = closedLoopRoute.active && closedLoopRoute.toDepartmentId
-    ? closedLoopTargetLabel(closedLoopRoute.toDepartmentId)
-    : snapshot?.isNextMissionTarget
-      ? "Routing next mission"
-      : null;
-
-  const decisionText = snapshot?.displaySummary ?? (closedLoopRoute.decisionType
-    ? closedLoopRoute.decisionType.replace(/_/g, " ")
-    : null);
+  const terminal = cycleTerminal(cycleMeta);
+  const missionHeadline = currentActivity.active
+    ? (currentActivity.displayTask ?? snapshot?.displayHeadline ?? "Executing current mission")
+    : terminal?.headline ?? currentActivity.displayTask ?? snapshot?.displayHeadline ?? "Standing by for the next mission";
+  const decisionText =
+    terminal?.decision ??
+    snapshot?.displaySummary ??
+    (closedLoopRoute.decisionType ? closedLoopRoute.decisionType.replace(/_/g, " ") : null);
+  const nextRoute =
+    closedLoopRoute.active && closedLoopRoute.toDepartmentId
+      ? closedLoopTargetLabel(closedLoopRoute.toDepartmentId)
+      : snapshot?.isNextMissionTarget
+        ? "Routing next mission"
+        : null;
 
   const { primary: primaryNode, satellites: satelliteNodes } = partitionCommandDecisionOrbs(workerNodes);
-  const isActive = snapshot?.isActive ?? closedLoopRoute.active;
+  const isActive = snapshot?.isActive ?? closedLoopRoute.active ?? currentActivity.active;
+  const commandArtifacts = snapshot?.workArtifacts ?? [];
+  const groupedDecisions = commandArtifacts.filter((a) => a.artifactType === "decision" || a.artifactType === "mission").slice(0, 3);
+  const commandState = snapshot?.state ?? (isActive ? "RUNNING" : "NOT_STARTED");
+  const inspector = useOptionalHqArtifactInspector();
+  const departmentLabel = currentActivity.departmentDisplayName ?? currentActivity.departmentLabel;
+  const workerLabel = [currentActivity.provider, currentActivity.model].filter(Boolean).join(" · ");
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-label="Command — mission control"
-      aria-pressed={isSelected}
-      className={`
-        group relative w-full overflow-hidden border border-violet-500/25 text-left transition-all duration-300
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60
-        bg-gradient-to-b from-violet-950/30 via-[#070709] to-[#050507]
-        ${isSelected ? "ring-2 ring-violet-400/50" : ""}
-        hover:border-violet-400/35
-      `}
-    >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,92,246,0.1),transparent)]" aria-hidden />
-
-      <div className="relative px-4 py-2.5 md:px-6 md:py-3">
-        <div className="flex items-center gap-4 md:justify-between">
+    <InfinityRoomShell
+      variant="command"
+      size="hero"
+      state={commandState}
+      isSelected={isSelected}
+      isActive={Boolean(isActive)}
+      ariaLabel="Command — mission control"
+      onActivate={onSelect}
+      header={
+        <div className="flex items-start gap-3 md:justify-between">
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-400/80">{names.displayName}</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-300/90">{names.displayName}</p>
 
-            <div className="mt-2 grid gap-2 md:grid-cols-[1fr_auto] md:items-start md:gap-6">
-              <div className="space-y-1.5">
+            <div className="mt-1.5 grid gap-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-4">
+              <div className="min-w-0 space-y-1.5">
                 <div>
-                  <p className="text-[8px] uppercase tracking-wider text-zinc-600">Current mission</p>
-                  <p className="text-sm font-medium leading-snug text-zinc-100 md:text-base">{missionText}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-zinc-500">
+                    {currentActivity.active ? "Current task" : terminal ? "Mission complete" : "Current mission"}
+                  </p>
+                  <p className="line-clamp-2 text-base font-semibold leading-snug text-zinc-50 md:text-lg">{missionHeadline}</p>
+                </div>
+
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-400">
+                  {departmentLabel ? (
+                    <span>
+                      <span className="uppercase tracking-wider text-zinc-600">Department </span>
+                      {departmentLabel}
+                    </span>
+                  ) : null}
+                  {workerLabel ? (
+                    <span>
+                      <span className="uppercase tracking-wider text-zinc-600">Agent </span>
+                      {workerLabel}
+                      {currentActivity.active ? " · ACTIVE" : ""}
+                    </span>
+                  ) : null}
+                  {cycleMeta?.currentStageLabel ? (
+                    <span>
+                      <span className="uppercase tracking-wider text-zinc-600">Stage </span>
+                      {cycleMeta.currentStageLabel}
+                    </span>
+                  ) : null}
+                  {cycleMeta?.failureMessage ? (
+                    <span className="text-amber-200/90">
+                      <span className="uppercase tracking-wider text-zinc-600">Blocker </span>
+                      {cycleMeta.failureMessage}
+                    </span>
+                  ) : null}
                 </div>
 
                 {decisionText ? (
-                  <div>
-                    <p className="text-[8px] uppercase tracking-wider text-zinc-600">Decision</p>
-                    <p className="text-xs text-zinc-300">{decisionText}</p>
-                  </div>
+                  <p className="text-xs text-zinc-300">
+                    <span className="uppercase tracking-wider text-zinc-600">Decision </span>
+                    {decisionText}
+                  </p>
                 ) : null}
 
-                {nextRoute ? (
-                  <div>
-                    <p className="text-[8px] uppercase tracking-wider text-violet-400/70">Next route</p>
-                    <p className="text-xs text-violet-200">{nextRoute}</p>
+                {nextRoute ? <p className="text-xs text-violet-100">Next route {nextRoute}</p> : null}
+
+                {groupedDecisions.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {groupedDecisions.map((artifact) =>
+                      artifact.artifactType === "decision" ? (
+                        <DecisionToken key={artifact.id} artifact={artifact} large />
+                      ) : (
+                        <div
+                          key={artifact.id}
+                          role="button"
+                          tabIndex={0}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            inspector?.openInspector(artifact);
+                          }}
+                          onKeyDown={(event) =>
+                            handleCardKeyboardInspect(event, () => inspector?.openInspector(artifact))
+                          }
+                          className="cursor-pointer rounded border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[11px] text-sky-50 transition hover:border-sky-400/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50"
+                        >
+                          {artifact.title}
+                        </div>
+                      ),
+                    )}
                   </div>
                 ) : null}
               </div>
 
-              <div className="hidden min-w-[140px] md:block">
-                <RoomWorkflowStage
-                  departmentId="executive_office"
-                  nodes={[]}
-                  isActive={isActive}
-                  renderOrbs={false}
-                />
+              <div className="min-w-0 space-y-2">
+                {cycleMeta ? (
+                  <div className="grid grid-cols-4 gap-1.5 text-[10px] text-zinc-400">
+                    <Metric label="Candidates" value={cycleMeta.candidateCount ?? "Unknown"} />
+                    <Metric label="Monetized" value={cycleMeta.monetizedCandidateCount ?? "Unknown"} />
+                    <Metric
+                      label="Research"
+                      value={`${cycleMeta.activeResearchSessionCount}/${cycleMeta.researchSessionCount}`}
+                    />
+                    <Metric label="Known cost" value={formatCost(cycleMeta)} />
+                  </div>
+                ) : null}
+
+                {systemReadiness.length > 0 ? (
+                  <div aria-label="Command system status">
+                    <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-600">Systems</p>
+                    <ul className="mt-1 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px] sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+                      {systemReadiness.map((item) => (
+                        <li key={item.id} className="flex items-baseline justify-between gap-2">
+                          <span className="text-zinc-500">{item.label}</span>
+                          <span className="font-medium uppercase tracking-wide text-zinc-200">{item.status}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {cycleMeta ? (
+                  <p className="truncate font-mono text-[10px] text-zinc-600">cycleKey: {cycleMeta.cycleKey}</p>
+                ) : null}
               </div>
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-col items-center gap-1">
+          <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5">
             {primaryNode || satelliteNodes.length > 0 ? (
               <div className="flex items-end justify-center gap-2" aria-label="Command decision sessions">
                 {primaryNode ? (
-                  <WorkerNode node={primaryNode} prominent={primaryNode.motionActive || isActive} />
+                  <WorkerNode node={primaryNode} prominent={primaryNode.motionActive || Boolean(isActive)} />
                 ) : null}
                 {satelliteNodes.map((node) => (
                   <WorkerNode key={node.nodeId} node={node} compact prominent={node.motionActive} />
                 ))}
               </div>
             ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-violet-500/40 bg-violet-950/40 shadow-[0_0_16px_rgba(139,92,246,0.2)]">
-                <span className="h-2.5 w-2.5 rounded-full bg-violet-400/80" aria-hidden />
+              <div
+                className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/50 bg-violet-950/50 shadow-[0_0_22px_rgba(167,139,250,0.35)] ${isActive ? "hq-command-ring" : ""}`}
+              >
+                <span
+                  className={`h-3 w-3 rounded-full ${isActive ? "bg-violet-200 shadow-[0_0_14px_rgba(167,139,250,0.9)]" : "bg-violet-400/80"}`}
+                  aria-hidden
+                />
               </div>
             )}
-            <span className="text-[7px] uppercase tracking-widest text-violet-400/60">Decision core</span>
+            <span className="text-[10px] uppercase tracking-widest text-violet-300/70">Decision core</span>
           </div>
         </div>
-      </div>
+      }
+    >
+      <span className="sr-only">Command chamber body</span>
+    </InfinityRoomShell>
+  );
+}
 
-      <div className="relative flex justify-center pb-0.5" aria-hidden>
-        <div className={`h-4 w-px ${closedLoopRoute.active || isActive ? "bg-gradient-to-b from-violet-400/60 to-sky-400/40 hq-corridor-glow" : "bg-zinc-800"}`} />
-      </div>
-    </button>
+function Metric({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div>
+      <p className="uppercase tracking-wider text-zinc-600">{label}</p>
+      <p className="text-zinc-200">{value}</p>
+    </div>
   );
 }

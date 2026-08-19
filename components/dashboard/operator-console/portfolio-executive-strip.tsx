@@ -49,6 +49,7 @@ export function PortfolioExecutiveStrip({ summary }: Props) {
   return (
     <section
       aria-label="Portfolio performance summary"
+      data-hq-region="scoreboard"
       className="relative overflow-hidden border border-zinc-700/35 bg-gradient-to-r from-zinc-950/80 via-[#070709] to-zinc-950/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
     >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(56,189,248,0.04),transparent)]" aria-hidden />
@@ -95,10 +96,10 @@ function MetricCell({
   accent?: "sky" | "violet";
 }) {
   return (
-    <div className="bg-[#060608] px-4 py-3">
+    <div className="bg-[#060608] px-4 py-2">
       <p className="text-[8px] font-semibold uppercase tracking-[0.22em] text-zinc-500">{label}</p>
       <p
-        className={`mt-1 text-lg font-semibold tabular-nums tracking-tight md:text-xl ${
+        className={`mt-0.5 text-base font-semibold tabular-nums tracking-tight md:text-lg ${
           accent === "sky" ? "text-sky-100" : accent === "violet" ? "text-violet-100" : "text-zinc-100"
         }`}
       >

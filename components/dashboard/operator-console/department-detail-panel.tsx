@@ -7,7 +7,10 @@ import type {
   OperatorWorkerNode,
 } from "@/lib/infinity/operator-console/types";
 import { departmentStateLabel } from "@/lib/infinity/operator-console/status-derivation";
+import { LineageMarker, lineageStyleForKey } from "./artifacts/lineage-accent";
 import { WorkerNodeCluster } from "./worker-node";
+import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
+import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 
 type Props = {
   department: OperatorDepartmentSnapshot | null;
@@ -15,6 +18,33 @@ type Props = {
   workerNodes: OperatorWorkerNode[];
   costs: OperatorCostSummary;
 };
+
+function ArtifactDetailTrigger({ artifact }: { artifact: HqWorkArtifact }) {
+  const inspector = useOptionalHqArtifactInspector();
+  return (
+    <button
+      type="button"
+      onClick={() => inspector?.openInspector(artifact)}
+      className="w-full rounded border border-zinc-800/60 bg-black/20 p-3 text-left transition hover:border-cyan-500/30 hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
+    >
+      <div className="flex items-start gap-2">
+        {artifact.lineageColorKey ? (
+          <span className="mt-0.5 h-3 w-3 shrink-0 rounded-sm border border-white/20" style={lineageStyleForKey(artifact.lineageColorKey)} />
+        ) : null}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <LineageMarker artifact={artifact} />
+            <p className="text-base font-medium text-zinc-100">{artifact.title}</p>
+          </div>
+          {artifact.subtitle ? <p className="text-sm text-zinc-400">{artifact.subtitle}</p> : null}
+          <p className="mt-1.5 font-mono text-xs text-zinc-600">
+            {artifact.artifactType} · {artifact.sourceRecordType} · {artifact.state}
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 export function DepartmentDetailPanel({ department, providers, workerNodes, costs }: Props) {
   if (!department) {
@@ -31,33 +61,33 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
   return (
     <aside className="overflow-hidden rounded-xl border border-zinc-800/80 bg-gradient-to-b from-zinc-950/90 to-[#0a0a0c] shadow-xl shadow-black/10">
       <div className="border-b border-zinc-800/80 bg-black/20 px-4 py-3">
-        <h2 className="text-sm font-semibold tracking-tight text-zinc-100">
+        <h2 className="text-lg font-semibold tracking-tight text-zinc-100">
           {department.displayName ?? department.label}
         </h2>
-        <p className="text-[11px] text-zinc-500">
+        <p className="text-sm text-[var(--hq-text-secondary)]">
           {department.supportingLabel ?? department.label} · {departmentStateLabel(department.state)} · {department.recordCount} records
         </p>
       </div>
 
-      <div className="space-y-4 p-4 text-xs">
+      <div className="space-y-4 p-4 text-sm">
         <section>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">What Infinity is doing</p>
-          <p className="mt-1 text-sm leading-snug text-zinc-100">
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">What Infinity is doing</p>
+          <p className="mt-1.5 text-base leading-snug text-zinc-100">
             {department.displayHeadline ?? department.displaySummary ?? "Standing by"}
           </p>
           {department.displayTask ? (
-            <p className="mt-1 text-zinc-400">{department.displayTask}</p>
+            <p className="mt-1.5 text-sm text-zinc-400">{department.displayTask}</p>
           ) : null}
         </section>
 
         {deptNodes.length > 0 ? (
           <section>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Active work sessions</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Agents in room</p>
             <div className="rounded-lg border border-zinc-800/60 bg-black/20 p-3">
               <WorkerNodeCluster nodes={deptNodes} />
               <ul className="mt-3 space-y-2">
                 {deptNodes.map((node) => (
-                  <li key={node.nodeId} className="flex items-start justify-between gap-2 text-[11px]">
+                  <li key={node.nodeId} className="flex items-start justify-between gap-2 text-sm">
                     <span className="text-zinc-300">{node.displayRole}</span>
                     <span className="text-right text-zinc-500">
                       {[node.provider, node.model].filter(Boolean).join(" / ") || node.displayTask || "—"}
@@ -69,7 +99,18 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
           </section>
         ) : null}
 
-        {department.artifacts && department.artifacts.length > 0 ? (
+        {department.workArtifacts && department.workArtifacts.length > 0 ? (
+          <section>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Persisted outputs</p>
+            <ul className="space-y-2">
+              {department.workArtifacts.slice(0, 8).map((artifact) => (
+                <li key={artifact.id}>
+                  <ArtifactDetailTrigger artifact={artifact} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : department.artifacts && department.artifacts.length > 0 ? (
           <section>
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Current outputs</p>
             <ul className="space-y-1">

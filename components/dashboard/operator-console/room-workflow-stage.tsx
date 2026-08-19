@@ -29,16 +29,11 @@ export function RoomWorkflowStage({
   const hasMotion = movingNodes.length > 0;
 
   if (nodes.length === 0 && !isActive) {
-    return (
-      <div className="relative min-h-[72px] w-full opacity-30">
-        <RoomMotif motif={zones.motif} active={false} />
-        <p className="absolute inset-x-0 bottom-0 text-center text-[9px] text-zinc-600">Chamber idle</p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="relative min-h-[72px] w-full">
+    <div className="relative mt-1.5 min-h-0 w-full">
       <RoomMotif motif={zones.motif} active={isActive || hasMotion} />
 
       {showZoneLabels || isActive ? (

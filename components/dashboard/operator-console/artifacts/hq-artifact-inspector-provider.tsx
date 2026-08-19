@@ -32,7 +32,10 @@ type InspectorContextValue = {
   entityDetail: HQEntityDetail | null;
   loading: boolean;
   error: string | null;
+  inventory: { roomName: string; artifacts: HqWorkArtifact[] } | null;
   openInspector: (artifact: HqWorkArtifact) => void;
+  openRoomInventory: (input: { roomName: string; artifacts: HqWorkArtifact[] }) => void;
+  backToInventory: () => void;
   closeInspector: () => void;
   switchArtifact: (artifactId: string) => void;
 };
@@ -77,6 +80,7 @@ export function HqArtifactInspectorProvider({
   const [model, setModel] = useState<HqArtifactInspectorModel | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inventory, setInventory] = useState<{ roomName: string; artifacts: HqWorkArtifact[] } | null>(null);
 
   const allArtifacts = useMemo(
     () => flattenRoomArtifacts(snapshot.roomArtifacts, snapshot.departments),
@@ -182,6 +186,7 @@ export function HqArtifactInspectorProvider({
     abortRef.current = null;
     const currentQuery = detailQueryParam ?? (sessionRef.current.selectedArtifactId ? formatDetailQueryParam(sessionRef.current.selectedArtifactId) : null);
     syncSessionState(applyHqDetailClose(sessionRef.current, currentQuery));
+    setInventory(null);
     setModel(null);
     setError(null);
     setLoading(false);
@@ -189,6 +194,31 @@ export function HqArtifactInspectorProvider({
   }, [detailQueryParam, onDetailQueryChange, syncSessionState]);
 
   const closeInspector = closeHQDetail;
+
+  const openRoomInventory = useCallback((input: { roomName: string; artifacts: HqWorkArtifact[] }) => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    if (sessionRef.current.selectedArtifactId) {
+      const currentQuery = detailQueryParam ?? formatDetailQueryParam(sessionRef.current.selectedArtifactId);
+      syncSessionState(applyHqDetailClose(sessionRef.current, currentQuery));
+      onDetailQueryChange?.(null);
+    }
+    setModel(null);
+    setError(null);
+    setLoading(false);
+    setInventory({ roomName: input.roomName, artifacts: input.artifacts });
+  }, [detailQueryParam, onDetailQueryChange, syncSessionState]);
+
+  const backToInventory = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    const currentQuery = detailQueryParam ?? (sessionRef.current.selectedArtifactId ? formatDetailQueryParam(sessionRef.current.selectedArtifactId) : null);
+    syncSessionState(applyHqDetailClose(sessionRef.current, currentQuery));
+    setModel(null);
+    setError(null);
+    setLoading(false);
+    onDetailQueryChange?.(null);
+  }, [detailQueryParam, onDetailQueryChange, syncSessionState]);
 
   const switchArtifact = useCallback(
     (artifactId: string) => {
@@ -217,13 +247,13 @@ export function HqArtifactInspectorProvider({
   }, [allArtifacts, detailQueryParam, loadInspector, model]);
 
   useEffect(() => {
-    if (!selectedArtifactId) return;
+    if (!selectedArtifactId && !inventory) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [selectedArtifactId]);
+  }, [inventory, selectedArtifactId]);
 
   const value: InspectorContextValue = {
     selectedArtifactId,
@@ -232,7 +262,10 @@ export function HqArtifactInspectorProvider({
     entityDetail,
     loading,
     error,
+    inventory,
     openInspector,
+    openRoomInventory,
+    backToInventory,
     closeInspector,
     switchArtifact,
   };

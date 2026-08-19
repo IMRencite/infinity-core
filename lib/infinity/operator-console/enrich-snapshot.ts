@@ -17,6 +17,7 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
 
   const departments = snapshot.departments.map((dept) => {
     const names = getRoomDisplayNames(dept.id);
+    const hasPersistedArtifacts = (dept.workArtifacts?.length ?? 0) > 0;
     return {
       ...dept,
       displayName: names.displayName,
@@ -24,7 +25,7 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
       displayHeadline: humanizeDepartmentHeadline(dept.id, dept.state, dept.failureSemantics),
       displayTask: humanizeTask(dept.currentTask),
       displaySummary: humanizeDepartmentSummary(dept),
-      artifacts: buildRoomArtifacts(dept),
+      artifacts: hasPersistedArtifacts ? [] : buildRoomArtifacts(dept),
     };
   });
 

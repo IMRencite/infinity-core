@@ -285,11 +285,11 @@ export function departmentStateClasses(state: DepartmentUiState, failureSemantic
     case "PAUSED":
       return "border-violet-500/30 bg-violet-500/10";
     case "SHUTDOWN":
-      return "border-zinc-700/50 bg-zinc-900/40 opacity-60";
+      return "border-zinc-700/50 bg-zinc-900/70";
     case "SKIPPED":
-      return "border-zinc-700/30 bg-zinc-900/20 opacity-70";
+      return "border-zinc-700/40 bg-zinc-900/55";
     case "NOT_STARTED":
-      return "border-zinc-800/60 bg-zinc-950/30 opacity-80";
+      return "border-zinc-700/55 bg-zinc-950/85";
     default:
       return "border-zinc-700/40 bg-zinc-900/30";
   }

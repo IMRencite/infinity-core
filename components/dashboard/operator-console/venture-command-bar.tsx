@@ -69,12 +69,12 @@ export function VentureCommandBar({
         </div>
       </div>
 
-      <div className="relative px-4 py-5 text-center md:py-6">
-        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-28 max-w-2xl bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(56,189,248,0.12),transparent)]" aria-hidden />
-        <h1 className="relative text-2xl font-semibold tracking-[0.12em] text-white sm:text-3xl md:text-4xl lg:text-[2.65rem] lg:leading-tight">
+      <div data-hq-region="welcome" className="relative px-3 py-2 text-center md:py-2.5">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-16 max-w-2xl bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(56,189,248,0.12),transparent)]" aria-hidden />
+        <h1 className="relative text-xl font-semibold tracking-[0.14em] text-white md:text-2xl md:leading-tight">
           {HQ_WELCOME_TITLE.toUpperCase()}
         </h1>
-        <p className="relative mt-2 text-xs tracking-wide text-zinc-500 sm:text-sm">{HQ_WELCOME_SUBTITLE}</p>
+        <p className="relative mt-0.5 text-[11px] tracking-wide text-zinc-500">{HQ_WELCOME_SUBTITLE}</p>
       </div>
     </header>
   );

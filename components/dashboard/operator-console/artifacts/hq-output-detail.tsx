@@ -88,6 +88,7 @@ type Props = {
 };
 
 export function HQOutputDetail({ detail, artifact, loading, error }: Props) {
+  const inspector = useOptionalHqArtifactInspector();
   const [activeTab, setActiveTab] = useState<HQDetailTab>(detail.availableTabs[0] ?? "overview");
   const safeTab = detail.availableTabs.includes(activeTab) ? activeTab : detail.availableTabs[0] ?? "overview";
 
@@ -200,6 +201,18 @@ export function HQOutputDetail({ detail, artifact, loading, error }: Props) {
         <span className="hq-inspector-header-orb" aria-hidden />
         <div className="relative flex items-start justify-between gap-3 pr-10">
           <div className="min-w-0">
+            {inspector?.inventory ? (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  inspector.backToInventory();
+                }}
+                className="mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-cyan-200/90 hover:text-cyan-100"
+              >
+                Back to room inventory
+              </button>
+            ) : null}
             <div className="flex flex-wrap items-center gap-2">
               <LineageMarker artifact={artifact} />
               <span className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">

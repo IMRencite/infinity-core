@@ -22,6 +22,8 @@ const DEPARTMENT_DEFAULT_ROLES: Partial<Record<DepartmentId, string[]>> = {
   executive_office: ["Decision"],
 };
 
+const HQ_WORKER_COLLECT_LIMIT = 12;
+
 function sessionToNode(session: OperatorProviderSession): OperatorWorkerNode {
   const status = deriveUiStateFromEngineStatus(session.status);
   const isActive = status === "RUNNING";
@@ -36,7 +38,7 @@ function sessionToNode(session: OperatorProviderSession): OperatorWorkerNode {
     provider: session.provider,
     model: session.model,
     isActive,
-    isDormant: false,
+    isDormant: !isActive,
     motionActive: isActive,
   };
 }
@@ -70,19 +72,22 @@ export function buildWorkerNodes(
   departments: OperatorDepartmentSnapshot[],
 ): OperatorWorkerNode[] {
   const nodes: OperatorWorkerNode[] = [];
+  const departmentsWithSessions = new Set<DepartmentId>();
 
   for (const dept of departments) {
     const deptProviders = providers.filter((p) => p.departmentId === dept.id);
-    const runningSessions = deptProviders
-      .filter((p) => deriveUiStateFromEngineStatus(p.status) === "RUNNING")
-      .slice(0, 3);
+    if (deptProviders.length === 0) continue;
+    const mapped = deptProviders.slice(0, HQ_WORKER_COLLECT_LIMIT).map(sessionToNode);
+    nodes.push(...mapped);
+    departmentsWithSessions.add(dept.id);
+  }
 
-    if (runningSessions.length > 0) {
-      nodes.push(...runningSessions.map(sessionToNode));
-      continue;
-    }
+  for (const dept of departments) {
+    if (departmentsWithSessions.has(dept.id)) continue;
 
     if (dept.isActive) {
+      const showWorkers = dept.detail?.showWorkers !== false;
+      if (!showWorkers) continue;
       const roles = DEPARTMENT_DEFAULT_ROLES[dept.id] ?? ["WORK"];
       nodes.push(genericNode(dept.id, roles[0]!, dept.state, dept.currentTask, false));
       continue;
@@ -91,16 +96,6 @@ export function buildWorkerNodes(
     if (dept.state === "BLOCKED" || (dept.state === "FAILED" && dept.failureSemantics === "CURRENT_BLOCKING_FAILURE")) {
       const roles = DEPARTMENT_DEFAULT_ROLES[dept.id] ?? ["WORK"];
       nodes.push(genericNode(dept.id, roles[0]!, dept.state, dept.currentTask, true));
-      continue;
-    }
-
-    if (dept.recordCount > 0 && dept.state === "COMPLETE") {
-      continue;
-    }
-
-    if (dept.recordCount > 0 && !dept.isActive && dept.state !== "NOT_STARTED") {
-      const roles = DEPARTMENT_DEFAULT_ROLES[dept.id] ?? ["WORK"];
-      nodes.push(genericNode(dept.id, roles[0]!, dept.state, null, true));
     }
   }
 
@@ -111,5 +106,5 @@ export function workerNodesForDepartment(
   nodes: OperatorWorkerNode[],
   departmentId: DepartmentId,
 ): OperatorWorkerNode[] {
-  return nodes.filter((n) => n.departmentId === departmentId).slice(0, 3);
+  return nodes.filter((n) => n.departmentId === departmentId);
 }

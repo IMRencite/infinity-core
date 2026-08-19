@@ -1,12 +1,14 @@
 "use client";
 
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
-import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
+import { getRoomDisplayNames, LIFECYCLE_ROOM_SEQUENCE } from "@/lib/infinity/operator-console/room-naming";
 
 type Props = {
   activeDepartmentIds: DepartmentId[];
   activeFlowIndex: number;
   commandAtTop?: boolean;
+  handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
+  handoffLineageColorKey?: string | null;
   closedLoopRoute: {
     active: boolean;
     fromDepartmentId: DepartmentId | null;
@@ -18,96 +20,50 @@ type Props = {
 export function HqFlowConnectors({
   activeDepartmentIds,
   activeFlowIndex,
-  commandAtTop = false,
+  handoffStage = null,
+  handoffLineageColorKey = null,
   closedLoopRoute,
 }: Props) {
   const hasActive = activeDepartmentIds.length > 0;
-  const activeStroke = hasActive ? "url(#flow-active)" : "rgba(255,255,255,0.05)";
-  const flowClass = hasActive ? "hq-flow-animate" : "";
-
-  const commandY = commandAtTop ? 8 : 18;
-  const floorStartY = commandAtTop ? 22 : 18;
+  const handoffActive = Boolean(handoffStage) && hasActive;
 
   return (
-    <svg
-      className="pointer-events-none absolute inset-0 hidden h-full w-full md:block"
-      aria-hidden
-      preserveAspectRatio="none"
-      viewBox="0 0 100 100"
-    >
-      <defs>
-        <linearGradient id="flow-active" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="rgb(56,189,248)" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="rgb(56,189,248)" stopOpacity="0.5" />
-        </linearGradient>
-        <linearGradient id="loop-active" x1="0%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" stopColor="rgb(167,139,250)" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="rgb(167,139,250)" stopOpacity="0.6" />
-        </linearGradient>
-        <linearGradient id="command-out" x1="50%" y1="0%" x2="50%" y2="100%">
-          <stop offset="0%" stopColor="rgb(167,139,250)" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="rgb(56,189,248)" stopOpacity="0.3" />
-        </linearGradient>
-      </defs>
-
-      {/* Command → floor spine */}
-      {commandAtTop ? (
-        <path
-          d={`M 50 ${commandY} L 50 ${floorStartY}`}
-          fill="none"
-          stroke={closedLoopRoute.active || hasActive ? "url(#command-out)" : "rgba(167,139,250,0.15)"}
-          strokeWidth="0.35"
-          className={hasActive || closedLoopRoute.active ? "hq-flow-animate" : ""}
+    <div className="hq-floor-flow-legend mb-2.5" aria-hidden>
+      <ol className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
+        {LIFECYCLE_ROOM_SEQUENCE.map((id, index) => {
+          const active = index <= activeFlowIndex && activeFlowIndex >= 0;
+          return (
+            <li key={id} className="flex items-center gap-1.5">
+              <span
+                className={`text-[8px] font-semibold uppercase tracking-[0.14em] ${
+                  active ? "text-cyan-200/80" : "text-zinc-600"
+                }`}
+              >
+                {getRoomDisplayNames(id).displayName}
+              </span>
+              {index < LIFECYCLE_ROOM_SEQUENCE.length - 1 ? (
+                <span className="text-[8px] text-zinc-700" aria-hidden>
+                  →
+                </span>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+      {handoffActive ? (
+        <span
+          className="hq-handoff-packet mx-auto mt-1 block h-1.5 w-1.5 rounded-full"
+          style={
+            handoffLineageColorKey
+              ? { background: `var(--hq-lineage-${handoffLineageColorKey})` }
+              : { background: "rgb(34,211,238)" }
+          }
         />
       ) : null}
-
-      <path
-        d={`M 50 ${floorStartY} L 50 88`}
-        fill="none"
-        stroke={activeStroke}
-        strokeWidth={hasActive ? "0.4" : "0.18"}
-        className={flowClass}
-      />
-
-      <path
-        d={`M 22 ${floorStartY - 4} L 50 ${floorStartY - 4} L 78 ${floorStartY - 4}`}
-        fill="none"
-        stroke={activeFlowIndex >= 1 ? "url(#flow-active)" : "rgba(255,255,255,0.04)"}
-        strokeWidth="0.28"
-        className={activeFlowIndex >= 1 ? "hq-flow-animate" : ""}
-      />
-
-      <path
-        d={`M 50 ${floorStartY + 12} L 18 ${floorStartY + 12} L 18 ${floorStartY + 26} M 50 ${floorStartY + 12} L 50 ${floorStartY + 26} M 50 ${floorStartY + 12} L 82 ${floorStartY + 26}`}
-        fill="none"
-        stroke={activeFlowIndex >= 4 ? "url(#flow-active)" : "rgba(255,255,255,0.03)"}
-        strokeWidth="0.22"
-        className={activeFlowIndex >= 4 ? "hq-flow-animate" : ""}
-      />
-
-      {/* Signal Intelligence → Command return loop */}
       {closedLoopRoute.active ? (
-        <>
-          <path
-            d={`M 50 82 Q 72 72 50 ${commandY + 2}`}
-            fill="none"
-            stroke="url(#loop-active)"
-            strokeWidth="0.38"
-            className="hq-flow-animate"
-          />
-          {closedLoopRoute.toDepartmentId ? (
-            <path
-              d={`M 50 ${commandY + 2} Q 28 40 50 ${floorStartY + 20}`}
-              fill="none"
-              stroke="url(#command-out)"
-              strokeWidth="0.3"
-              className="hq-flow-animate"
-              strokeDasharray="3 2"
-            />
-          ) : null}
-        </>
+        <p className="mt-1 text-center text-[8px] uppercase tracking-[0.16em] text-violet-300/70">Closed loop active</p>
       ) : null}
-    </svg>
+    </div>
   );
 }
 

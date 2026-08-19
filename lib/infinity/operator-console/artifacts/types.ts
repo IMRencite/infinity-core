@@ -73,8 +73,17 @@ export type HqArtifactDisplayGroup = {
   visible: HqWorkArtifact[];
   overflowCount: number;
   totalCount: number;
+  artifactLoaded: number;
+  artifactVisible: number;
+  artifactOverflow: number;
+  expectedCount: number | null;
+  missingCount: number;
 };
 
 export type HqRoomArtifactMap = Partial<Record<DepartmentId, HqWorkArtifact[]>>;
 
-export const HQ_ARTIFACT_DISPLAY_LIMIT = 3;
+/** Desktop/tablet show the full loaded set; this is the extreme-count expand threshold. */
+export const HQ_ARTIFACT_EXTREME_DISPLAY_LIMIT = 48;
+export const HQ_ARTIFACT_MOBILE_DISPLAY_LIMIT = 8;
+/** Alias: rooms no longer use a 3-card floor cap. */
+export const HQ_ARTIFACT_DISPLAY_LIMIT = HQ_ARTIFACT_EXTREME_DISPLAY_LIMIT;
