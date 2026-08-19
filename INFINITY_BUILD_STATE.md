@@ -36,7 +36,11 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Infinity HQ Dashboard V1.4 | VERIFIED | Centered welcome hero; Command-first layout; simplified above-the-fold |
 | Infinity HQ Dashboard V1.5 | VERIFIED | Continuous spatial floor; workstation zones; failure-state clarity; compact Command |
 | Infinity HQ Dashboard V1.6 | VERIFIED | Portfolio performance strip; Top Earners; final spatial polish; honest profit semantics |
-| First complete autonomous venture cycle | NOT STARTED | Explicitly deferred until foundation work is ready. |
+| First complete autonomous venture cycle | ATTEMPTED / BLOCKED | FAVC1 orchestrator implemented; live run blocked by Supabase PGRST002 (see section 9). |
+| Treasury + Capital / Budget Engine V1 | VERIFIED | Canonical money-governance layer; mock provider only; no real bank/card/payment; see section 6h. |
+| Founder Idea Lab V1 | VERIFIED | Manual idea intake into the canonical pipeline; founder control without Treasury bypass; see section 6i. |
+| Cursor Coding Agent Adapter V1 | VERIFIED | Optional CodingAgentProvider; Native Coder preserved; live Cursor execution NOT CONFIGURED; see section 6j. |
+| Zero-to-Production Venture Builder V1 | VERIFIED IN DRY-RUN / NON-LAUNCH MODE | Canonical closed-loop orchestrator; READY ≠ PUBLICLY_LAUNCHED; see section 6k. |
 
 ## 2. Product + Asset Builder V2.1 — Verified Checkpoint
 
@@ -443,14 +447,163 @@ Economic gate demo: upside $10 / cost $40 → **DEFER**; upside $2,000 / cost $5
 - Targeted typecheck: **0 errors**
 - Production build: **passed**
 
+## 6h. Treasury + Capital / Budget Engine — VERIFIED (V1)
+
+**Status:** `Treasury + Capital / Budget Engine V1 — VERIFIED`
+
+Implemented in `lib/infinity/treasury/` as the canonical financial control layer.
+
+### Architecture
+- Provider-neutral `FinancialProvider` with explicit capabilities and `UNSUPPORTED_CAPABILITY`
+- Deterministic mock provider only — no Mercury/Ramp/Stripe credentials required
+- Canonical path: FinancialActionRequest → policy → FinancialAuthorization → reservation → ExternalAction (simulated) → ledger
+- Commercialization `SpendIntent` is a specialized adapter into Treasury (Option B)
+- Paid Creative Media generation is Treasury-gated; providers are not called when budget is denied
+- FINANCIAL_AUTONOMY_ENABLED default `false`; EMERGENCY_FINANCIAL_FREEZE default `false` and supersedes all subsystems
+
+### Persistence
+Migration `20260818010000_treasury_capital_budget_engine_v1.sql` — RLS enabled, service_role grants, no blanket policies, no credential columns.
+
+### Test totals
+- Treasury suites: **28/28 passed**
+- Commercialization dry-run regression: **12/12 passed**
+- Operator console / HQ regressions: **passed** (live-provider-probes UNKNOWN-renewal assertion remains a pre-existing `undefined` vs `null` mismatch, unrelated)
+- Production build: **passed**
+- Full-repo `tsc --noEmit`: pre-existing failures in unrelated test files; no treasury errors after index export fix
+
+### Real financial actions
+Bank connected: NO. Cards created: NO. Payments sent: NO. Money moved: NO. Domains purchased: NO. Paid media generated: NO.
+
+## 6i. Founder Idea Lab — VERIFIED (V1)
+
+**Status:** `Founder Idea Lab V1 — VERIFIED`
+
+Implemented in `lib/infinity/founder-idea-lab/` as a founder intake layer over the canonical pipeline.
+
+### Architecture
+- `FounderIdeaSubmission` converts to existing `OpportunityCandidate`
+- Scoring reuses `calculateDeterministicScores`, `assessBuildability`, `calculateSelectionScore`, `calculateValidationDimensions`, `passesBuildGate`, and `classifyDecision`
+- Opportunity quality is separate from build readiness
+- FounderDecisionOverride preserves Infinity's original recommendation
+- Approved BUILD routes through Company Builder `assembleVentureBlueprint` / `assembleBuildPackage` (simulation only, no public deploy)
+- Financial actions still require Treasury `FinancialActionRequest`
+
+### HQ
+- Sidebar: Founder Ideas
+- Command / idle CTA: SUBMIT IDEA / SUBMIT AN IDEA
+- Centered `HQOutputDetail` reused; Venture Radar `FOUNDER` badge
+
+### Persistence
+Migration `20260818020000_founder_idea_lab_v1.sql` — RLS enabled, service_role grants, no blanket policies.
+
+### Test totals
+- Founder Idea Lab: **16/16 passed**
+- HQ / treasury / company-builder regressions: **passed**
+- Production build: **passed**
+
+## 6j. Cursor Coding Agent Adapter — VERIFIED (V1)
+
+**Status:** `Cursor Coding Agent Adapter V1 — VERIFIED`  
+**Live Cursor execution:** `NOT CONFIGURED`
+
+Implemented in `lib/infinity/coding-agents/` as a provider-neutral coding layer. Cursor is optional; Infinity Native Coder remains a core capability.
+
+### Architecture
+- `BuildPackage` / `CodingTask` → Coding Router → `CodingAgentProvider` → Native / Cursor / mock → `CodeChangeSet` → `WorkspaceMutation` → Infinity QA → `ProductionArtifact`
+- Router outcomes: `INFINITY_NATIVE | CURSOR | MULTI_AGENT | DEFER | BLOCK`
+- Cursor modes: `CURSOR_CLI | CURSOR_CLOUD_AGENT` (programmatic only; no desktop UI automation)
+- Cursor success is not Infinity acceptance
+- Treasury gates billable Cursor usage; unknown cost cannot AUTO_AUTHORIZE
+- Path/command policy fail closed; External Action Gateway remains the only real-world mutation path
+
+### Persistence
+Migration `20260818030000_coding_agent_adapter_v1.sql` — `coding_agent_runs`, RLS enabled, service_role grants, no blanket policies.
+
+### HQ
+- Coding Intelligence strip on HQ
+- Creation Lab surfaces Native / Cursor from persisted runs
+- Centered `HQOutputDetail` reused; no new modal
+
+### Test totals
+- coding-agents: **15/15 passed**
+- Founder Idea Lab regression: **16/16 passed**
+- Treasury / PAB / operator-console regressions: **passed**
+- Live Cursor probe: **SKIPPED (NOT CONFIGURED)**
+- Production build: **passed**
+
+### Real actions
+Money spent: NO. Domain purchased: NO. Public deployment: NO. Bank connected: NO. FAVC1 runs: NO.
+
+## 6k. Zero-to-Production Venture Builder — VERIFIED IN DRY-RUN / NON-LAUNCH MODE (V1)
+
+**Status:** `Zero-to-Production Venture Builder V1 — VERIFIED IN DRY-RUN / NON-LAUNCH MODE`
+
+Implemented in `lib/infinity/zero-to-production/` as an orchestrator over canonical systems. It does not replace Founder Idea Lab, Opportunity Scanner, Research, Monetization, Venture Selection, Company Builder, Coding Router, QA, Treasury, Commercialization, or EAG.
+
+### Stops at
+`READY` / `READY_FOR_CONTROLLED_LAUNCH`
+
+### Not claimed
+Public launch, live domain purchase, live DNS mutation, live payments, live Cursor execution, autonomous revenue generation.
+
+### Persistence
+Migration `20260818040000_zero_to_production_v1.sql` — `zero_to_production_runs`, `zero_to_production_stage_runs`, `zero_to_production_events`. RLS enabled, service_role grants, no blanket policies.
+
+### Test totals
+- Zero-to-Production: **16/16 passed**
+- Required regressions (Founder Idea Lab, Opportunity, Research, Monetization, Selection, Company Builder, PAB, Coding Agents, Treasury, Commercialization, Creative Media, Organic Growth, Operator Console; live FAVC1 excluded): **459 passed, 1 skipped**
+- Pre-existing non-ZTP failure: `commercialization/live-provider-probes` registrar mock `renewalPriceUsd` undefined vs null
+- Live Cursor probe: **SKIPPED (NOT CONFIGURED)**
+- Production build: **passed**
+
+### Real actions
+FAVC1 runs: 0. Domains purchased: 0. DNS mutations: 0. Public deployments: 0. Payment products created: 0. Payments charged: 0. Bank connections: 0. Real financial transactions: 0. Live Cursor runs: 0.
+
 ## 7. Explicitly Not Yet Done
 - Do not claim Organic Growth Architecture V1 is implemented until its build/test report passes.
 - Do not claim Creative Media Architecture V1 is unimplemented — **V1 foundation is VERIFIED** (see section 4); full YouTube publishing and performance learning remain future.
 - Do not claim full autonomous YouTube channel creation/publishing is complete.
 - Do not claim full social channel creation/posting is complete.
 - Do not claim full Growth/Monitoring learning loop is complete.
-- Do not claim Performance Intelligence V1 is unimplemented — **V1 foundation is VERIFIED** (see section 5); first autonomous venture cycle not started.
+- Do not claim Performance Intelligence V1 is unimplemented — **V1 foundation is VERIFIED** (see section 5); first autonomous venture cycle attempted but blocked by Supabase availability (see section 9).
 - Do not claim the first end-to-end autonomous revenue-generating venture cycle has been completed unless a future checkpoint verifies it.
+- Do not claim Treasury V1 is unimplemented — **V1 foundation is VERIFIED** (see section 6h). Real bank connections, cards, payments, and autonomous spend remain forbidden until a later governed milestone.
+- Do not claim Founder Idea Lab V1 is unimplemented — **V1 foundation is VERIFIED** (see section 6i). Founder approval still never bypasses Treasury or public deployment.
+- Do not claim live Cursor execution is verified — **Cursor Coding Agent Adapter V1 is VERIFIED** (see section 6j). Live Cursor remains NOT CONFIGURED until a governed non-destructive probe runs.
+- Do not claim Zero-to-Production public launch, live domain/DNS/payments, or autonomous revenue — **ZTP V1 is VERIFIED IN DRY-RUN / NON-LAUNCH MODE** (see section 6k). READY is not PUBLICLY_LAUNCHED.
+
+## 9. First Autonomous Venture Cycle V1 — ATTEMPTED / BLOCKED
+
+**Status:** `FIRST AUTONOMOUS VENTURE CYCLE V1 — LEVEL 0`  
+**Date:** August 16, 2026  
+**Starting commit:** `2900193` (master)  
+**Cycle key (final attempt):** `favc1-retry-20260816064705`
+
+### Outcome
+- **Success level:** LEVEL 0 — FAILED TO FORM VENTURE
+- **Architectural closed loop proven:** NO
+- **Root blocker:** Supabase PostgREST `PGRST002` — "Could not query the database for the schema cache. Retrying." — persisted across 30 readiness retries (~7.5 minutes) and standalone opportunity-scanner live test failure.
+- **Venture created:** none
+- **Known provider spend:** $0.00
+- **External non-model spend:** $0.00
+
+### What was implemented (uncommitted platform source)
+- `lib/infinity/first-autonomous-venture-cycle/budget-governor.ts` — $10 hard cap / $8 warning
+- `lib/infinity/first-autonomous-venture-cycle/venture-bridge.ts` — mission/opportunity/plan/venture_assembly HQ bridge
+- `lib/infinity/first-autonomous-venture-cycle/execute-v1.ts` — end-to-end pipeline orchestrator with Supabase readiness wait
+- `lib/infinity/first-autonomous-venture-cycle/__tests__/budget-governor.test.ts`
+- `lib/infinity/first-autonomous-venture-cycle/__tests__/execute-v1-live.test.ts`
+- `scripts/execute-first-autonomous-venture-cycle-v1.mjs`
+
+### Pipeline design (not executed live)
+Command → Venture Radar → Research Grid → Profit Lab → Venture Selection → Blueprint Lab → Growth Nexus → Design Core (NOT_REQUIRED default) → Creation Lab (PAB V2.1) → Validation → Deployment Depot → Signal Intelligence → Command/LearningDecision → Next Mission
+
+### Platform defects discovered
+1. **Supabase unavailable (PGRST002)** — Severity: CRITICAL for live autonomy; interrupted entire cycle before discovery.
+2. **Orchestrator type integration gaps** — fixed during implementation (`runAdversarial` env flag, discriminated union error handling, `VentureModelType` mapping).
+
+### Remaining blockers
+- Restore Supabase project / PostgREST schema cache availability, then re-run `node scripts/execute-first-autonomous-venture-cycle-v1.mjs`.
 
 ## 8. Next Step
-Reassess with the external Infinity architect whether the foundation is sufficient to begin the **first complete autonomous venture cycle**. Do not start that cycle without architect approval.
+Restore Supabase connectivity and re-execute **First Autonomous Venture Cycle V1** using the implemented orchestrator at `scripts/execute-first-autonomous-venture-cycle-v1.mjs`. External architect review of uncommitted platform source recommended before merge.

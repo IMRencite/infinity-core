@@ -20,6 +20,7 @@ Infinity is not a single website builder or content generator. It is a reusable 
 
 ## 3. End-to-End Target Pipeline
 Opportunity Discovery / Scanner
+  (including Founder Idea Lab intake → same OpportunityCandidate)
 → Research & Evidence
 → Strategy / Validation
 → Monetization Engine
@@ -31,6 +32,7 @@ Opportunity Discovery / Scanner
 → Product + Asset Builder
 → Production Artifact
 → External Action Gateway / Launch
+→ Treasury + Capital / Budget Engine (governs all financial mutations)
 → Marketing & Growth
 → Monitoring / Measurement (Performance Intelligence V1 verified foundation)
 → Learning / Iteration
@@ -327,8 +329,55 @@ OpportunityCandidate
 → BuildGate
 → ProductionArtifact
 → ExternalAction
+→ FinancialActionRequest / Treasury authorization
 → PerformanceEvent
 → learning/iteration decision
+
+## 15a. Treasury + Capital / Budget Engine
+Treasury is the canonical money-governance layer. Models may propose financial actions; Infinity Core decides authorization.
+
+Required path:
+Mission / Venture / SpendIntent
+→ FinancialActionRequest
+→ Treasury policy
+→ FinancialAuthorization
+→ External Action Gateway
+→ FinancialProvider adapter
+→ future bank/card/payment provider
+
+Source of truth:
+- Connected financial provider is authoritative for actual balances, transactions, cards, and payments.
+- Infinity persistence is authoritative for budgets, allocations, reservations, commitments, policy, authorization, and economic reasoning.
+- Cached balances never override a fresh provider read. Unavailable provider state is STALE / DEGRADED / UNKNOWN — never silently treated as current.
+
+Unknown cost is never zero and never AUTO_AUTHORIZE.
+FINANCIAL_AUTONOMY_ENABLED defaults to false. Emergency freeze supersedes every subsystem.
+Founder/investor capital is CAPITAL_CONTRIBUTION, not revenue.
+Commercialization SpendIntent is a specialized adapter into Treasury; there is one canonical policy/authorization model.
+
+## 15b. Founder Idea Lab
+Founder Idea Lab is an intake layer, not a parallel venture stack. A FounderIdeaSubmission converts into the canonical OpportunityCandidate and is graded by Opportunity Scanner scoring, Monetization, Venture Selection, and build-gate classifyDecision.
+
+Infinity may recommend BUILD, VALIDATE, HOLD, or REJECT. The founder retains control, including BUILD ANYWAY, but founder approval is not spend authority: FinancialActionRequest → Treasury → External Action Gateway still applies.
+
+FounderDecisionOverride stores both Infinity's original recommendation and the founder's decision. Override never rewrites Infinity's recommendation. Resulting ventures carry origin AUTONOMOUS_DISCOVERY | FOUNDER_SUBMITTED | FOUNDER_OVERRIDE through venture, mission, build, commercialization, and performance segmentation.
+
+Approved builds route FounderIdea → OpportunityCandidate → Venture Blueprint → Company Builder → BuildPackage → Coding Router (Native Coder / optional Cursor) → QA → ProductionArtifact. There is no shortcut from the form to code generation or public deployment.
+
+## 15c. Coding Agent Adapter
+Coding work is provider-neutral. BuildPackage / CodingTask is routed by the Coding Router to a CodingAgentProvider (Infinity Native Coder, optional Cursor, future providers). Results normalize to CodeChangeSet → WorkspaceMutation → Infinity QA → ProductionArtifact.
+
+Cursor is an optional first-class provider (CURSOR_CLI / CURSOR_CLOUD_AGENT), not Infinity's core brain and not the only coder. Native Coder remains a core capability; Cursor unavailability must not fail supported Native tasks.
+
+Cursor cannot bypass Treasury, External Action Gateway, workspace path policy, or QA. Cursor reporting success is not Infinity acceptance. Cursor cannot deploy production, mutate DNS, purchase services, or use financial/secret credentials. Unknown Cursor cost cannot AUTO_AUTHORIZE.
+
+## 15d. Zero-to-Production Venture Builder
+Zero-to-Production is the canonical closed-loop orchestrator. Founder and autonomous ventures share one path. ZTP does not replace Research, Monetization, Selection, Company Builder, Coding Router, QA, Treasury, Commercialization, or the External Action Gateway.
+
+Canonical lineage:
+Founder Idea / Autonomous Opportunity → Research → Monetization → Selection → Venture Blueprint → BuildPackage → BuildGraph → Coding Router (Native / Cursor / Multi-Agent) → Infinity QA + bounded repair → ProductionArtifact → CommercializationPlan → Treasury authorization → External Action Gateway requirements → Launch readiness.
+
+V1 stops at READY / READY_FOR_CONTROLLED_LAUNCH. READY is not PUBLICLY_LAUNCHED. Technical failure is not business REJECT. Business VALIDATE does not silently build. ZTP does not depend on FAVC1; future autonomous cycles may invoke ZTP.
 
 ## 16. Autonomy Boundary
 The architectural goal is autonomous execution, not arbitrary execution.

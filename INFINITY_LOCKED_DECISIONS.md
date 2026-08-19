@@ -88,3 +88,39 @@ These decisions should not be casually reversed in future chats or implementatio
 62. Distinguish VERIFIED from DESIGNED/PLANNED.
 63. Update the canonical project documents after major verified milestones or architectural changes.
 64. Maintain traceability from opportunity → decision → build → provider call → mutation/asset → quality gate → production artifact → external action → performance.
+
+## 11. Treasury + Capital
+65. Infinity models may propose financial actions. Infinity Core authorizes them. No agent, mission, venture, commercialization adapter, creative-media provider, coding agent, or PAB may mutate money except through FinancialActionRequest → Treasury policy → FinancialAuthorization → External Action Gateway → FinancialProvider.
+66. Connected financial providers are authoritative for actual balances/transactions/cards/payments. Infinity is authoritative for budgets, allocations, reservations, commitments, policy, and authorization.
+67. Cached balances must never override a fresh provider read. Missing amounts stay UNKNOWN — never defaulted to zero.
+68. Unknown, unbounded, or materially uncertain external cost cannot AUTO_AUTHORIZE.
+69. FINANCIAL_AUTONOMY_ENABLED defaults to false. EMERGENCY_FINANCIAL_FREEZE supersedes mission, venture, policy auto-auth, commercialization, creative media, and coding-agent spend.
+70. Reserved capital (pending execution) is distinct from committed capital (known future obligation).
+71. Founder/investor capital is CAPITAL_CONTRIBUTION, not revenue. Actual profit is calculated only when actual revenue and actual attributable expenses are both known.
+72. Commercialization SpendIntent is a specialized adapter into Treasury. Do not maintain a second contradictory money-governance system.
+
+## 12. Founder Idea Lab
+73. Founder ideas use the canonical pipeline: Opportunity Candidate → Research → Monetization → Venture Selection → Validation → Company Builder → PAB / Coding Router → Commercialization → Treasury → Performance Intelligence. Do not create a parallel founder-only venture architecture.
+74. Founder override does not erase Infinity's original recommendation. Both Infinity decision and founder decision remain persisted; origin becomes FOUNDER_OVERRIDE when they differ.
+75. Founder build approval never bypasses Treasury or the External Action Gateway. Founder BUILD is not unlimited spending authority.
+76. Founder-origin ventures remain distinguishable in performance data (AUTONOMOUS_DISCOVERY vs FOUNDER_SUBMITTED vs FOUNDER_OVERRIDE). Do not train naively from override outcomes.
+
+## 13. Coding Agents
+77. Coding is provider-neutral: CodingTask → Coding Router → CodingAgentProvider → Native Coder / Cursor / future provider. Do not hard-code task = Cursor.
+78. Infinity Native Coder remains a core capability. No critical build path may depend permanently on Cursor.
+79. Cursor cannot bypass Treasury, External Action Gateway, workspace security, or deterministic QA. Cursor success is not Infinity acceptance.
+80. Cursor must not deploy production, mutate DNS, purchase services, modify secrets, or receive bank/payment credentials. Forbidden path/command attempts fail closed.
+
+## 14. Zero-to-Production
+81. Founder and autonomous ventures share one ZTP orchestration path.
+82. ZTP orchestrates canonical systems; it does not replace them.
+83. ZTP cannot bypass Research, Monetization, Selection, Company Builder, QA, Treasury, or the External Action Gateway.
+84. Founder BUILD authority is not financial or public-launch authority.
+85. Coding Router alone chooses Native/Cursor/Multi-Agent. Cursor is optional.
+86. ProductionArtifact requires Infinity acceptance, not coding-provider success.
+87. CommercializationPlan does not equal external commercialization.
+88. READY does not equal PUBLICLY_LAUNCHED.
+89. ZTP does not depend on FAVC1. FAVC1 or future autonomous cycles may invoke ZTP.
+90. ZTP is resumable and idempotent.
+91. Technical failure is distinct from business rejection.
+92. Actual revenue/performance cannot exist before real launch/customer events.
