@@ -1,13 +1,22 @@
 "use client";
 
 import type { DepartmentUiState, FailureSemantics } from "@/lib/infinity/operator-console/types";
+import type { RoomPresenceState } from "@/lib/infinity/operator-console/room-presence";
 import { departmentStateLabel, departmentVisualState } from "@/lib/infinity/operator-console/status-derivation";
 
 type Props = {
   state: DepartmentUiState;
   failureSemantics?: FailureSemantics;
   isActive?: boolean;
+  presence?: RoomPresenceState;
 };
+
+function presenceTone(presence: RoomPresenceState): string {
+  if (presence === "ACTIVE_WORK") return "bg-cyan-500/15 text-cyan-200";
+  if (presence === "BLOCKED") return "bg-amber-500/12 text-amber-200";
+  if (presence === "EMPTY") return "bg-zinc-800/80 text-zinc-500";
+  return "bg-zinc-800/60 text-zinc-400";
+}
 
 function failureBadge(failureSemantics?: FailureSemantics): string | null {
   if (failureSemantics === "HISTORICAL_FAILURE") return "Previous issue";
@@ -15,7 +24,15 @@ function failureBadge(failureSemantics?: FailureSemantics): string | null {
   return null;
 }
 
-export function RoomStatusChip({ state, failureSemantics, isActive = false }: Props) {
+export function RoomStatusChip({ state, failureSemantics, isActive = false, presence }: Props) {
+  if (presence) {
+    return (
+      <span className={`hq-room-status shrink-0 rounded px-1.5 py-0.5 ${presenceTone(presence)}`} data-hq-room-presence={presence}>
+        {presence}
+      </span>
+    );
+  }
+
   const visualState = departmentVisualState(state, failureSemantics);
   const badge = failureBadge(failureSemantics);
 

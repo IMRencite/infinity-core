@@ -211,6 +211,7 @@ function VentureOperatorConsoleInner({
                 isSelected={selectedDepartment === "executive_office"}
                 onSelect={() => setSelectedDepartment("executive_office")}
                 cycleMeta={snapshot.favc1Cycle ?? null}
+                ventureName={snapshot.venture.ventureName}
                 systemReadiness={deriveCommandSystemReadiness({
                   snapshot,
                   treasury: treasury,
@@ -229,6 +230,7 @@ function VentureOperatorConsoleInner({
               onSelectDepartment={setSelectedDepartment}
               handoffStage={snapshot.handoffStage ?? null}
               handoffLineageColorKey={snapshot.handoffLineageColorKey ?? null}
+              ventureName={snapshot.venture.ventureName}
               isTerminalCycle={
                 Boolean(snapshot.favc1Cycle?.terminalOutcome) &&
                 snapshot.favc1Cycle?.terminalOutcome !== "RUNNING"

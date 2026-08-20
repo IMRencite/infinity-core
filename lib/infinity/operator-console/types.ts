@@ -1,6 +1,7 @@
 import type { Favc1CycleSnapshotMeta } from "./favc1-cycle/types";
 import type { HqRoomArtifactMap, HqWorkArtifact } from "./artifacts/types";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import type { RoomActivityExplanation } from "./room-activity";
 
 export type DepartmentId =
   | "opportunity_lab"
@@ -133,6 +134,7 @@ export type OperatorDepartmentSnapshot = {
   workArtifacts?: HqWorkArtifact[];
   failureSemantics?: FailureSemantics;
   latestRawStatus?: string | null;
+  activityExplanation?: RoomActivityExplanation;
 };
 
 export type OperatorCostSummary = {

@@ -12,6 +12,8 @@ import { LineageMarker, lineageStyleForKey } from "./artifacts/lineage-accent";
 import { WorkerNodeCluster } from "./worker-node";
 import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
+import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
+import { RoomCurrentActivity } from "./room-current-activity";
 
 type Props = {
   department: OperatorDepartmentSnapshot | null;
@@ -59,6 +61,14 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
   const deptProviders = providers.filter((p) => p.departmentId === department.id);
   const deptNodes = workerNodes.filter((n) => n.departmentId === department.id);
   const names = getRoomDisplayNames(department.id);
+  const activity =
+    department.activityExplanation ??
+    buildRoomActivityExplanation({
+      departmentId: department.id,
+      department,
+      workerNodes: deptNodes,
+      providers: deptProviders,
+    });
 
   return (
     <aside className="overflow-hidden rounded-xl border border-zinc-800/80 bg-gradient-to-b from-zinc-950/90 to-[#0a0a0c] shadow-xl shadow-black/10">
@@ -68,25 +78,36 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
         </h2>
         <p className="hq-room-job mt-1">{names.shortDescription}</p>
         <p className="mt-2 text-sm text-[var(--hq-text-muted)]">
-          {departmentStateLabel(department.state)} · {department.recordCount} records
+          {activity.presence} · {departmentStateLabel(department.state)} · {department.recordCount} records
         </p>
       </div>
 
       <div className="space-y-4 p-4 text-sm">
         <section>
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">What happens here</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Room purpose</p>
           <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">{names.expandedDescription}</p>
         </section>
 
         <section>
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">What Infinity is doing</p>
-          <p className="mt-1.5 text-base leading-snug text-zinc-100">
-            {department.displayHeadline ?? department.displaySummary ?? "Standing by"}
-          </p>
-          {department.displayTask ? (
-            <p className="mt-1.5 text-sm text-zinc-400">{department.displayTask}</p>
-          ) : null}
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Current activity</p>
+          <RoomCurrentActivity explanation={activity} className="mt-1.5" />
+          {activity.why ? <p className="mt-1.5 text-sm text-zinc-400">{activity.why}</p> : null}
         </section>
+
+        <section>
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Current venture</p>
+          <p className="mt-1.5 text-sm text-zinc-200">{activity.ventureName ?? "No current production venture in this room."}</p>
+        </section>
+
+        {activity.activeArtifactTitle || department.displayTask ? (
+          <section>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Active work</p>
+            {activity.activeArtifactTitle ? (
+              <p className="mt-1.5 text-sm text-zinc-200">{activity.activeArtifactTitle}</p>
+            ) : null}
+            {department.displayTask ? <p className="mt-1.5 text-sm text-zinc-400">{department.displayTask}</p> : null}
+          </section>
+        ) : null}
 
         {deptNodes.length > 0 ? (
           <section>

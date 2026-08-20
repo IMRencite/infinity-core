@@ -12,6 +12,8 @@ import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspecto
 import { handleCardKeyboardInspect } from "./infinity-room/room-keyboard";
 import { InfinityRoomShell } from "./infinity-room/infinity-room-shell";
 import { buildFavc1TerminalDisplay } from "@/lib/infinity/operator-console/favc1-cycle/terminal-messaging";
+import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
+import { RoomCurrentActivity } from "./room-current-activity";
 
 type Props = {
   snapshot?: OperatorDepartmentSnapshot;
@@ -27,6 +29,7 @@ type Props = {
   onSelect: () => void;
   cycleMeta?: Favc1CycleSnapshotMeta | null;
   systemReadiness?: CommandSystemIndicator[];
+  ventureName?: string | null;
 };
 
 function formatCost(meta: Favc1CycleSnapshotMeta): string {
@@ -56,8 +59,18 @@ export function CommandChamber({
   onSelect,
   cycleMeta = null,
   systemReadiness = [],
+  ventureName = null,
 }: Props) {
   const names = getRoomDisplayNames("executive_office");
+  const commandNodes = workerNodes.filter((node) => node.departmentId === "executive_office");
+  const activity = buildRoomActivityExplanation({
+    departmentId: "executive_office",
+    department: snapshot ?? null,
+    workerNodes: commandNodes,
+    currentActivity,
+    closedLoopRoute,
+    ventureName,
+  });
   const terminal = cycleTerminal(cycleMeta);
   const missionHeadline = currentActivity.active
     ? (currentActivity.displayTask ?? snapshot?.displayHeadline ?? "Executing current mission")
@@ -96,6 +109,10 @@ export function CommandChamber({
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-300/90">{names.displayName}</p>
             <p className="hq-room-job mt-1">{names.shortDescription}</p>
+            <RoomCurrentActivity explanation={activity} className="mt-2" />
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500" data-hq-room-presence={activity.presence}>
+              {activity.presence}
+            </p>
 
             <div className="mt-1.5 grid gap-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-4">
               <div className="min-w-0 space-y-1.5">

@@ -2,10 +2,11 @@
 
 import type {
   DepartmentId,
+  OperatorCurrentActivity,
   OperatorDepartmentSnapshot,
   OperatorWorkerNode,
   DepartmentUiState,
-  FailureSemantics,
+  OperatorVentureSnapshot,
 } from "@/lib/infinity/operator-console/types";
 import { departmentStateLabel, departmentVisualState } from "@/lib/infinity/operator-console/status-derivation";
 import { RoomWorkflowStage } from "./room-workflow-stage";
@@ -14,7 +15,9 @@ import { InfinityRoomShell } from "./infinity-room/infinity-room-shell";
 import { RoomStatusChip } from "./infinity-room/room-status-chip";
 import { RoomOutputStrip } from "./infinity-room/room-output-strip";
 import { deriveRoomPresence } from "@/lib/infinity/operator-console/room-presence";
+import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomPresenceTrack } from "./infinity-room/room-presence-track";
+import { RoomCurrentActivity } from "./room-current-activity";
 
 type Props = {
   departmentId: DepartmentId;
@@ -22,6 +25,9 @@ type Props = {
   supportingLabel: string;
   snapshot?: OperatorDepartmentSnapshot;
   workerNodes: OperatorWorkerNode[];
+  currentActivity?: OperatorCurrentActivity | null;
+  closedLoopRoute?: OperatorVentureSnapshot["closedLoopRoute"] | null;
+  ventureName?: string | null;
   isSelected: boolean;
   isActive: boolean;
   isNextMissionTarget: boolean;
@@ -40,6 +46,9 @@ export function DepartmentRoom({
   supportingLabel,
   snapshot,
   workerNodes,
+  currentActivity = null,
+  closedLoopRoute = null,
+  ventureName = null,
   isSelected,
   isActive,
   isNextMissionTarget,
@@ -54,12 +63,19 @@ export function DepartmentRoom({
   const rawState: DepartmentUiState = snapshot?.state ?? "NOT_STARTED";
   const failureSemantics = snapshot?.failureSemantics;
   const state = departmentVisualState(rawState, failureSemantics);
-  const activityHeadline = snapshot?.displayHeadline ?? null;
   const workArtifacts = snapshot?.workArtifacts ?? [];
   const artifacts = snapshot?.artifacts ?? [];
   const primaryArtifact = artifacts[0];
   const presence = deriveRoomPresence(workerNodes, state, isTerminal);
   const workflowNodes = presence.state === "ACTIVE_WORK" ? presence.activeNodes : [];
+  const activity = buildRoomActivityExplanation({
+    departmentId,
+    department: snapshot ?? null,
+    workerNodes,
+    currentActivity,
+    closedLoopRoute,
+    ventureName,
+  });
 
   return (
     <InfinityRoomShell
@@ -73,7 +89,7 @@ export function DepartmentRoom({
       partition={partition}
       size={wide || span === "full" ? "wide" : "standard"}
       span={span}
-      ariaLabel={`${displayName}. ${supportingLabel} ${departmentStateLabel(state)}`}
+      ariaLabel={`${displayName}. ${supportingLabel} ${activity.sentence} ${activity.presence}`}
       onActivate={onSelect}
       header={
         <div className="flex items-start justify-between gap-2">
@@ -81,7 +97,12 @@ export function DepartmentRoom({
             <p className={`hq-room-title ${isActive ? "hq-room-title-active" : ""}`}>{displayName}</p>
             <p className="hq-room-job mt-1">{supportingLabel}</p>
           </div>
-          <RoomStatusChip state={state} failureSemantics={failureSemantics} isActive={isActive} />
+          <RoomStatusChip
+            state={state}
+            failureSemantics={failureSemantics}
+            isActive={isActive}
+            presence={activity.presence}
+          />
         </div>
       }
       footer={
@@ -91,19 +112,7 @@ export function DepartmentRoom({
         />
       }
     >
-      {activityHeadline ? (
-        <p
-          className={`hq-room-task mt-1.5 ${
-            isActive
-              ? "font-medium text-sky-50"
-              : failureSemantics === "HISTORICAL_FAILURE"
-                ? "text-amber-200/70"
-                : "text-[var(--hq-text-muted)]"
-          }`}
-        >
-          {activityHeadline}
-        </p>
-      ) : null}
+      <RoomCurrentActivity explanation={activity} className="mt-1.5" />
 
       <div className="relative mt-2">
         {workArtifacts.length > 0 ? (

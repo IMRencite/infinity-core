@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
-import type { DepartmentId, OperatorDepartmentSnapshot, OperatorCurrentActivity, OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
+import type { DepartmentId, OperatorDepartmentSnapshot, OperatorCurrentActivity, OperatorWorkerNode, OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
 import { LIFECYCLE_ROOM_SEQUENCE, getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
 import {
   HQ_FLOOR_LAYOUT_SECTIONS,
@@ -17,19 +17,13 @@ type Props = {
   workerNodes: OperatorWorkerNode[];
   currentActivity: OperatorCurrentActivity;
   activeDepartments: DepartmentId[];
-  closedLoopRoute: {
-    active: boolean;
-    fromDepartmentId: DepartmentId | null;
-    viaDepartmentId: DepartmentId | null;
-    toDepartmentId: DepartmentId | null;
-    decisionType: string | null;
-    missionStatus: string | null;
-  };
+  closedLoopRoute: OperatorVentureSnapshot["closedLoopRoute"];
   selectedDepartment: DepartmentId | null;
   onSelectDepartment: (id: DepartmentId) => void;
   handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
   handoffLineageColorKey?: string | null;
   isTerminalCycle?: boolean;
+  ventureName?: string | null;
 };
 
 export const FLOW_SEQUENCE = [...LIFECYCLE_ROOM_SEQUENCE, "executive_office"] as DepartmentId[];
@@ -38,6 +32,8 @@ function RoomCell({
   deptId,
   departments,
   workerNodes,
+  currentActivity,
+  ventureName,
   activeSet,
   activeFlowIndex,
   selectedDepartment,
@@ -48,6 +44,8 @@ function RoomCell({
   deptId: DepartmentId;
   departments: Map<string, OperatorDepartmentSnapshot>;
   workerNodes: OperatorWorkerNode[];
+  currentActivity: OperatorCurrentActivity;
+  ventureName?: string | null;
   activeSet: Set<DepartmentId>;
   activeFlowIndex: number;
   selectedDepartment: DepartmentId | null;
@@ -75,6 +73,9 @@ function RoomCell({
         supportingLabel={names.supportingLabel}
         snapshot={dept}
         workerNodes={deptNodes}
+        currentActivity={currentActivity}
+        closedLoopRoute={closedLoopRoute}
+        ventureName={ventureName}
         isSelected={selectedDepartment === deptId}
         isActive={activeSet.has(deptId)}
         isNextMissionTarget={dept?.isNextMissionTarget ?? false}
@@ -113,7 +114,7 @@ function FloorColumns({
 export function HqSpatialFloor({
   departments,
   workerNodes,
-  currentActivity: _currentActivity,
+  currentActivity,
   activeDepartments,
   closedLoopRoute,
   selectedDepartment,
@@ -121,6 +122,7 @@ export function HqSpatialFloor({
   handoffStage = null,
   handoffLineageColorKey = null,
   isTerminalCycle = false,
+  ventureName = null,
 }: Props) {
   const deptMap = new Map(departments.map((d) => [d.id, d]));
   const activeSet = new Set(activeDepartments);
@@ -133,6 +135,8 @@ export function HqSpatialFloor({
       deptId={deptId}
       departments={deptMap}
       workerNodes={workerNodes}
+      currentActivity={currentActivity}
+      ventureName={ventureName}
       activeSet={activeSet}
       activeFlowIndex={activeFlowIndex}
       selectedDepartment={selectedDepartment}

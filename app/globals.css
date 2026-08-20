@@ -740,8 +740,42 @@ body {
   white-space: normal;
 }
 
+.hq-room-now-block {
+  min-width: 0;
+}
+
+.hq-room-now-label {
+  font-size: 0.625rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hq-text-muted);
+}
+
+.hq-room-now {
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--hq-text-primary);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+@media (max-width: 1023px) {
+  .hq-room-now {
+    font-size: 0.78125rem;
+  }
+}
+
 @media (max-width: 767px) {
   .hq-room-job {
+    font-size: 0.75rem;
+  }
+
+  .hq-room-now {
     font-size: 0.75rem;
   }
 }

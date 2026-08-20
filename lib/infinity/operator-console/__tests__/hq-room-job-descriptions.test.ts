@@ -64,7 +64,7 @@ describe("HQ room job descriptions v1", () => {
     const room = readComponent("department-room.tsx");
     expect(room).toContain("hq-room-job");
     expect(room).toContain("{supportingLabel}");
-    expect(room).toContain("activityHeadline");
+    expect(room).toContain("RoomCurrentActivity");
     expect(room).not.toContain("snapshot?.displayHeadline ?? supportingLabel");
     expect(room).toContain("RoomPresenceTrack");
     expect(readComponent("infinity-room/room-presence-track.tsx")).toContain("Agents in room");
@@ -80,9 +80,9 @@ describe("HQ room job descriptions v1", () => {
 
   it("shows expanded descriptions in the existing room detail panel", () => {
     const detail = readComponent("department-detail-panel.tsx");
-    expect(detail).toContain("What happens here");
+    expect(detail).toContain("Room purpose");
     expect(detail).toContain("names.expandedDescription");
-    expect(detail).toContain("What Infinity is doing");
+    expect(detail).toContain("Current activity");
     expect(detail).toContain("Agents in room");
     expect(detail).not.toMatch(/Workers in room/);
   });

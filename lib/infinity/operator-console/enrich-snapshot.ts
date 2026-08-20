@@ -10,11 +10,10 @@ import {
 } from "./humanize";
 import { buildWorkerNodes } from "./worker-nodes";
 import { getRoomDisplayNames } from "./room-naming";
+import { explainSnapshotDepartmentActivity } from "./room-activity";
 import type { OperatorVentureSnapshot } from "./types";
 
 export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): OperatorVentureSnapshot {
-  const workerNodes = buildWorkerNodes(snapshot.providers, snapshot.departments);
-
   const departments = snapshot.departments.map((dept) => {
     const names = getRoomDisplayNames(dept.id);
     const hasPersistedArtifacts = (dept.workArtifacts?.length ?? 0) > 0;
@@ -60,9 +59,24 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
     displayTask: humanizeTask(currentActivityBase.task),
   };
 
+  const workerNodes = buildWorkerNodes(providers, departments);
+  const departmentsWithActivity = departments.map((dept) => ({
+    ...dept,
+    activityExplanation: explainSnapshotDepartmentActivity(
+      {
+        currentActivity,
+        closedLoopRoute: snapshot.closedLoopRoute,
+        venture: snapshot.venture,
+        providers,
+      },
+      dept,
+      workerNodes,
+    ),
+  }));
+
   return {
     ...snapshot,
-    departments,
+    departments: departmentsWithActivity,
     activityFeed,
     providers,
     currentActivity,
