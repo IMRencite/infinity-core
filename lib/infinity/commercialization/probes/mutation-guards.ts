@@ -116,6 +116,21 @@ export async function exerciseMutationGuards(): Promise<MutationGuardReport> {
     dnsMutationBlocked = dnsMutationBlocked && error instanceof ReadOnlyMutationBlockedError;
   }
 
+  const { NamecheapReadAdapter } = await import("../providers/namecheap/read-adapter");
+  const { CloudflareReadAdapter } = await import("../providers/cloudflare/read-adapter");
+  const namecheap = new NamecheapReadAdapter({ env: {} });
+  const cloudflare = new CloudflareReadAdapter({ env: {} });
+  try {
+    namecheap.denyWrite("namecheap.domains.create");
+  } catch (error) {
+    domainRegisterBlocked = domainRegisterBlocked && error instanceof ReadOnlyMutationBlockedError;
+  }
+  try {
+    cloudflare.denyWrite("dns_record.create");
+  } catch (error) {
+    dnsMutationBlocked = dnsMutationBlocked && error instanceof ReadOnlyMutationBlockedError;
+  }
+
   let hostingDeployBlocked = false;
   let hostingMutationCode: string | null = null;
   try {

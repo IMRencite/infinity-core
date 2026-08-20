@@ -9,6 +9,8 @@ export const CURSOR_FORBIDDEN_ENV = [
   "CLOUDFLARE_API_TOKEN",
   "NAMECHEAP_API_KEY",
   "NAMECHEAP_API_USER",
+  "NAMECHEAP_USERNAME",
+  "NAMECHEAP_CLIENT_IP",
   "VERCEL_TOKEN",
   "AWS_SECRET_ACCESS_KEY",
   "BANK_PASSWORD",
@@ -19,7 +21,10 @@ export function sanitizeEnvForCursor(env: Record<string, string | undefined>): R
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(env)) {
     if (!value) continue;
-    if (CURSOR_FORBIDDEN_ENV.some((forbidden) => key.toUpperCase().includes(forbidden.replace(/_KEY$/, ""))) || /SECRET|PASSWORD|TOKEN|SERVICE_ROLE|BANK|STRIPE/i.test(key)) {
+    if (
+      CURSOR_FORBIDDEN_ENV.some((forbidden) => key.toUpperCase().includes(forbidden.replace(/_KEY$/, ""))) ||
+      /SECRET|PASSWORD|TOKEN|SERVICE_ROLE|BANK|STRIPE|NAMECHEAP_(API_KEY|API_USER|USERNAME|CLIENT_IP)/i.test(key)
+    ) {
       continue;
     }
     out[key] = value;

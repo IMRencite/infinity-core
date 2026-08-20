@@ -1,17 +1,14 @@
 import {
-  CLOUDFLARE_API_TOKEN_ENV,
   CLOUDFLARE_LIVE_ENV,
   credentialPresence,
   envFlagConfigured,
-  NAMECHEAP_API_KEY_ENV,
-  NAMECHEAP_API_USER_ENV,
-  NAMECHEAP_CLIENT_IP_ENV,
-  NAMECHEAP_LIVE_ENV,
   STRIPE_LIVE_ENV,
   STRIPE_SECRET_KEY_ENV,
   VERCEL_LIVE_ENV,
   VERCEL_TOKEN_ENV,
 } from "../providers/config";
+import { loadCloudflareConfig } from "../providers/cloudflare/config";
+import { loadNamecheapConfig } from "../providers/namecheap/config";
 
 export type ProviderConfigured = "CONFIGURED" | "NOT_CONFIGURED" | "PARTIALLY_CONFIGURED" | "INVALID_CONFIGURATION";
 
@@ -54,13 +51,10 @@ function stripeEnvironment(): ProviderEnvironment {
 
 /** Env-only inventory. Never calls provider APIs. Never returns secret values. */
 export function buildProviderInventory(): ProviderInventory {
-  const namecheapParts = [
-    credentialPresence(NAMECHEAP_API_USER_ENV),
-    credentialPresence(NAMECHEAP_API_KEY_ENV),
-    credentialPresence(NAMECHEAP_CLIENT_IP_ENV, 7),
-  ] as const;
-  const namecheapConfigured = configuredFromPresence([...namecheapParts]);
-  const cloudflareConfigured = configuredFromPresence([credentialPresence(CLOUDFLARE_API_TOKEN_ENV)]);
+  const namecheap = loadNamecheapConfig();
+  const cloudflare = loadCloudflareConfig();
+  const namecheapConfigured = namecheap.credentials ? "CONFIGURED" : "NOT_CONFIGURED";
+  const cloudflareConfigured = cloudflare.credentials ? "CONFIGURED" : "NOT_CONFIGURED";
   const vercelConfigured = configuredFromPresence([credentialPresence(VERCEL_TOKEN_ENV, 11)]);
   const stripeConfigured = configuredFromPresence([credentialPresence(STRIPE_SECRET_KEY_ENV, 11)]);
 
@@ -69,28 +63,28 @@ export function buildProviderInventory(): ProviderInventory {
       providerKey: "namecheap.com_v1",
       providerName: "Namecheap",
       configured: namecheapConfigured,
-      environment: envFlagConfigured(NAMECHEAP_LIVE_ENV) === "CONFIGURED" ? "LIVE" : "UNKNOWN",
-      credentialPresence: namecheapConfigured === "CONFIGURED" ? "YES" : "NO",
-      readCapabilities: ["searchDomains", "getAvailability", "getRegistrationPrice", "getRenewalPrice"],
-      writeCapabilities: ["registerDomain", "configureNameservers"],
+      environment:
+        namecheap.public.mode === "SANDBOX" ? "SANDBOX" : namecheap.public.mode === "PRODUCTION" ? "LIVE" : "UNKNOWN",
+      credentialPresence: namecheap.public.credentialPresence,
+      readCapabilities: ["listDomains", "getDomain", "getExpiration", "getNameservers", "verifyAuth"],
+      writeCapabilities: ["registerDomain", "renewDomain", "transferDomain", "configureNameservers"],
       liveProbeSupport: true,
       readOnlyEnforceable: true,
-      capabilities:
-        namecheapConfigured === "CONFIGURED"
-          ? ["searchDomains", "getAvailability", "getRegistrationPrice", "getRenewalPrice"]
-          : [],
+      capabilities: namecheap.credentials
+        ? ["listDomains", "getDomain", "getExpiration", "getNameservers", "verifyAuth"]
+        : [],
     },
     dns: {
       providerKey: "cloudflare.dns_v1",
       providerName: "Cloudflare",
       configured: cloudflareConfigured,
-      environment: envFlagConfigured(CLOUDFLARE_LIVE_ENV) === "CONFIGURED" ? "LIVE" : "UNKNOWN",
-      credentialPresence: cloudflareConfigured === "CONFIGURED" ? "YES" : "NO",
-      readCapabilities: ["getZone", "listRecords", "verifyRecord", "listZones"],
+      environment: cloudflare.credentials ? "LIVE" : envFlagConfigured(CLOUDFLARE_LIVE_ENV) === "CONFIGURED" ? "LIVE" : "UNKNOWN",
+      credentialPresence: cloudflare.public.tokenConfigured ? "YES" : "NO",
+      readCapabilities: ["verifyToken", "listZones", "getZone", "listRecords", "getRecord"],
       writeCapabilities: ["createZone", "createRecord", "updateRecord", "deleteRecord"],
       liveProbeSupport: true,
       readOnlyEnforceable: true,
-      capabilities: cloudflareConfigured === "CONFIGURED" ? ["getZone", "listRecords", "verifyRecord"] : [],
+      capabilities: cloudflare.credentials ? ["verifyToken", "listZones", "getZone", "listRecords"] : [],
     },
     hosting: {
       providerKey: "vercel.com_v1",

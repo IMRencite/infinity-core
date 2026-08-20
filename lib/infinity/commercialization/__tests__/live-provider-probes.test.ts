@@ -330,12 +330,15 @@ describe("Commercialization live capability verification", () => {
   it("does not send provider credentials into Cursor workspaces", () => {
     const sanitized = sanitizeEnvForCursor({
       NAMECHEAP_API_KEY: "secret-registrar",
+      NAMECHEAP_API_USER: "apiuser01",
+      NAMECHEAP_CLIENT_IP: "203.0.113.10",
       CLOUDFLARE_API_TOKEN: "secret-dns",
       VERCEL_TOKEN: "test-provider-secret-redacted",
       STRIPE_SECRET_KEY: "stripe_test_token_fixture",
       NEXT_PUBLIC_SITE_URL: "https://example.com",
     });
     expect(sanitized.NAMECHEAP_API_KEY).toBeUndefined();
+    expect(sanitized.NAMECHEAP_CLIENT_IP).toBeUndefined();
     expect(sanitized.CLOUDFLARE_API_TOKEN).toBeUndefined();
     expect(sanitized.VERCEL_TOKEN).toBeUndefined();
     expect(sanitized.STRIPE_SECRET_KEY).toBeUndefined();

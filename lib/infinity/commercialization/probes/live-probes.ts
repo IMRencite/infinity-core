@@ -1,15 +1,11 @@
 import type { FinancialTruth } from "../types";
 import {
-  CLOUDFLARE_API_TOKEN_ENV,
-  CLOUDFLARE_PROBE_ZONE_ENV,
-  CLOUDFLARE_ZONE_ID_ENV,
-  NAMECHEAP_API_KEY_ENV,
-  NAMECHEAP_API_USER_ENV,
-  NAMECHEAP_CLIENT_IP_ENV,
   STRIPE_SECRET_KEY_ENV,
   VERCEL_TEAM_ID_ENV,
   VERCEL_TOKEN_ENV,
 } from "../providers/config";
+import { CloudflareReadAdapter } from "../providers/cloudflare/read-adapter";
+import { NamecheapReadAdapter } from "../providers/namecheap/read-adapter";
 import type { DnsRecord } from "../providers/contracts";
 import { normalizePremiumFlag, normalizeUsdAmount } from "../providers/money";
 import type { ProviderCapabilityStatus, ProviderProbeFailureCode } from "./status";
@@ -34,23 +30,47 @@ export type RegistrarProbeRow = {
   source: "LIVE";
 };
 
-async function namecheapFetch(params: Record<string, string>): Promise<string> {
-  const user = process.env[NAMECHEAP_API_USER_ENV];
-  const key = process.env[NAMECHEAP_API_KEY_ENV];
-  const clientIp = process.env[NAMECHEAP_CLIENT_IP_ENV];
-  if (!user || !key || !clientIp) throw new Error("NAMECHEAP_CREDENTIALS_MISSING");
-
-  const query = new URLSearchParams({
-    ApiUser: user,
-    ApiKey: key,
-    UserName: user,
-    ClientIp: clientIp,
-    ...params,
-  });
-
-  const res = await fetch(`https://api.namecheap.com/xml.response?${query.toString()}`);
-  if (!res.ok) throw new Error(`NAMECHEAP_HTTP_${res.status}`);
-  return res.text();
+export async function probeRegistrarLive(_domains: string[] = []): Promise<{
+  provider: string;
+  rows: RegistrarProbeRow[];
+  domains: Awaited<ReturnType<NamecheapReadAdapter["verifyReadOnly"]>>["domains"];
+  domainCount: number | null;
+  nextExpiration: string | null;
+  authRead: boolean;
+  domainListRead: boolean;
+  domainDetailRead: boolean;
+  clientIpWhitelistRequired: true;
+  readHttpCalls: number;
+  writeHttpCalls: 0;
+  mutationOccurred: false;
+  normalization: "PASS" | "FAIL" | "SKIPPED";
+  status: ProviderCapabilityStatus;
+  realProviderCall: boolean;
+  failureCode: ProviderProbeFailureCode | null;
+  failureReason: string | null;
+}> {
+  void _domains;
+  const adapter = new NamecheapReadAdapter();
+  const report = await adapter.verifyReadOnly();
+  return {
+    provider: report.provider,
+    rows: [],
+    domains: report.domains,
+    domainCount: report.domainCount,
+    nextExpiration: report.nextExpiration,
+    authRead: report.authRead,
+    domainListRead: report.domainListRead,
+    domainDetailRead: report.domainDetailRead,
+    clientIpWhitelistRequired: true,
+    readHttpCalls: report.readHttpCalls,
+    writeHttpCalls: 0,
+    mutationOccurred: false,
+    normalization: report.normalization,
+    status: report.status,
+    realProviderCall: report.realProviderCall,
+    failureCode: report.failureCode,
+    failureReason: report.failureReason,
+  };
 }
 
 export function parseNamecheapAvailability(xml: string, domain: string): Omit<RegistrarProbeRow, "provider" | "normalized" | "checkedAt" | "source"> {
@@ -79,74 +99,6 @@ export function parseNamecheapAvailability(xml: string, domain: string): Omit<Re
   };
 }
 
-export async function probeRegistrarLive(domains: string[]): Promise<{
-  provider: string;
-  rows: RegistrarProbeRow[];
-  mutationOccurred: false;
-  normalization: "PASS" | "FAIL" | "SKIPPED";
-  status: ProviderCapabilityStatus;
-  realProviderCall: boolean;
-  failureCode: ProviderProbeFailureCode | null;
-}> {
-  const inventory = buildProviderInventory();
-  if (inventory.registrar.configured !== "CONFIGURED") {
-    return {
-      provider: inventory.registrar.providerKey,
-      rows: [],
-      mutationOccurred: false,
-      normalization: "SKIPPED",
-      status: "NOT_CONFIGURED",
-      realProviderCall: false,
-      failureCode: "NOT_CONFIGURED",
-    };
-  }
-
-  const rows: RegistrarProbeRow[] = [];
-  try {
-    for (const domain of domains) {
-      const xml = await namecheapFetch({
-        Command: "namecheap.domains.check",
-        DomainList: domain,
-      });
-      const parsed = parseNamecheapAvailability(xml, domain);
-      rows.push({
-        ...parsed,
-        provider: "namecheap.com_v1",
-        normalized: parsed.renewalPriceUsd === null || typeof parsed.renewalPriceUsd === "number",
-        checkedAt: new Date().toISOString(),
-        source: "LIVE",
-      });
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    const failureCode: ProviderProbeFailureCode = /HTTP_401|HTTP_403|AUTH/i.test(message)
-      ? "AUTH_FAILED"
-      : /ECONN|ETIMEDOUT|network/i.test(message)
-        ? "NETWORK_ERROR"
-        : "PROVIDER_ERROR";
-    return {
-      provider: "namecheap.com_v1",
-      rows,
-      mutationOccurred: false,
-      normalization: "FAIL",
-      status: "FAILED",
-      realProviderCall: rows.length > 0,
-      failureCode,
-    };
-  }
-
-  const priceUnsupported = rows.some((r) => r.available != null && r.registrationPriceUsd == null);
-  return {
-    provider: "namecheap.com_v1",
-    rows,
-    mutationOccurred: false,
-    normalization: rows.length > 0 && rows.every((r) => r.renewalPriceUsd === null || typeof r.renewalPriceUsd === "number") ? "PASS" : "FAIL",
-    status: priceUnsupported ? "DEGRADED" : rows.length > 0 ? "READ_ONLY_VERIFIED" : "FAILED",
-    realProviderCall: true,
-    failureCode: null,
-  };
-}
-
 export async function probeDnsLive(): Promise<{
   provider: string;
   zoneReadable: boolean;
@@ -155,96 +107,41 @@ export async function probeDnsLive(): Promise<{
   zoneCount: number | null;
   selectedZone: string | null;
   recordCount: number | null;
+  authRead: boolean;
+  zoneListRead: boolean;
+  dnsRecordRead: boolean;
+  tokenScope: "TOKEN_SCOPE_MINIMAL" | "TOKEN_SCOPE_BROADER_THAN_REQUIRED" | "UNKNOWN";
+  readHttpCalls: number;
+  writeHttpCalls: 0;
   normalization: "PASS" | "FAIL" | "SKIPPED";
   mutationOccurred: false;
   status: ProviderCapabilityStatus;
   realProviderCall: boolean;
   failureCode: ProviderProbeFailureCode | null;
+  failureReason: string | null;
 }> {
-  const skipped = {
-    provider: "cloudflare.dns_v1",
-    zoneReadable: false,
-    recordsReadable: false,
-    zonesReadable: false,
-    zoneCount: null as number | null,
-    selectedZone: null as string | null,
-    recordCount: null as number | null,
-    normalization: "SKIPPED" as const,
-    mutationOccurred: false as const,
-    status: "NOT_CONFIGURED" as const,
-    realProviderCall: false,
-    failureCode: "NOT_CONFIGURED" as const,
-  };
-  const inventory = buildProviderInventory();
-  if (inventory.dns.configured !== "CONFIGURED") return skipped;
-
-  const token = process.env[CLOUDFLARE_API_TOKEN_ENV]!;
-  const headers = { Authorization: `Bearer ${token}` };
-  const configuredZoneId = process.env[CLOUDFLARE_ZONE_ID_ENV]?.trim() || null;
-  const zoneName = process.env[CLOUDFLARE_PROBE_ZONE_ENV]?.trim() || null;
-
-  const zonesRes = await fetch("https://api.cloudflare.com/client/v4/zones?per_page=5", { headers });
-  if (!zonesRes.ok) {
-    return {
-      ...skipped,
-      normalization: "FAIL",
-      status: zonesRes.status === 401 || zonesRes.status === 403 ? "FAILED" : "UNAVAILABLE",
-      realProviderCall: true,
-      failureCode: classifyHttpFailure(zonesRes.status),
-    };
-  }
-  const zonesBody = (await zonesRes.json()) as { result?: Array<{ id: string; name: string }> };
-  const zones = zonesBody.result ?? [];
-  const zoneCount = zones.length;
-  let resolvedZoneId = configuredZoneId;
-  if (!resolvedZoneId && zoneName) {
-    resolvedZoneId = zones.find((z) => z.name === zoneName)?.id ?? null;
-  }
-  if (!resolvedZoneId) resolvedZoneId = zones[0]?.id ?? null;
-  const selectedZone = zones.find((z) => z.id === resolvedZoneId)?.name ?? zoneName ?? resolvedZoneId;
-
-  if (!resolvedZoneId) {
-    return {
-      provider: "cloudflare.dns_v1",
-      zoneReadable: true,
-      recordsReadable: true,
-      zonesReadable: true,
-      zoneCount: 0,
-      selectedZone: null,
-      recordCount: 0,
-      normalization: "PASS",
-      mutationOccurred: false,
-      status: "READ_ONLY_VERIFIED",
-      realProviderCall: true,
-      failureCode: null,
-    };
-  }
-
-  const zoneRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${resolvedZoneId}`, { headers });
-  const recordsRes = await fetch(
-    `https://api.cloudflare.com/client/v4/zones/${resolvedZoneId}/dns_records?per_page=5`,
-    { headers },
-  );
-  let recordCount: number | null = null;
-  if (recordsRes.ok) {
-    const body = (await recordsRes.json()) as { result?: unknown[] };
-    recordCount = body.result?.length ?? 0;
-  }
-
-  const ok = zoneRes.ok && recordsRes.ok;
+  const adapter = new CloudflareReadAdapter();
+  const report = await adapter.verifyReadOnly();
   return {
-    provider: "cloudflare.dns_v1",
-    zoneReadable: zoneRes.ok,
-    recordsReadable: recordsRes.ok,
-    zonesReadable: true,
-    zoneCount,
-    selectedZone,
-    recordCount,
-    normalization: ok ? "PASS" : "FAIL",
+    provider: report.provider,
+    zoneReadable: report.zoneDetailRead,
+    recordsReadable: report.dnsRecordRead,
+    zonesReadable: report.zoneListRead,
+    zoneCount: report.zoneCount,
+    selectedZone: report.zones[0]?.zoneName ?? null,
+    recordCount: report.recordCount,
+    authRead: report.authRead,
+    zoneListRead: report.zoneListRead,
+    dnsRecordRead: report.dnsRecordRead,
+    tokenScope: report.tokenScope,
+    readHttpCalls: report.readHttpCalls,
+    writeHttpCalls: 0,
+    normalization: report.normalization,
     mutationOccurred: false,
-    status: ok ? "READ_ONLY_VERIFIED" : "DEGRADED",
-    realProviderCall: true,
-    failureCode: ok ? null : classifyHttpFailure(recordsRes.ok ? zoneRes.status : recordsRes.status),
+    status: report.status,
+    realProviderCall: report.realProviderCall,
+    failureCode: report.failureCode,
+    failureReason: report.failureReason,
   };
 }
 

@@ -10,8 +10,33 @@ import { COMMERCIAL_PROVIDER_VERIFICATION_MODE } from "./mode";
 
 export type PersistableLiveReport = {
   inventory: ProviderInventory;
-  registrar: { status: ProviderCapabilityStatus; failureCode: ProviderProbeFailureCode | null; realProviderCall: boolean; rows: unknown[] };
-  dns: { status: ProviderCapabilityStatus; failureCode: ProviderProbeFailureCode | null; realProviderCall: boolean; zoneCount: number | null; recordCount: number | null };
+  registrar: {
+    status: ProviderCapabilityStatus;
+    failureCode: ProviderProbeFailureCode | null;
+    realProviderCall: boolean;
+    rows: unknown[];
+    domainCount?: number | null;
+    nextExpiration?: string | null;
+    authRead?: boolean;
+    domainListRead?: boolean;
+    domainDetailRead?: boolean;
+    clientIpWhitelistRequired?: boolean;
+    readHttpCalls?: number;
+    writeHttpCalls?: number;
+  };
+  dns: {
+    status: ProviderCapabilityStatus;
+    failureCode: ProviderProbeFailureCode | null;
+    realProviderCall: boolean;
+    zoneCount: number | null;
+    recordCount: number | null;
+    authRead?: boolean;
+    zoneListRead?: boolean;
+    dnsRecordRead?: boolean;
+    tokenScope?: string;
+    readHttpCalls?: number;
+    writeHttpCalls?: number;
+  };
   hosting: {
     status: ProviderCapabilityStatus;
     failureCode: ProviderProbeFailureCode | null;
@@ -83,7 +108,15 @@ export function persistLiveVerification(
       metadata: {
         realProviderCall: report.registrar.realProviderCall,
         rowCount: report.registrar.rows.length,
+        domainCount: report.registrar.domainCount ?? report.registrar.rows.length,
+        nextExpiration: report.registrar.nextExpiration ?? null,
+        authRead: report.registrar.authRead ?? false,
+        domainListRead: report.registrar.domainListRead ?? false,
+        domainDetailRead: report.registrar.domainDetailRead ?? false,
+        clientIpWhitelistRequired: report.registrar.clientIpWhitelistRequired ?? true,
+        lastSuccessfulRead: report.registrar.status === "READ_ONLY_VERIFIED" || report.registrar.status === "DEGRADED" ? completedAt : null,
         mutationOccurred: false,
+        writeHttpCalls: report.registrar.writeHttpCalls ?? 0,
       },
     }),
     record({
@@ -101,7 +134,13 @@ export function persistLiveVerification(
         realProviderCall: report.dns.realProviderCall,
         zoneCount: report.dns.zoneCount,
         recordCount: report.dns.recordCount,
+        authRead: report.dns.authRead ?? false,
+        zoneListRead: report.dns.zoneListRead ?? false,
+        dnsRecordRead: report.dns.dnsRecordRead ?? false,
+        tokenScope: report.dns.tokenScope ?? "UNKNOWN",
+        lastSuccessfulRead: report.dns.status === "READ_ONLY_VERIFIED" || report.dns.status === "DEGRADED" ? completedAt : null,
         mutationOccurred: false,
+        writeHttpCalls: report.dns.writeHttpCalls ?? 0,
       },
     }),
     record({

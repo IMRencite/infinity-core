@@ -55,7 +55,7 @@ function readinessArtifact(input: {
     roomId: input.roomId,
     artifactType: input.artifactType,
     title: input.title,
-    subtitle: `${status.display} · PURCHASE AUTHORITY LOCKED`,
+    subtitle: `${input.entry.providerName} · ${status.display} · PURCHASE AUTHORITY LOCKED`,
     state: status.hqState,
     createdAt: input.verification?.completedAt ?? null,
     sourceRecordType: "provider_readiness",
@@ -80,6 +80,13 @@ function readinessArtifact(input: {
       verifiedAt: input.verification?.completedAt ?? null,
       failureCode: input.verification?.failureCode ?? null,
       blockingReason: status.readiness === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "MUTATION_NOT_AUTHORIZED",
+      domainCount: input.verification?.metadata.domainCount ?? null,
+      nextExpiration: input.verification?.metadata.nextExpiration ?? null,
+      zoneCount: input.verification?.metadata.zoneCount ?? null,
+      recordCount: input.verification?.metadata.recordCount ?? null,
+      lastSuccessfulRead: input.verification?.metadata.lastSuccessfulRead ?? input.verification?.completedAt ?? null,
+      tokenScope: input.verification?.metadata.tokenScope ?? null,
+      clientIpWhitelistRequired: input.verification?.metadata.clientIpWhitelistRequired ?? null,
     },
   };
 }
