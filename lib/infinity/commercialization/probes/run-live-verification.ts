@@ -12,6 +12,7 @@ import {
 } from "./live-probes";
 import { exerciseMutationGuards } from "./mutation-guards";
 import { persistLiveVerification } from "./persist";
+import { persistLiveVerificationIfPossible } from "./persist-durable";
 import type { CommercialProviderVerification } from "./status";
 import { COMMERCIAL_PROVIDER_VERIFICATION_MODE } from "./mode";
 
@@ -28,6 +29,8 @@ export type LiveVerificationReport = {
   startedAt: string;
   completedAt: string;
   persisted: CommercialProviderVerification[];
+  durablePersisted: boolean;
+  durableRowCount: number;
   engineStatus: "ENGINE VERIFIED";
   mutationAuthority: "LOCKED";
   harnessReady: boolean;
@@ -126,6 +129,8 @@ export async function runLiveCommercializationVerification(seed = "infinity"): P
     startedAt,
     completedAt,
     persisted: [] as CommercialProviderVerification[],
+    durablePersisted: false,
+    durableRowCount: 0,
     engineStatus: "ENGINE VERIFIED" as const,
     mutationAuthority: "LOCKED" as const,
     harnessReady: true,
@@ -134,6 +139,9 @@ export async function runLiveCommercializationVerification(seed = "infinity"): P
   };
 
   draft.persisted = persistLiveVerification(store, draft);
+  const durable = await persistLiveVerificationIfPossible(draft);
+  draft.durablePersisted = durable.persisted;
+  draft.durableRowCount = durable.rowCount;
 
   const configured = [
     { configured: inventory.registrar.configured, status: registrar.status },

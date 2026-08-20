@@ -7,12 +7,52 @@ import {
   type ProviderProbeFailureCode,
 } from "./status";
 import { COMMERCIAL_PROVIDER_VERIFICATION_MODE } from "./mode";
+import { redactSecrets } from "@/lib/infinity/launch-gateway/redaction";
+
+export const DURABLE_VERIFICATION_STATUSES = [
+  "NOT_CONFIGURED",
+  "CONFIGURED_UNVERIFIED",
+  "READ_ONLY_VERIFIED",
+  "DEGRADED",
+  "UNAVAILABLE",
+  "FAILED",
+  "WRITE_CAPABLE_NOT_AUTHORIZED",
+] as const;
+
+const SECRET_KEY = /secret|password|authorization|api[_-]?key|credential|bearer/i;
+const SECRET_VALUE = /(sk_live_|sk_test_|whsec_|vcp_|ghp_|Bearer )/i;
+
+export function sanitizeVerificationMetadata(
+  input: Record<string, string | number | boolean | null>,
+): Record<string, string | number | boolean | null> {
+  const out: Record<string, string | number | boolean | null> = {};
+  for (const [key, value] of Object.entries(input)) {
+    if (SECRET_KEY.test(key)) continue;
+    if (typeof value === "string") {
+      if (SECRET_VALUE.test(value)) continue;
+      const redacted = redactSecrets(value).slice(0, 200);
+      if (SECRET_VALUE.test(redacted)) continue;
+      out[key] = redacted;
+    } else {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+export function sanitizeFailureReason(reason: string | null | undefined): string | null {
+  if (!reason) return null;
+  const redacted = redactSecrets(reason).slice(0, 200);
+  if (SECRET_VALUE.test(redacted) || SECRET_KEY.test(redacted)) return "SANITIZED_FAILURE";
+  return redacted;
+}
 
 export type PersistableLiveReport = {
   inventory: ProviderInventory;
   registrar: {
     status: ProviderCapabilityStatus;
     failureCode: ProviderProbeFailureCode | null;
+    failureReason?: string | null;
     realProviderCall: boolean;
     rows: unknown[];
     domainCount?: number | null;
@@ -27,6 +67,7 @@ export type PersistableLiveReport = {
   dns: {
     status: ProviderCapabilityStatus;
     failureCode: ProviderProbeFailureCode | null;
+    failureReason?: string | null;
     realProviderCall: boolean;
     zoneCount: number | null;
     recordCount: number | null;
@@ -40,6 +81,7 @@ export type PersistableLiveReport = {
   hosting: {
     status: ProviderCapabilityStatus;
     failureCode: ProviderProbeFailureCode | null;
+    failureReason?: string | null;
     realProviderCall: boolean;
     projectCount: number | null;
     deploymentCount: number | null;
@@ -47,6 +89,7 @@ export type PersistableLiveReport = {
   payments: {
     status: ProviderCapabilityStatus;
     failureCode: ProviderProbeFailureCode | null;
+    failureReason?: string | null;
     realProviderCall: boolean;
     productCount: number | null;
     priceCount: number | null;
@@ -81,19 +124,18 @@ function record(input: {
     completedAt: input.completedAt,
     freshness: freshnessFromCompletedAt(input.completedAt),
     failureCode: input.failureCode,
-    failureReason: input.failureReason,
-    metadata: input.metadata,
+    failureReason: sanitizeFailureReason(input.failureReason),
+    metadata: sanitizeVerificationMetadata(input.metadata),
     mutationAuthority: "LOCKED",
   };
 }
 
-export function persistLiveVerification(
-  store: CommercializationStore,
+export function buildLiveVerificationRecords(
   report: PersistableLiveReport,
-  organizationId = "org-local-probe",
+  organizationId: string,
 ): CommercialProviderVerification[] {
   const { startedAt, completedAt } = report;
-  const records: CommercialProviderVerification[] = [
+  return [
     record({
       organizationId,
       category: "REGISTRAR",
@@ -104,7 +146,7 @@ export function persistLiveVerification(
       startedAt,
       completedAt,
       failureCode: report.registrar.failureCode,
-      failureReason: report.registrar.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null,
+      failureReason: report.registrar.failureReason ?? (report.registrar.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null),
       metadata: {
         realProviderCall: report.registrar.realProviderCall,
         rowCount: report.registrar.rows.length,
@@ -129,7 +171,7 @@ export function persistLiveVerification(
       startedAt,
       completedAt,
       failureCode: report.dns.failureCode,
-      failureReason: report.dns.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null,
+      failureReason: report.dns.failureReason ?? (report.dns.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null),
       metadata: {
         realProviderCall: report.dns.realProviderCall,
         zoneCount: report.dns.zoneCount,
@@ -137,6 +179,8 @@ export function persistLiveVerification(
         authRead: report.dns.authRead ?? false,
         zoneListRead: report.dns.zoneListRead ?? false,
         dnsRecordRead: report.dns.dnsRecordRead ?? false,
+        dnsReadCapabilitySupported: report.inventory.dns.readCapabilities.includes("listRecords"),
+        dnsLiveResourceReadProven: Boolean((report.dns.zoneCount ?? 0) > 0 && report.dns.dnsRecordRead),
         tokenScope: report.dns.tokenScope ?? "UNKNOWN",
         lastSuccessfulRead: report.dns.status === "READ_ONLY_VERIFIED" || report.dns.status === "DEGRADED" ? completedAt : null,
         mutationOccurred: false,
@@ -153,7 +197,7 @@ export function persistLiveVerification(
       startedAt,
       completedAt,
       failureCode: report.hosting.failureCode,
-      failureReason: report.hosting.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null,
+      failureReason: report.hosting.failureReason ?? (report.hosting.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null),
       metadata: {
         realProviderCall: report.hosting.realProviderCall,
         projectCount: report.hosting.projectCount,
@@ -171,7 +215,7 @@ export function persistLiveVerification(
       startedAt,
       completedAt,
       failureCode: report.payments.failureCode,
-      failureReason: report.payments.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null,
+      failureReason: report.payments.failureReason ?? (report.payments.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null),
       metadata: {
         realProviderCall: report.payments.realProviderCall,
         productCount: report.payments.productCount,
@@ -181,7 +225,14 @@ export function persistLiveVerification(
       },
     }),
   ];
+}
 
+export function persistLiveVerification(
+  store: CommercializationStore,
+  report: PersistableLiveReport,
+  organizationId = "org-local-probe",
+): CommercialProviderVerification[] {
+  const records = buildLiveVerificationRecords(report, organizationId);
   for (const item of records) {
     store.providerVerifications.set(item.id, item);
     store.registerIdempotency(organizationId, `provider-verification:${item.providerCategory}`, item.id);
