@@ -1,3 +1,4 @@
+import type { CanonicalVentureAssemblyIdentity } from "@/lib/infinity/venture-assembly/identity";
 import type { SelectionDecision } from "@/lib/infinity/venture-selection/constants";
 import type { NormalizedCandidateScores } from "@/lib/infinity/opportunity-scanner/types";
 import type { CandidateEvaluationDraft } from "@/lib/infinity/venture-selection/types";
@@ -110,6 +111,7 @@ export type FounderBuildRouteResult = {
   blueprintId: string | null;
   buildPackageId: string | null;
   missionId: string | null;
+  canonicalVentureIdentity: CanonicalVentureAssemblyIdentity;
 };
 
 export type FounderValidationPlan = {

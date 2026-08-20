@@ -9,6 +9,7 @@ export type VentureAssemblyManifestV1 = {
   schemaVersion: "venture_assembly_manifest_v1";
   ventureIdentity: {
     workingName: string;
+    displayName?: string;
     ventureType: string;
     businessModel: string;
     targetCustomer: string;
@@ -16,6 +17,10 @@ export type VentureAssemblyManifestV1 = {
     valueProposition: string;
     offer: string;
   };
+  opportunityCandidateId?: string | null;
+  companyBuilderBlueprintId?: string | null;
+  origin?: string;
+  rank?: number | null;
   traceability: {
     organizationId: string;
     missionId: string;

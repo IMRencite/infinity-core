@@ -3,6 +3,11 @@ import type { VentureBlueprint } from "@/lib/infinity/venture-factory/types/blue
 import type { VentureAssemblyManifestV1 } from "./types";
 import { VENTURE_ASSEMBLY_MANIFEST_SCHEMA_VERSION } from "./constants";
 import { evaluateLaunchReadiness } from "./readiness";
+import {
+  buildCanonicalVentureAssemblyIdentity,
+  candidateIdFromLineageSources,
+  persistCanonicalVentureAssemblyIdentity,
+} from "./identity";
 
 export type AssemblySourceContext = {
   organizationId: string;
@@ -22,6 +27,11 @@ export type AssemblySourceContext = {
   blueprint: VentureBlueprint | null;
   opportunityName: string;
   opportunitySummary: string | null;
+  opportunityCandidateId?: string | null;
+  candidateTitle?: string | null;
+  candidateRank?: number | null;
+  origin?: string | null;
+  companyBuilderBlueprintId?: string | null;
 };
 
 function slugDomainCandidate(name: string): string {
@@ -56,7 +66,17 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
   readinessEvaluation: ReturnType<typeof evaluateLaunchReadiness>;
 } {
   const bp = ctx.blueprint;
-  const workingName = bp?.name ?? ctx.opportunityName;
+  const identity = buildCanonicalVentureAssemblyIdentity({
+    opportunityCandidateId: ctx.opportunityCandidateId,
+    opportunityId: ctx.opportunityId,
+    candidateTitle: ctx.candidateTitle,
+    workingName: bp?.name ?? ctx.opportunityName,
+    origin: ctx.origin ?? "venture_assembly",
+    rank: ctx.candidateRank,
+    blueprintId: ctx.companyBuilderBlueprintId ?? ctx.ventureBlueprintId,
+  });
+  const persisted = persistCanonicalVentureAssemblyIdentity(identity);
+  const workingName = identity.workingName;
   const ventureType = bp?.ventureType ?? ctx.projectType;
   const businessModel = bp?.businessModel ?? "digital_venture";
   const targetCustomer = bp?.targetAudience ?? "Defined in approved blueprint";
@@ -66,6 +86,10 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
 
   const identityPackage = {
     workingName,
+    displayName: identity.displayName,
+    opportunityCandidateId: identity.opportunityCandidateId,
+    origin: identity.origin,
+    rank: identity.rank,
     ventureDescription: problem,
     category: ventureType,
     positioning: valueProposition,
@@ -246,6 +270,7 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
     schemaVersion: VENTURE_ASSEMBLY_MANIFEST_SCHEMA_VERSION,
     ventureIdentity: {
       workingName,
+      displayName: identity.displayName,
       ventureType,
       businessModel,
       targetCustomer,
@@ -253,6 +278,10 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
       valueProposition,
       offer: String(businessModelPackage.offer.value),
     },
+    opportunityCandidateId: persisted.manifestLineage.opportunityCandidateId,
+    companyBuilderBlueprintId: persisted.manifestLineage.companyBuilderBlueprintId,
+    origin: persisted.manifestLineage.origin,
+    rank: persisted.manifestLineage.rank,
     traceability: {
       organizationId: ctx.organizationId,
       missionId: ctx.missionId,
@@ -376,9 +405,55 @@ export async function loadAssemblySourceContext(
 
   const { data: opp } = await admin
     .from("opportunities")
-    .select("name, summary")
+    .select("name, summary, source_snapshot")
     .eq("id", pe.opportunity_id)
     .maybeSingle();
+
+  const [{ data: mission }, { data: decision }, { data: plan }] = await Promise.all([
+    admin
+      .from("missions")
+      .select("constraints, objectives")
+      .eq("organization_id", input.organizationId)
+      .eq("id", input.missionId)
+      .maybeSingle(),
+    admin
+      .from("command_decisions")
+      .select("payload")
+      .eq("organization_id", input.organizationId)
+      .eq("id", pe.executive_decision_id ?? "")
+      .maybeSingle(),
+    admin
+      .from("plans")
+      .select("metadata")
+      .eq("organization_id", input.organizationId)
+      .eq("id", pe.plan_id ?? "")
+      .maybeSingle(),
+  ]);
+
+  const opportunityCandidateId = candidateIdFromLineageSources([
+    opp?.source_snapshot,
+    mission?.constraints,
+    mission?.objectives,
+    decision?.payload,
+    plan?.metadata,
+  ]);
+
+  let candidateTitle: string | null = null;
+  let candidateRank: number | null = null;
+  if (opportunityCandidateId) {
+    const { data: candidate } = await admin
+      .from("opportunity_candidates")
+      .select("title, rank_position")
+      .eq("organization_id", input.organizationId)
+      .eq("id", opportunityCandidateId)
+      .maybeSingle();
+    if (typeof candidate?.title === "string" && candidate.title.trim()) {
+      candidateTitle = candidate.title.trim();
+    }
+    if (typeof candidate?.rank_position === "number" && candidate.rank_position > 0) {
+      candidateRank = Math.floor(candidate.rank_position);
+    }
+  }
 
   if (!pe.build_id || !pe.build_job_id || !snapshot?.id) return null;
 
@@ -400,5 +475,10 @@ export async function loadAssemblySourceContext(
     blueprint,
     opportunityName: opp?.name ?? "Venture",
     opportunitySummary: opp?.summary ?? null,
+    opportunityCandidateId,
+    candidateTitle,
+    candidateRank,
+    origin: "venture_assembly",
+    companyBuilderBlueprintId: null,
   };
 }

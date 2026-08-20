@@ -6,6 +6,7 @@ import { CodingAgentStore } from "@/lib/infinity/coding-agents/store";
 import { CommercializationStore } from "@/lib/infinity/commercialization/store";
 import type { TreasuryStore } from "@/lib/infinity/treasury/store";
 import type { SelectionDecision } from "@/lib/infinity/venture-selection/constants";
+import { buildCanonicalVentureAssemblyIdentity } from "@/lib/infinity/venture-assembly/identity";
 import { PERFORMANCE_HOOKS, ZTP_STAGES, type ZtpFailureCode, type ZtpOrigin, type ZtpStage, type ZtpStatus } from "./constants";
 import { assembleCanonicalBlueprint, handoffFromAutonomous, handoffFromFounder } from "./handoff";
 import { validateBuildGraphForZtp, ownerForBuildTask } from "./graph";
@@ -127,6 +128,11 @@ function createRun(ctx: ZtpContext, input: ZtpRunInput): ZeroToProductionRun {
     founderIdeaSubmissionId: resolved.founderIdeaSubmissionId,
     opportunityCandidateId: resolved.opportunityCandidateId,
     ventureId: resolved.opportunityCandidateId,
+    canonicalVentureIdentity: buildCanonicalVentureAssemblyIdentity({
+      opportunityCandidateId: resolved.opportunityCandidateId,
+      candidateTitle: resolved.candidate?.title ?? resolved.submission?.title,
+      origin: resolved.origin,
+    }),
     ventureBlueprintId: null,
     missionId: `mission:ztp:${resolved.sourceEntityId}`,
     buildPackageId: null,
@@ -263,6 +269,15 @@ async function executeFrom(ctx: ZtpContext, run: ZeroToProductionRun, input: Ztp
 
   if (!candidate) return snapshot(ctx, fail(run, ctx, "SOURCE_INVALID", "OpportunityCandidate missing", "SOURCE"), false);
 
+  run.canonicalVentureIdentity = buildCanonicalVentureAssemblyIdentity({
+    opportunityCandidateId: candidate.id,
+    candidateTitle: candidate.title,
+    origin: run.origin,
+    blueprintId: run.ventureBlueprintId,
+  });
+  run.opportunityCandidateId = candidate.id;
+  run.ventureId = run.ventureId ?? candidate.id;
+
   if (!stageDone(ctx, run, "RESEARCH")) {
     checkpoint(ctx, run, "RESEARCH", "COMPLETE", {
       canonicalEntityType: "research_run",
@@ -337,6 +352,12 @@ async function executeFrom(ctx: ZtpContext, run: ZeroToProductionRun, input: Ztp
     run.ventureBlueprintId = assembled.blueprintId;
     run.buildPackageId = assembled.packageId;
     run.buildGraphId = assembled.graphId;
+    run.canonicalVentureIdentity = buildCanonicalVentureAssemblyIdentity({
+      opportunityCandidateId: candidate.id,
+      candidateTitle: candidate.title,
+      origin: run.origin,
+      blueprintId: assembled.blueprintId,
+    });
     checkpoint(ctx, run, "BLUEPRINT", "COMPLETE", {
       canonicalEntityType: "venture_blueprint",
       canonicalEntityId: assembled.blueprintId,

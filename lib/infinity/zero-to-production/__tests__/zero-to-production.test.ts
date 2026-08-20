@@ -45,6 +45,9 @@ describe("ztp-dry-run-closed-loop", () => {
     });
     expect(result.run.origin).toBe("FOUNDER_SUBMITTED");
     expect(result.run.opportunityCandidateId).toBeTruthy();
+    expect(result.run.canonicalVentureIdentity.opportunityCandidateId).toBe(result.run.opportunityCandidateId);
+    expect(result.run.canonicalVentureIdentity.workingName.length).toBeGreaterThan(0);
+    expect(result.run.canonicalVentureIdentity.origin).toBe("FOUNDER_SUBMITTED");
     expect(result.run.ventureBlueprintId).toBeTruthy();
     expect(result.buildPackage).toBeTruthy();
     expect(result.buildGraph?.tasks.length).toBeGreaterThan(0);

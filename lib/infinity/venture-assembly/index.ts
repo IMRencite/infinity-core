@@ -7,3 +7,4 @@ export * from "./persistence";
 export * from "./events";
 export * from "./packages";
 export * from "./orchestrator";
+export * from "./identity";

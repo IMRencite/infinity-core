@@ -1,3 +1,4 @@
+import type { CanonicalVentureAssemblyIdentity } from "@/lib/infinity/venture-assembly/identity";
 import type { SelectionDecision } from "@/lib/infinity/venture-selection/constants";
 import type { VentureBlueprintDraft, BuildPackageDraft, BuildGraph } from "@/lib/infinity/company-builder/types";
 import type { CodingAgentRun } from "@/lib/infinity/coding-agents/types";
@@ -28,6 +29,7 @@ export type ZeroToProductionRun = {
   founderIdeaSubmissionId: string | null;
   opportunityCandidateId: string;
   ventureId: string | null;
+  canonicalVentureIdentity: CanonicalVentureAssemblyIdentity;
   ventureBlueprintId: string | null;
   missionId: string | null;
   buildPackageId: string | null;
