@@ -75,3 +75,9 @@ export function loadCloudflareConfig(env: NodeJS.Dict<string> = process.env): Cl
 export function serializeCloudflarePublicConfig(config: CloudflarePublicConfig): CloudflarePublicConfig {
   return { ...config };
 }
+
+/** Account API tokens verify at /accounts/{id}/tokens/verify. User tokens verify at /user/tokens/verify. */
+export function cloudflareTokenVerifyPath(accountId: string | null): string {
+  if (accountId) return `/accounts/${encodeURIComponent(accountId)}/tokens/verify`;
+  return "/user/tokens/verify";
+}

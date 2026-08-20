@@ -7,7 +7,7 @@ import {
   parseNamecheapDomainInfo,
   parseNamecheapDomainList,
 } from "../providers/namecheap/normalize";
-import { loadCloudflareConfig } from "../providers/cloudflare/config";
+import { cloudflareTokenVerifyPath, loadCloudflareConfig } from "../providers/cloudflare/config";
 import { CloudflareReadAdapter } from "../providers/cloudflare/read-adapter";
 import { nextCloudflarePage, normalizeCloudflareRecord, normalizeCloudflareZone, redactRecordContent } from "../providers/cloudflare/normalize";
 import { buildProviderInventory } from "../probes/inventory";
@@ -282,6 +282,57 @@ describe("Registrar + DNS read-only adapters", () => {
     expect(writes).toBe(0);
     expect(report.tokenScope).toBe("UNKNOWN");
     await expect(async () => adapter.denyWrite("dns_record.create")).rejects.toMatchObject({ code: READ_ONLY_MUTATION_BLOCKED });
+  });
+
+  it("verifies account API tokens at the account endpoint, not the user endpoint", async () => {
+    const requested: string[] = [];
+    const fetchImpl = (async (url: RequestInfo | URL, init?: RequestInit) => {
+      const href = String(url);
+      requested.push(href);
+      expect(init?.method ?? "GET").toBe("GET");
+      if (href.includes("/user/tokens/verify")) return jsonResponse({ success: false }, 401);
+      if (href.includes("/accounts/acct-live/tokens/verify")) {
+        return jsonResponse({ success: true, result: { status: "active" } });
+      }
+      if (href.includes("/zones?") && href.includes("page=1")) {
+        return jsonResponse({
+          success: true,
+          result: [{ id: "zone-1", name: "example.com", status: "active", account: { id: "acct-live" } }],
+          result_info: { page: 1, total_pages: 1, total_count: 1 },
+        });
+      }
+      if (href.endsWith("/zones/zone-1")) {
+        return jsonResponse({ success: true, result: { id: "zone-1", name: "example.com", status: "active" } });
+      }
+      if (href.includes("/dns_records?")) {
+        return jsonResponse({
+          success: true,
+          result: [{ id: "rec-1", type: "A", name: "example.com", content: "192.0.2.1", ttl: 300 }],
+          result_info: { page: 1, total_pages: 1, total_count: 1 },
+        });
+      }
+      if (href.endsWith("/dns_records/rec-1")) {
+        return jsonResponse({ success: true, result: { id: "rec-1", type: "A", name: "example.com" } });
+      }
+      return jsonResponse({ success: false }, 404);
+    }) as typeof fetch;
+    const adapter = new CloudflareReadAdapter({
+      env: {
+        CLOUDFLARE_ENABLED: "true",
+        CLOUDFLARE_API_TOKEN: "cloudflare-test-token-fixture",
+        CLOUDFLARE_ACCOUNT_ID: "acct-live",
+      },
+      fetchImpl,
+    });
+    const report = await adapter.verifyReadOnly();
+    expect(cloudflareTokenVerifyPath("acct-live")).toBe("/accounts/acct-live/tokens/verify");
+    expect(cloudflareTokenVerifyPath(null)).toBe("/user/tokens/verify");
+    expect(requested.some((href) => href.includes("/accounts/acct-live/tokens/verify"))).toBe(true);
+    expect(requested.some((href) => href.includes("/user/tokens/verify"))).toBe(false);
+    expect(report.status).toBe("READ_ONLY_VERIFIED");
+    expect(report.authRead).toBe(true);
+    expect(JSON.stringify(report)).not.toContain("cloudflare-test-token-fixture");
+    expect(report.writeHttpCalls).toBe(0);
   });
 
   it("maps Cloudflare auth failure and does not mark verified", async () => {

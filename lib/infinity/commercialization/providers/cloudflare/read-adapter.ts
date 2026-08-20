@@ -6,6 +6,7 @@ import {
   CLOUDFLARE_MAX_PAGES,
   CLOUDFLARE_PAGE_SIZE,
   CLOUDFLARE_RECORD_DETAIL_CAP,
+  cloudflareTokenVerifyPath,
   loadCloudflareConfig,
   type CloudflareCredentials,
   type CloudflareResolvedConfig,
@@ -134,7 +135,7 @@ export class CloudflareReadAdapter {
     const zones: NormalizedCloudflareZone[] = [];
     const records: NormalizedCloudflareRecord[] = [];
     try {
-      await this.getJson(this.config.credentials, "/user/tokens/verify");
+      await this.getJson(this.config.credentials, cloudflareTokenVerifyPath(this.config.public.accountId));
 
       let page = 1;
       let totalCount: number | null = null;
