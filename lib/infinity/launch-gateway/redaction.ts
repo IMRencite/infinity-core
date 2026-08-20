@@ -1,7 +1,12 @@
 const SECRET_PATTERNS = [
   /ghp_[a-zA-Z0-9]{20,}/g,
   /github_pat_[a-zA-Z0-9_]{20,}/g,
+  /sk_live_[a-zA-Z0-9]{8,}/g,
+  /sk_test_[a-zA-Z0-9]{8,}/g,
   /sk-[a-zA-Z0-9]{20,}/g,
+  /whsec_[a-zA-Z0-9]{8,}/g,
+  /vcp_[a-zA-Z0-9]{8,}/g,
+  /vercel_[a-zA-Z0-9]{12,}/gi,
   /\bBearer\s+[a-zA-Z0-9._-]{20,}/gi,
 ];
 

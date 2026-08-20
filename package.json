@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "verify:commercialization-providers": "node scripts/verify-commercialization-providers.mjs",
     "db:push": "npx supabase@latest db push --yes",
     "db:types": "node scripts/generate-db-types.mjs",
     "validate:worker-e2e": "node scripts/validate-worker-e2e.mjs",

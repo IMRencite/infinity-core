@@ -10,6 +10,9 @@ import { loadFounderIdeaHqArtifacts } from "@/lib/infinity/founder-idea-lab/hq/l
 import { mergeRoomArtifacts } from "@/lib/infinity/founder-idea-lab/hq/merge";
 import { emptyCodingHqReadModel, buildCodingHqArtifacts } from "@/lib/infinity/coding-agents/hq/read-model";
 import { emptyZtpHqReadModel, buildZtpHqArtifacts } from "@/lib/infinity/zero-to-production/hq/read-model";
+import { buildProviderInventory } from "@/lib/infinity/commercialization/probes/inventory";
+import { buildProviderReadinessArtifacts } from "@/lib/infinity/commercialization/hq/build-provider-readiness-artifacts";
+import { loadPersistedProviderVerifications } from "@/lib/infinity/commercialization/hq/load-provider-verifications";
 import { HqIdleShell } from "@/components/dashboard/operator-console/hq-idle-shell";
 import { VentureOperatorConsole } from "@/components/dashboard/operator-console/venture-operator-console";
 
@@ -25,10 +28,11 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
   const orgContext = result;
 
   const admin = createAdminClient();
-  const [ctx, portfolioSummary, founderArtifacts, loadedTreasury] = await Promise.all([
+  const [ctx, portfolioSummary, founderArtifacts, persistedProviderVerifications, loadedTreasury] = await Promise.all([
     loadHqDashboardContext(admin, orgContext.organizationId, ventureId ?? null),
     loadPortfolioSummary(admin, orgContext.organizationId),
     loadFounderIdeaHqArtifacts(admin as never, orgContext.organizationId),
+    loadPersistedProviderVerifications(admin as never, orgContext.organizationId),
     loadTreasuryHqForOrg(admin, orgContext.organizationId),
   ]);
 
@@ -42,12 +46,16 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
   const codingArtifacts = buildCodingHqArtifacts(codingSummary);
   const ztpSummary = emptyZtpHqReadModel(orgContext.organizationId);
   const ztpArtifacts = buildZtpHqArtifacts(ztpSummary);
+  const providerArtifacts = buildProviderReadinessArtifacts(buildProviderInventory(), persistedProviderVerifications);
   const mergedArtifacts = mergeRoomArtifacts(
     mergeRoomArtifacts(
-      mergeRoomArtifacts(mergeTreasuryArtifacts(ctx.snapshot.roomArtifacts, treasuryArtifacts), founderArtifacts),
-      codingArtifacts,
+      mergeRoomArtifacts(
+        mergeRoomArtifacts(mergeTreasuryArtifacts(ctx.snapshot.roomArtifacts, treasuryArtifacts), founderArtifacts),
+        codingArtifacts,
+      ),
+      ztpArtifacts,
     ),
-    ztpArtifacts,
+    providerArtifacts,
   );
   const snapshot = {
     ...ctx.snapshot,
@@ -61,6 +69,7 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
         ...(founderArtifacts[dept.id] ?? []),
         ...(codingArtifacts[dept.id] ?? []),
         ...(ztpArtifacts[dept.id] ?? []),
+        ...(providerArtifacts[dept.id] ?? []),
       ],
     })),
   };

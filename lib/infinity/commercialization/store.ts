@@ -40,6 +40,7 @@ export class CommercializationStore {
   checkouts = new Map<string, CommercialCheckoutConfiguration>();
   paymentEvents = new Map<string, CommercialPaymentEvent>();
   entitlements = new Map<string, CommercialEntitlement>();
+  providerVerifications = new Map<string, import("./probes/status").CommercialProviderVerification>();
 
   idempotencyIndex = new Map<string, string>();
 

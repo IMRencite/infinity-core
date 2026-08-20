@@ -107,6 +107,7 @@ export type LaunchReadinessReport = {
   fulfillmentReady: boolean;
   telemetryReady: boolean;
   noUnresolvedHighCritical: boolean;
+  providerReadinessVerified: boolean;
   result: ZtpReadiness;
   publiclyLaunched: false;
   label: "READY_FOR_CONTROLLED_LAUNCH" | "DEGRADED" | "BLOCKED";

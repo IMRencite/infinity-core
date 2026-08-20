@@ -1,6 +1,7 @@
 import type { LaunchReadinessReport, ZeroToProductionRun } from "./types";
 import type { BuildPackageDraft } from "@/lib/infinity/company-builder/types";
 import type { CommercializationPlan } from "@/lib/infinity/commercialization/types";
+import type { ProviderCapabilityStatus, ProviderVerificationFreshness } from "@/lib/infinity/commercialization/probes/status";
 
 export function evaluateLaunchReadiness(input: {
   run: ZeroToProductionRun;
@@ -8,6 +9,13 @@ export function evaluateLaunchReadiness(input: {
   commercializationPlan: CommercializationPlan | null;
   treasuryReady: boolean;
   domainRequirementReady: boolean;
+  providerVerification?: {
+    registrar: ProviderCapabilityStatus;
+    dns: ProviderCapabilityStatus;
+    hosting: ProviderCapabilityStatus;
+    payments: ProviderCapabilityStatus;
+    freshness: ProviderVerificationFreshness;
+  } | null;
 }): LaunchReadinessReport {
   const businessDecisionValid = input.run.businessOutcome === "BUILD_AUTHORIZED";
   const ventureBlueprintReady = Boolean(input.run.ventureBlueprintId);
@@ -21,6 +29,14 @@ export function evaluateLaunchReadiness(input: {
   const telemetryReady = input.run.performanceHooksDeclared.length > 0;
   const hostingRequirementReady = Boolean(input.commercializationPlan?.hostingRequirements);
   const noUnresolvedHighCritical = !input.run.failureCode && input.run.stale === false;
+  const providerReadinessVerified =
+    input.providerVerification?.freshness === "VERIFIED_FRESH" &&
+    [
+      input.providerVerification.registrar,
+      input.providerVerification.dns,
+      input.providerVerification.hosting,
+      input.providerVerification.payments,
+    ].every((status) => status === "READ_ONLY_VERIFIED" || status === "DEGRADED");
   const checks = [
     businessDecisionValid,
     ventureBlueprintReady,
@@ -54,6 +70,7 @@ export function evaluateLaunchReadiness(input: {
     fulfillmentReady,
     telemetryReady,
     noUnresolvedHighCritical,
+    providerReadinessVerified,
     result,
     publiclyLaunched: false,
     label: result === "READY" ? "READY_FOR_CONTROLLED_LAUNCH" : result,
