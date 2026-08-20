@@ -4,6 +4,8 @@ import { commitmentTotals } from "../commitments/recurring";
 import { composeTreasuryState } from "../state/compose";
 import { TreasuryStore } from "../store";
 import type { EpistemicAmount, FinancialActionRequest, RecurringCommitment, TreasuryBudget, TreasuryState, TreasuryTransaction, VentureCapitalAllocation } from "../types";
+import type { MercuryPublicConfig } from "../providers/mercury/config";
+import { buildMercuryHqStatus, type MercuryHqStatus } from "./mercury-status";
 
 export type TruthfulHqValue = {
   display: string;
@@ -99,6 +101,7 @@ export type TreasuryHqReadModel = {
   monthlyRecurring: TruthfulHqValue;
   annualizedRecurring: TruthfulHqValue;
   requests: FinancialActionRequest[];
+  mercury: MercuryHqStatus;
 };
 
 export function formatHqAmount(amount: EpistemicAmount | null | undefined, stale = false): TruthfulHqValue {
@@ -112,14 +115,15 @@ export function formatHqAmount(amount: EpistemicAmount | null | undefined, stale
   return { display: `${formatted} ACTUAL`, actuality: "ACTUAL", stale: false };
 }
 
-export function emptyTreasuryHqReadModel(organizationId: string): TreasuryHqReadModel {
-  return buildTreasuryHqReadModel(new TreasuryStore(), organizationId);
+export function emptyTreasuryHqReadModel(organizationId: string, mercury?: MercuryPublicConfig | null): TreasuryHqReadModel {
+  return buildTreasuryHqReadModel(new TreasuryStore(), organizationId, undefined, { mercury });
 }
 
 export function buildTreasuryHqReadModel(
   store: TreasuryStore,
   organizationId: string,
   composeInput?: Parameters<typeof composeTreasuryState>[1],
+  options?: { mercury?: MercuryPublicConfig | null },
 ): TreasuryHqReadModel {
   store.queryCount = 0;
   const started = store.queryCount;
@@ -132,7 +136,10 @@ export function buildTreasuryHqReadModel(
   );
 
   const constraints = buildConstraintRows(store, organizationId, policy);
-  const connection = store.scoped(organizationId, store.connections)[0] ?? null;
+  const mercury = buildMercuryHqStatus(store, organizationId, options?.mercury);
+  const connections = store.scoped(organizationId, store.connections);
+  const mercuryConnection = connections.find((connection) => connection.provider === "mercury") ?? null;
+  const connection = mercuryConnection ?? connections[0] ?? null;
   const ventures = store.scoped(organizationId, store.allocations).map((allocation) => toVentureRow(allocation));
   const ventureBudgets = store
     .budgetsForOrg(organizationId)
@@ -170,7 +177,7 @@ export function buildTreasuryHqReadModel(
       netProfit: formatHqAmount(state.profit),
     },
     treasurySource: "Internal manual ledger",
-    bankingProvider: connection?.provider ?? "Not configured",
+    bankingProvider: mercury.health === "NOT_CONFIGURED" ? connection?.provider ?? "Not configured" : "Mercury",
     freshnessLabel:
       state.providerFreshness === "FRESH"
         ? "FRESH"
@@ -187,6 +194,7 @@ export function buildTreasuryHqReadModel(
     monthlyRecurring: formatHqAmount(totals.monthlyRecurring),
     annualizedRecurring: formatHqAmount(totals.annualizedRecurring),
     requests,
+    mercury,
   };
 }
 

@@ -158,6 +158,46 @@ export const PROVIDER_FRESHNESS_STATES = [
 
 export type ProviderFreshness = (typeof PROVIDER_FRESHNESS_STATES)[number];
 
+export const PROVIDER_HEALTH_STATES = [
+  "NOT_CONFIGURED",
+  "CONFIGURED",
+  "READ_ONLY_VERIFIED",
+  "DEGRADED",
+  "AUTH_FAILED",
+  "RATE_LIMITED",
+  "UNAVAILABLE",
+] as const;
+
+export type ProviderHealth = (typeof PROVIDER_HEALTH_STATES)[number];
+
+export const PROVIDER_ENVIRONMENTS = ["DISABLED", "SANDBOX", "PRODUCTION"] as const;
+export type ProviderEnvironment = (typeof PROVIDER_ENVIRONMENTS)[number];
+
+export const PROVIDER_TRUTH_CLASSES = ["INTERNAL_MANUAL", "PROVIDER_SANDBOX", "PROVIDER_PRODUCTION"] as const;
+export type ProviderTruthClass = (typeof PROVIDER_TRUTH_CLASSES)[number];
+
+export const PROVIDER_DATA_ACTUALITIES = ["SANDBOX_PROVIDER_DATA", "PRODUCTION_PROVIDER_DATA"] as const;
+export type ProviderDataActuality = (typeof PROVIDER_DATA_ACTUALITIES)[number];
+
+export const MERCURY_SANDBOX_BASE_URL = "https://api-sandbox.mercury.com/api/v1/";
+export const MERCURY_PRODUCTION_BASE_URL = "https://api.mercury.com/api/v1/";
+
+export const MERCURY_V1_READ_CAPABILITIES = ["ACCOUNT_READ", "BALANCE_READ", "TRANSACTION_READ"] as const;
+
+export const MERCURY_V1_DENIED_CAPABILITIES = [
+  "SEND_MONEY",
+  "CREATE_RECIPIENT",
+  "RECIPIENT_CREATE",
+  "INTERNAL_TRANSFER_WRITE",
+  "CARD_WRITE",
+  "CARD_CREATE",
+  "CARD_LIMIT_UPDATE",
+  "CARD_FREEZE",
+  "PAYMENT_WRITE",
+  "PAYMENT_CREATE",
+  "TRANSACTION_METADATA_WRITE",
+] as const;
+
 export const ACTUALITY_STATES = ["ACTUAL", "ESTIMATE", "UNKNOWN"] as const;
 export type Actuality = (typeof ACTUALITY_STATES)[number];
 
@@ -204,6 +244,9 @@ export const FORBIDDEN_TREASURY_SERIALIZATION_FIELDS = [
   "webhookSecret",
   "privateKey",
   "clientSecret",
+  "apiToken",
+  "mercuryToken",
+  "MERCURY_API_TOKEN",
 ] as const;
 
 export const TREASURY_HQ_SECTIONS = [

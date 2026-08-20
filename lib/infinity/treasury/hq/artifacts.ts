@@ -46,6 +46,14 @@ export function buildTreasuryHqArtifacts(
       bankingProvider: model.bankingProvider,
       freshness: model.freshnessLabel,
       fundingClass: "INTERNAL / MANUAL / NON-BANK",
+      mercuryProvider: model.mercury.provider,
+      mercuryStatus: model.mercury.statusLabel,
+      mercuryEnvironment: model.mercury.environment,
+      mercuryHealth: model.mercury.health,
+      mercuryLastSync: model.mercury.lastSuccessfulSync,
+      mercuryAccountCount: model.mercury.accountCount,
+      mercuryProviderBalance: model.mercury.providerBalance.display,
+      mercuryTransactionFreshness: model.mercury.transactionFreshness,
     },
   });
 

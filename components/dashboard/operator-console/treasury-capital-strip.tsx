@@ -47,6 +47,9 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
           <p className={attention || stale ? "text-[11px] uppercase tracking-[0.16em] text-amber-200" : "text-[11px] uppercase tracking-[0.16em] text-zinc-500"}>
             {statusLabel}
           </p>
+          <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+            Mercury · {model.mercury.statusLabel}
+          </p>
         </div>
         {onInspect ? (
           <button
@@ -73,6 +76,11 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
             label="Bank cash"
             value={model.cards.totalCash.display}
             hint={stale ? "Provider state not current" : model.state.providerFreshness === "NOT_CONFIGURED" ? "Banking provider not configured" : null}
+          />
+          <Cell
+            label="Mercury"
+            value={model.mercury.statusLabel}
+            hint={`${model.mercury.environment} · last sync ${model.mercury.lastSuccessfulSync ?? "NONE"} · accounts ${model.mercury.accountCount} · ${model.mercury.providerBalance.display}`}
           />
           <Cell label="Reserved capital" value={model.cards.reservedCapital.display} />
           <Cell label="Committed capital" value={model.cards.committedCapital.display} />

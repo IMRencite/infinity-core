@@ -1,5 +1,5 @@
 import { DEFAULT_CURRENCY } from "../constants";
-import type { LedgerEntryType, LedgerSubtype, ProviderTransactionClass, TreasuryBudgetCategory } from "../constants";
+import type { LedgerEntryType, LedgerSubtype, ProviderTransactionClass, ProviderTruthClass, TreasuryBudgetCategory } from "../constants";
 import { newId, nowIso, type TreasuryStore } from "../store";
 import { actualAmount, type EpistemicAmount, type TreasuryLedgerEntry, type TreasuryTransaction } from "../types";
 
@@ -71,6 +71,7 @@ export function ingestProviderTransaction(
     authorizationId?: string | null;
     occurredAt: string;
     status?: TreasuryTransaction["status"];
+    truthClass?: ProviderTruthClass;
   },
 ): { transaction: TreasuryTransaction; ledger: TreasuryLedgerEntry | null; duplicate: boolean } {
   const existing = store.findTransactionByProviderId(input.organizationId, input.provider, input.providerTransactionId);
@@ -103,8 +104,9 @@ export function ingestProviderTransaction(
   store.registerProviderTransaction(input.organizationId, input.provider, input.providerTransactionId, transaction.transactionId);
 
   const mapped = mapClassificationToLedger(input.classification);
+  const skipLedger = input.truthClass === "PROVIDER_SANDBOX";
   const ledger =
-    mapped && input.classification !== "UNKNOWN"
+    !skipLedger && mapped && input.classification !== "UNKNOWN"
       ? recordLedgerEntry(store, {
           organizationId: input.organizationId,
           ventureId: input.ventureId,

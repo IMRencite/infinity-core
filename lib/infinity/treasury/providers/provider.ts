@@ -34,6 +34,33 @@ export class ProviderUnavailableError extends Error {
   }
 }
 
+export class ProviderAuthFailedError extends Error {
+  readonly code = "AUTH_FAILED";
+  constructor(providerKey: string) {
+    super("AUTH_FAILED");
+    this.name = "ProviderAuthFailedError";
+    void providerKey;
+  }
+}
+
+export class ProviderRateLimitedError extends Error {
+  readonly code = "RATE_LIMITED";
+  constructor(providerKey: string) {
+    super("RATE_LIMITED");
+    this.name = "ProviderRateLimitedError";
+    void providerKey;
+  }
+}
+
+export class ProviderTimeoutError extends Error {
+  readonly code = "TIMEOUT";
+  constructor(providerKey: string) {
+    super("TIMEOUT");
+    this.name = "ProviderTimeoutError";
+    void providerKey;
+  }
+}
+
 export type CreateVirtualCardInput = {
   purpose: string;
   dailyLimitUsd?: number | null;

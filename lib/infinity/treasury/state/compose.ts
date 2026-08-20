@@ -44,11 +44,16 @@ export function composeTreasuryState(store: TreasuryStore, input: ComposeTreasur
   }
 
   let totalCash: EpistemicAmount;
-  if (freshness === "FRESH" && input.providerCurrentBalanceUsd != null) {
+  const sandboxProvider = cached?.source === "PROVIDER_SANDBOX" || cached?.truthClass === "PROVIDER_SANDBOX";
+  if (sandboxProvider) {
+    totalCash = unknownAmount();
+  } else if (freshness === "FRESH" && input.providerCurrentBalanceUsd != null) {
     totalCash = actualAmount(input.providerCurrentBalanceUsd);
   } else if (freshness === "FRESH" && cached?.source === "PROVIDER" && cached.current.value != null) {
     totalCash = { ...cached.current, actuality: "ACTUAL" };
-  } else if ((freshness === "STALE" || freshness === "UNAVAILABLE") && cached?.current.value != null) {
+  } else if (freshness === "FRESH" && cached?.source === "PROVIDER_PRODUCTION" && cached.current.value != null) {
+    totalCash = { ...cached.current, actuality: "ACTUAL" };
+  } else if ((freshness === "STALE" || freshness === "UNAVAILABLE") && cached?.current.value != null && cached.source !== "PROVIDER_SANDBOX") {
     totalCash = estimateAmount(cached.current.value, cached.current.currency);
   } else {
     totalCash = unknownAmount();

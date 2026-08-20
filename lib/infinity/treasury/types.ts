@@ -11,8 +11,12 @@ import type {
   FinancialProviderKey,
   LedgerEntryType,
   LedgerSubtype,
+  ProviderDataActuality,
+  ProviderEnvironment,
   ProviderFreshness,
+  ProviderHealth,
   ProviderTransactionClass,
+  ProviderTruthClass,
   ReservationStatus,
   TreasuryBudgetCategory,
 } from "./constants";
@@ -38,6 +42,14 @@ export function estimateAmount(value: number, currency = "USD"): EpistemicAmount
   return { value, actuality: "ESTIMATE", currency };
 }
 
+export type ProviderProvenance = {
+  source: "MERCURY" | "MOCK" | string;
+  environment: ProviderEnvironment;
+  actuality: ProviderDataActuality | Actuality;
+  truthClass: ProviderTruthClass;
+  fetchedAt: string;
+};
+
 export type ProviderAccount = {
   accountId: string;
   provider: FinancialProviderKey | string;
@@ -46,6 +58,8 @@ export type ProviderAccount = {
   accountKind: "CHECKING" | "SAVINGS" | "TREASURY" | "CARD" | "OTHER";
   externalAccountId: string;
   status: "ACTIVE" | "FROZEN" | "CLOSED" | "UNKNOWN";
+  fetchedAt?: string;
+  provenance?: ProviderProvenance;
 };
 
 export type ProviderBalance = {
@@ -53,6 +67,8 @@ export type ProviderBalance = {
   available: EpistemicAmount;
   current: EpistemicAmount;
   asOf: string;
+  provenance?: ProviderProvenance;
+  truthClass?: ProviderTruthClass;
 };
 
 export type ProviderTransaction = {
@@ -64,6 +80,9 @@ export type ProviderTransaction = {
   description: string | null;
   occurredAt: string;
   status: "PENDING" | "POSTED" | "FAILED" | "REVERSED";
+  providerCategory?: string | null;
+  counterparty?: string | null;
+  provenance?: ProviderProvenance;
 };
 
 export type ProviderCard = {
@@ -105,6 +124,9 @@ export type FinancialProviderConfig = {
   displayName: string;
   capabilities: ProviderCapabilityMap;
   connectionStatus: "NOT_CONFIGURED" | "CONFIGURED" | "DEGRADED" | "UNAVAILABLE";
+  health?: ProviderHealth;
+  environment?: ProviderEnvironment;
+  truthClass?: ProviderTruthClass;
 };
 
 export type TreasuryProviderConnection = {
@@ -112,6 +134,9 @@ export type TreasuryProviderConnection = {
   organizationId: string;
   provider: string;
   connectionStatus: "NOT_CONFIGURED" | "CONFIGURED" | "DEGRADED" | "UNAVAILABLE";
+  health?: ProviderHealth;
+  environment?: ProviderEnvironment;
+  truthClass?: ProviderTruthClass;
   externalAccountIds: string[];
   capabilities: FinancialCapability[];
   lastSyncAt: string | null;
@@ -136,7 +161,9 @@ export type TreasuryBalanceSnapshot = {
   available: EpistemicAmount;
   current: EpistemicAmount;
   capturedAt: string;
-  source: "PROVIDER" | "CACHE";
+  source: "PROVIDER" | "CACHE" | "PROVIDER_SANDBOX" | "PROVIDER_PRODUCTION" | "INTERNAL_MANUAL";
+  truthClass?: ProviderTruthClass;
+  provenance?: ProviderProvenance;
 };
 
 export type TreasuryTransaction = {

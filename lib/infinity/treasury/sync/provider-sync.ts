@@ -1,7 +1,14 @@
 import { TREASURY_STALE_AFTER_MS } from "../config";
 import { ingestProviderTransaction } from "../ledger/engine";
 import { createRecurringCommitment } from "../commitments/recurring";
-import { ProviderUnavailableError } from "../providers/provider";
+import {
+  ProviderAuthFailedError,
+  ProviderRateLimitedError,
+  ProviderTimeoutError,
+  ProviderUnavailableError,
+} from "../providers/provider";
+import { mercuryHealthFromError } from "../providers/mercury/health";
+import { mercurySafeErrorMessage } from "../providers/mercury/redact";
 import { newId, nowIso, type TreasuryStore } from "../store";
 import type {
   ProviderSyncResult,
@@ -10,6 +17,7 @@ import type {
   TreasuryProviderConnection,
 } from "../types";
 import type { FinancialProvider } from "../providers/provider";
+import type { ProviderTruthClass } from "../constants";
 
 export function classifyFreshness(lastSyncAt: string | null, now = new Date(), staleAfterMs = TREASURY_STALE_AFTER_MS) {
   if (!lastSyncAt) return "NOT_CONFIGURED" as const;
@@ -17,6 +25,20 @@ export function classifyFreshness(lastSyncAt: string | null, now = new Date(), s
   if (!Number.isFinite(age) || age < 0) return "STALE" as const;
   if (age > staleAfterMs) return "STALE" as const;
   return "FRESH" as const;
+}
+
+function snapshotSourceFor(provider: FinancialProvider): TreasuryBalanceSnapshot["source"] {
+  if (provider.config.truthClass === "PROVIDER_SANDBOX" || provider.config.environment === "SANDBOX") {
+    return "PROVIDER_SANDBOX";
+  }
+  if (provider.config.truthClass === "PROVIDER_PRODUCTION" || provider.config.environment === "PRODUCTION") {
+    return "PROVIDER_PRODUCTION";
+  }
+  return "PROVIDER";
+}
+
+function truthClassFor(provider: FinancialProvider): ProviderTruthClass | undefined {
+  return provider.config.truthClass;
 }
 
 export async function syncFinancialProvider(
@@ -29,9 +51,12 @@ export async function syncFinancialProvider(
 ): Promise<ProviderSyncResult> {
   const now = input.now ?? new Date();
   const providerKey = input.provider.config.providerKey;
-  const connection = ensureConnection(store, input.organizationId, providerKey, input.provider.config.capabilities);
+  const connection = ensureConnection(store, input.organizationId, providerKey, input.provider.config);
 
   if (input.provider.config.connectionStatus === "NOT_CONFIGURED") {
+    connection.connectionStatus = "NOT_CONFIGURED";
+    connection.health = "NOT_CONFIGURED";
+    store.connections.set(connection.connectionId, connection);
     return emptySync(input.organizationId, "NOT_CONFIGURED", "PROVIDER_NOT_CONFIGURED");
   }
 
@@ -57,6 +82,8 @@ export async function syncFinancialProvider(
       accountsUpserted += 1;
     }
 
+    const source = snapshotSourceFor(input.provider);
+    const truthClass = truthClassFor(input.provider);
     let balancesUpserted = 0;
     for (const balance of balances) {
       const snapshot: TreasuryBalanceSnapshot = {
@@ -66,7 +93,9 @@ export async function syncFinancialProvider(
         available: balance.available,
         current: balance.current,
         capturedAt: nowIso(now),
-        source: "PROVIDER",
+        source,
+        truthClass: balance.truthClass ?? truthClass,
+        provenance: balance.provenance,
       };
       store.balanceSnapshots.set(`${input.organizationId}:${balance.accountId}:latest`, snapshot);
       store.balanceSnapshots.set(snapshot.snapshotId, snapshot);
@@ -86,6 +115,7 @@ export async function syncFinancialProvider(
         merchant: txn.merchant,
         occurredAt: txn.occurredAt,
         status: txn.status,
+        truthClass,
       });
       if (result.duplicate) duplicate += 1;
       else ingested += 1;
@@ -109,7 +139,14 @@ export async function syncFinancialProvider(
 
     connection.lastSyncAt = nowIso(now);
     connection.connectionStatus = "CONFIGURED";
+    connection.health = "READ_ONLY_VERIFIED";
+    connection.environment = input.provider.config.environment;
+    connection.truthClass = truthClass;
+    connection.externalAccountIds = accounts.map((account) => account.externalAccountId);
     store.connections.set(connection.connectionId, connection);
+    if ("markHealth" in input.provider && typeof input.provider.markHealth === "function") {
+      input.provider.markHealth("READ_ONLY_VERIFIED");
+    }
 
     return {
       organizationId: input.organizationId,
@@ -124,12 +161,31 @@ export async function syncFinancialProvider(
       reason: null,
     };
   } catch (error) {
-    const unavailable = error instanceof ProviderUnavailableError || (error instanceof Error && error.name === "ProviderUnavailableError");
-    connection.connectionStatus = "UNAVAILABLE";
+    const health = mercuryHealthFromError(error);
+    const unavailable =
+      error instanceof ProviderUnavailableError ||
+      error instanceof ProviderAuthFailedError ||
+      error instanceof ProviderRateLimitedError ||
+      error instanceof ProviderTimeoutError ||
+      (error instanceof Error &&
+        (error.name === "ProviderUnavailableError" ||
+          error.name === "ProviderAuthFailedError" ||
+          error.name === "ProviderRateLimitedError" ||
+          error.name === "ProviderTimeoutError"));
+    connection.connectionStatus = health === "DEGRADED" ? "DEGRADED" : "UNAVAILABLE";
+    connection.health = health;
     store.connections.set(connection.connectionId, connection);
+    const reasonCode =
+      health === "AUTH_FAILED"
+        ? "AUTH_FAILED"
+        : health === "RATE_LIMITED"
+          ? "RATE_LIMITED"
+          : unavailable
+            ? "PROVIDER_UNAVAILABLE"
+            : "SYNC_FAILED";
     return {
       organizationId: input.organizationId,
-      freshness: unavailable ? "UNAVAILABLE" : "UNAVAILABLE",
+      freshness: "UNAVAILABLE",
       lastProviderSyncAt: connection.lastSyncAt,
       accountsUpserted: 0,
       balancesUpserted: 0,
@@ -137,7 +193,7 @@ export async function syncFinancialProvider(
       transactionsDuplicate: 0,
       commitmentsUpserted: 0,
       degraded: true,
-      reason: unavailable ? "PROVIDER_UNAVAILABLE" : error instanceof Error ? error.message : "SYNC_FAILED",
+      reason: mercurySafeErrorMessage(reasonCode, null),
     };
   }
 }
@@ -146,17 +202,24 @@ function ensureConnection(
   store: TreasuryStore,
   organizationId: string,
   provider: string,
-  capabilities: Record<string, boolean | undefined>,
+  config: FinancialProvider["config"],
 ): TreasuryProviderConnection {
   const existing = [...store.connections.values()].find((c) => c.organizationId === organizationId && c.provider === provider);
-  if (existing) return existing;
+  if (existing) {
+    existing.environment = config.environment ?? existing.environment;
+    existing.truthClass = config.truthClass ?? existing.truthClass;
+    return existing;
+  }
   const created: TreasuryProviderConnection = {
     connectionId: newId(),
     organizationId,
     provider,
-    connectionStatus: "CONFIGURED",
+    connectionStatus: config.connectionStatus === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED",
+    health: config.health ?? (config.connectionStatus === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : "CONFIGURED"),
+    environment: config.environment,
+    truthClass: config.truthClass,
     externalAccountIds: [],
-    capabilities: Object.entries(capabilities)
+    capabilities: Object.entries(config.capabilities)
       .filter(([, enabled]) => enabled)
       .map(([name]) => name) as TreasuryProviderConnection["capabilities"],
     lastSyncAt: null,
@@ -207,4 +270,17 @@ export function cacheBalanceSnapshot(
 
 export function latestBalanceSnapshot(store: TreasuryStore, organizationId: string, accountId: string): TreasuryBalanceSnapshot | null {
   return store.balanceSnapshots.get(`${organizationId}:${accountId}:latest`) ?? null;
+}
+
+export function latestBalanceSnapshotsForOrg(store: TreasuryStore, organizationId: string): TreasuryBalanceSnapshot[] {
+  const seen = new Set<string>();
+  const out: TreasuryBalanceSnapshot[] = [];
+  for (const account of store.scoped(organizationId, store.accounts)) {
+    const snapshot = latestBalanceSnapshot(store, organizationId, account.accountId);
+    if (snapshot && !seen.has(snapshot.accountId)) {
+      seen.add(snapshot.accountId);
+      out.push(snapshot);
+    }
+  }
+  return out;
 }

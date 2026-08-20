@@ -7,10 +7,24 @@ export type { FinancialProviderConfig } from "./types";
 export {
   UnsupportedCapabilityError,
   ProviderUnavailableError,
+  ProviderAuthFailedError,
+  ProviderRateLimitedError,
+  ProviderTimeoutError,
   UNSUPPORTED_CAPABILITY,
   assertCapability,
   advertiseCapabilities,
 } from "./providers/provider";
+export {
+  MercuryFinancialProvider,
+  createMercuryFinancialProvider,
+  isMercurySandboxConfigured,
+  loadMercuryConfig,
+  loadMercuryPublicConfig,
+  mercuryWriteCallCount,
+} from "./providers/mercury";
+export type { MercuryPublicConfig } from "./providers/mercury";
+export { buildMercuryHqStatus } from "./hq/mercury-status";
+export type { MercuryHqStatus } from "./hq/mercury-status";
 export {
   computeAvailable,
   createBudget,
@@ -59,7 +73,7 @@ export {
 } from "./commitments/recurring";
 export { computeCapitalEfficiency, ratioWhenKnown, actualProfitOrUnknown, CAPITAL_FLYWHEEL } from "./economics";
 export { ingestCommercialRevenueEvent, recordCapitalContribution } from "./revenue/ingest";
-export { syncFinancialProvider, cacheBalanceSnapshot, latestBalanceSnapshot, classifyFreshness } from "./sync/provider-sync";
+export { syncFinancialProvider, cacheBalanceSnapshot, latestBalanceSnapshot, latestBalanceSnapshotsForOrg, classifyFreshness } from "./sync/provider-sync";
 export { composeTreasuryState } from "./state/compose";
 export { buildTreasuryHqReadModel, emptyTreasuryHqReadModel, formatHqAmount } from "./hq/read-model";
 export type { TreasuryHqReadModel, TruthfulHqValue, TreasuryHqVentureRow, TreasuryHqBudgetRow } from "./hq/read-model";

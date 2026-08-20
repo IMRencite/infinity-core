@@ -249,12 +249,27 @@ export async function loadExtendedArtifactDetail(
     try {
       const { loadTreasuryStore } = await import("@/lib/infinity/treasury/persistence");
       const { buildTreasuryInspectorPayload } = await import("@/lib/infinity/treasury/hq/inspector-payload");
+      const { loadMercuryPublicConfig } = await import("@/lib/infinity/treasury/providers/mercury/config");
       const store = await loadTreasuryStore(admin, organizationId);
-      const built = buildTreasuryInspectorPayload(store, organizationId, artifact.sourceRecordType, artifact.sourceRecordId);
+      const built = buildTreasuryInspectorPayload(
+        store,
+        organizationId,
+        artifact.sourceRecordType,
+        artifact.sourceRecordId,
+        undefined,
+        loadMercuryPublicConfig(),
+      );
       payload.treasury = {
         treasurySource: built.treasurySource,
         bankingProvider: built.bankingProvider,
         fundingClass: built.fundingClass,
+        mercuryProvider: built.mercury.provider,
+        mercuryStatus: built.mercury.statusLabel,
+        mercuryEnvironment: built.mercury.environment,
+        mercuryLastSync: built.mercury.lastSuccessfulSync,
+        mercuryAccountCount: built.mercury.accountCount,
+        mercuryProviderBalance: built.mercury.providerBalance.display,
+        mercuryTransactionFreshness: built.mercury.transactionFreshness,
         ventureDisplayName: built.ventureDisplayName,
         ventureId: built.ventureId,
         allocated: built.allocated.display,

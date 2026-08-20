@@ -1,11 +1,14 @@
 import { INTERNAL_TREASURY_PROVIDER } from "../constants";
 import type { TreasuryStore } from "../store";
 import { formatHqAmount, type TruthfulHqValue } from "./read-model";
+import { buildMercuryHqStatus, type MercuryHqStatus } from "./mercury-status";
+import type { MercuryPublicConfig } from "../providers/mercury/config";
 
 export type TreasuryInspectorPayload = {
   treasurySource: string;
   bankingProvider: string;
   fundingClass: string;
+  mercury: Omit<MercuryHqStatus, never>;
   ventureDisplayName: string | null;
   ventureId: string | null;
   allocated: TruthfulHqValue;
@@ -29,9 +32,13 @@ export function buildTreasuryInspectorPayload(
   sourceRecordType: string,
   sourceRecordId: string,
   names?: { displayNameForVenture?: (ventureId: string) => string },
+  mercury?: MercuryPublicConfig | null,
 ): TreasuryInspectorPayload {
-  const connection = store.scoped(organizationId, store.connections)[0] ?? null;
-  const bankingProvider = connection?.provider ?? "Not configured";
+  const mercuryStatus = buildMercuryHqStatus(store, organizationId, mercury);
+  const connection = store.scoped(organizationId, store.connections).find((row) => row.provider === "mercury")
+    ?? store.scoped(organizationId, store.connections)[0]
+    ?? null;
+  const bankingProvider = mercuryStatus.health === "NOT_CONFIGURED" ? connection?.provider ?? "Not configured" : "Mercury";
   const allocation =
     sourceRecordType === "venture_capital_allocation"
       ? store.scoped(organizationId, store.allocations).find((row) => row.ventureId === sourceRecordId) ?? null
@@ -65,6 +72,7 @@ export function buildTreasuryInspectorPayload(
     treasurySource: "Internal manual ledger",
     bankingProvider,
     fundingClass: "INTERNAL / MANUAL / NON-BANK",
+    mercury: mercuryStatus,
     ventureDisplayName,
     ventureId,
     allocated: allocation ? formatHqAmount(allocation.capitalAllocated) : formatHqAmount({ value: null, actuality: "UNKNOWN", currency: "USD" }),

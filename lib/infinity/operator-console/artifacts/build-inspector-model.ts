@@ -164,6 +164,13 @@ export type ArtifactDetailPayload = {
     treasurySource: string;
     bankingProvider: string;
     fundingClass: string;
+    mercuryProvider?: string;
+    mercuryStatus?: string;
+    mercuryEnvironment?: string;
+    mercuryLastSync?: string | null;
+    mercuryAccountCount?: number;
+    mercuryProviderBalance?: string;
+    mercuryTransactionFreshness?: string;
     ventureDisplayName?: string | null;
     ventureId?: string | null;
     allocated: string;
@@ -847,9 +854,14 @@ export function buildArtifactInspectorModel(
             { label: "Treasury source", value: treasury?.treasurySource ?? "Internal manual ledger" },
             { label: "Banking provider", value: treasury?.bankingProvider ?? fmt(artifact.metadata.bankingProvider) },
             { label: "Funding class", value: treasury?.fundingClass ?? "INTERNAL / MANUAL / NON-BANK" },
+            { label: "Mercury", value: treasury?.mercuryStatus ?? fmt(artifact.metadata.mercuryStatus) },
+            { label: "Mercury environment", value: treasury?.mercuryEnvironment ?? fmt(artifact.metadata.mercuryEnvironment) },
+            { label: "Mercury last sync", value: treasury?.mercuryLastSync ?? fmt(artifact.metadata.mercuryLastSync) },
+            { label: "Mercury accounts", value: String(treasury?.mercuryAccountCount ?? artifact.metadata.mercuryAccountCount ?? "0") },
+            { label: "Mercury provider balance", value: treasury?.mercuryProviderBalance ?? fmt(artifact.metadata.mercuryProviderBalance) },
             ...Object.entries(artifact.metadata)
               .filter(([key]) => !/secret|token|credential|password|card|cvv/i.test(key))
-              .filter(([key]) => key !== "ventureDisplayName" && key !== "ventureId" && key !== "candidateId" && key !== "blueprintId")
+              .filter(([key]) => key !== "ventureDisplayName" && key !== "ventureId" && key !== "candidateId" && key !== "blueprintId" && !key.startsWith("mercury"))
               .map(([label, value]) => ({
                 label: label.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()),
                 value: fmt(value),
