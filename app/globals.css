@@ -730,6 +730,22 @@ body {
   line-height: 1.35;
 }
 
+.hq-room-job {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 450;
+  color: var(--hq-text-secondary);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+@media (max-width: 767px) {
+  .hq-room-job {
+    font-size: 0.75rem;
+  }
+}
+
 .hq-room-artifact-platform {
   min-height: 5.75rem;
   border-radius: 0.5rem;

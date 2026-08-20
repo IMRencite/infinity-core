@@ -7,6 +7,7 @@ import type {
   OperatorWorkerNode,
 } from "@/lib/infinity/operator-console/types";
 import { departmentStateLabel } from "@/lib/infinity/operator-console/status-derivation";
+import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
 import { LineageMarker, lineageStyleForKey } from "./artifacts/lineage-accent";
 import { WorkerNodeCluster } from "./worker-node";
 import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
@@ -57,19 +58,26 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
 
   const deptProviders = providers.filter((p) => p.departmentId === department.id);
   const deptNodes = workerNodes.filter((n) => n.departmentId === department.id);
+  const names = getRoomDisplayNames(department.id);
 
   return (
     <aside className="overflow-hidden rounded-xl border border-zinc-800/80 bg-gradient-to-b from-zinc-950/90 to-[#0a0a0c] shadow-xl shadow-black/10">
       <div className="border-b border-zinc-800/80 bg-black/20 px-4 py-3">
         <h2 className="text-lg font-semibold tracking-tight text-zinc-100">
-          {department.displayName ?? department.label}
+          {department.displayName ?? names.displayName}
         </h2>
-        <p className="text-sm text-[var(--hq-text-secondary)]">
-          {department.supportingLabel ?? department.label} · {departmentStateLabel(department.state)} · {department.recordCount} records
+        <p className="hq-room-job mt-1">{names.shortDescription}</p>
+        <p className="mt-2 text-sm text-[var(--hq-text-muted)]">
+          {departmentStateLabel(department.state)} · {department.recordCount} records
         </p>
       </div>
 
       <div className="space-y-4 p-4 text-sm">
+        <section>
+          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">What happens here</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">{names.expandedDescription}</p>
+        </section>
+
         <section>
           <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">What Infinity is doing</p>
           <p className="mt-1.5 text-base leading-snug text-zinc-100">

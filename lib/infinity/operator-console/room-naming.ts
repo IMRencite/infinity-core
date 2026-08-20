@@ -21,59 +21,97 @@ export const LIFECYCLE_ROOM_SEQUENCE: DepartmentId[] = [
 
 export type RoomDisplayNames = {
   displayName: string;
+  /** Operator-facing one-sentence job. Also exposed as supportingLabel for existing callers. */
+  shortDescription: string;
+  expandedDescription: string;
   supportingLabel: string;
 };
 
+function roomCopy(input: {
+  displayName: string;
+  shortDescription: string;
+  expandedDescription: string;
+}): RoomDisplayNames {
+  return {
+    ...input,
+    supportingLabel: input.shortDescription,
+  };
+}
+
 export const ROOM_DISPLAY_NAMES: Record<DepartmentId, RoomDisplayNames> = {
-  opportunity_lab: {
+  opportunity_lab: roomCopy({
     displayName: "Venture Radar",
-    supportingLabel: "Find promising opportunities",
-  },
-  research_department: {
+    shortDescription: "Finds new business ideas and opportunities worth exploring.",
+    expandedDescription:
+      "Scans for real problems, demand signals, trends, and market gaps, then sends promising opportunities forward for deeper research.",
+  }),
+  research_department: roomCopy({
     displayName: "Research Grid",
-    supportingLabel: "Validate demand and evidence",
-  },
-  strategy_finance: {
+    shortDescription: "Checks the market, customers, competitors, facts, and evidence behind an idea.",
+    expandedDescription:
+      "Collects and evaluates grounded evidence so Infinity can understand the opportunity before committing more time or money.",
+  }),
+  strategy_finance: roomCopy({
     displayName: "Profit Lab",
-    supportingLabel: "Define the revenue strategy",
-  },
-  company_operations: {
+    shortDescription: "Figures out how the business can make money and whether the economics make sense.",
+    expandedDescription:
+      "Tests pricing, revenue models, costs, margins, customer acquisition assumptions, and other financial factors before the venture moves forward.",
+  }),
+  company_operations: roomCopy({
     displayName: "Blueprint Lab",
-    supportingLabel: "Structure the venture",
-  },
-  growth_department: {
+    shortDescription: "Turns a validated idea into a clear business plan and build roadmap.",
+    expandedDescription:
+      "Defines the venture structure, business model, product requirements, operating plan, and the major pieces that need to be built.",
+  }),
+  growth_department: roomCopy({
     displayName: "Growth Nexus",
-    supportingLabel: "Plan discovery and acquisition",
-  },
-  creative_studio: {
+    shortDescription: "Plans how the venture will attract customers and grow.",
+    expandedDescription:
+      "Builds the growth strategy across content, SEO, social media, distribution, acquisition channels, and other ways the venture can reach customers.",
+  }),
+  creative_studio: roomCopy({
     displayName: "Design Core",
-    supportingLabel: "Create visual and media assets",
-  },
-  product_lab: {
+    shortDescription: "Creates the brand, visuals, messaging, and creative direction.",
+    expandedDescription:
+      "Develops the venture's identity, visual system, media, creative assets, and customer-facing presentation.",
+  }),
+  product_lab: roomCopy({
     displayName: "Creation Lab",
-    supportingLabel: "Build the product and core assets",
-  },
-  quality_control: {
+    shortDescription: "Builds the product, website, software, assets, and systems the venture needs.",
+    expandedDescription:
+      "Turns the venture blueprint into working digital products, websites, software, content, integrations, and production-ready assets.",
+  }),
+  quality_control: roomCopy({
     displayName: "Validation Station",
-    supportingLabel: "Review quality and repair issues",
-  },
-  launch_operations: {
+    shortDescription: "Tests the work, catches problems, and decides if the venture is ready to move forward.",
+    expandedDescription:
+      "Checks technical quality, business assumptions, evidence, safety, readiness, and production artifacts before the venture advances.",
+  }),
+  launch_operations: roomCopy({
     displayName: "Deployment Depot",
-    supportingLabel: "Prepare and execute launch actions",
-  },
-  intelligence_center: {
+    shortDescription: "Handles the technical steps needed to put the venture online.",
+    expandedDescription:
+      "Coordinates domains, DNS, hosting, deployment, SSL, provider readiness, and other infrastructure required for a controlled launch.",
+  }),
+  intelligence_center: roomCopy({
     displayName: "Signal Intelligence",
-    supportingLabel: "Measure results and diagnose outcomes",
-  },
-  executive_office: {
+    shortDescription: "Watches performance, learns what is working, and finds what should improve next.",
+    expandedDescription:
+      "Collects performance signals, compares expected results with actual results, diagnoses problems, and creates optimization opportunities.",
+  }),
+  executive_office: roomCopy({
     displayName: "Command",
-    supportingLabel: "Choose the next mission",
-  },
+    shortDescription: "Coordinates the whole venture and decides what should happen next.",
+    expandedDescription:
+      "Acts as Infinity HQ's operating brain, using evidence, economics, readiness, and system state to coordinate work across every room.",
+  }),
 };
 
 export function getRoomDisplayNames(id: DepartmentId): RoomDisplayNames {
   return ROOM_DISPLAY_NAMES[id];
 }
+
+export const ALL_HQ_ROOM_IDS: DepartmentId[] = [...LIFECYCLE_ROOM_SEQUENCE, COMMAND_ROOM_ID];
 
 export const FINAL_ROOM_DISPLAY_NAMES: string[] = LIFECYCLE_ROOM_SEQUENCE.map(
   (id) => ROOM_DISPLAY_NAMES[id].displayName,

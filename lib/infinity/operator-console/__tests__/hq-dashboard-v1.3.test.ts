@@ -49,8 +49,8 @@ describe("HQ Dashboard V1.3 — welcome header and room naming", () => {
   });
 
   it("3. supporting labels clarify room purpose", () => {
-    expect(getRoomDisplayNames("company_operations").supportingLabel).toContain("Structure");
-    expect(getRoomDisplayNames("product_lab").supportingLabel).toContain("Build");
+    expect(getRoomDisplayNames("company_operations").supportingLabel).toContain("business plan");
+    expect(getRoomDisplayNames("product_lab").supportingLabel).toContain("Builds the product");
   });
 });
 

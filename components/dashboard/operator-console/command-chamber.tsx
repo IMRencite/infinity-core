@@ -89,12 +89,13 @@ export function CommandChamber({
       state={commandState}
       isSelected={isSelected}
       isActive={Boolean(isActive)}
-      ariaLabel="Command — mission control"
+      ariaLabel={`Command. ${names.shortDescription}`}
       onActivate={onSelect}
       header={
         <div className="flex items-start gap-3 md:justify-between">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-300/90">{names.displayName}</p>
+            <p className="hq-room-job mt-1">{names.shortDescription}</p>
 
             <div className="mt-1.5 grid gap-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-4">
               <div className="min-w-0 space-y-1.5">

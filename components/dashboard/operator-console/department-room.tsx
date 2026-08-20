@@ -54,7 +54,7 @@ export function DepartmentRoom({
   const rawState: DepartmentUiState = snapshot?.state ?? "NOT_STARTED";
   const failureSemantics = snapshot?.failureSemantics;
   const state = departmentVisualState(rawState, failureSemantics);
-  const headline = snapshot?.displayHeadline ?? supportingLabel;
+  const activityHeadline = snapshot?.displayHeadline ?? null;
   const workArtifacts = snapshot?.workArtifacts ?? [];
   const artifacts = snapshot?.artifacts ?? [];
   const primaryArtifact = artifacts[0];
@@ -73,12 +73,13 @@ export function DepartmentRoom({
       partition={partition}
       size={wide || span === "full" ? "wide" : "standard"}
       span={span}
-      ariaLabel={`${displayName}, ${departmentStateLabel(state)}`}
+      ariaLabel={`${displayName}. ${supportingLabel} ${departmentStateLabel(state)}`}
       onActivate={onSelect}
       header={
         <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className={`hq-room-title ${isActive ? "hq-room-title-active" : ""} line-clamp-1`}>{displayName}</p>
+          <div className="min-w-0 pr-2">
+            <p className={`hq-room-title ${isActive ? "hq-room-title-active" : ""}`}>{displayName}</p>
+            <p className="hq-room-job mt-1">{supportingLabel}</p>
           </div>
           <RoomStatusChip state={state} failureSemantics={failureSemantics} isActive={isActive} />
         </div>
@@ -90,17 +91,19 @@ export function DepartmentRoom({
         />
       }
     >
-      <p
-        className={`hq-room-task mt-1.5 line-clamp-2 ${
-          isActive
-            ? "font-medium text-sky-50"
-            : failureSemantics === "HISTORICAL_FAILURE"
-              ? "text-amber-200/70"
-              : "text-[var(--hq-text-secondary)]"
-        }`}
-      >
-        {headline}
-      </p>
+      {activityHeadline ? (
+        <p
+          className={`hq-room-task mt-1.5 ${
+            isActive
+              ? "font-medium text-sky-50"
+              : failureSemantics === "HISTORICAL_FAILURE"
+                ? "text-amber-200/70"
+                : "text-[var(--hq-text-muted)]"
+          }`}
+        >
+          {activityHeadline}
+        </p>
+      ) : null}
 
       <div className="relative mt-2">
         {workArtifacts.length > 0 ? (

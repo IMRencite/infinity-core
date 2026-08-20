@@ -41,7 +41,9 @@ describe("HQ Dashboard V1.4 — welcome and room names", () => {
   });
 
   it("4. supporting labels are concise", () => {
-    expect(getRoomDisplayNames("product_lab").supportingLabel).toBe("Build the product and core assets");
+    expect(getRoomDisplayNames("product_lab").supportingLabel).toBe(
+      "Builds the product, website, software, assets, and systems the venture needs.",
+    );
     expect(getRoomDisplayNames("executive_office").displayName).toBe("Command");
   });
 });
