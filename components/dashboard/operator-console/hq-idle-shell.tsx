@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
 import { VentureSelector } from "./venture-selector";
+import { HqCopilotDock } from "./hq-copilot-dock";
 
 type Props = {
   ventures: OperatorVentureListItem[];
@@ -20,6 +21,9 @@ export function HqIdleShell({ ventures, showPortfolioLink = true }: Props) {
         <p className="mt-2 max-w-xl text-sm text-zinc-400">
           No venture is currently selected. The headquarters floor is idle — select a venture to observe real engine activity.
         </p>
+        <div className="mt-4 min-w-0 max-w-2xl">
+          <HqCopilotDock currentRoute="/dashboard" />
+        </div>
         {ventures.length > 0 ? (
           <div className="mt-4 max-w-xs">
             <VentureSelector

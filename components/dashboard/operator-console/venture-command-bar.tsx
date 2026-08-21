@@ -5,6 +5,8 @@ import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/ty
 import { departmentStateLabel } from "@/lib/infinity/operator-console/status-derivation";
 import { HQ_WELCOME_SUBTITLE, HQ_WELCOME_TITLE } from "@/lib/infinity/operator-console/room-naming";
 import { VentureSelector } from "./venture-selector";
+import { HqCopilotDock } from "./hq-copilot-dock";
+import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 
 type Props = {
   snapshot: OperatorVentureSnapshot;
@@ -13,6 +15,8 @@ type Props = {
   ventureOptions?: OperatorVentureListItem[];
   onVentureChange?: (id: string) => void;
   live?: boolean;
+  currentRoom?: DepartmentId | null;
+  selectedArtifactId?: string | null;
 };
 
 export function VentureCommandBar({
@@ -22,6 +26,8 @@ export function VentureCommandBar({
   ventureOptions = [],
   onVentureChange,
   live = true,
+  currentRoom = null,
+  selectedArtifactId = null,
 }: Props) {
   return (
     <header className="relative">
@@ -75,6 +81,14 @@ export function VentureCommandBar({
           {HQ_WELCOME_TITLE.toUpperCase()}
         </h1>
         <p className="relative mt-0.5 text-[11px] tracking-wide text-zinc-500">{HQ_WELCOME_SUBTITLE}</p>
+        <div className="relative mt-3 min-w-0">
+          <HqCopilotDock
+            currentRoute="/dashboard"
+            currentVentureId={snapshot.venture.ventureAssemblyId}
+            currentRoom={currentRoom}
+            selectedArtifactId={selectedArtifactId}
+          />
+        </div>
       </div>
     </header>
   );

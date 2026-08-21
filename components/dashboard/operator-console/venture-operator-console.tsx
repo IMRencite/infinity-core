@@ -191,6 +191,8 @@ function VentureOperatorConsoleInner({
         ventureOptions={ventureOptions}
         onVentureChange={handleVentureChange}
         live={live && !pollError}
+        currentRoom={selectedDepartment}
+        selectedArtifactId={detailFromUrl}
       />
 
       {pollError ? (
