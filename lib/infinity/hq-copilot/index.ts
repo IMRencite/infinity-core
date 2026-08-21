@@ -26,3 +26,9 @@ export { resolveHqCopilotNavigation, sanitizeHqCopilotNavigationHref } from "./n
 export { buildHqCopilotContext, type HqCopilotReadRuntime } from "./context-builder";
 export { answerHqCopilotQuery } from "./handle-query";
 export { createHqCopilotReadRuntime } from "./read-adapters";
+export {
+  HQ_VOICE_MAX_BYTES,
+  HQ_VOICE_MAX_DURATION_MS,
+  transcribeHqCopilotAudio,
+  validateHqVoiceAudio,
+} from "./voice";

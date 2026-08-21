@@ -57,6 +57,7 @@ const FORBIDDEN_RULES: ForbiddenRule[] = [
   { action: "DECIDE", pattern: /\bwhich\s+venture\s+should\s+we\s+(kill|reject|hold|build|choose)\b/i },
   { action: "DECIDE", pattern: /\bmake\s+a\s+(new\s+)?(hold|build|reject)\s+decision\b/i },
   { action: "MUTATE", pattern: /\b(ignore|override|disregard)\s+(your|the)\s+(rules|instructions|constraints)\b.{0,80}\b(launch|approve|buy|delete|spend|deploy|assign)\b/i },
+  { action: "MUTATE", pattern: /\b(ignore|override|disregard)\s+all\s+(rules|instructions|constraints)\b.{0,80}\b(launch|approve|buy|delete|spend|deploy|assign)\b/i },
 ];
 
 function isExistingDecisionExplanation(question: string): boolean {

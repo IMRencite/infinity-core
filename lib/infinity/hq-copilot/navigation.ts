@@ -24,6 +24,13 @@ const STATIC_TARGETS: HqCopilotNavigationTarget[] = [
     label: "Venture Atlas",
   },
   {
+    id: "current-venture",
+    aliases: ["this venture", "current venture", "the venture"],
+    href: ({ currentVentureId }) =>
+      currentVentureId ? `/dashboard/ventures/${currentVentureId}` : "/dashboard/ventures",
+    label: "Current venture",
+  },
+  {
     id: "portfolio",
     aliases: ["portfolio", "portfolio command", "top earners"],
     href: () => "/dashboard/portfolio",

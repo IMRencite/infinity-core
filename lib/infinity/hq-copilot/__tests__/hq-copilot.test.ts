@@ -498,9 +498,14 @@ describe("HQ Copilot V1", () => {
   });
 
   it("never exposes a mutation API in the Copilot domain", () => {
-    const files = ["read-adapters.ts", "handle-query.ts", "context-builder.ts", "answer-engine.ts"].map((file) =>
-      readFileSync(join(ROOT, file), "utf8"),
-    );
+    const files = [
+      "read-adapters.ts",
+      "handle-query.ts",
+      "context-builder.ts",
+      "answer-engine.ts",
+      "voice/transcribe.ts",
+      "voice/audio-validation.ts",
+    ].map((file) => readFileSync(join(ROOT, file), "utf8"));
     const joined = files.join("\n");
     expect(joined).not.toMatch(/allocateVentureCapital|persistTreasuryMutation|recordManualFunding/);
     expect(joined).not.toMatch(/runLiveCommercializationVerification|probeDnsLive|probeRegistrarLive/);
