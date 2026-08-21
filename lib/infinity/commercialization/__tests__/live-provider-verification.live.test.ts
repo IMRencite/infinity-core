@@ -105,11 +105,16 @@ describe.runIf(RUN_LIVE)("Commercialization live provider probes (read-only)", (
     expect(dns?.metadata.dnsLiveResourceReadProven).toBe(false);
     expect(dns?.metadata.dnsReadCapabilitySupported).toBe(true);
     expect(hosting?.status).toBe("READ_ONLY_VERIFIED");
-    expect(registrar?.status).toBe("NOT_CONFIGURED");
+    expect(registrar?.status).toBe(
+      report.inventory.registrar.configured === "CONFIGURED" ? "READ_ONLY_VERIFIED" : "NOT_CONFIGURED",
+    );
     expect(payments?.status).toBe("NOT_CONFIGURED");
-    expect(JSON.stringify(loaded)).not.toMatch(/Bearer |sk_live_|whsec_/);
+    expect(JSON.stringify(loaded)).not.toMatch(/Bearer |sk_live_|whsec_|ApiKey=|ApiUser=/);
     if (process.env.CLOUDFLARE_API_TOKEN) {
       expect(JSON.stringify(loaded)).not.toContain(process.env.CLOUDFLARE_API_TOKEN);
+    }
+    if (process.env.NAMECHEAP_API_KEY) {
+      expect(JSON.stringify(loaded)).not.toContain(process.env.NAMECHEAP_API_KEY);
     }
 
     expect(await countIdentity(admin, organizationId!, "DNS", "cloudflare.dns_v1")).toBe(1);
@@ -162,5 +167,10 @@ describe.runIf(RUN_LIVE)("Commercialization live provider probes (read-only)", (
     const hqAfter = await loadPersistedProviderVerifications(admin as never, organizationId!);
     expect(hqAfter.find((row) => row.providerCategory === "DNS")?.providerKey).toBe("cloudflare.dns_v1");
     expect(hqAfter.find((row) => row.providerCategory === "DNS")?.status).toBe("READ_ONLY_VERIFIED");
+    expect(hqAfter.find((row) => row.providerCategory === "REGISTRAR")?.providerKey).toBe("namecheap.com_v1");
+    expect(hqAfter.find((row) => row.providerCategory === "REGISTRAR")?.status).toBe(
+      report.inventory.registrar.configured === "CONFIGURED" ? "READ_ONLY_VERIFIED" : "NOT_CONFIGURED",
+    );
+    expect(JSON.stringify(hqAfter)).not.toMatch(/ApiKey=|ApiUser=|ClientIp=/);
   }, 60000);
 });
