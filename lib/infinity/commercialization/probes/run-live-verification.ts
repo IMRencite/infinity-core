@@ -84,7 +84,7 @@ export function formatLiveVerificationSummary(report: LiveVerificationReport): s
     `Registrar: ${registrar}  status=${report.registrar.status}  configured=${report.inventory.registrar.configured}  env=${report.inventory.registrar.environment}  realCall=${report.registrar.realProviderCall ? "YES" : "NO"} domains=${report.registrar.domainCount ?? "n/a"} nextExpiration=${report.registrar.nextExpiration ?? "n/a"} writes=${report.registrar.writeHttpCalls}`,
     `DNS: ${dns}  status=${report.dns.status}  configured=${report.inventory.dns.configured}  env=${report.inventory.dns.environment}  realCall=${report.dns.realProviderCall ? "YES" : "NO"} zones=${report.dns.zoneCount ?? "n/a"} records=${report.dns.recordCount ?? "n/a"} tokenScope=${report.dns.tokenScope} writes=${report.dns.writeHttpCalls}`,
     `Hosting: ${hosting}  status=${report.hosting.status}  configured=${report.inventory.hosting.configured}  env=${report.inventory.hosting.environment}  realCall=${report.hosting.realProviderCall ? "YES" : "NO"} account=${report.hosting.accountAccessible} projects=${report.hosting.projectsReadable} deployments=${report.hosting.deploymentsReadable} projectCount=${report.hosting.projectCount ?? "null"} deploymentCount=${report.hosting.deploymentCount ?? "null"}`,
-    `Payments: ${payments}  status=${report.payments.status}  configured=${report.inventory.payments.configured}  env=${report.inventory.payments.environment}  realCall=${report.payments.realProviderCall ? "YES" : "NO"}`,
+    `Payments: ${payments}  status=${report.payments.status}  configured=${report.inventory.payments.configured}  env=${report.inventory.payments.environment}  realCall=${report.payments.realProviderCall ? "YES" : "NO"} balanceAccessible=${report.payments.balanceAccessible ? "YES" : "NO"}`,
     "",
     `Domain purchase blocked: ${report.mutationGuards.domainRegisterBlocked ? "YES" : "NO"} (${report.mutationGuards.domainRegisterCalls} writes)`,
     `DNS mutation blocked: ${report.mutationGuards.dnsMutationBlocked ? "YES" : "NO"} (${report.mutationGuards.dnsCreateCalls} writes)`,
@@ -172,7 +172,7 @@ export async function runLiveCommercializationVerification(seed = "infinity"): P
   const report: LiveVerificationReport = draft;
 
   const serialized = redactSecrets(JSON.stringify(report));
-  const secretPatterns = [/sk_live_/, /sk_test_/, /whsec_/, /vcp_/, /ghp_/, /Bearer /];
+  const secretPatterns = [/sk_live_/, /sk_test_/, /rk_live_/, /rk_test_/, /whsec_/, /vcp_/, /ghp_/, /Bearer /];
   for (const pattern of secretPatterns) {
     if (pattern.test(serialized)) {
       throw new Error("SECRET_LEAK_IN_PROBE_REPORT");

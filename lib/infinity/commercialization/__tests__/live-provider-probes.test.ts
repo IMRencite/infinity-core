@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -19,6 +19,7 @@ import { CommercializationStore } from "../store";
 import { classifyCommercialProviderFailure } from "../probes/failure-semantics";
 import { normalizeUsdAmount, unknownCostCannotAuthorize } from "../providers/money";
 import { classifyHttpFailure } from "../probes/status";
+import { buildLiveVerificationRecords } from "../probes/persist";
 import { redactSecrets, redactUnknown } from "@/lib/infinity/launch-gateway/redaction";
 import { READ_ONLY_MUTATION_BLOCKED } from "../probes/mode";
 import { wrapRegistrarReadOnly } from "../probes/read-only-adapters";
@@ -232,6 +233,8 @@ describe("Commercialization live capability verification", () => {
       const payments = await probePaymentsLive();
       expect(payments.status).toBe("NOT_CONFIGURED");
       expect(payments.liveChargesAuthorized).toBe(false);
+      expect(payments.balanceAccessible).toBe(false);
+      expect(payments.realProviderCall).toBe(false);
     } finally {
       if (saved.NAMECHEAP_API_USER) process.env.NAMECHEAP_API_USER = saved.NAMECHEAP_API_USER;
       if (saved.NAMECHEAP_API_KEY) process.env.NAMECHEAP_API_KEY = saved.NAMECHEAP_API_KEY;
@@ -388,6 +391,7 @@ describe("Commercialization live capability verification", () => {
     expect(hq).not.toContain("probeHostingLive");
     expect(hq).not.toContain("probePaymentsLive");
     expect(hq).not.toContain("runLiveCommercializationVerification");
+    expect(hq).not.toContain("api.stripe.com/v1/balance");
     expect(hq).not.toContain("probes/live-probes");
   });
 
@@ -402,6 +406,116 @@ describe("Commercialization live capability verification", () => {
     expect(readRepo("components/dashboard/operator-console/artifacts/artifact-inspector-modal.tsx")).toContain(
       "HQOutputDetail",
     );
+  });
+
+  it("Stripe balance probe is the verification threshold and ignores optional 403s", async () => {
+    const saved = process.env.STRIPE_SECRET_KEY;
+    process.env.STRIPE_SECRET_KEY = "rk_test_fixture_xxxxxxxx";
+    const calls: Array<{ url: string; method: string }> = [];
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      calls.push({ url, method: (init?.method ?? "GET").toUpperCase() });
+      if (url.includes("/v1/balance")) {
+        return new Response(JSON.stringify({ object: "balance", available: [{ amount: 12345, currency: "usd" }] }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify({ error: { type: "invalid_request_error" } }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const payments = await probePaymentsLive();
+      expect(payments.status).toBe("READ_ONLY_VERIFIED");
+      expect(payments.balanceAccessible).toBe(true);
+      expect(payments.realProviderCall).toBe(true);
+      expect(payments.productsCapability).toBe(false);
+      expect(payments.pricesCapability).toBe(false);
+      expect(payments.webhooksCapability).toBe(false);
+      expect(payments.mutationOccurred).toBe(false);
+      expect(payments.liveChargesAuthorized).toBe(false);
+      expect(JSON.stringify(payments)).not.toContain("12345");
+      expect(JSON.stringify(payments)).not.toMatch(/Bearer |rk_test_/);
+      expect(payments).not.toHaveProperty("available");
+      expect(calls.every((call) => call.method === "GET")).toBe(true);
+      expect(calls.some((call) => call.url.includes("/v1/balance"))).toBe(true);
+      expect(calls.some((call) => call.url.includes("/v1/account"))).toBe(false);
+      expect(calls.every((call) => !["POST", "PUT", "PATCH", "DELETE"].includes(call.method))).toBe(true);
+
+      const records = buildLiveVerificationRecords(
+        {
+          inventory: buildProviderInventory(),
+          registrar: { status: "NOT_CONFIGURED", failureCode: "NOT_CONFIGURED", realProviderCall: false, rows: [] },
+          dns: {
+            status: "NOT_CONFIGURED",
+            failureCode: "NOT_CONFIGURED",
+            realProviderCall: false,
+            zoneCount: null,
+            recordCount: null,
+          },
+          hosting: {
+            status: "NOT_CONFIGURED",
+            failureCode: "NOT_CONFIGURED",
+            realProviderCall: false,
+            projectCount: null,
+            deploymentCount: null,
+          },
+          payments,
+          startedAt: "2026-08-21T00:00:00.000Z",
+          completedAt: "2026-08-21T00:00:01.000Z",
+        },
+        "8ba4459b-e5f5-4ca3-86db-fbe6bbd51494",
+      );
+      const stripe = records.find((row) => row.providerCategory === "PAYMENTS");
+      expect(stripe?.status).toBe("READ_ONLY_VERIFIED");
+      expect(stripe?.metadata.balanceAccessible).toBe(true);
+      expect(JSON.stringify(stripe?.metadata)).not.toContain("12345");
+      expect(stripe?.metadata).not.toHaveProperty("available");
+    } finally {
+      vi.unstubAllGlobals();
+      if (saved) process.env.STRIPE_SECRET_KEY = saved;
+      else delete process.env.STRIPE_SECRET_KEY;
+    }
+  });
+
+  it("Stripe missing key does not call Stripe", async () => {
+    const saved = process.env.STRIPE_SECRET_KEY;
+    delete process.env.STRIPE_SECRET_KEY;
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const payments = await probePaymentsLive();
+      expect(payments.status).toBe("NOT_CONFIGURED");
+      expect(payments.balanceAccessible).toBe(false);
+      expect(payments.realProviderCall).toBe(false);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+      if (saved) process.env.STRIPE_SECRET_KEY = saved;
+    }
+  });
+
+  it("Stripe failed balance read is FAILED", async () => {
+    const saved = process.env.STRIPE_SECRET_KEY;
+    process.env.STRIPE_SECRET_KEY = "rk_test_fixture_xxxxxxxx";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("{}", { status: 403, headers: { "Content-Type": "application/json" } })),
+    );
+    try {
+      const payments = await probePaymentsLive();
+      expect(payments.status).toBe("FAILED");
+      expect(payments.balanceAccessible).toBe(false);
+      expect(payments.realProviderCall).toBe(true);
+      expect(payments.failureCode).toBe("PERMISSION_DENIED");
+    } finally {
+      vi.unstubAllGlobals();
+      if (saved) process.env.STRIPE_SECRET_KEY = saved;
+      else delete process.env.STRIPE_SECRET_KEY;
+    }
   });
 
   it("hosting probe skips when token absent without fake success", async () => {

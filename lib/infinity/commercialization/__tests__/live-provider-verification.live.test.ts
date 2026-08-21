@@ -77,7 +77,7 @@ describe.runIf(RUN_LIVE)("Commercialization live provider probes (read-only)", (
     expect(report.payments.liveChargesAuthorized).toBe(false);
 
     const serialized = redactSecrets(JSON.stringify(report));
-    expect(serialized).not.toMatch(/sk_live_|sk_test_|whsec_|vcp_|ghp_|Bearer /);
+    expect(serialized).not.toMatch(/sk_live_|sk_test_|rk_live_|rk_test_|whsec_|vcp_|ghp_|Bearer /);
     if (process.env.VERCEL_TOKEN) {
       expect(serialized).not.toContain(process.env.VERCEL_TOKEN);
     }
@@ -108,8 +108,22 @@ describe.runIf(RUN_LIVE)("Commercialization live provider probes (read-only)", (
     expect(registrar?.status).toBe(
       report.inventory.registrar.configured === "CONFIGURED" ? "READ_ONLY_VERIFIED" : "NOT_CONFIGURED",
     );
-    expect(payments?.status).toBe("NOT_CONFIGURED");
-    expect(JSON.stringify(loaded)).not.toMatch(/Bearer |sk_live_|whsec_|ApiKey=|ApiUser=/);
+    const expectedPaymentsStatus =
+      report.inventory.payments.configured === "CONFIGURED" ? report.payments.status : "NOT_CONFIGURED";
+    expect(payments?.status).toBe(expectedPaymentsStatus);
+    if (report.inventory.payments.configured === "CONFIGURED") {
+      expect(["READ_ONLY_VERIFIED", "FAILED"]).toContain(payments?.status);
+      expect(payments?.providerKey).toBe("stripe.com_v1");
+      expect(payments?.metadata.realProviderCall).toBe(true);
+      if (payments?.status === "READ_ONLY_VERIFIED") {
+        expect(payments?.metadata.balanceAccessible).toBe(true);
+      }
+      expect(payments?.metadata).not.toHaveProperty("available");
+      expect(payments?.metadata).not.toHaveProperty("pending");
+      expect(JSON.stringify(payments?.metadata ?? {})).not.toMatch(/"amount"/);
+    }
+    expect(await countIdentity(admin, organizationId!, "PAYMENTS", "stripe.com_v1")).toBe(1);
+    expect(JSON.stringify(loaded)).not.toMatch(/Bearer |sk_live_|rk_live_|rk_test_|whsec_|ApiKey=|ApiUser=/);
     if (process.env.CLOUDFLARE_API_TOKEN) {
       expect(JSON.stringify(loaded)).not.toContain(process.env.CLOUDFLARE_API_TOKEN);
     }

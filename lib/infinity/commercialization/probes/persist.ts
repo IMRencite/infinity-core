@@ -20,7 +20,7 @@ export const DURABLE_VERIFICATION_STATUSES = [
 ] as const;
 
 const SECRET_KEY = /secret|password|authorization|api[_-]?key|credential|bearer/i;
-const SECRET_VALUE = /(sk_live_|sk_test_|whsec_|vcp_|ghp_|Bearer )/i;
+const SECRET_VALUE = /(sk_live_|sk_test_|rk_live_|rk_test_|whsec_|vcp_|ghp_|Bearer )/i;
 
 export function sanitizeVerificationMetadata(
   input: Record<string, string | number | boolean | null>,
@@ -93,6 +93,7 @@ export type PersistableLiveReport = {
     realProviderCall: boolean;
     productCount: number | null;
     priceCount: number | null;
+    balanceAccessible?: boolean;
   };
   startedAt: string;
   completedAt: string;
@@ -218,6 +219,7 @@ export function buildLiveVerificationRecords(
       failureReason: report.payments.failureReason ?? (report.payments.status === "NOT_CONFIGURED" ? "NOT_CONFIGURED" : null),
       metadata: {
         realProviderCall: report.payments.realProviderCall,
+        balanceAccessible: report.payments.balanceAccessible === true,
         productCount: report.payments.productCount,
         priceCount: report.payments.priceCount,
         liveChargesAuthorized: false,

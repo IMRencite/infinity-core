@@ -3,6 +3,8 @@ const SECRET_PATTERNS = [
   /github_pat_[a-zA-Z0-9_]{20,}/g,
   /sk_live_[a-zA-Z0-9]{8,}/g,
   /sk_test_[a-zA-Z0-9]{8,}/g,
+  /rk_live_[a-zA-Z0-9]{8,}/g,
+  /rk_test_[a-zA-Z0-9]{8,}/g,
   /sk-[a-zA-Z0-9]{20,}/g,
   /whsec_[a-zA-Z0-9]{8,}/g,
   /vcp_[a-zA-Z0-9]{8,}/g,

@@ -269,6 +269,8 @@ describe("Durable commercial provider verification persistence", () => {
       ...inventory,
       dns: { ...inventory.dns, configured: "CONFIGURED" as const },
       hosting: { ...inventory.hosting, configured: "CONFIGURED" as const },
+      registrar: { ...inventory.registrar, configured: "NOT_CONFIGURED" as const },
+      payments: { ...inventory.payments, configured: "NOT_CONFIGURED" as const },
     };
     const artifacts = buildProviderReadinessArtifacts(configuredInventory, loaded);
     const dns = artifacts.launch_operations?.find((item) => item.title === "DNS");

@@ -35,7 +35,7 @@ function sanitizeMetadata(input: Record<string, string | number | boolean | null
   const out: Record<string, string | number | boolean | null> = {};
   for (const [key, value] of Object.entries(input ?? {})) {
     if (/secret|password|authorization|api_key|credential/i.test(key) && key !== "tokenScope") continue;
-    if (typeof value === "string" && /(sk_live_|sk_test_|whsec_|vcp_|Bearer )/i.test(value)) continue;
+    if (typeof value === "string" && /(sk_live_|sk_test_|rk_live_|rk_test_|whsec_|vcp_|Bearer )/i.test(value)) continue;
     out[key] = value;
   }
   return out;

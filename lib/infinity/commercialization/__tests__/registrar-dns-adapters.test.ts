@@ -156,7 +156,22 @@ describe("Registrar + DNS read-only adapters", () => {
     expect(registrar.realProviderCall).toBe(false);
     expect(dns.status).toBe("NOT_CONFIGURED");
     expect(dns.realProviderCall).toBe(false);
-    expect(buildProviderInventory().registrar.configured).toBe("NOT_CONFIGURED");
+    const savedNamecheap = {
+      NAMECHEAP_API_KEY: process.env.NAMECHEAP_API_KEY,
+      NAMECHEAP_ENABLED: process.env.NAMECHEAP_ENABLED,
+      NAMECHEAP_LIVE_ENABLED: process.env.NAMECHEAP_LIVE_ENABLED,
+    };
+    delete process.env.NAMECHEAP_API_KEY;
+    delete process.env.NAMECHEAP_ENABLED;
+    delete process.env.NAMECHEAP_LIVE_ENABLED;
+    try {
+      expect(buildProviderInventory().registrar.configured).toBe("NOT_CONFIGURED");
+    } finally {
+      for (const [key, value] of Object.entries(savedNamecheap)) {
+        if (value) process.env[key] = value;
+        else delete process.env[key];
+      }
+    }
   });
 
   it("verifies Namecheap read-only list+detail and blocks write commands before HTTP", async () => {

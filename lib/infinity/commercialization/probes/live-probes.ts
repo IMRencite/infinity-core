@@ -248,17 +248,23 @@ export async function probeHostingLive(): Promise<{
   };
 }
 
+async function discardStripeResponseBody(res: Response): Promise<void> {
+  try {
+    await res.arrayBuffer();
+  } catch {
+    /* body already consumed or empty */
+  }
+}
+
 export async function probePaymentsLive(): Promise<{
   provider: string;
-  accountAccessible: boolean;
+  balanceAccessible: boolean;
   mode: ProviderEnvironment;
   productsCapability: boolean;
   pricesCapability: boolean;
   checkoutCapability: boolean;
   subscriptionsCapability: boolean;
   webhooksCapability: boolean;
-  chargesCapability: boolean | null;
-  payoutsCapability: boolean | null;
   productCount: number | null;
   priceCount: number | null;
   liveChargesAuthorized: false;
@@ -271,15 +277,13 @@ export async function probePaymentsLive(): Promise<{
   const inventory = buildProviderInventory();
   const base = {
     provider: "stripe.com_v1",
-    accountAccessible: false,
+    balanceAccessible: false,
     mode: inventory.payments.environment,
     productsCapability: false,
     pricesCapability: false,
     checkoutCapability: false,
     subscriptionsCapability: false,
     webhooksCapability: false,
-    chargesCapability: null as boolean | null,
-    payoutsCapability: null as boolean | null,
     productCount: null as number | null,
     priceCount: null as number | null,
     liveChargesAuthorized: false as const,
@@ -293,26 +297,24 @@ export async function probePaymentsLive(): Promise<{
 
   const key = process.env[STRIPE_SECRET_KEY_ENV]!;
   const headers = { Authorization: `Bearer ${key}` };
-  const accountRes = await fetch("https://api.stripe.com/v1/account", { headers });
-  if (!accountRes.ok) {
+  const balanceRes = await fetch("https://api.stripe.com/v1/balance", { method: "GET", headers });
+  if (!balanceRes.ok) {
+    await discardStripeResponseBody(balanceRes);
     return {
       ...base,
       mode: inventory.payments.environment,
       normalization: "FAIL",
       status: "FAILED",
       realProviderCall: true,
-      failureCode: classifyHttpFailure(accountRes.status),
+      failureCode: classifyHttpFailure(balanceRes.status),
     };
   }
-  const account = (await accountRes.json()) as {
-    charges_enabled?: boolean;
-    payouts_enabled?: boolean;
-  };
+  await discardStripeResponseBody(balanceRes);
 
   const [productsRes, pricesRes, webhooksRes] = await Promise.all([
-    fetch("https://api.stripe.com/v1/products?limit=5", { headers }),
-    fetch("https://api.stripe.com/v1/prices?limit=5", { headers }),
-    fetch("https://api.stripe.com/v1/webhook_endpoints?limit=1", { headers }),
+    fetch("https://api.stripe.com/v1/products?limit=5", { method: "GET", headers }),
+    fetch("https://api.stripe.com/v1/prices?limit=5", { method: "GET", headers }),
+    fetch("https://api.stripe.com/v1/webhook_endpoints?limit=1", { method: "GET", headers }),
   ]);
 
   let productCount: number | null = null;
@@ -320,23 +322,26 @@ export async function probePaymentsLive(): Promise<{
   if (productsRes.ok) {
     const body = (await productsRes.json()) as { data?: unknown[] };
     productCount = body.data?.length ?? 0;
+  } else {
+    await discardStripeResponseBody(productsRes);
   }
   if (pricesRes.ok) {
     const body = (await pricesRes.json()) as { data?: unknown[] };
     priceCount = body.data?.length ?? 0;
+  } else {
+    await discardStripeResponseBody(pricesRes);
   }
+  await discardStripeResponseBody(webhooksRes);
 
   return {
     provider: "stripe.com_v1",
-    accountAccessible: true,
+    balanceAccessible: true,
     mode: inventory.payments.environment,
     productsCapability: productsRes.ok,
     pricesCapability: pricesRes.ok,
     checkoutCapability: false,
     subscriptionsCapability: false,
     webhooksCapability: webhooksRes.ok,
-    chargesCapability: account.charges_enabled ?? null,
-    payoutsCapability: account.payouts_enabled ?? null,
     productCount,
     priceCount,
     liveChargesAuthorized: false,

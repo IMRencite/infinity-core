@@ -43,8 +43,8 @@ function configuredFromPresence(parts: Array<"CONFIGURED" | "MISSING" | "INVALID
 
 function stripeEnvironment(): ProviderEnvironment {
   const key = process.env[STRIPE_SECRET_KEY_ENV]?.trim() ?? "";
-  if (key.startsWith("sk_test_")) return "TEST";
-  if (key.startsWith("sk_live_")) return "LIVE";
+  if (key.startsWith("sk_test_") || key.startsWith("rk_test_")) return "TEST";
+  if (key.startsWith("sk_live_") || key.startsWith("rk_live_")) return "LIVE";
   if (envFlagConfigured(STRIPE_LIVE_ENV) === "CONFIGURED") return "LIVE";
   return "UNKNOWN";
 }
@@ -105,7 +105,7 @@ export function buildProviderInventory(): ProviderInventory {
       configured: stripeConfigured,
       environment: stripeEnvironment(),
       credentialPresence: stripeConfigured === "CONFIGURED" ? "YES" : "NO",
-      readCapabilities: ["getAccount", "listProducts", "listPrices", "listWebhookEndpoints"],
+      readCapabilities: ["getBalance", "listProducts", "listPrices", "listWebhookEndpoints"],
       writeCapabilities: [
         "createProduct",
         "createPrice",
@@ -119,7 +119,7 @@ export function buildProviderInventory(): ProviderInventory {
       readOnlyEnforceable: true,
       capabilities:
         stripeConfigured === "CONFIGURED"
-          ? ["getAccount", "listProducts", "listPrices", "getTransaction", "getSubscription"]
+          ? ["getBalance", "listProducts", "listPrices", "getTransaction", "getSubscription"]
           : [],
     },
   };
