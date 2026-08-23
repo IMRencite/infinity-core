@@ -335,6 +335,7 @@ function architectureCoverage(
       blockedFamilies: [],
       deferredFamilies: [],
       externalFamilies: [],
+      internalFamilies: [],
       validationOk: false,
     };
   }
@@ -348,6 +349,7 @@ function architectureCoverage(
     blockedFamilies: plan.rows.filter((row) => row.required && row.disposition === "BLOCKED").map((row) => row.family),
     deferredFamilies: plan.rows.filter((row) => row.required && row.disposition === "DEFERRED").map((row) => row.family),
     externalFamilies: plan.rows.filter((row) => row.required && row.disposition === "EXTERNAL_PROVIDER_DEPENDENCY").map((row) => row.family),
+    internalFamilies: plan.rows.filter((row) => row.required && row.disposition === "INTERNAL_BUILD").map((row) => row.family),
     validationOk: validation?.ok ?? accounted,
   };
 }
@@ -355,11 +357,15 @@ function architectureCoverage(
 function livePolicyUnresolved(plan: VentureSystemsBuildCoveragePlan | null | undefined): ProductionHandoffFailure[] {
   if (!plan) return [];
   return plan.input.contract.unresolvedPolicies
-    .filter((policy) => (LIVE_PROVISIONING_POLICY_CODES as readonly string[]).includes(policy.code))
+    .filter(
+      (policy) =>
+        (LIVE_PROVISIONING_POLICY_CODES as readonly string[]).includes(policy.code) ||
+        policy.code === "REGULATED_INDUSTRY_COMPLIANCE",
+    )
     .map((policy) => ({
       code: "PRODUCTION_HANDOFF_ARCHITECTURE_BLOCKED" as const,
       message: policy.question,
-      systemFamily: null,
+      systemFamily: policy.code === "REGULATED_INDUSTRY_COMPLIANCE" ? "LEGAL_AND_COMPLIANCE" : null,
       identifier: policy.code,
     }));
 }

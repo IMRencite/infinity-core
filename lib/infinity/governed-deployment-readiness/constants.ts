@@ -1,0 +1,112 @@
+export const GOVERNED_DEPLOYMENT_READINESS_SCHEMA = "governed_deployment_readiness_v1";
+
+export const GOVERNED_DEPLOYMENT_WRITE_BOUNDARY = {
+  validationWrites: 0,
+  selectionWrites: 0,
+  missionCreation: 0,
+  treasuryMovements: 0,
+  treasuryReservations: 0,
+  providerAccountCreation: 0,
+  providerWrites: 0,
+  purchases: 0,
+  eagActions: 0,
+  deployments: 0,
+  domainPurchases: 0,
+  dnsWrites: 0,
+  paymentWrites: 0,
+  productionMigrations: 0,
+  publicLaunches: 0,
+} as const;
+
+export const GOVERNED_DEPLOYMENT_STATES = [
+  "NOT_EVALUATED",
+  "BLOCKED",
+  "REQUIRES_AUTHORIZATION",
+  "REQUIRES_PROCUREMENT",
+  "REQUIRES_CONFIGURATION",
+  "TECHNICALLY_READY",
+  "READY_FOR_DEPLOYMENT_EXECUTION",
+] as const;
+
+export type GovernedDeploymentState = (typeof GOVERNED_DEPLOYMENT_STATES)[number];
+
+export const DIMENSION_STATUSES = [
+  "SATISFIED",
+  "NOT_REQUIRED",
+  "MISSING",
+  "BLOCKED",
+  "REQUIRES_AUTHORIZATION",
+  "REQUIRES_PROCUREMENT",
+  "REQUIRES_CONFIGURATION",
+  "READ_ONLY_ONLY",
+] as const;
+
+export type DimensionStatus = (typeof DIMENSION_STATUSES)[number];
+
+export const TREASURY_READINESS_STATUSES = [
+  "SATISFIED",
+  "MISSING_BUDGET",
+  "UNKNOWN_COST",
+  "REQUIRES_RESERVATION",
+  "REQUIRES_PROCUREMENT",
+  "NOT_REQUIRED",
+] as const;
+
+export type TreasuryReadinessStatus = (typeof TREASURY_READINESS_STATUSES)[number];
+
+export const EAG_READINESS_STATUSES = [
+  "SATISFIED",
+  "EAG_REQUIRED",
+  "EAG_AUTHORIZATION_MISSING",
+  "NOT_REQUIRED",
+] as const;
+
+export type EagReadinessStatus = (typeof EAG_READINESS_STATUSES)[number];
+
+export const DEPLOYMENT_READINESS_FAILURE_CODES = [
+  "DEPLOYMENT_HANDOFF_NOT_VERIFIED",
+  "DEPLOYMENT_RUNTIME_UNRESOLVED",
+  "DEPLOYMENT_PROVIDER_MISSING",
+  "DEPLOYMENT_PROVIDER_READ_ONLY",
+  "DEPLOYMENT_WRITE_CREDENTIAL_MISSING",
+  "DEPLOYMENT_WRITE_AUTHORITY_MISSING",
+  "DEPLOYMENT_UNKNOWN_COST",
+  "DEPLOYMENT_BUDGET_MISSING",
+  "DEPLOYMENT_PROCUREMENT_REQUIRED",
+  "DEPLOYMENT_DOMAIN_MISSING",
+  "DEPLOYMENT_DNS_NOT_READY",
+  "DEPLOYMENT_HOSTING_NOT_READY",
+  "DEPLOYMENT_DATABASE_NOT_READY",
+  "DEPLOYMENT_PAYMENT_NOT_READY",
+  "DEPLOYMENT_MIGRATION_NOT_READY",
+  "DEPLOYMENT_COMPLIANCE_BLOCKED",
+  "DEPLOYMENT_ROLLBACK_NOT_READY",
+  "DEPLOYMENT_HEALTHCHECK_NOT_READY",
+  "DEPLOYMENT_LINEAGE_MISMATCH",
+] as const;
+
+export type DeploymentReadinessFailureCode = (typeof DEPLOYMENT_READINESS_FAILURE_CODES)[number];
+
+export const DEPLOYMENT_ACTION_TYPES = [
+  "CREATE_HOSTING_PROJECT",
+  "DEPLOY_APPLICATION",
+  "PURCHASE_DOMAIN",
+  "UPSERT_DNS_RECORD",
+  "CONFIGURE_PAYMENT_RESOURCE",
+  "CREATE_WEBHOOK",
+  "RUN_PRODUCTION_MIGRATION",
+] as const;
+
+export type DeploymentActionType = (typeof DEPLOYMENT_ACTION_TYPES)[number];
+
+export const PROVIDER_CAPABILITIES = [
+  "HOSTING",
+  "DNS",
+  "REGISTRAR",
+  "PAYMENTS",
+  "DATABASE",
+  "EMAIL",
+  "CRM",
+] as const;
+
+export type DeploymentProviderCapability = (typeof PROVIDER_CAPABILITIES)[number];

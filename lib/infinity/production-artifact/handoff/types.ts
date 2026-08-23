@@ -151,6 +151,7 @@ export type ArchitectureCoverageHandoff = {
   blockedFamilies: SystemFamily[];
   deferredFamilies: SystemFamily[];
   externalFamilies: SystemFamily[];
+  internalFamilies: SystemFamily[];
   validationOk: boolean;
 };
 
