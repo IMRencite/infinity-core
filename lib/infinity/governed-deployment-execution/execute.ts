@@ -1,0 +1,496 @@
+import { MOCK_PROVIDER_KEY } from "@/lib/infinity/launch-gateway/constants";
+import { resolveAdapter } from "@/lib/infinity/launch-gateway/adapters/registry";
+import { resolveActionType } from "@/lib/infinity/launch-gateway/action-registry";
+import { scanHandoffObjectForSecrets } from "@/lib/infinity/production-artifact/handoff/secrets";
+import { authorizeExecutionAction } from "./authorize-action";
+import { EMPTY_SIDE_EFFECTS, GOVERNED_DEPLOYMENT_EXECUTION_SCHEMA } from "./constants";
+import type { ExecutionSideEffectCounts, GovernedExecutionActionType, GovernedExecutionState } from "./constants";
+import { bindGatewayAction } from "./map-actions";
+import type {
+  ActionExecutionRecord,
+  ExecuteGovernedDeploymentInput,
+  ExecutionFailure,
+  GovernedDeploymentExecutionResult,
+} from "./types";
+
+const replayCache = new Map<string, ActionExecutionRecord>();
+
+function cloneCounts(): ExecutionSideEffectCounts {
+  return { ...EMPTY_SIDE_EFFECTS };
+}
+
+function incrementSimulated(counts: ExecutionSideEffectCounts, action: GovernedExecutionActionType): void {
+  if (action === "CREATE_HOSTING_PROJECT") {
+    counts.providerWrites += 1;
+    counts.providerAccountCreation += 1;
+  } else if (action === "DEPLOY_APPLICATION") {
+    counts.providerWrites += 1;
+    counts.deployments += 1;
+  } else if (action === "UPSERT_DNS_RECORD" || action === "BIND_DOMAIN") {
+    counts.providerWrites += 1;
+    counts.dnsWrites += 1;
+  } else if (action === "PURCHASE_DOMAIN") {
+    counts.purchases += 1;
+    counts.domainPurchases += 1;
+  } else if (action === "CONFIGURE_PAYMENT_RESOURCE") {
+    counts.paymentWrites += 1;
+  } else if (action === "CREATE_WEBHOOK") {
+    counts.webhookWrites += 1;
+  } else if (action === "RUN_PRODUCTION_MIGRATION") {
+    counts.productionMigrations += 1;
+  }
+}
+
+function actionIdempotencyKey(requestId: string, actionType: GovernedExecutionActionType, target: string): string {
+  return `${requestId}:${actionType}:${target}`;
+}
+
+function actionId(requestId: string, actionType: GovernedExecutionActionType): string {
+  return `gde-action:${requestId}:${actionType}`;
+}
+
+function targetFor(action: GovernedExecutionActionType, ventureId: string, healthPath: string | null): string {
+  if (action === "PURCHASE_DOMAIN") return `${ventureId}.example.test`;
+  if (action === "UPSERT_DNS_RECORD" || action === "BIND_DOMAIN") return `dns:${ventureId}`;
+  if (action === "VERIFY_HEALTH") return healthPath ?? `/health:${ventureId}`;
+  if (action === "RUN_PRODUCTION_MIGRATION") return `migration:${ventureId}`;
+  if (action === "CONFIGURE_PAYMENT_RESOURCE") return `payments:${ventureId}`;
+  if (action === "CREATE_WEBHOOK") return `webhook:${ventureId}`;
+  if (action === "CONFIGURE_ENVIRONMENT") return `env:${ventureId}`;
+  if (action === "ROLLBACK_DEPLOYMENT") return `rollback:${ventureId}`;
+  return ventureId;
+}
+
+function failureForSimulatedAction(action: GovernedExecutionActionType): ExecutionFailure {
+  if (action === "UPSERT_DNS_RECORD" || action === "BIND_DOMAIN") {
+    return { code: "DEPLOYMENT_EXECUTION_DNS_FAILED", message: "Simulated DNS write failed.", actionType: action };
+  }
+  if (action === "RUN_PRODUCTION_MIGRATION") {
+    return { code: "DEPLOYMENT_EXECUTION_MIGRATION_FAILED", message: "Simulated production migration failed.", actionType: action };
+  }
+  if (action === "VERIFY_HEALTH") {
+    return { code: "DEPLOYMENT_EXECUTION_HEALTHCHECK_FAILED", message: "Simulated health check failed.", actionType: action };
+  }
+  return { code: "DEPLOYMENT_EXECUTION_PROVIDER_FAILURE", message: `Simulated provider failure for ${action}.`, actionType: action };
+}
+
+async function simulateAction(
+  action: GovernedExecutionActionType,
+  ventureId: string,
+  healthPath: string | null,
+  environmentVariableNames: string[],
+): Promise<{ externalIds: Record<string, string>; providerCallId: string; actualUsd: number | null }> {
+  const binding = bindGatewayAction(action);
+  const target = targetFor(action, ventureId, healthPath);
+  if (binding.gatewayActionType && resolveActionType(binding.gatewayActionType)) {
+    const adapter = resolveAdapter(MOCK_PROVIDER_KEY);
+    const ctx = {
+      organizationId: "org-gde-sim",
+      actionType: binding.gatewayActionType,
+      target,
+      payload: { ventureId, environmentVariableNames, secret: null },
+      correlationId: `sim:${ventureId}:${action}`,
+    };
+    const result = await adapter.simulate(ctx);
+    return {
+      externalIds: result.externalIds,
+      providerCallId: result.externalIds.simulation_id ?? `sim-call:${action}:${target}`,
+      actualUsd: action === "PURCHASE_DOMAIN" ? 12 : 0,
+    };
+  }
+  return {
+    externalIds: { simulation_id: `sim_${action}_${ventureId}` },
+    providerCallId: `sim-call:${action}:${target}`,
+    actualUsd: 0,
+  };
+}
+
+export function resetGovernedExecutionReplayCache(): void {
+  replayCache.clear();
+}
+
+export async function executeGovernedDeployment(
+  input: ExecuteGovernedDeploymentInput,
+): Promise<GovernedDeploymentExecutionResult> {
+  const request = input.request;
+  const readiness = input.readiness;
+  const startedAt = input.startedAt ?? "2026-08-23T00:00:00.000Z";
+  const blockers: ExecutionFailure[] = [...request.blockers];
+  const simulated = cloneCounts();
+  const live = cloneCounts();
+
+  if (request.ventureId !== readiness.ventureId || request.readinessId !== readiness.readinessId) {
+    blockers.push({ code: "DEPLOYMENT_EXECUTION_LINEAGE_MISMATCH", message: "Execution request lineage does not match readiness." });
+  }
+  if (request.mode === "LIVE" && request.executable && !input.liveGateway) {
+    blockers.push({ code: "DEPLOYMENT_EXECUTION_LIVE_NOT_CONFIGURED", message: "LIVE mode requires an explicit Launch Gateway live port." });
+  }
+
+  const attempted: ActionExecutionRecord[] = [];
+  const succeeded: string[] = [];
+  const failed: string[] = [];
+  const blocked: string[] = [];
+  const providerReferences: Record<string, string> = {};
+  const providerCallIds: string[] = [];
+  let estimated = 0;
+  let authorized = 0;
+  let actual: number | null = 0;
+  let unknownCost = false;
+
+  const canRun = request.executable && !blockers.some((item) => item.code === "DEPLOYMENT_EXECUTION_LINEAGE_MISMATCH");
+
+  for (const actionType of request.requiredActions) {
+    const id = actionId(request.executionRequestId, actionType);
+    const binding = bindGatewayAction(actionType);
+    const target = targetFor(actionType, request.ventureId, request.healthCheckRequirements.path);
+    const idempotencyKey = actionIdempotencyKey(request.idempotencyKey, actionType, target);
+    const auth = authorizeExecutionAction({
+      actionType,
+      readiness,
+      eagAuthorizations: input.eagAuthorizations ?? [],
+      treasuryAuthorizations: input.treasuryAuthorizations ?? [],
+      providerWrites: input.providerWrites ?? [],
+    });
+
+    if (auth.unknownCost) unknownCost = true;
+    if (auth.estimatedUsd != null) estimated += auth.estimatedUsd;
+    if (auth.authorizedUsd != null) authorized += auth.authorizedUsd;
+
+    const cached = replayCache.get(idempotencyKey);
+    if (cached && canRun && !auth.failure) {
+      attempted.push({ ...cached, reused: true });
+      if (cached.state === "SUCCEEDED") succeeded.push(id);
+      else if (cached.state === "FAILED") failed.push(id);
+      else blocked.push(id);
+      Object.assign(providerReferences, cached.providerReferences);
+      if (cached.providerCallId) providerCallIds.push(cached.providerCallId);
+      continue;
+    }
+
+    if (!canRun || !request.executable) {
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "BLOCKED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+        providerReferences: {},
+        providerCallId: null,
+        idempotencyKey,
+        reused: false,
+        simulated: false,
+        live: false,
+        failure: request.blockers[0] ?? { code: "DEPLOYMENT_EXECUTION_NOT_READY", message: "Execution request is not executable.", actionType },
+      };
+      attempted.push(record);
+      blocked.push(id);
+      continue;
+    }
+
+    if (auth.failure) {
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "BLOCKED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+        providerReferences: {},
+        providerCallId: null,
+        idempotencyKey,
+        reused: false,
+        simulated: false,
+        live: false,
+        failure: { ...auth.failure, actionId: id },
+      };
+      attempted.push(record);
+      blocked.push(id);
+      blockers.push(record.failure!);
+      continue;
+    }
+
+    if (request.mode === "DRY_RUN") {
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "AUTHORIZED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+        providerReferences: {},
+        providerCallId: null,
+        idempotencyKey,
+        reused: false,
+        simulated: false,
+        live: false,
+        failure: null,
+      };
+      attempted.push(record);
+      succeeded.push(id);
+      continue;
+    }
+
+    if (request.mode === "LIVE") {
+      if (!input.liveGateway || !binding.liveAdapterExists) {
+        const record: ActionExecutionRecord = {
+          actionId: id,
+          actionType,
+          gatewayActionType: binding.gatewayActionType,
+          capability: binding.capability,
+          state: "BLOCKED",
+          requiresTreasury: auth.requiresTreasury,
+          requiresEag: auth.requiresEag,
+          requiresWriteCredential: auth.requiresWriteCredential,
+          requiresProcurement: auth.requiresProcurement,
+          writeAuthority: auth.writeAuthority,
+          costKnown: auth.costKnown,
+          budgetAuthorized: auth.budgetAuthorized,
+          specificActionAuthorized: auth.specificActionAuthorized,
+          cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+          providerReferences: {},
+          providerCallId: null,
+          idempotencyKey,
+          reused: false,
+          simulated: false,
+          live: false,
+          failure: {
+            code: "DEPLOYMENT_EXECUTION_LIVE_NOT_CONFIGURED",
+            message: binding.liveAdapterExists
+              ? "LIVE Launch Gateway port was not provided."
+              : `No live Launch Gateway adapter exists for ${actionType}.`,
+            actionType,
+            actionId: id,
+          },
+        };
+        attempted.push(record);
+        blocked.push(id);
+        blockers.push(record.failure!);
+        continue;
+      }
+      const liveResult = await input.liveGateway.execute({
+        gatewayActionType: binding.gatewayActionType ?? "",
+        target,
+        payload: { ventureId: request.ventureId, environmentVariableNames: input.environmentVariableNames ?? [] },
+        idempotencyKey,
+        executionRequestId: request.executionRequestId,
+        actionId: id,
+      });
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "SUCCEEDED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: liveResult.actualCostUsd, unknown: liveResult.actualCostUsd == null },
+        providerReferences: liveResult.externalIds,
+        providerCallId: liveResult.providerCallId,
+        idempotencyKey,
+        reused: false,
+        simulated: false,
+        live: true,
+        failure: null,
+      };
+      attempted.push(record);
+      succeeded.push(id);
+      providerCallIds.push(liveResult.providerCallId);
+      Object.assign(providerReferences, liveResult.externalIds);
+      replayCache.set(idempotencyKey, record);
+      continue;
+    }
+
+    if (input.simulateFailures?.includes(actionType)) {
+      const failure = { ...failureForSimulatedAction(actionType), actionId: id };
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "FAILED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+        providerReferences: {},
+        providerCallId: null,
+        idempotencyKey,
+        reused: false,
+        simulated: true,
+        live: false,
+        failure,
+      };
+      attempted.push(record);
+      failed.push(id);
+      blockers.push(failure);
+      replayCache.set(idempotencyKey, record);
+      continue;
+    }
+
+    const simulation = await simulateAction(actionType, request.ventureId, request.healthCheckRequirements.path, input.environmentVariableNames ?? []);
+    if (simulation.actualUsd == null) {
+      unknownCost = true;
+      actual = null;
+    } else if (actual != null) {
+      actual += simulation.actualUsd;
+    }
+    const record: ActionExecutionRecord = {
+      actionId: id,
+      actionType,
+      gatewayActionType: binding.gatewayActionType,
+      capability: binding.capability,
+      state: "SUCCEEDED",
+      requiresTreasury: auth.requiresTreasury,
+      requiresEag: auth.requiresEag,
+      requiresWriteCredential: auth.requiresWriteCredential,
+      requiresProcurement: auth.requiresProcurement,
+      writeAuthority: auth.writeAuthority,
+      costKnown: auth.costKnown,
+      budgetAuthorized: auth.budgetAuthorized,
+      specificActionAuthorized: auth.specificActionAuthorized,
+      cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: simulation.actualUsd, unknown: simulation.actualUsd == null },
+      providerReferences: simulation.externalIds,
+      providerCallId: simulation.providerCallId,
+      idempotencyKey,
+      reused: false,
+      simulated: true,
+      live: false,
+      failure: null,
+    };
+    attempted.push(record);
+    succeeded.push(id);
+    providerCallIds.push(simulation.providerCallId);
+    Object.assign(providerReferences, simulation.externalIds);
+    incrementSimulated(simulated, actionType);
+    replayCache.set(idempotencyKey, record);
+  }
+
+  const secretHits = [
+    ...scanHandoffObjectForSecrets({ actions: attempted, providerReferences }),
+    ...(input.secretValuesForbidden ?? []).flatMap((secret) =>
+      JSON.stringify({ attempted, providerReferences }).includes(secret) ? [`forbidden_secret:${secret.slice(0, 4)}`] : [],
+    ),
+  ];
+  if (secretHits.length > 0) {
+    blockers.push({ code: "DEPLOYMENT_EXECUTION_SECRET_LEAKAGE", message: "Secret material appeared in the execution result." });
+  }
+
+  const hasSuccess = succeeded.length > 0 && attempted.some((item) => item.state === "SUCCEEDED");
+  const hasFailure = failed.length > 0;
+  const hasBlocked = blocked.length > 0;
+  let state: GovernedExecutionState = "BLOCKED";
+  if (!request.executable || blockers.some((item) => item.code === "DEPLOYMENT_EXECUTION_LINEAGE_MISMATCH" || item.code === "DEPLOYMENT_EXECUTION_NOT_READY")) {
+    state = "BLOCKED";
+  } else if (request.mode === "DRY_RUN" && !hasFailure && !hasBlocked) {
+    state = "AUTHORIZED";
+  } else if (hasSuccess && (hasFailure || hasBlocked)) {
+    state = "PARTIALLY_SUCCEEDED";
+    if (!blockers.some((item) => item.code === "DEPLOYMENT_EXECUTION_PARTIAL_FAILURE")) {
+      blockers.push({ code: "DEPLOYMENT_EXECUTION_PARTIAL_FAILURE", message: "Some governed deployment actions succeeded and others did not." });
+    }
+  } else if (hasFailure && !hasSuccess) {
+    state = "FAILED";
+  } else if (hasSuccess && !hasFailure && !hasBlocked) {
+    state = "SUCCEEDED";
+  } else if (hasBlocked) {
+    state = "BLOCKED";
+  }
+
+  const healthRecord = attempted.find((item) => item.actionType === "VERIFY_HEALTH");
+  const rollbackRecord = attempted.find((item) => item.actionType === "ROLLBACK_DEPLOYMENT");
+  const rollbackState = !request.rollbackRequirements.required
+    ? "NOT_REQUIRED"
+    : rollbackRecord?.state === "SUCCEEDED" && request.mode === "SIMULATION"
+      ? "SIMULATED"
+      : rollbackRecord?.specificActionAuthorized || request.rollbackRequirements.authorized
+        ? "AUTHORIZED_NOT_EXECUTED"
+        : "REQUIRED_NOT_AUTHORIZED";
+
+  return {
+    schemaVersion: GOVERNED_DEPLOYMENT_EXECUTION_SCHEMA,
+    executionId: `gdx:${request.executionRequestId}`,
+    requestId: request.executionRequestId,
+    ventureId: request.ventureId,
+    mode: request.mode,
+    state,
+    actionsAttempted: attempted,
+    actionsSucceeded: succeeded,
+    actionsFailed: failed,
+    actionsBlocked: blocked,
+    providerReferences,
+    costsIncurred: {
+      estimatedUsd: estimated,
+      authorizedUsd: authorized,
+      actualUsd: unknownCost ? null : actual,
+      unknown: unknownCost,
+    },
+    treasuryReferences: request.treasuryAuthorizationRefs.map((item) => item.authorizationId),
+    eagReferences: request.eagAuthorizationRefs.map((item) => item.authorizationId),
+    rollbackState,
+    healthCheckState: !request.healthCheckRequirements.required
+      ? "NOT_REQUIRED"
+      : !healthRecord
+        ? "NOT_RUN"
+        : healthRecord.state === "SUCCEEDED" || healthRecord.state === "AUTHORIZED"
+          ? "PASS"
+          : "FAIL",
+    publicLaunchState: request.publicLaunchAuthorizationId ? "AUTHORIZED_NOT_EXECUTED" : "NOT_AUTHORIZED",
+    startedAt,
+    completedAt: startedAt,
+    blockers: uniqueFailures(blockers),
+    traceability: {
+      ventureId: request.ventureId,
+      handoffId: request.productionArtifactHandoffId,
+      readinessId: request.readinessId,
+      executionRequestId: request.executionRequestId,
+      actionIds: attempted.map((item) => item.actionId),
+      providerCallIds,
+    },
+    simulatedSideEffects: simulated,
+    liveSideEffects: live,
+  };
+}
+
+function uniqueFailures(failures: ExecutionFailure[]): ExecutionFailure[] {
+  const seen = new Map<string, ExecutionFailure>();
+  for (const failure of failures) {
+    seen.set(`${failure.code}:${failure.actionType ?? ""}:${failure.actionId ?? ""}`, failure);
+  }
+  return [...seen.values()];
+}
