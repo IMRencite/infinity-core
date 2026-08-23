@@ -25,13 +25,13 @@ type SelectedCandidate = {
   title: string | null;
 };
 
-function collectHqArtifacts(snapshot: OperatorVentureSnapshot): HqWorkArtifact[] {
+export function collectHqArtifacts(snapshot: OperatorVentureSnapshot): HqWorkArtifact[] {
   const fromDepartments = snapshot.departments.flatMap((dept) => dept.workArtifacts ?? []);
   const fromMap = snapshot.roomArtifacts ? Object.values(snapshot.roomArtifacts).flat() : [];
   return [...fromDepartments, ...fromMap];
 }
 
-function readCandidateId(artifact: HqWorkArtifact): string | null {
+export function readHqCandidateId(artifact: HqWorkArtifact): string | null {
   const metaId = artifact.metadata.candidateId;
   if (typeof metaId === "string" && metaId.trim()) return metaId.trim();
   if (artifact.artifactType === "opportunity_candidate" && artifact.sourceRecordId.trim()) {
@@ -57,14 +57,18 @@ function titleForCandidate(artifacts: HqWorkArtifact[], candidateId: string): st
   return selectedBlueprint?.title.trim() ?? null;
 }
 
+export function titleForHqCandidate(snapshot: OperatorVentureSnapshot, candidateId: string): string | null {
+  return titleForCandidate(collectHqArtifacts(snapshot), candidateId);
+}
+
 export function findSelectedOpportunityCandidate(snapshot: OperatorVentureSnapshot): SelectedCandidate | null {
   const artifacts = collectHqArtifacts(snapshot);
-  const selected = artifacts.find((artifact) => artifact.metadata.selected === true && readCandidateId(artifact));
-  const selectedId = selected ? readCandidateId(selected) : null;
+  const selected = artifacts.find((artifact) => artifact.metadata.selected === true && readHqCandidateId(artifact));
+  const selectedId = selected ? readHqCandidateId(selected) : null;
   const selectedCard = artifacts.find(
     (artifact) => artifact.artifactType === "opportunity_candidate" && artifact.state === "SELECTED",
   );
-  const id = selectedId ?? (selectedCard ? readCandidateId(selectedCard) : null);
+  const id = selectedId ?? (selectedCard ? readHqCandidateId(selectedCard) : null);
   if (!id) return null;
   return { id, title: titleForCandidate(artifacts, id) };
 }

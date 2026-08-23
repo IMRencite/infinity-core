@@ -16,6 +16,12 @@ import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/ro
 import { RoomCurrentActivity } from "./room-current-activity";
 import { SystemsArchitectDetail } from "./systems-architect-blueprint";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
+import { useOptionalHqInspection } from "./hq-inspection-provider";
+import {
+  EMPTY_INSPECTION_CONTEXT,
+  filterArtifactsForInspection,
+  isRoomCompatibleWithInspection,
+} from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
   department: OperatorDepartmentSnapshot | null;
@@ -78,9 +84,18 @@ export function DepartmentDetailPanel({
       workerNodes: deptNodes,
       providers: deptProviders,
     });
+  const inspection = useOptionalHqInspection();
+  const inspectionContext = inspection?.context ?? EMPTY_INSPECTION_CONTEXT;
+  const roomCompatible = isRoomCompatibleWithInspection(department.id, inspectionContext);
+  const workArtifacts = filterArtifactsForInspection(
+    department.workArtifacts ?? [],
+    inspectionContext,
+    department.id,
+  );
   const systemsView =
     department.id === "systems_architect"
-      ? ((department.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null)
+      ? (inspection?.systemsArchitectView ??
+        ((department.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null))
       : null;
 
   return (
@@ -101,7 +116,16 @@ export function DepartmentDetailPanel({
           <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">{names.expandedDescription}</p>
         </section>
 
-        {systemsView && !architectureWorkspaceOpen ? (
+        {!roomCompatible ? (
+          <section>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Room context</p>
+            <p className="mt-1.5 text-sm text-zinc-400" data-hq-room-incompatible="true">
+              This room requires a promoted venture.
+            </p>
+          </section>
+        ) : null}
+
+        {roomCompatible && systemsView && !architectureWorkspaceOpen ? (
           <section>
             <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Operating blueprint</p>
             <div className="mt-2">
@@ -109,7 +133,7 @@ export function DepartmentDetailPanel({
             </div>
           </section>
         ) : null}
-        {systemsView && architectureWorkspaceOpen ? (
+        {roomCompatible && systemsView && architectureWorkspaceOpen ? (
           <section>
             <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Operating blueprint</p>
             <p className="mt-1.5 text-sm text-zinc-400">
@@ -158,11 +182,11 @@ export function DepartmentDetailPanel({
           </section>
         ) : null}
 
-        {department.workArtifacts && department.workArtifacts.length > 0 ? (
+        {roomCompatible && workArtifacts.length > 0 ? (
           <section>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">Persisted outputs</p>
             <ul className="space-y-2">
-              {department.workArtifacts.slice(0, 8).map((artifact) => (
+              {workArtifacts.slice(0, 8).map((artifact) => (
                 <li key={artifact.id}>
                   <ArtifactDetailTrigger artifact={artifact} />
                 </li>

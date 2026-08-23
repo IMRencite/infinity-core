@@ -20,6 +20,12 @@ import { RoomPresenceTrack } from "./infinity-room/room-presence-track";
 import { RoomCurrentActivity } from "./room-current-activity";
 import { SystemsArchitectBlueprint } from "./systems-architect-blueprint";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
+import { useOptionalHqInspection } from "./hq-inspection-provider";
+import {
+  EMPTY_INSPECTION_CONTEXT,
+  filterArtifactsForInspection,
+  isRoomCompatibleWithInspection,
+} from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
   departmentId: DepartmentId;
@@ -65,9 +71,15 @@ export function DepartmentRoom({
   const rawState: DepartmentUiState = snapshot?.state ?? "NOT_STARTED";
   const failureSemantics = snapshot?.failureSemantics;
   const state = departmentVisualState(rawState, failureSemantics);
-  const workArtifacts = snapshot?.workArtifacts ?? [];
+  const inspection = useOptionalHqInspection();
+  const workArtifacts = filterArtifactsForInspection(
+    snapshot?.workArtifacts ?? [],
+    inspection?.context ?? EMPTY_INSPECTION_CONTEXT,
+    departmentId,
+  );
   const artifacts = snapshot?.artifacts ?? [];
   const primaryArtifact = artifacts[0];
+  const roomCompatible = inspection ? isRoomCompatibleWithInspection(departmentId, inspection.context) : true;
   const presence = deriveRoomPresence(workerNodes, state, isTerminal);
   const workflowNodes = presence.state === "ACTIVE_WORK" ? presence.activeNodes : [];
   const activity = buildRoomActivityExplanation({
@@ -80,7 +92,8 @@ export function DepartmentRoom({
   });
   const systemsView =
     departmentId === "systems_architect"
-      ? ((snapshot?.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null)
+      ? (inspection?.systemsArchitectView ??
+        ((snapshot?.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null))
       : null;
 
   return (
@@ -129,7 +142,11 @@ export function DepartmentRoom({
       {systemsView ? <SystemsArchitectBlueprint view={systemsView} compact /> : null}
 
       <div className="relative mt-2">
-        {systemsView ? null : workArtifacts.length > 0 ? (
+        {!roomCompatible ? (
+          <p className="hq-room-incompatible px-1 py-1 text-[11px] leading-snug text-zinc-400" data-hq-room-incompatible="true">
+            This room requires a promoted venture.
+          </p>
+        ) : systemsView ? null : workArtifacts.length > 0 ? (
           <RoomArtifactSurface
             artifacts={workArtifacts}
             expectedCount={snapshot?.recordCount ?? null}

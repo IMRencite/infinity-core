@@ -11,7 +11,6 @@ import { ActivityFeedPanel } from "./activity-feed-panel";
 import { SystemView } from "./system-view";
 import { DepartmentDetailPanel } from "./department-detail-panel";
 import { SystemsArchitectDetail } from "./systems-architect-blueprint";
-import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import { SystemHealthStrip } from "./system-health-strip";
 import { CostBreakdownStrip } from "./cost-breakdown-strip";
 import { OperationsSummaryStrip } from "./operations-summary-strip";
@@ -40,6 +39,7 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { HqArtifactInspectorProvider } from "./artifacts/hq-artifact-inspector-provider";
 import { ArtifactInspectorModal } from "./artifacts/artifact-inspector-modal";
+import { HqInspectionProvider, useHqInspection } from "./hq-inspection-provider";
 
 type Props = {
   ventureId: string;
@@ -176,10 +176,70 @@ function VentureOperatorConsoleInner({
     [router, searchParams],
   );
 
+  return (
+    <HqInspectionProvider snapshot={snapshot}>
+    <HqArtifactInspectorProvider
+      ventureId={ventureId}
+      snapshot={snapshot}
+      detailQueryParam={detailFromUrl}
+      onDetailQueryChange={handleDetailQueryChange}
+    >
+    <VentureOperatorConsoleBody
+      snapshot={snapshot}
+      view={view}
+      setView={setView}
+      ventureOptions={ventureOptions}
+      onVentureChange={handleVentureChange}
+      live={live && !pollError}
+      pollError={pollError}
+      selectedDepartment={selectedDepartment}
+      setSelectedDepartment={setSelectedDepartment}
+      portfolioSummary={portfolioSummary}
+      treasury={treasury}
+      codingSummary={codingSummary}
+      ztpSummary={ztpSummary}
+      onTreasuryChange={handleTreasuryChange}
+    />
+      <ArtifactInspectorModal />
+    </HqArtifactInspectorProvider>
+    </HqInspectionProvider>
+  );
+}
+
+function VentureOperatorConsoleBody({
+  snapshot,
+  view,
+  setView,
+  ventureOptions,
+  onVentureChange,
+  live,
+  pollError,
+  selectedDepartment,
+  setSelectedDepartment,
+  portfolioSummary,
+  treasury,
+  codingSummary,
+  ztpSummary,
+  onTreasuryChange,
+}: {
+  snapshot: OperatorVentureSnapshot;
+  view: "hq" | "system";
+  setView: (view: "hq" | "system") => void;
+  ventureOptions: OperatorVentureListItem[];
+  onVentureChange: (id: string) => void;
+  live: boolean;
+  pollError: string | null;
+  selectedDepartment: DepartmentId | null;
+  setSelectedDepartment: (id: DepartmentId | null) => void;
+  portfolioSummary: PortfolioSummary;
+  treasury: TreasuryHqReadModel | null;
+  codingSummary: CodingHqReadModel | null;
+  ztpSummary: ZtpHqReadModel | null;
+  onTreasuryChange: (model: TreasuryHqReadModel) => void;
+}) {
+  const inspection = useHqInspection();
   const selected = snapshot.departments.find((d) => d.id === selectedDepartment) ?? null;
-  const systemsArchitectView =
-    snapshot.systemsArchitecture ??
-    ((selected?.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null);
+  const systemsArchitectView = inspection.systemsArchitectView;
 
   useEffect(() => {
     if (selectedDepartment !== "systems_architect") return;
@@ -187,22 +247,15 @@ function VentureOperatorConsoleInner({
   }, [selectedDepartment]);
 
   return (
-    <HqArtifactInspectorProvider
-      ventureId={ventureId}
-      snapshot={snapshot}
-      detailQueryParam={detailFromUrl}
-      onDetailQueryChange={handleDetailQueryChange}
-    >
     <div className="infinity-hq space-y-3 overflow-x-hidden">
       <VentureCommandBar
         snapshot={snapshot}
         view={view}
         onViewChange={setView}
         ventureOptions={ventureOptions}
-        onVentureChange={handleVentureChange}
-        live={live && !pollError}
+        onVentureChange={onVentureChange}
+        live={live}
         currentRoom={selectedDepartment}
-        selectedArtifactId={detailFromUrl}
       />
 
       {pollError ? (
@@ -316,7 +369,7 @@ function VentureOperatorConsoleInner({
                 <TreasuryControlCenter
                   model={treasury}
                   ventureOptions={ventureOptions}
-                  onModelChange={handleTreasuryChange}
+                  onModelChange={onTreasuryChange}
                 />
                 <TreasuryBudgetConstraintsPanel model={treasury} />
                 <TreasuryTransactionsPanel model={treasury} />
@@ -344,8 +397,6 @@ function VentureOperatorConsoleInner({
       ) : (
         <SystemView snapshot={snapshot} portfolioSummary={portfolioSummary} />
       )}
-      <ArtifactInspectorModal />
     </div>
-    </HqArtifactInspectorProvider>
   );
 }

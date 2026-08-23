@@ -6,6 +6,8 @@ import { departmentStateLabel } from "@/lib/infinity/operator-console/status-der
 import { HQ_WELCOME_SUBTITLE, HQ_WELCOME_TITLE } from "@/lib/infinity/operator-console/room-naming";
 import { VentureSelector } from "./venture-selector";
 import { HqCopilotDock } from "./hq-copilot-dock";
+import { InspectionContextBar } from "./inspection-context-bar";
+import { useOptionalHqInspection } from "./hq-inspection-provider";
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 
 type Props = {
@@ -29,6 +31,7 @@ export function VentureCommandBar({
   currentRoom = null,
   selectedArtifactId = null,
 }: Props) {
+  const inspection = useOptionalHqInspection();
   return (
     <header className="relative">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/40 pb-2">
@@ -74,6 +77,10 @@ export function VentureCommandBar({
           </div>
         </div>
       </div>
+
+      {inspection ? (
+        <InspectionContextBar context={inspection.context} onClear={inspection.clearInspection} />
+      ) : null}
 
       <div data-hq-region="welcome" className="relative px-3 py-2 text-center md:py-2.5">
         <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-16 max-w-2xl bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(56,189,248,0.12),transparent)]" aria-hidden />

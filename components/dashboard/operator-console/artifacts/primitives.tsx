@@ -6,7 +6,10 @@ import { artifactRenderId } from "@/lib/infinity/operator-console/artifacts/arti
 import { formatArtifactPrimaryDisplay, formatFatalRiskDelta } from "@/lib/infinity/operator-console/artifacts/artifact-display";
 import { LineageMarker, lineageClassForArtifact, lineageStyleForArtifact } from "./lineage-accent";
 import { useOptionalHqArtifactInspector } from "./hq-artifact-inspector-provider";
+import { useOptionalHqInspection } from "../hq-inspection-provider";
 import { handleCardKeyboardInspect } from "../infinity-room/room-keyboard";
+import { readHqCandidateId } from "@/lib/infinity/operator-console/architecture-entity";
+import { inspectionRefFromOpportunityArtifact } from "@/lib/infinity/operator-console/inspection-context";
 
 const STATE_CLASS: Record<HqArtifactState, string> = {
   CREATING: "hq-artifact-card hq-artifact-card--creating",
@@ -73,15 +76,22 @@ export function DecisionBadge({ artifact, large = false }: { artifact: HqWorkArt
 
 export function ArtifactCard({ artifact, onInspect }: ArtifactCardProps) {
   const inspector = useOptionalHqArtifactInspector();
+  const inspection = useOptionalHqInspection();
   const display = formatArtifactPrimaryDisplay(artifact);
   const riskDelta = formatFatalRiskDelta(artifact);
   const stateClass = STATE_CLASS[artifact.state];
   const lineageClass = lineageClassForArtifact(artifact);
   const lineageStyle = lineageStyleForArtifact(artifact);
   const selectedLineage = artifact.state === "SELECTED" && artifact.lineageColorKey ? "hq-lineage-selected" : "";
+  const inspectionRef = inspectionRefFromOpportunityArtifact(artifact);
+  const inspecting =
+    inspection?.context.status === "ACTIVE" &&
+    inspection.context.entityType === "OPPORTUNITY_CANDIDATE" &&
+    inspection.context.entityId === readHqCandidateId(artifact);
   const handleInspect = () => {
+    if (inspectionRef) inspection?.selectInspection(inspectionRef);
     if (onInspect) onInspect(artifact);
-    else inspector?.openInspector(artifact);
+    else if (!inspectionRef) inspector?.openInspector(artifact);
   };
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => handleCardKeyboardInspect(event, handleInspect);
 
@@ -89,7 +99,10 @@ export function ArtifactCard({ artifact, onInspect }: ArtifactCardProps) {
     <div
       role="button"
       tabIndex={0}
-      title={`${display.detailTitle} — Inspect`}
+      title={inspectionRef ? `${display.detailTitle} — Inspect opportunity` : `${display.detailTitle} — Inspect`}
+      aria-pressed={inspecting || undefined}
+      data-hq-inspecting={inspecting ? "true" : "false"}
+      data-hq-inspection-card={inspectionRef ? "opportunity_candidate" : undefined}
       onClick={(event) => {
         event.stopPropagation();
         handleInspect();
@@ -99,7 +112,7 @@ export function ArtifactCard({ artifact, onInspect }: ArtifactCardProps) {
         event.currentTarget.scrollIntoView({ block: "nearest" });
       }}
       style={lineageStyle}
-      className={`${stateClass} ${shapeClass(artifact)} ${lineageClass} ${selectedLineage} hq-artifact-card--clickable hq-artifact-card--rail group relative min-h-[4.5rem] min-w-0 w-full cursor-pointer px-2.5 py-2 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50`}
+      className={`${stateClass} ${shapeClass(artifact)} ${lineageClass} ${selectedLineage} ${inspecting ? "hq-artifact-card--inspecting" : ""} hq-artifact-card--clickable hq-artifact-card--rail group relative min-h-[4.5rem] min-w-0 w-full cursor-pointer px-2.5 py-2 text-left transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50`}
     >
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" aria-hidden />
       <div className="relative mb-1.5 flex items-start justify-between gap-1">
@@ -111,6 +124,11 @@ export function ArtifactCard({ artifact, onInspect }: ArtifactCardProps) {
       <p className={`relative text-[var(--hq-artifact-title-size)] font-semibold leading-snug text-[var(--hq-text-primary)] ${titleClampClass(artifact)}`}>
         {display.title}
       </p>
+      {inspecting ? (
+        <p className="hq-inspection-chip" data-hq-inspecting-label="true">
+          Inspecting
+        </p>
+      ) : null}
       {display.subtitle ? (
         <p
           className={`relative mt-1 text-[var(--hq-artifact-subtitle-size)] text-[var(--hq-text-secondary)] ${
@@ -169,6 +187,7 @@ export function DecisionToken({ artifact, large = false }: { artifact: HqWorkArt
         open();
       }}
       onKeyDown={onKeyDown}
+      data-hq-validation-token={decision === "VALIDATE" ? "true" : "false"}
       style={lineageStyle}
       className={`${tone} ${lineageClass} ${large ? "hq-decision-token--large" : ""} hq-artifact-card--clickable min-w-0 w-full cursor-pointer ${artifact.state === "CREATING" ? "hq-artifact-creating" : ""} focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50`}
     >
