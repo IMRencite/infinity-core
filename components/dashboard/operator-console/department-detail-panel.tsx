@@ -21,6 +21,8 @@ import {
   EMPTY_INSPECTION_CONTEXT,
   filterArtifactsForInspection,
   isRoomCompatibleWithInspection,
+  LEGACY_RESEARCH_LINEAGE_NOTICE,
+  shouldShowLegacyResearchLineageNotice,
 } from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
@@ -87,8 +89,14 @@ export function DepartmentDetailPanel({
   const inspection = useOptionalHqInspection();
   const inspectionContext = inspection?.context ?? EMPTY_INSPECTION_CONTEXT;
   const roomCompatible = isRoomCompatibleWithInspection(department.id, inspectionContext);
+  const rawWorkArtifacts = department.workArtifacts ?? [];
   const workArtifacts = filterArtifactsForInspection(
-    department.workArtifacts ?? [],
+    rawWorkArtifacts,
+    inspectionContext,
+    department.id,
+  );
+  const showLegacyResearchNotice = shouldShowLegacyResearchLineageNotice(
+    rawWorkArtifacts,
     inspectionContext,
     department.id,
   );
@@ -180,6 +188,12 @@ export function DepartmentDetailPanel({
               </ul>
             </div>
           </section>
+        ) : null}
+
+        {roomCompatible && showLegacyResearchNotice ? (
+          <p className="text-sm text-zinc-400" data-hq-legacy-research-lineage="true">
+            {LEGACY_RESEARCH_LINEAGE_NOTICE}
+          </p>
         ) : null}
 
         {roomCompatible && workArtifacts.length > 0 ? (

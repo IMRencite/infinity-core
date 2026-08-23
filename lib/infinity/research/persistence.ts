@@ -9,6 +9,10 @@ import type {
   FailedResearchResult,
   ResearchResult,
 } from "./types";
+import {
+  canonicalizeResearchCandidateId,
+  readCandidateIdFromStructuredResult,
+} from "./candidate-lineage";
 
 export type ResearchRunRow = {
   id: string;
@@ -67,6 +71,7 @@ export async function insertResearchRun(
   admin: AdminSupabaseClient,
   input: {
     organizationId: string;
+    candidateId?: string | null;
     missionId?: string | null;
     provider: string;
     model: string;
@@ -76,6 +81,7 @@ export async function insertResearchRun(
     correlationId: string;
   },
 ): Promise<ResearchRunRow> {
+  const candidateId = canonicalizeResearchCandidateId(input.candidateId);
   const { data, error } = await admin
     .from("research_runs")
     .insert({
@@ -91,6 +97,7 @@ export async function insertResearchRun(
       correlation_id: input.correlationId,
       status: "requested",
       started_at: new Date().toISOString(),
+      ...(candidateId ? { structured_result: { candidateId } as never } : {}),
     })
     .select("*")
     .single();
@@ -120,7 +127,9 @@ export async function updateResearchRun(
 }
 
 export function mapCompletedResearchRunToResult(row: ResearchRunRow): ResearchResult {
-  return row.structured_result as unknown as ResearchResult;
+  const result = row.structured_result as unknown as ResearchResult;
+  const candidateId = readCandidateIdFromStructuredResult(row.structured_result);
+  return candidateId ? { ...result, candidateId } : result;
 }
 
 export function mapFailedResearchRunToResult(
@@ -131,6 +140,7 @@ export function mapFailedResearchRunToResult(
   return {
     researchRunId: row.id,
     organizationId: row.organization_id,
+    candidateId: readCandidateIdFromStructuredResult(row.structured_result),
     researchObjective: row.research_objective,
     providerId: (row.provider as FailedResearchResult["providerId"]) ?? null,
     modelId: row.model ?? null,

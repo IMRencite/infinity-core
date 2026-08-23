@@ -81,6 +81,7 @@ export function normalizeGroundedResearch(input: {
   retryMetadata: ResearchResult["retryMetadata"];
   rawProviderResponseStored: boolean;
   runPurpose?: string;
+  candidateId?: string | null;
 }): ResearchResult {
   const allowedSourcesMap = extractAllowedSourceUrls(input.groundingMetadata);
   const sources = dedupeSources([...allowedSourcesMap.values()]);
@@ -161,12 +162,13 @@ export function normalizeGroundedResearch(input: {
     : buildGroundingUsage(input.groundingMetadata);
 
   if (!groundingUsage.groundingInvoked) {
-    throw new Error("Google Search grounding was not invoked — no grounding metadata returned.");
+    throw new Error("Google Search grounding was not invoked ΓÇö no grounding metadata returned.");
   }
 
   return {
     researchRunId: input.researchRunId,
     organizationId: input.organizationId,
+    candidateId: input.candidateId ?? null,
     missionId: input.missionId,
     providerId: input.providerId,
     modelId: input.modelId,

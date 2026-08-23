@@ -40,6 +40,24 @@ export function readHqCandidateId(artifact: HqWorkArtifact): string | null {
   return null;
 }
 
+export function readHqCandidateLineageIds(artifact: HqWorkArtifact): string[] {
+  const ids: string[] = [];
+  const single = readHqCandidateId(artifact);
+  if (single) ids.push(single);
+  const raw = artifact.metadata.candidateIds;
+  if (typeof raw === "string" && raw.trim()) {
+    for (const part of raw.split(",")) {
+      const id = part.trim();
+      if (id && !ids.includes(id)) ids.push(id);
+    }
+  }
+  return ids;
+}
+
+export function isResearchGridArtifact(artifact: HqWorkArtifact): boolean {
+  return artifact.artifactType === "research_packet" || artifact.artifactType === "source_cluster";
+}
+
 function titleForCandidate(artifacts: HqWorkArtifact[], candidateId: string): string | null {
   const card = artifacts.find(
     (artifact) =>

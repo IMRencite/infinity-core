@@ -20,6 +20,8 @@ const ALLOWED_METADATA_KEYS = new Set([
   "assumptionCategory",
   "synthesisOnly",
   "candidateId",
+  "candidateIds",
+  "ventureId",
   "researchRunId",
   "status",
   "selected",
@@ -47,9 +49,11 @@ export function sanitizeArtifactMetadata(
       out[key] = value;
       continue;
     }
-    const text = String(value);
+    const text = Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0).join(",")
+      : String(value);
     if (SECRET_PATTERN.test(text)) continue;
-    out[key] = text.slice(0, 120);
+    out[key] = text.slice(0, key === "candidateIds" ? 2000 : 120);
   }
   return out;
 }

@@ -4,7 +4,9 @@ import {
   architectureIdentityBind,
   collectHqArtifacts,
   findSelectedOpportunityCandidate,
+  isResearchGridArtifact,
   readHqCandidateId,
+  readHqCandidateLineageIds,
   resolveArchitectureEntity,
   titleForHqCandidate,
   type ArchitectureEntity,
@@ -209,14 +211,26 @@ export function isRoomCompatibleWithInspection(roomId: DepartmentId, context: Hq
   return OPPORTUNITY_INSPECTION_ROOMS.includes(roomId);
 }
 
+export const LEGACY_RESEARCH_LINEAGE_NOTICE =
+  "Some legacy research lacks candidate lineage and is not shown in this scoped view.";
+
+function artifactHasVentureResearchLineage(artifact: HqWorkArtifact, ventureId: string): boolean {
+  const metaVentureId = artifact.metadata.ventureId;
+  if (typeof metaVentureId === "string" && metaVentureId.trim() === ventureId) return true;
+  return artifact.lineageType === "venture" && artifact.lineageId === ventureId;
+}
+
 export function artifactBelongsToInspection(artifact: HqWorkArtifact, context: HqInspectionContext): boolean {
   if (context.status !== "ACTIVE" || !context.entityId) return true;
-  const candidateId = readHqCandidateId(artifact);
+  const lineageIds = readHqCandidateLineageIds(artifact);
   if (context.entityType === "OPPORTUNITY_CANDIDATE") {
-    return candidateId === context.entityId;
+    return lineageIds.includes(context.entityId);
   }
   if (context.entityType === "VENTURE") {
-    return candidateId == null || candidateId === context.entityId;
+    if (isResearchGridArtifact(artifact)) {
+      return artifactHasVentureResearchLineage(artifact, context.entityId);
+    }
+    return lineageIds.length === 0 || lineageIds.includes(context.entityId);
   }
   return true;
 }
@@ -227,9 +241,25 @@ export function filterArtifactsForInspection(
   roomId: DepartmentId,
 ): HqWorkArtifact[] {
   if (context.status === "UNAVAILABLE") return [];
-  if (context.status !== "ACTIVE" || context.entityType !== "OPPORTUNITY_CANDIDATE") return artifacts;
+  if (context.status !== "ACTIVE") return artifacts;
+  if (context.entityType === "VENTURE" && roomId === "research_department") {
+    return artifacts.filter((artifact) => artifactBelongsToInspection(artifact, context));
+  }
+  if (context.entityType !== "OPPORTUNITY_CANDIDATE") return artifacts;
   if (roomId === "opportunity_lab") return artifacts;
   return artifacts.filter((artifact) => artifactBelongsToInspection(artifact, context));
+}
+
+export function shouldShowLegacyResearchLineageNotice(
+  artifacts: HqWorkArtifact[],
+  context: HqInspectionContext,
+  roomId: DepartmentId,
+): boolean {
+  if (roomId !== "research_department") return false;
+  if (context.status !== "ACTIVE" || context.entityType !== "OPPORTUNITY_CANDIDATE") return false;
+  return artifacts.some(
+    (artifact) => isResearchGridArtifact(artifact) && readHqCandidateLineageIds(artifact).length === 0,
+  );
 }
 
 function candidateMonetizationModel(snapshot: OperatorVentureSnapshot, candidateId: string): string | null {

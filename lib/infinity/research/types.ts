@@ -79,6 +79,7 @@ export type ProviderResearchStructuredOutput = {
 export type ResearchResult = {
   researchRunId: string;
   organizationId: string;
+  candidateId?: string | null;
   missionId: string | null;
   providerId: ResearchProviderId;
   modelId: string;
@@ -118,6 +119,7 @@ export type ResearchResult = {
 export type FailedResearchResult = {
   researchRunId: string;
   organizationId: string;
+  candidateId?: string | null;
   researchObjective: string;
   providerId: ResearchProviderId | null;
   modelId: string | null;
@@ -134,6 +136,8 @@ export type FailedResearchResult = {
 
 export type RunGroundedResearchInput = {
   organizationId: string;
+  /** Canonical OpportunityCandidate.id when this run is candidate-scoped. Optional for independent research. */
+  candidateId?: string | null;
   missionId?: string | null;
   researchObjective: string;
   idempotencyKey: string;

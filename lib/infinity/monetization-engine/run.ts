@@ -136,6 +136,7 @@ export async function runMonetizationEngineCycle(
 
         const researchOutput = await runGroundedResearch(admin, {
           organizationId: input.organizationId,
+          candidateId: candidate.id,
           researchObjective,
           idempotencyKey: `${input.idempotencyKey}:research:${candidate.id}`,
           providerId: "gemini",

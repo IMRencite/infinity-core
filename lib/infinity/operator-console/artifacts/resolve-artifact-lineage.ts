@@ -1,5 +1,6 @@
 import type { HqWorkArtifact } from "./types";
 import { colorKeyForLineageId } from "./lineage-palette";
+import { readHqCandidateLineageIds } from "../architecture-entity";
 
 export type HqLineageType = "candidate" | "venture";
 
@@ -36,10 +37,9 @@ function resolveCandidateId(artifact: HqWorkArtifact, context: ArtifactLineageCo
     return artifact.sourceRecordId;
   }
 
-  const metaCandidateId = artifact.metadata.candidateId;
-  if (typeof metaCandidateId === "string" && metaCandidateId.length > 0) {
-    return metaCandidateId;
-  }
+  const lineageIds = readHqCandidateLineageIds(artifact);
+  if (lineageIds.length === 1) return lineageIds[0] ?? null;
+  if (lineageIds.length > 1) return null;
 
   const selected = artifact.metadata.selected === true;
   if (selected && context.selectedCandidateId) {
@@ -66,7 +66,8 @@ export function resolveArtifactLineage(
 ): ResolvedArtifactLineage {
   if (artifact.artifactType === "research_packet" || artifact.artifactType === "source_cluster") {
     if (artifact.roomId === "research_department") {
-      return NEUTRAL;
+      const lineageIds = readHqCandidateLineageIds(artifact);
+      if (lineageIds.length !== 1) return NEUTRAL;
     }
   }
 

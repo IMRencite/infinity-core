@@ -25,6 +25,8 @@ import {
   EMPTY_INSPECTION_CONTEXT,
   filterArtifactsForInspection,
   isRoomCompatibleWithInspection,
+  LEGACY_RESEARCH_LINEAGE_NOTICE,
+  shouldShowLegacyResearchLineageNotice,
 } from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
@@ -72,8 +74,14 @@ export function DepartmentRoom({
   const failureSemantics = snapshot?.failureSemantics;
   const state = departmentVisualState(rawState, failureSemantics);
   const inspection = useOptionalHqInspection();
+  const rawWorkArtifacts = snapshot?.workArtifacts ?? [];
   const workArtifacts = filterArtifactsForInspection(
-    snapshot?.workArtifacts ?? [],
+    rawWorkArtifacts,
+    inspection?.context ?? EMPTY_INSPECTION_CONTEXT,
+    departmentId,
+  );
+  const showLegacyResearchNotice = shouldShowLegacyResearchLineageNotice(
+    rawWorkArtifacts,
     inspection?.context ?? EMPTY_INSPECTION_CONTEXT,
     departmentId,
   );
@@ -146,19 +154,31 @@ export function DepartmentRoom({
           <p className="hq-room-incompatible px-1 py-1 text-[11px] leading-snug text-zinc-400" data-hq-room-incompatible="true">
             This room requires a promoted venture.
           </p>
-        ) : systemsView ? null : workArtifacts.length > 0 ? (
-          <RoomArtifactSurface
-            artifacts={workArtifacts}
-            expectedCount={snapshot?.recordCount ?? null}
-            roomName={displayName}
-            isActive={isActive}
-            isTerminal={isTerminal}
-            compact
-          />
-        ) : (
-          <p className="hq-room-empty-outputs px-1 py-1 text-[9px] font-medium uppercase tracking-[0.14em] text-zinc-600">
-            No outputs yet
-          </p>
+        ) : systemsView ? null : (
+          <>
+            {workArtifacts.length > 0 ? (
+              <RoomArtifactSurface
+                artifacts={workArtifacts}
+                expectedCount={snapshot?.recordCount ?? null}
+                roomName={displayName}
+                isActive={isActive}
+                isTerminal={isTerminal}
+                compact
+              />
+            ) : (
+              <p className="hq-room-empty-outputs px-1 py-1 text-[9px] font-medium uppercase tracking-[0.14em] text-zinc-600">
+                No outputs yet
+              </p>
+            )}
+            {showLegacyResearchNotice ? (
+              <p
+                className="mt-1 px-1 text-[10px] leading-snug text-zinc-500"
+                data-hq-legacy-research-lineage="true"
+              >
+                {LEGACY_RESEARCH_LINEAGE_NOTICE}
+              </p>
+            ) : null}
+          </>
         )}
         {presence.state === "ACTIVE_WORK" ? (
           <RoomWorkflowStage

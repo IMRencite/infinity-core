@@ -26,6 +26,7 @@ import {
   providerResearchJsonSchema,
 } from "./schema";
 import type { RunGroundedResearchInput, RunGroundedResearchOutput } from "./types";
+import { canonicalizeResearchCandidateId } from "./candidate-lineage";
 
 async function persistResearchFailure(
   admin: AdminSupabaseClient,
@@ -39,6 +40,7 @@ async function persistResearchFailure(
     latencyMs?: number | null;
     requestId?: string | null;
     retryCount?: number;
+    candidateId?: string | null;
   },
 ): Promise<RunGroundedResearchOutput> {
   const failedAt = new Date().toISOString();
@@ -59,6 +61,7 @@ async function persistResearchFailure(
     request_id: input.requestId ?? null,
     retry_count: input.retryCount ?? 0,
     failed_at: failedAt,
+    ...(input.candidateId ? { structured_result: { candidateId: input.candidateId } as never } : {}),
   });
 
   const { data: row } = await admin
@@ -85,6 +88,7 @@ export async function runGroundedResearch(
   const config = loadResearchConfig();
   const providerId = input.providerId ?? config.providerId;
   const modelId = input.modelId ?? config.modelId;
+  const candidateId = canonicalizeResearchCandidateId(input.candidateId);
 
   const existing = await findResearchRunByIdempotencyKey(
     admin,
@@ -149,6 +153,7 @@ export async function runGroundedResearch(
     if (!existing) {
       const row = await insertResearchRun(admin, {
         organizationId: input.organizationId,
+        candidateId,
         missionId: input.missionId,
         provider: providerId,
         model: modelId,
@@ -162,6 +167,7 @@ export async function runGroundedResearch(
         runId: row.id,
         classification: classified.classification,
         message: classified.message,
+        candidateId,
       });
     }
     return persistResearchFailure(admin, {
@@ -169,6 +175,7 @@ export async function runGroundedResearch(
       runId: existing.id,
       classification: classified.classification,
       message: classified.message,
+      candidateId,
     });
   }
 
@@ -177,6 +184,7 @@ export async function runGroundedResearch(
     existing ??
     (await insertResearchRun(admin, {
       organizationId: input.organizationId,
+      candidateId,
       missionId: input.missionId,
       provider: providerId,
       model: modelId,
@@ -226,6 +234,7 @@ export async function runGroundedResearch(
       retryMetadata: providerResult.retryMetadata,
       rawProviderResponseStored: true,
       runPurpose: input.runPurpose,
+      candidateId,
     });
 
     const completedAt = new Date().toISOString();
@@ -266,6 +275,7 @@ export async function runGroundedResearch(
       runId: runRow.id,
       classification: classified.classification,
       message: classified.message,
+      candidateId,
     });
   }
 }
