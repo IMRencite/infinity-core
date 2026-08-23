@@ -41,10 +41,10 @@ describe("HQ Validation Station full-width layout", () => {
     expect(sections.above.left).toEqual([
       "opportunity_lab",
       "strategy_finance",
-      "growth_department",
-      "product_lab",
+      "systems_architect",
+      "creative_studio",
     ]);
-    expect(sections.above.right).toEqual(["research_department", "company_operations", "creative_studio"]);
+    expect(sections.above.right).toEqual(["research_department", "company_operations", "growth_department", "product_lab"]);
     expect(sections.below.left).toEqual(["launch_operations"]);
     expect(sections.below.right).toEqual(["intelligence_center"]);
     expect(assembleCanonicalFloorOrder(sections)).toEqual(LIFECYCLE_ROOM_SEQUENCE);

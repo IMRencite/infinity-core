@@ -27,6 +27,10 @@ const FAMILY_PROVIDER_CATEGORY: Partial<Record<SystemFamily, ProviderCategory>> 
   IDENTITY_AND_ACCOUNTS: "IDENTITY",
 };
 
+export function providerCategoryForFamily(family: SystemFamily): ProviderCategory | null {
+  return FAMILY_PROVIDER_CATEGORY[family] ?? null;
+}
+
 export function overlayTenancy(
   requirements: VentureSystemRequirement[],
   evidence: VentureSystemsEvidence,

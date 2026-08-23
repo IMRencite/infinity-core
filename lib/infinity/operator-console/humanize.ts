@@ -45,6 +45,13 @@ const DEPARTMENT_HEADLINES: Record<
     blocked: "Formation blocked",
     failed: "Structure build failed",
   },
+  systems_architect: {
+    active: "Mapping required operating systems",
+    idle: "Systems architect ready",
+    complete: "Operating blueprint mapped",
+    blocked: "Systems mapping blocked",
+    failed: "Systems mapping failed",
+  },
   growth_department: {
     active: "Planning how the venture gets discovered",
     idle: "Growth nexus ready",
@@ -99,6 +106,7 @@ const DEPARTMENT_HEADLINES: Record<
 const HISTORICAL_FAILURE_HEADLINES: Partial<Record<DepartmentId, string>> = {
   strategy_finance: "An earlier strategy pass did not complete",
   company_operations: "An earlier structure pass did not complete",
+  systems_architect: "An earlier systems-architecture pass did not complete",
   research_department: "An earlier research pass did not complete",
   product_lab: "An earlier build pass did not complete",
   creative_studio: "An earlier design pass did not complete",
@@ -113,6 +121,7 @@ const HISTORICAL_FAILURE_HEADLINES: Partial<Record<DepartmentId, string>> = {
 const CURRENT_FAILURE_HEADLINES: Partial<Record<DepartmentId, string>> = {
   strategy_finance: "Infinity could not complete the revenue strategy",
   company_operations: "Infinity could not complete the venture structure",
+  systems_architect: "Infinity could not complete the systems blueprint",
   research_department: "Infinity could not complete the market research",
   product_lab: "Infinity could not complete the product build",
   creative_studio: "Infinity could not complete the visual direction",

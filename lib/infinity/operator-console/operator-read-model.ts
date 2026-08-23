@@ -37,7 +37,7 @@ export async function loadOperatorVentureSnapshot(
 
   const raw = await loadRawEngineData(admin, venture);
   const nextMissionTargetDept = resolveNextMissionTarget(raw);
-  const departments = buildDepartments(raw, nextMissionTargetDept);
+  const departments = buildDepartments(raw, nextMissionTargetDept, venture);
   const activityFeed = buildActivityFeed(raw);
   const currentActivity = buildCurrentActivity(
     departments,

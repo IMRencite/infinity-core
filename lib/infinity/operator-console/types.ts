@@ -1,6 +1,7 @@
 import type { Favc1CycleSnapshotMeta } from "./favc1-cycle/types";
 import type { HqRoomArtifactMap, HqWorkArtifact } from "./artifacts/types";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import type { RoomActivityExplanation } from "./room-activity";
 
 export type DepartmentId =
@@ -8,6 +9,7 @@ export type DepartmentId =
   | "research_department"
   | "strategy_finance"
   | "company_operations"
+  | "systems_architect"
   | "growth_department"
   | "creative_studio"
   | "product_lab"
@@ -43,6 +45,7 @@ export type EngineId =
   | "monetization_engine"
   | "venture_selection"
   | "company_builder"
+  | "venture_systems_architecture"
   | "organic_growth"
   | "creative_media"
   | "product_asset_builder"
@@ -188,6 +191,7 @@ export type OperatorVentureContext = {
   assemblyStatus: string;
   readinessStatus: string | null;
   launchStage: string | null;
+  origin?: string | null;
   correlationIds: string[];
 };
 
@@ -228,6 +232,7 @@ export type OperatorVentureSnapshot = {
   handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
   handoffLineageColorKey?: string | null;
   treasury?: TreasuryHqReadModel;
+  systemsArchitecture?: SystemsArchitectHqView | null;
 };
 
 export type OperatorVentureListItem = {

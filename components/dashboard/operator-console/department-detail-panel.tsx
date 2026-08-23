@@ -14,12 +14,15 @@ import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspecto
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomCurrentActivity } from "./room-current-activity";
+import { SystemsArchitectDetail } from "./systems-architect-blueprint";
+import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 
 type Props = {
   department: OperatorDepartmentSnapshot | null;
   providers: OperatorProviderSession[];
   workerNodes: OperatorWorkerNode[];
   costs: OperatorCostSummary;
+  architectureWorkspaceOpen?: boolean;
 };
 
 function ArtifactDetailTrigger({ artifact }: { artifact: HqWorkArtifact }) {
@@ -49,7 +52,13 @@ function ArtifactDetailTrigger({ artifact }: { artifact: HqWorkArtifact }) {
   );
 }
 
-export function DepartmentDetailPanel({ department, providers, workerNodes, costs }: Props) {
+export function DepartmentDetailPanel({
+  department,
+  providers,
+  workerNodes,
+  costs,
+  architectureWorkspaceOpen = false,
+}: Props) {
   if (!department) {
     return (
       <aside className="rounded-xl border border-zinc-800/80 bg-zinc-950/40 p-4 text-sm text-zinc-500">
@@ -69,6 +78,10 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
       workerNodes: deptNodes,
       providers: deptProviders,
     });
+  const systemsView =
+    department.id === "systems_architect"
+      ? ((department.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null)
+      : null;
 
   return (
     <aside className="overflow-hidden rounded-xl border border-zinc-800/80 bg-gradient-to-b from-zinc-950/90 to-[#0a0a0c] shadow-xl shadow-black/10">
@@ -87,6 +100,23 @@ export function DepartmentDetailPanel({ department, providers, workerNodes, cost
           <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Room purpose</p>
           <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">{names.expandedDescription}</p>
         </section>
+
+        {systemsView && !architectureWorkspaceOpen ? (
+          <section>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Operating blueprint</p>
+            <div className="mt-2">
+              <SystemsArchitectDetail view={systemsView} />
+            </div>
+          </section>
+        ) : null}
+        {systemsView && architectureWorkspaceOpen ? (
+          <section>
+            <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Operating blueprint</p>
+            <p className="mt-1.5 text-sm text-zinc-400">
+              Architecture workspace is open above. Concrete systems are selectable there.
+            </p>
+          </section>
+        ) : null}
 
         <section>
           <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Current activity</p>

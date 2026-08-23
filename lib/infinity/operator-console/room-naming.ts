@@ -11,6 +11,7 @@ export const LIFECYCLE_ROOM_SEQUENCE: DepartmentId[] = [
   "research_department",
   "strategy_finance",
   "company_operations",
+  "systems_architect",
   "growth_department",
   "creative_studio",
   "product_lab",
@@ -62,6 +63,12 @@ export const ROOM_DISPLAY_NAMES: Record<DepartmentId, RoomDisplayNames> = {
     shortDescription: "Turns a validated idea into a clear business plan and build roadmap.",
     expandedDescription:
       "Defines the venture structure, business model, product requirements, operating plan, and the major pieces that need to be built.",
+  }),
+  systems_architect: roomCopy({
+    displayName: "Systems Architect",
+    shortDescription: "Shows the operating systems this venture needs before anything is built or bought.",
+    expandedDescription:
+      "Maps the business model onto payments, CRM, communications, scheduling, support, analytics, compliance, and provider tenancy so Infinity can explain the operating path without purchasing software or creating accounts.",
   }),
   growth_department: roomCopy({
     displayName: "Growth Nexus",

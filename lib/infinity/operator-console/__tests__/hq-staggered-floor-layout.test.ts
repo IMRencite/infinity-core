@@ -46,19 +46,20 @@ describe("HQ staggered operating floor layout", () => {
     expect(HQ_FLOOR_LEFT_ROOMS).toEqual([
       "opportunity_lab",
       "strategy_finance",
-      "growth_department",
-      "product_lab",
+      "systems_architect",
+      "creative_studio",
       "launch_operations",
     ]);
     expect(HQ_FLOOR_RIGHT_ROOMS).toEqual([
       "research_department",
       "company_operations",
-      "creative_studio",
+      "growth_department",
+      "product_lab",
       "intelligence_center",
     ]);
     expect(HQ_FLOOR_FULL_WIDTH_ROOMS).toEqual(["quality_control"]);
     expect(assembleCanonicalFloorOrder()).toEqual(HQ_FLOOR_CANONICAL_ROOMS);
-    expect(new Set([...HQ_FLOOR_LEFT_ROOMS, ...HQ_FLOOR_RIGHT_ROOMS, ...HQ_FLOOR_FULL_WIDTH_ROOMS]).size).toBe(10);
+    expect(new Set([...HQ_FLOOR_LEFT_ROOMS, ...HQ_FLOOR_RIGHT_ROOMS, ...HQ_FLOOR_FULL_WIDTH_ROOMS]).size).toBe(11);
     expect(hqFloorDesktopColumns().left).toEqual(HQ_FLOOR_LEFT_ROOMS);
     expect(hqFloorSpan("quality_control")).toBe("full");
     expect(interleaveFloorColumns(HQ_FLOOR_LAYOUT_SECTIONS.above.left, HQ_FLOOR_LAYOUT_SECTIONS.above.right)).toEqual([
@@ -66,6 +67,7 @@ describe("HQ staggered operating floor layout", () => {
       "research_department",
       "strategy_finance",
       "company_operations",
+      "systems_architect",
       "growth_department",
       "creative_studio",
       "product_lab",

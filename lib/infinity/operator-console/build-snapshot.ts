@@ -13,8 +13,10 @@ import type {
   OperatorDepartmentSnapshot,
   OperatorLineageNode,
   OperatorProviderSession,
+  OperatorVentureContext,
 } from "./types";
 import { filterSafeFilePaths } from "./sanitize";
+import { evidenceFromPersistedHqRows, identityFromPersistedHqRows, resolveSystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 
 function latestRow(rows: Record<string, unknown>[]): Record<string, unknown> | null {
   if (!rows.length) return null;
@@ -39,6 +41,7 @@ function runningRow(rows: Record<string, unknown>[]): Record<string, unknown> | 
 export function buildDepartments(
   raw: RawEngineData,
   nextMissionTargetDept: DepartmentId | null,
+  venture: OperatorVentureContext | null = null,
 ): OperatorDepartmentSnapshot[] {
   type DeptPartial = {
     def: (typeof DEPARTMENTS)[number];
@@ -119,6 +122,39 @@ export function buildDepartments(
         timeline = rowsToTimeline(rows);
         detail = { runs: raw.companyBuilderRuns, blueprints: raw.companyBuilderBlueprints };
         lastActivityAt = latestRow(rows) ? rowTimestamp(latestRow(rows)!) : null;
+        break;
+      }
+      case "systems_architect": {
+        const plan = raw.monetizationPlans[0] ?? null;
+        const blueprint = raw.companyBuilderBlueprints[0] ?? null;
+        const identity = identityFromPersistedHqRows({
+          ventureId: venture?.ventureAssemblyId,
+          ventureName: venture?.ventureName,
+          ventureOrigin: venture?.origin,
+          ventureStatus: venture?.assemblyStatus,
+          ventureStage: venture?.launchStage ?? venture?.readinessStatus,
+          monetizationPlan: plan,
+          blueprint,
+        });
+        const view = resolveSystemsArchitectHqView(
+          evidenceFromPersistedHqRows({
+            ventureId: venture?.ventureAssemblyId,
+            ventureType: venture?.ventureType,
+            monetizationPlan: plan,
+            blueprint,
+          }),
+          identity,
+        );
+        const sourceRows = [...raw.monetizationPlans, ...raw.companyBuilderBlueprints, ...raw.monetizationRuns];
+        hasRecords = view.evidenceGrounded;
+        recordCount = view.requiredCount;
+        runStatuses = hasRecords ? ["completed"] : [];
+        timeline = hasRecords
+          ? [{ status: "completed", timestamp: latestRow(sourceRows) ? rowTimestamp(latestRow(sourceRows)!) : null }]
+          : [];
+        summary = view.explanation;
+        detail = { systemsArchitectView: view };
+        lastActivityAt = latestRow(sourceRows) ? rowTimestamp(latestRow(sourceRows)!) : null;
         break;
       }
       case "growth_department": {

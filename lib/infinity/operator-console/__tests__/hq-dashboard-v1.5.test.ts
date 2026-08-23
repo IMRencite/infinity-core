@@ -17,7 +17,7 @@ import type { OperatorDepartmentSnapshot, OperatorVentureSnapshot } from "../typ
 describe("HQ Dashboard V1.5 — spatial floor structure", () => {
   it("1. shared spatial floor layout constants exist", () => {
     expect(HQ_FLOOR_LAYOUT.productionWingSpan).toBe("lg:col-span-11");
-    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(10);
+    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(11);
     expect(COMMAND_ROOM_ID).toBe("executive_office");
   });
 

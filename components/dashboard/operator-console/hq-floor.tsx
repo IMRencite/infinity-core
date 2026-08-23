@@ -20,13 +20,14 @@ const GRID_LAYOUT: Record<DepartmentId, string> = {
   research_department: "md:col-start-2 md:row-start-1",
   strategy_finance: "md:col-start-1 md:row-start-2",
   company_operations: "md:col-start-2 md:row-start-2",
-  growth_department: "md:col-start-1 md:row-start-3",
-  creative_studio: "md:col-start-2 md:row-start-3",
-  product_lab: "md:col-start-1 md:row-start-4",
-  quality_control: "md:col-start-2 md:row-start-4",
-  launch_operations: "md:col-start-1 md:row-start-5",
-  intelligence_center: "md:col-start-2 md:row-start-5",
-  executive_office: "md:col-span-2 md:row-start-6",
+  systems_architect: "md:col-start-1 md:row-start-3",
+  growth_department: "md:col-start-2 md:row-start-3",
+  creative_studio: "md:col-start-1 md:row-start-4",
+  product_lab: "md:col-start-2 md:row-start-4",
+  quality_control: "md:col-start-1 md:row-start-5",
+  launch_operations: "md:col-start-2 md:row-start-5",
+  intelligence_center: "md:col-start-1 md:row-start-6",
+  executive_office: "md:col-span-2 md:row-start-7",
 };
 
 export function HqFloor({ departments, closedLoopRoute, selectedDepartment, onSelectDepartment }: Props) {

@@ -41,6 +41,15 @@ export function RoomMotif({ motif, active }: Props) {
           <path d="M 15 18 L 85 18 M 40 8 L 40 32" className={stroke} strokeWidth="0.25" fill="none" />
         </>
       ) : null}
+      {motif === "systems" ? (
+        <>
+          <rect x="8" y="14" width="14" height="12" className={stroke} strokeWidth="0.35" fill="none" />
+          <rect x="32" y="12" width="14" height="16" className={stroke} strokeWidth="0.35" fill="none" />
+          <rect x="56" y="14" width="14" height="12" className={stroke} strokeWidth="0.35" fill="none" />
+          <rect x="80" y="16" width="12" height="8" className={stroke} strokeWidth="0.35" fill="none" />
+          <path d="M 22 20 L 32 20 M 46 20 L 56 20 M 70 20 L 80 20" className={stroke} strokeWidth="0.35" fill="none" />
+        </>
+      ) : null}
       {motif === "branch" ? (
         <path d="M 50 32 L 50 20 M 50 20 L 25 10 M 50 20 L 75 10" className={stroke} strokeWidth="0.4" fill="none" />
       ) : null}

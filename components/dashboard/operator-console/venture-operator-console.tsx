@@ -10,6 +10,8 @@ import { CommandChamber } from "./command-chamber";
 import { ActivityFeedPanel } from "./activity-feed-panel";
 import { SystemView } from "./system-view";
 import { DepartmentDetailPanel } from "./department-detail-panel";
+import { SystemsArchitectDetail } from "./systems-architect-blueprint";
+import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import { SystemHealthStrip } from "./system-health-strip";
 import { CostBreakdownStrip } from "./cost-breakdown-strip";
 import { OperationsSummaryStrip } from "./operations-summary-strip";
@@ -175,6 +177,14 @@ function VentureOperatorConsoleInner({
   );
 
   const selected = snapshot.departments.find((d) => d.id === selectedDepartment) ?? null;
+  const systemsArchitectView =
+    snapshot.systemsArchitecture ??
+    ((selected?.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null);
+
+  useEffect(() => {
+    if (selectedDepartment !== "systems_architect") return;
+    document.getElementById("systems-architect-workspace")?.scrollIntoView({ block: "nearest" });
+  }, [selectedDepartment]);
 
   return (
     <HqArtifactInspectorProvider
@@ -240,6 +250,35 @@ function VentureOperatorConsoleInner({
             />
           </div>
 
+          {selectedDepartment === "systems_architect" ? (
+            <section
+              id="systems-architect-workspace"
+              data-systems-architect-workspace="true"
+              className="systems-architect-workspace"
+              aria-label="Systems Architect architecture workspace"
+            >
+              {systemsArchitectView ? (
+                <SystemsArchitectDetail
+                  view={systemsArchitectView}
+                  onClose={() => setSelectedDepartment(null)}
+                />
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="systems-architect-back"
+                    data-systems-architect-back="true"
+                    aria-label="Back to HQ floor"
+                    onClick={() => setSelectedDepartment(null)}
+                  >
+                    ← Back to HQ
+                  </button>
+                  <p className="systems-architect-empty-copy">No architecture context is available for this room.</p>
+                </>
+              )}
+            </section>
+          ) : null}
+
           <div className="space-y-3 border-t border-zinc-800/60 pt-4" data-hq-region="infrastructure">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-600">System Infrastructure</p>
             {treasury ? (
@@ -297,6 +336,7 @@ function VentureOperatorConsoleInner({
                 providers={snapshot.providers}
                 workerNodes={snapshot.workerNodes ?? []}
                 costs={snapshot.costs}
+                architectureWorkspaceOpen={selectedDepartment === "systems_architect"}
               />
             </div>
           </div>

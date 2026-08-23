@@ -22,6 +22,7 @@ const EXPECTED_SHORT: Record<string, string> = {
   research_department: "Checks the market, customers, competitors, facts, and evidence behind an idea.",
   strategy_finance: "Figures out how the business can make money and whether the economics make sense.",
   company_operations: "Turns a validated idea into a clear business plan and build roadmap.",
+  systems_architect: "Shows the operating systems this venture needs before anything is built or bought.",
   growth_department: "Plans how the venture will attract customers and grow.",
   creative_studio: "Creates the brand, visuals, messaging, and creative direction.",
   product_lab: "Builds the product, website, software, assets, and systems the venture needs.",
@@ -33,8 +34,8 @@ const EXPECTED_SHORT: Record<string, string> = {
 
 describe("HQ room job descriptions v1", () => {
   it("keeps one canonical metadata source for every HQ room", () => {
-    expect(ALL_HQ_ROOM_IDS).toHaveLength(11);
-    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(11);
+    expect(ALL_HQ_ROOM_IDS).toHaveLength(12);
+    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(12);
     for (const id of ALL_HQ_ROOM_IDS) {
       const names = getRoomDisplayNames(id);
       expect(names.shortDescription.trim().length).toBeGreaterThan(20);
@@ -93,6 +94,7 @@ describe("HQ room job descriptions v1", () => {
       "research_department",
       "strategy_finance",
       "company_operations",
+      "systems_architect",
       "growth_department",
       "creative_studio",
       "product_lab",
@@ -105,6 +107,7 @@ describe("HQ room job descriptions v1", () => {
       "Research Grid",
       "Profit Lab",
       "Blueprint Lab",
+      "Systems Architect",
       "Growth Nexus",
       "Design Core",
       "Creation Lab",

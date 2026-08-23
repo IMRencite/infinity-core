@@ -136,6 +136,17 @@ const ROOM_ACTIVE_COPY: Record<DepartmentId, { default: RoomCopyVariant; alt?: R
       withoutVenture: "Defining the product, operating model, and major build requirements.",
     },
   },
+  systems_architect: {
+    default: {
+      withVenture: (v) => `Mapping the operating systems ${v} needs before build or procurement.`,
+      withoutVenture: "Mapping the operating systems this venture needs before build or procurement.",
+    },
+    altWhen: /payment|crm|tenancy/i,
+    alt: {
+      withVenture: () => "Selecting payment, CRM, communications, and tenancy requirements without buying software.",
+      withoutVenture: "Selecting payment, CRM, communications, and tenancy requirements without buying software.",
+    },
+  },
   growth_department: {
     default: {
       withVenture: (v) => `Planning customer acquisition channels and organic growth for ${v}.`,

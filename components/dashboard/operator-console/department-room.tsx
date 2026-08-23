@@ -18,6 +18,8 @@ import { deriveRoomPresence } from "@/lib/infinity/operator-console/room-presenc
 import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomPresenceTrack } from "./infinity-room/room-presence-track";
 import { RoomCurrentActivity } from "./room-current-activity";
+import { SystemsArchitectBlueprint } from "./systems-architect-blueprint";
+import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 
 type Props = {
   departmentId: DepartmentId;
@@ -76,6 +78,10 @@ export function DepartmentRoom({
     closedLoopRoute,
     ventureName,
   });
+  const systemsView =
+    departmentId === "systems_architect"
+      ? ((snapshot?.detail.systemsArchitectView as SystemsArchitectHqView | undefined) ?? null)
+      : null;
 
   return (
     <InfinityRoomShell
@@ -107,15 +113,23 @@ export function DepartmentRoom({
       }
       footer={
         <RoomOutputStrip
-          value={primaryArtifact?.label ?? null}
+          value={
+            systemsView
+              ? systemsView.hasArchitectureContext
+                ? `${systemsView.requiredCount} required systems · ${systemsView.deferredCount} deferred`
+                : "No venture selected"
+              : (primaryArtifact?.label ?? null)
+          }
           muted={state === "NOT_STARTED" || state === "BLOCKED"}
         />
       }
     >
       <RoomCurrentActivity explanation={activity} className="mt-1.5" />
 
+      {systemsView ? <SystemsArchitectBlueprint view={systemsView} compact /> : null}
+
       <div className="relative mt-2">
-        {workArtifacts.length > 0 ? (
+        {systemsView ? null : workArtifacts.length > 0 ? (
           <RoomArtifactSurface
             artifacts={workArtifacts}
             expectedCount={snapshot?.recordCount ?? null}

@@ -18,6 +18,7 @@ const ROOM_LABELS: Partial<Record<DepartmentId, string>> = {
   research_department: "Research Grid",
   strategy_finance: "Profit Lab",
   company_operations: "Blueprint Lab",
+  systems_architect: "Systems Architect",
   quality_control: "Validation Station",
   growth_department: "Growth Nexus",
   creative_studio: "Design Core",

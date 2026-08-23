@@ -38,7 +38,8 @@ export type HqArtifactType =
   | "coding_agent_run"
   | "coding_task"
   | "coding_provider"
-  | "ztp_run";
+  | "ztp_run"
+  | "systems_blueprint";
 
 export type HqArtifactState =
   | "CREATING"

@@ -9,6 +9,7 @@ export type RoomWorkZoneConfig = {
     | "network"
     | "economics"
     | "blueprint"
+    | "systems"
     | "branch"
     | "frame"
     | "pipeline"
@@ -23,6 +24,7 @@ const ROOM_WORK_ZONES: Record<DepartmentId, RoomWorkZoneConfig> = {
   research_department: { intake: "Sources", process: "Analysis", output: "Findings", motif: "network" },
   strategy_finance: { intake: "Market data", process: "Economics", output: "Revenue plan", motif: "economics" },
   company_operations: { intake: "Inputs", process: "Structure", output: "Venture blueprint", motif: "blueprint" },
+  systems_architect: { intake: "Business model", process: "Systems map", output: "Operating blueprint", motif: "systems" },
   growth_department: { intake: "Opportunity", process: "Distribution", output: "Growth plan", motif: "branch" },
   creative_studio: { intake: "Creative brief", process: "Design", output: "Media asset", motif: "frame" },
   product_lab: { intake: "Build task", process: "Implementation", output: "Artifact", motif: "pipeline" },

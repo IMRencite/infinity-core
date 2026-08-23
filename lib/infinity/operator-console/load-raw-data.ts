@@ -56,6 +56,7 @@ export async function loadVentureContext(
     assemblyStatus: data.status,
     readinessStatus: data.readiness_status,
     launchStage: data.launch_stage,
+    origin: readJsonString(identity, "origin") ?? readJsonString(manifest, "origin"),
     correlationIds,
   };
 }

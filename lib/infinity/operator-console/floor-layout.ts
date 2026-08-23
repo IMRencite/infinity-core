@@ -25,6 +25,9 @@ export const HQ_FLOOR_FULL_WIDTH_ROOMS: DepartmentId[] = ["quality_control"];
 
 export function hqFloorSpan(id: DepartmentId): HqFloorSpan {
   if (HQ_FLOOR_FULL_WIDTH_ROOMS.includes(id)) return "full";
+  // Keep the deployment wing stable when rooms are inserted above Validation.
+  if (id === "launch_operations") return "left";
+  if (id === "intelligence_center") return "right";
   const index = HQ_FLOOR_CANONICAL_ROOMS.indexOf(id);
   return index % 2 === 0 ? "left" : "right";
 }
@@ -45,6 +48,7 @@ export function hqFloorWing(id: DepartmentId): HqFloorWing {
     case "research_department":
     case "strategy_finance":
     case "company_operations":
+    case "systems_architect":
       return "discovery";
     case "growth_department":
     case "creative_studio":

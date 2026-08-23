@@ -13,6 +13,7 @@ const DEPARTMENT_DEFAULT_ROLES: Partial<Record<DepartmentId, string[]>> = {
   research_department: ["Research", "Synthesis"],
   strategy_finance: ["Economics"],
   company_operations: ["Blueprint"],
+  systems_architect: ["Architect"],
   growth_department: ["Planning"],
   creative_studio: ["Generator", "Quality"],
   product_lab: ["Implementer", "Reviewer"],

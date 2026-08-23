@@ -66,6 +66,7 @@ describe("Operator Console V1", () => {
         "research_department",
         "strategy_finance",
         "company_operations",
+        "systems_architect",
         "growth_department",
         "creative_studio",
         "product_lab",
@@ -81,6 +82,7 @@ describe("Operator Console V1", () => {
       expect(getDepartmentForEngine("monetization_engine")).toBe("strategy_finance");
       expect(getDepartmentForEngine("venture_selection")).toBe("strategy_finance");
       expect(getDepartmentForEngine("company_builder")).toBe("company_operations");
+      expect(getDepartmentForEngine("venture_systems_architecture")).toBe("systems_architect");
       expect(getDepartmentForEngine("organic_growth")).toBe("growth_department");
       expect(getDepartmentForEngine("creative_media")).toBe("creative_studio");
       expect(getDepartmentForEngine("product_asset_builder")).toBe("product_lab");

@@ -343,6 +343,7 @@ describe("HQ room activity explanations v1", () => {
       "research_department",
       "strategy_finance",
       "company_operations",
+      "systems_architect",
       "growth_department",
       "creative_studio",
       "product_lab",

@@ -22,6 +22,7 @@ describe("HQ Dashboard V1.4 — welcome and room names", () => {
       "Research Grid",
       "Profit Lab",
       "Blueprint Lab",
+      "Systems Architect",
       "Growth Nexus",
       "Design Core",
       "Creation Lab",
@@ -34,7 +35,7 @@ describe("HQ Dashboard V1.4 — welcome and room names", () => {
 
   it("3. Command is separate from lifecycle sequence", () => {
     expect(COMMAND_ROOM_ID).toBe("executive_office");
-    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(10);
+    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(11);
     expect(LIFECYCLE_ROOM_SEQUENCE.includes("executive_office")).toBe(false);
     expect(LIFECYCLE_ROOM_SEQUENCE[0]).toBe("opportunity_lab");
     expect(LIFECYCLE_ROOM_SEQUENCE.at(-1)).toBe("intelligence_center");

@@ -15,7 +15,7 @@ export type {
 } from "./types";
 export { classifyVentureOperatingModel } from "./classifier";
 export { requirementsForOperatingModel } from "./requirements";
-export { selectVentureSystems, buildDependencyGraph } from "./selector";
+export { selectVentureSystems, buildDependencyGraph, providerCategoryForFamily } from "./selector";
 export { selectTenancyStrategy } from "./provider-tenancy";
 export { buildVendorProcurement, unknownCost, sumKnownRecurringCost } from "./vendor-procurement";
 export { catalogProviderCandidates } from "./provider-capabilities";
@@ -23,6 +23,24 @@ export { buildVentureSystemsContract } from "./build-contract";
 export { validateVentureSystems } from "./validation";
 export { resolveVentureSystems } from "./resolve";
 export { buildVentureSystemsHqReadModel, explainVentureSystems } from "./hq/read-model";
+export {
+  buildSystemsArchitectHqView,
+  evidenceFromHqSignals,
+  evidenceFromPersistedHqRows,
+  identityFromPersistedHqRows,
+  bindSystemsArchitectVentureContext,
+  resolveSystemsArchitectHqView,
+  selectDefaultSystemsArchitectNodeId,
+  systemsArchitectWriteBoundary,
+} from "./hq/hq-view";
+export type {
+  SystemsArchitectHqView,
+  SystemsArchitectNode,
+  SystemsArchitectStage,
+  SystemsArchitectCluster,
+  SystemsArchitectEdge,
+} from "./hq/hq-view";
+export { buildSystemsArchitectArtifacts, SYSTEMS_ARCHITECT_ROOM_ID } from "./hq/artifacts";
 export {
   evidenceFromMonetization,
   evidenceFromVentureBlueprint,
