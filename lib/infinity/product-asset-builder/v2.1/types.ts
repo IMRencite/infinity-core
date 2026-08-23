@@ -1,5 +1,12 @@
 import type { ChangeOperation, CodingTaskType } from "./constants";
 import type { FeatureContract } from "../v2/types";
+import type { SystemFamily } from "@/lib/infinity/venture-systems-architecture/constants";
+import type { VentureSystemsBuildContract } from "@/lib/infinity/venture-systems-architecture/types";
+import type {
+  ArchitectureCodingTaskContext,
+  VentureSystemsBuildCoverageDisposition,
+  VentureSystemsBuildCoverageHqView,
+} from "./systems-architecture/types";
 
 export type RepositoryContext = {
   fileTree: string[];
@@ -18,6 +25,14 @@ export type CodingTask = {
   id: string;
   buildRunId: string;
   ventureId: string;
+  companyId?: string | null;
+  missionId?: string | null;
+  buildContractId?: string | null;
+  ventureSystemsBuildContractId?: string | null;
+  architectureFamily?: SystemFamily | null;
+  architectureRequirementIds?: string[];
+  coverageDisposition?: VentureSystemsBuildCoverageDisposition | null;
+  architectureContext?: ArchitectureCodingTaskContext;
   featureContractIds: string[];
   objective: string;
   taskType: CodingTaskType;
@@ -148,6 +163,13 @@ export type RunPabV21Input = {
   liveMode?: boolean;
   simulatedProviderOutage?: string;
   skipCollectionsFeature?: boolean;
+  ventureId?: string;
+  companyId?: string | null;
+  missionId?: string | null;
+  buildContractId?: string | null;
+  ventureSystemsBuildContractId?: string | null;
+  ventureSystemsBuildContract?: VentureSystemsBuildContract;
+  architecturePlanningOnly?: boolean;
 };
 
 export type RunPabV21Output = {
@@ -158,6 +180,8 @@ export type RunPabV21Output = {
   aiCodingReport: AiCodingReport;
   blockedReasons: string[];
   workspaceReference: string;
+  architectureCoverage?: VentureSystemsBuildCoverageHqView;
+  architectureTaskCount?: number;
 };
 
 export type CollectionsFeatureInput = {

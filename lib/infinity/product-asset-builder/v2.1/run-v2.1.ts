@@ -39,6 +39,13 @@ import { aggregateUsage } from "./telemetry/usage-telemetry";
 import type { AiCodingReport, CodingTask, ProviderUsageRecord, ReviewFinding, RunPabV21Input, RunPabV21Output } from "./types";
 import type { FeatureContract } from "../v2/types";
 import type { CostLedgerEntry } from "../types";
+import {
+  bindVentureSystemsBuildInput,
+  coverageHqView,
+  decomposeArchitectureBuildTasks,
+  planVentureSystemsBuildCoverage,
+  validateVentureSystemsBuildCoverage,
+} from "./systems-architecture";
 
 function emptyReport(): AiCodingReport {
   return {
@@ -212,7 +219,76 @@ export async function runProductAssetBuilderV21(
   await runProviderPreflight({ liveAuthCheck: liveMode });
 
   const buildRunId = randomUUID();
-  const ventureId = input.organizationId;
+  const ventureId = input.ventureId?.trim() || input.organizationId;
+  let architectureCoverage: RunPabV21Output["architectureCoverage"];
+  let architectureTaskCount = 0;
+
+  if (input.ventureSystemsBuildContract) {
+    const bound = bindVentureSystemsBuildInput({
+      ventureId,
+      companyId: input.companyId,
+      missionId: input.missionId,
+      buildContractId: input.buildContractId,
+      ventureSystemsBuildContractId: input.ventureSystemsBuildContractId,
+      contract: input.ventureSystemsBuildContract,
+    });
+    const plan = planVentureSystemsBuildCoverage(bound);
+    const architectureTasks = decomposeArchitectureBuildTasks(plan);
+    architectureTaskCount = architectureTasks.length;
+    architectureCoverage = coverageHqView(plan);
+    const validation = validateVentureSystemsBuildCoverage({
+      bound,
+      plan,
+      tasks: architectureTasks.map((task) => ({
+        ventureId: task.ventureId,
+        companyId: task.companyId,
+        missionId: task.missionId,
+        buildContractId: task.buildContractId,
+        ventureSystemsBuildContractId: task.ventureSystemsBuildContractId,
+        architectureFamily: task.architectureFamily,
+        coverageDisposition: task.coverageDisposition,
+      })),
+    });
+    if (!validation.ok) {
+      blockedReasons.push(...validation.failures.map((item) => item.code));
+      if (input.architecturePlanningOnly) {
+        return {
+          ok: false,
+          buildRunId,
+          artifactStatus: "blocked",
+          artifactId: null,
+          aiCodingReport: report,
+          blockedReasons,
+          workspaceReference: "",
+          architectureCoverage,
+          architectureTaskCount,
+        };
+      }
+    } else if (input.architecturePlanningOnly) {
+      return {
+        ok: true,
+        buildRunId,
+        artifactStatus: "ready",
+        artifactId: null,
+        aiCodingReport: report,
+        blockedReasons,
+        workspaceReference: "",
+        architectureCoverage,
+        architectureTaskCount,
+      };
+    }
+  } else if (input.architecturePlanningOnly) {
+    return {
+      ok: false,
+      buildRunId,
+      artifactStatus: "blocked",
+      artifactId: null,
+      aiCodingReport: report,
+      blockedReasons: ["VENTURE_SYSTEMS_CONTRACT_MISSING"],
+      workspaceReference: "",
+    };
+  }
+
   const sandbox = new VentureSandbox(input.organizationId, "pab-v21-collections", buildRunId);
 
   let dbRunId: string = buildRunId;
@@ -439,6 +515,8 @@ export async function runProductAssetBuilderV21(
     aiCodingReport: report,
     blockedReasons,
     workspaceReference: sandbox.workspaceReference,
+    architectureCoverage,
+    architectureTaskCount,
   };
 }
 

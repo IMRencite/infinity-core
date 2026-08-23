@@ -34,8 +34,12 @@ export type CanonicalCodingTask = {
   taskId: string;
   organizationId: string;
   ventureId: string | null;
+  companyId?: string | null;
   missionId: string | null;
   buildRunId: string | null;
+  buildContractId?: string | null;
+  ventureSystemsBuildContractId?: string | null;
+  architectureFamily?: string | null;
   founderIdeaSubmissionId: string | null;
   taskType: CanonicalCodingTaskType;
   objective: string;
