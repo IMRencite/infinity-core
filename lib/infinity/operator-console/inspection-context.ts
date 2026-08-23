@@ -88,6 +88,16 @@ export function formatInspectionQuery(ref: HqInspectionRef): string {
   return `${type}:${ref.entityId}`;
 }
 
+export function hqDashboardInspectionPath(ref: HqInspectionRef): string {
+  return `/dashboard?${INSPECTION_QUERY_PARAM}=${encodeURIComponent(formatInspectionQuery(ref))}`;
+}
+
+export function inspectionRefFromVentureId(value: string | null | undefined): HqInspectionRef | null {
+  const entityId = rejectHarnessArchitectureId(value);
+  if (!entityId) return null;
+  return { entityType: "VENTURE", entityId };
+}
+
 function candidateVisibleInSnapshot(snapshot: OperatorVentureSnapshot, candidateId: string): boolean {
   return collectHqArtifacts(snapshot).some(
     (artifact) =>

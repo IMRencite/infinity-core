@@ -40,6 +40,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { HqArtifactInspectorProvider } from "./artifacts/hq-artifact-inspector-provider";
 import { ArtifactInspectorModal } from "./artifacts/artifact-inspector-modal";
 import { HqInspectionProvider, useHqInspection } from "./hq-inspection-provider";
+import { HqInspectionWorkspace } from "./hq-inspection-workspace";
+import {
+  hqDashboardInspectionPath,
+  inspectionRefFromVentureId,
+} from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
   ventureId: string;
@@ -161,7 +166,9 @@ function VentureOperatorConsoleInner({
   }, []);
 
   const handleVentureChange = (id: string) => {
-    router.push(`/dashboard/ventures/${id}`);
+    const ref = inspectionRefFromVentureId(id);
+    if (!ref) return;
+    router.replace(hqDashboardInspectionPath(ref), { scroll: false });
   };
 
   const handleDetailQueryChange = useCallback(
@@ -201,8 +208,22 @@ function VentureOperatorConsoleInner({
       onTreasuryChange={handleTreasuryChange}
     />
       <ArtifactInspectorModal />
+      <HqInspectionWorkspaceBridge snapshot={snapshot} />
     </HqArtifactInspectorProvider>
     </HqInspectionProvider>
+  );
+}
+
+function HqInspectionWorkspaceBridge({ snapshot }: { snapshot: OperatorVentureSnapshot }) {
+  const inspection = useHqInspection();
+  return (
+    <HqInspectionWorkspace
+      snapshot={snapshot}
+      context={inspection.context}
+      systemsView={inspection.systemsArchitectView}
+      open={inspection.workspaceOpen}
+      onClose={inspection.closeInspectionWorkspace}
+    />
   );
 }
 

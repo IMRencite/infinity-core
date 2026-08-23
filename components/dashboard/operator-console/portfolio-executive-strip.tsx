@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 import type { PortfolioSummary } from "@/lib/infinity/operator-console/portfolio/portfolio-types";
+import { HqVentureInspectionLink } from "./hq-venture-inspection-link";
 
 type Props = {
   summary: PortfolioSummary;
@@ -65,9 +65,9 @@ export function PortfolioExecutiveStrip({ summary }: Props) {
           label="Top venture"
           value={
             top ? (
-              <Link href={`/dashboard/ventures/${top.ventureAssemblyId}`} className="hover:text-sky-200">
+              <HqVentureInspectionLink ventureId={top.ventureAssemblyId} className="hover:text-sky-200">
                 {top.ventureName}
-              </Link>
+              </HqVentureInspectionLink>
             ) : (
               "Not enough financial data"
             )

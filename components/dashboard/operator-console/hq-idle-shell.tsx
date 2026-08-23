@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
+import {
+  hqDashboardInspectionPath,
+  inspectionRefFromVentureId,
+} from "@/lib/infinity/operator-console/inspection-context";
+import { HqVentureInspectionLink } from "./hq-venture-inspection-link";
 import { VentureSelector } from "./venture-selector";
 import { HqCopilotDock } from "./hq-copilot-dock";
 
@@ -11,7 +17,14 @@ type Props = {
 };
 
 export function HqIdleShell({ ventures, showPortfolioLink = true }: Props) {
+  const router = useRouter();
   const recent = ventures.slice(0, 5);
+
+  function inspectVenture(id: string) {
+    const ref = inspectionRefFromVentureId(id);
+    if (!ref) return;
+    router.replace(hqDashboardInspectionPath(ref), { scroll: false });
+  }
 
   return (
     <div className="space-y-6">
@@ -29,7 +42,7 @@ export function HqIdleShell({ ventures, showPortfolioLink = true }: Props) {
             <VentureSelector
               ventures={ventures}
               currentVentureId={null}
-              onVentureChange={() => {}}
+              onVentureChange={inspectVenture}
             />
           </div>
         ) : null}
@@ -55,13 +68,13 @@ export function HqIdleShell({ ventures, showPortfolioLink = true }: Props) {
           <ul className="mt-3 space-y-2">
             {recent.map((v) => (
               <li key={v.ventureAssemblyId}>
-                <Link
-                  href={`/dashboard/ventures/${v.ventureAssemblyId}`}
+                <HqVentureInspectionLink
+                  ventureId={v.ventureAssemblyId}
                   className="flex items-center justify-between rounded-lg border border-zinc-800/60 px-3 py-2 text-sm hover:border-sky-500/30 hover:bg-sky-500/5"
                 >
                   <span className="text-zinc-200">{v.ventureName}</span>
                   <span className="text-xs text-zinc-500">{v.status}</span>
-                </Link>
+                </HqVentureInspectionLink>
               </li>
             ))}
           </ul>

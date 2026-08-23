@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import type { PortfolioSummary } from "@/lib/infinity/operator-console/portfolio/portfolio-types";
+import { HqVentureInspectionLink } from "./hq-venture-inspection-link";
 
 type Props = {
   summary: PortfolioSummary;
@@ -52,9 +52,9 @@ export function TopEarnersPanel({ summary }: Props) {
           const value = venture.rankingValue ?? 0;
           const width = Math.max(8, (value / maxValue) * 100);
           return (
-            <Link
+            <HqVentureInspectionLink
               key={venture.ventureAssemblyId}
-              href={`/dashboard/ventures/${venture.ventureAssemblyId}`}
+              ventureId={venture.ventureAssemblyId}
               className="group block rounded-lg border border-zinc-800/40 bg-zinc-950/40 px-3 py-2.5 transition-colors hover:border-sky-500/30 hover:bg-zinc-900/50"
             >
               <div className="flex items-center justify-between gap-3 text-xs">
@@ -76,7 +76,7 @@ export function TopEarnersPanel({ summary }: Props) {
                 {venture.knownCostsUsd != null ? <span>Costs {formatUsd(venture.knownCostsUsd)}</span> : null}
                 <span>{venture.status}</span>
               </div>
-            </Link>
+            </HqVentureInspectionLink>
           );
         })}
       </div>

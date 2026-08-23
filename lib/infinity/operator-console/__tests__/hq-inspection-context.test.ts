@@ -10,7 +10,9 @@ import {
   HQ_INSPECTION_WRITE_BOUNDARY,
   filterArtifactsForInspection,
   formatInspectionQuery,
+  hqDashboardInspectionPath,
   inspectionRefFromOpportunityArtifact,
+  inspectionRefFromVentureId,
   isRoomCompatibleWithInspection,
   isValidateDecisionArtifact,
   parseInspectionQuery,
@@ -383,5 +385,23 @@ describe("HQ opportunity selection context", () => {
       entityType: "OPPORTUNITY_CANDIDATE",
       entityId: CANDIDATE_A,
     });
+  });
+
+  it("keeps HQ inspection deep links on /dashboard without standalone venture routes", () => {
+    const candidatePath = hqDashboardInspectionPath({
+      entityType: "OPPORTUNITY_CANDIDATE",
+      entityId: CANDIDATE_A,
+    });
+    const venturePath = hqDashboardInspectionPath({ entityType: "VENTURE", entityId: "venture-real" });
+    expect(candidatePath.startsWith("/dashboard?")).toBe(true);
+    expect(candidatePath).toContain("inspect=");
+    expect(candidatePath).not.toContain("/dashboard/ventures/");
+    expect(venturePath).toBe(`/dashboard?inspect=${encodeURIComponent("venture:venture-real")}`);
+    expect(parseInspectionQuery(decodeURIComponent(venturePath.split("inspect=")[1] ?? ""))).toEqual({
+      entityType: "VENTURE",
+      entityId: "venture-real",
+    });
+    expect(inspectionRefFromVentureId("venture-real")).toEqual({ entityType: "VENTURE", entityId: "venture-real" });
+    expect(inspectionRefFromVentureId("favc1-cycle:cycle-1")).toBeNull();
   });
 });

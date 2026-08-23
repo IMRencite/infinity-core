@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
 import { groupVenturesForSelector } from "@/lib/infinity/operator-console/resolve-default-venture";
+import {
+  hqDashboardInspectionPath,
+  inspectionRefFromVentureId,
+} from "@/lib/infinity/operator-console/inspection-context";
 
 type Props = {
   ventures: OperatorVentureListItem[];
@@ -16,8 +20,12 @@ export function VentureSelector({ ventures, currentVentureId, onVentureChange }:
   const current = ventures.find((v) => v.ventureAssemblyId === currentVentureId);
 
   function handleChange(id: string) {
-    if (onVentureChange) onVentureChange(id);
-    else router.push(`/dashboard/ventures/${id}`);
+    if (onVentureChange) {
+      onVentureChange(id);
+      return;
+    }
+    const ref = inspectionRefFromVentureId(id);
+    if (ref) router.replace(hqDashboardInspectionPath(ref), { scroll: false });
   }
 
   return (

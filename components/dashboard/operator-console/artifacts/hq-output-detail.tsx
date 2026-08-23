@@ -256,10 +256,14 @@ export function HQOutputDetailShell({
   open,
   onClose,
   children,
+  variant = "inspector",
+  ariaLabel = "Entity intelligence projection",
 }: {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  variant?: "inspector" | "workspace";
+  ariaLabel?: string;
 }) {
   const [mounted, setMounted] = useState(open);
   const [closing, setClosing] = useState(false);
@@ -329,8 +333,8 @@ export function HQOutputDetailShell({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Entity intelligence projection"
-        className={`hq-inspector-hologram hq-hologram-modal ${closing ? "hq-inspector-hologram--closing" : ""}`}
+        aria-label={ariaLabel}
+        className={`hq-inspector-hologram hq-hologram-modal ${variant === "workspace" ? "hq-inspection-workspace-modal" : ""} ${closing ? "hq-inspector-hologram--closing" : ""}`}
         onClick={(event) => event.stopPropagation()}
       >
         <span className="hq-inspector-energy-line" aria-hidden />
@@ -346,7 +350,7 @@ export function HQOutputDetailShell({
             requestClose();
           }}
           className="hq-inspector-close absolute right-3 top-3 z-10"
-          aria-label="Close intelligence projection"
+          aria-label={variant === "workspace" ? "Close inspection" : "Close intelligence projection"}
         >
           <span aria-hidden>×</span>
         </button>

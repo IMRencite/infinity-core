@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
@@ -17,8 +17,10 @@ import {
 type HqInspectionValue = {
   context: HqInspectionContext;
   systemsArchitectView: SystemsArchitectHqView | null;
+  workspaceOpen: boolean;
   selectInspection: (ref: HqInspectionRef) => void;
   clearInspection: () => void;
+  closeInspectionWorkspace: () => void;
 };
 
 const HqInspectionReactContext = createContext<HqInspectionValue | null>(null);
@@ -41,6 +43,21 @@ export function HqInspectionProvider({
     () => systemsViewForInspection(snapshot, context, snapshot.systemsArchitecture ?? null),
     [context, snapshot],
   );
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const workspaceEntityKey = context.explicit && context.entityId ? `${context.entityType}:${context.entityId}` : null;
+  const lastWorkspaceEntityKey = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (workspaceEntityKey && workspaceEntityKey !== lastWorkspaceEntityKey.current) {
+      lastWorkspaceEntityKey.current = workspaceEntityKey;
+      setWorkspaceOpen(true);
+      return;
+    }
+    if (!workspaceEntityKey) {
+      lastWorkspaceEntityKey.current = null;
+      setWorkspaceOpen(false);
+    }
+  }, [workspaceEntityKey]);
 
   const writeInspect = useCallback(
     (ref: HqInspectionRef | null) => {
@@ -57,10 +74,19 @@ export function HqInspectionProvider({
     () => ({
       context,
       systemsArchitectView,
-      selectInspection: (ref) => writeInspect(ref),
-      clearInspection: () => writeInspect(null),
+      workspaceOpen,
+      selectInspection: (ref) => {
+        setWorkspaceOpen(true);
+        writeInspect(ref);
+      },
+      clearInspection: () => {
+        setWorkspaceOpen(false);
+        lastWorkspaceEntityKey.current = null;
+        writeInspect(null);
+      },
+      closeInspectionWorkspace: () => setWorkspaceOpen(false),
     }),
-    [context, systemsArchitectView, writeInspect],
+    [context, systemsArchitectView, workspaceOpen, writeInspect],
   );
 
   return <HqInspectionReactContext.Provider value={value}>{children}</HqInspectionReactContext.Provider>;
