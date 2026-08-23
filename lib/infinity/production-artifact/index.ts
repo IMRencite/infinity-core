@@ -6,3 +6,4 @@ export * from "./repository-naming";
 export * from "./deployment-lifecycle";
 export * from "./github-artifact-push";
 export * from "./launch-readiness";
+export * from "./handoff";

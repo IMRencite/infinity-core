@@ -1,0 +1,93 @@
+export const PRODUCTION_HANDOFF_SCHEMA_VERSION = "production_artifact_handoff_v1";
+
+export const PRODUCTION_HANDOFF_WRITE_BOUNDARY = {
+  validationWrites: 0,
+  selectionWrites: 0,
+  missionCreation: 0,
+  treasuryMovements: 0,
+  treasuryReservations: 0,
+  providerAccountCreation: 0,
+  providerWrites: 0,
+  purchases: 0,
+  eagActions: 0,
+  deployments: 0,
+  domainPurchases: 0,
+  dnsWrites: 0,
+  paymentWrites: 0,
+  publicLaunches: 0,
+} as const;
+
+export const PRODUCTION_HANDOFF_READINESS = [
+  "DRAFT",
+  "BUILD_COMPLETE",
+  "VERIFIED",
+  "BLOCKED",
+  "READY_FOR_COMMERCIALIZATION_REVIEW",
+] as const;
+
+export type ProductionHandoffReadiness = (typeof PRODUCTION_HANDOFF_READINESS)[number];
+
+export const PRODUCTION_HANDOFF_ARTIFACT_KINDS = [
+  "APPLICATION_SOURCE",
+  "CODE_CHANGE_SET",
+  "DATABASE_MIGRATION",
+  "DATABASE_SCHEMA",
+  "STATIC_ASSET",
+  "MEDIA_ASSET",
+  "CONTENT_ASSET",
+  "CONFIG_TEMPLATE",
+  "ENV_REQUIREMENT",
+  "INFRASTRUCTURE_REQUIREMENT",
+  "PROVIDER_DEPENDENCY",
+  "DEPLOYMENT_MANIFEST",
+  "TEST_EVIDENCE",
+  "BUILD_EVIDENCE",
+  "ARCHITECTURE_EVIDENCE",
+] as const;
+
+export type ProductionHandoffArtifactKind = (typeof PRODUCTION_HANDOFF_ARTIFACT_KINDS)[number];
+
+export const PRODUCTION_HANDOFF_FAILURE_CODES = [
+  "PRODUCTION_HANDOFF_BUILD_INCOMPLETE",
+  "PRODUCTION_HANDOFF_TESTS_FAILED",
+  "PRODUCTION_HANDOFF_LINEAGE_MISMATCH",
+  "PRODUCTION_HANDOFF_ARTIFACT_MISSING",
+  "PRODUCTION_HANDOFF_MIGRATION_MISSING",
+  "PRODUCTION_HANDOFF_ENV_REQUIREMENT_MISSING",
+  "PRODUCTION_HANDOFF_PROVIDER_DEPENDENCY_BLOCKED",
+  "PRODUCTION_HANDOFF_ARCHITECTURE_BLOCKED",
+  "PRODUCTION_HANDOFF_RUNTIME_UNRESOLVED",
+  "PRODUCTION_HANDOFF_UNKNOWN_COST",
+  "PRODUCTION_HANDOFF_ORPHAN_CHANGESET",
+  "PRODUCTION_HANDOFF_SECRET_LEAKAGE",
+  "PRODUCTION_HANDOFF_PATH_UNSAFE",
+  "PRODUCTION_HANDOFF_ARCHITECTURE_COVERAGE_MISSING",
+] as const;
+
+export type ProductionHandoffFailureCode = (typeof PRODUCTION_HANDOFF_FAILURE_CODES)[number];
+
+export const ENVIRONMENT_REQUIREMENT_STATUSES = [
+  "AVAILABLE",
+  "MISSING",
+  "DEFERRED",
+  "NOT_REQUIRED",
+  "REQUIRES_EXTERNAL_AUTHORIZATION",
+] as const;
+
+export type EnvironmentRequirementStatus = (typeof ENVIRONMENT_REQUIREMENT_STATUSES)[number];
+
+export const DEPLOYMENT_AUTHORITY = "NONE" as const;
+
+/** Live-provisioning legal policies that remain visible but do not by themselves fail a technical handoff. */
+export const LIVE_PROVISIONING_POLICY_CODES = [
+  "LEGAL_ENTITY_OBLIGATIONS",
+  "TAX_LIABILITY",
+  "MERCHANT_OF_RECORD_LEGAL_STATUS",
+] as const;
+
+export const DATABASE_INTERNAL_FAMILIES = [
+  "IDENTITY_AND_ACCOUNTS",
+  "CRM",
+  "ENTITLEMENTS",
+  "COMMERCE_AND_FULFILLMENT",
+] as const;
