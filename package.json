@@ -25,6 +25,8 @@
     "validate:live-provider-e2e": "node scripts/validate-live-provider-e2e.mjs",
     "validate:autonomous-external-authorization-e2e": "node scripts/validate-autonomous-external-authorization-e2e.mjs",
     "validate:vercel-deployment-readiness": "node scripts/validate-vercel-deployment-readiness.mjs",
+    "preflight:vercel-live-verification": "node scripts/preflight-vercel-live-verification.mjs",
+    "run:vercel-live-verification": "node scripts/run-vercel-live-verification.mjs",
     "prepare:autonomous-live-retry-2-1": "node scripts/prepare-autonomous-live-retry-2-1.mjs",
     "prepare:autonomous-live-retry-2-2": "node scripts/prepare-autonomous-live-retry-2-2.mjs",
     "execute:autonomous-live-retry-2-1": "node scripts/execute-autonomous-live-retry-2-1.mjs",

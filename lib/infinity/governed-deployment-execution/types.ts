@@ -29,6 +29,9 @@ export type TreasuryActionGrant = {
   authorizedAmountUsd: number | null;
   costActuality: "KNOWN" | "ESTIMATE" | "UNKNOWN";
   reservationId: string | null;
+  ventureId?: string | null;
+  expiresAt?: string | null;
+  invalidated?: boolean;
 };
 
 export type ProviderWriteEvidence = {
@@ -140,6 +143,13 @@ export type GovernedDeploymentExecutionResult = {
   };
   simulatedSideEffects: ExecutionSideEffectCounts;
   liveSideEffects: ExecutionSideEffectCounts;
+  liveProviderAccounting?: {
+    provider: "vercel.com_v1";
+    projectCreations: number;
+    deployments: number;
+    verificationReads: number;
+    cleanupWrites: number;
+  };
 };
 
 export type LiveGatewayPort = {
@@ -154,7 +164,22 @@ export type LiveGatewayPort = {
     providerCallId: string;
     externalIds: Record<string, string>;
     actualCostUsd: number | null;
+    ready?: boolean;
+    verified?: boolean;
+    httpStatus?: number | null;
+    errorClassification?: string | null;
   }>;
+};
+
+export type VercelLivePayload = {
+  testResourceName: string;
+  production_artifact_id?: string;
+  artifact_hash?: string;
+  repository_full_name?: string;
+  commit_sha?: string;
+  project_id?: string;
+  deployment_id?: string;
+  github_repository_id?: number;
 };
 
 export type BuildExecutionRequestInput = {
@@ -179,6 +204,8 @@ export type ExecuteGovernedDeploymentInput = {
   treasuryAuthorizations?: TreasuryActionGrant[];
   providerWrites?: ProviderWriteEvidence[];
   liveGateway?: LiveGatewayPort | null;
+  allowVercelLive?: boolean;
+  vercelLivePayload?: VercelLivePayload;
   simulateFailures?: GovernedExecutionActionType[];
   environmentVariableNames?: string[];
   secretValuesForbidden?: string[];

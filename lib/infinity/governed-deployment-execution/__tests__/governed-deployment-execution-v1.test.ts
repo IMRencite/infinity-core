@@ -372,6 +372,16 @@ describe("Governed Deployment Execution V1", () => {
       request,
       readiness,
       eagAuthorizations: eagFor(["DEPLOY_APPLICATION"]),
+      treasuryAuthorizations: [
+        {
+          actionType: "DEPLOY_APPLICATION",
+          authorizationId: "treas-live-unconfigured",
+          decision: "AUTO_AUTHORIZE",
+          authorizedAmountUsd: 1,
+          costActuality: "ESTIMATE",
+          reservationId: null,
+        },
+      ],
       providerWrites: writeAuthorized(),
     });
     expect(result.blockers.map((item) => item.code)).toContain("DEPLOYMENT_EXECUTION_LIVE_NOT_CONFIGURED");

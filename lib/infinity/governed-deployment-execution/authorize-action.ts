@@ -1,7 +1,7 @@
 import type { GovernedDeploymentReadiness } from "@/lib/infinity/governed-deployment-readiness";
 import type { DeploymentActionType } from "@/lib/infinity/governed-deployment-readiness/constants";
 import { actionRequiresEag, actionRequiresTreasury, capabilityForExecutionAction } from "./map-actions";
-import type { GovernedExecutionActionType } from "./constants";
+import type { GovernedExecutionActionType, GovernedExecutionMode } from "./constants";
 import type {
   ActionAuthorityGrant,
   ExecutionFailure,
@@ -48,6 +48,7 @@ export function authorizeExecutionAction(input: {
   eagAuthorizations: ActionAuthorityGrant[];
   treasuryAuthorizations: TreasuryActionGrant[];
   providerWrites: ProviderWriteEvidence[];
+  mode?: GovernedExecutionMode;
 }): ActionAuthorization {
   const actionType = input.actionType;
   const capability = capabilityForExecutionAction(actionType);
@@ -55,8 +56,24 @@ export function authorizeExecutionAction(input: {
   const provider = providerFor(capability, input.providerWrites, input.readiness);
   const eag = input.eagAuthorizations.find((item) => item.actionType === actionType);
   const treasury = input.treasuryAuthorizations.find((item) => item.actionType === actionType);
-  const estimatedUsd = actionType === "PURCHASE_DOMAIN" ? 12 : matrix?.costKnown === false ? null : 0;
-  const unknownCost = treasury?.costActuality === "UNKNOWN";
+  const liveHostingWrite =
+    input.mode === "LIVE" && (actionType === "CREATE_HOSTING_PROJECT" || actionType === "DEPLOY_APPLICATION");
+  const liveCostAttested =
+    liveHostingWrite &&
+    (treasury?.costActuality === "KNOWN" || treasury?.costActuality === "ESTIMATE") &&
+    treasury.authorizedAmountUsd != null &&
+    treasury.authorizedAmountUsd > 0;
+  const estimatedUsd =
+    actionType === "PURCHASE_DOMAIN"
+      ? 12
+      : liveHostingWrite
+        ? liveCostAttested
+          ? treasury!.authorizedAmountUsd
+          : null
+        : matrix?.costKnown === false
+          ? null
+          : 0;
+  const unknownCost = treasury?.costActuality === "UNKNOWN" || (liveHostingWrite && !liveCostAttested);
   const requiresTreasury = actionRequiresTreasury(actionType, estimatedUsd, Boolean(unknownCost));
   const requiresEag = actionRequiresEag(actionType);
   const requiresWrite = actionType !== "VERIFY_HEALTH" && actionType !== "CONFIGURE_ENVIRONMENT";
