@@ -1,5 +1,15 @@
 import { vercelAdapter } from "@/lib/infinity/launch-gateway/adapters/vercel-adapter";
 import type { ExternalActionAdapter } from "@/lib/infinity/launch-gateway/adapters/contract";
+import {
+  lookupVercelProjectByName,
+  VERCEL_PROJECT_LOOKUP_SUPPORTED,
+  type VercelProjectLookupResult,
+} from "@/lib/infinity/launch-gateway/adapters/vercel-project-lookup";
+import {
+  lookupVercelDeploymentBySha,
+  type VercelDeploymentLookupResult,
+} from "@/lib/infinity/launch-gateway/adapters/vercel-deployment-lookup";
+import type { GdeLiveActionLedger } from "./vercel-live-ledger";
 import { isExternalActionsLiveEnabled } from "@/lib/infinity/launch-gateway/kill-switch";
 import {
   isLiveProviderTestMode,
@@ -73,7 +83,9 @@ export type VercelLiveErrorClassification =
   | "unsupported_action"
   | "unsafe_target"
   | "missing_credential"
-  | "scope_blocked";
+  | "scope_blocked"
+  | "reconciliation_required"
+  | "persistence_failure";
 
 export type VercelLiveAccounting = {
   provider: "vercel.com_v1";
@@ -309,6 +321,7 @@ export function inspectVercelLivePreconditions(input: {
   treasuryAuthorizations?: TreasuryActionGrant[];
   providerWrites?: ProviderWriteEvidence[];
   payload?: VercelLivePayload | null;
+  now?: string;
 }): VercelLivePreconditionsReport {
   const preflight = evaluateVercelLiveVerificationPreflight({
     request: input.request,
@@ -316,6 +329,7 @@ export function inspectVercelLivePreconditions(input: {
     eagAuthorizations: input.eagAuthorizations,
     treasuryAuthorizations: input.treasuryAuthorizations,
     providerWrites: input.providerWrites,
+    now: input.now,
   });
   const payload = input.payload ?? null;
   const testName = payload?.testResourceName ?? preflight.config.testResource ?? "";
@@ -362,16 +376,43 @@ function incrementAccounting(accounting: VercelLiveAccounting, actionType: strin
   else if (actionType === "hosting.verify_deployment") accounting.verificationReads += 1;
 }
 
+function evaluateExistingProject(existing: VercelProjectLookupResult): "reuse" | "block" | "create" {
+  if (!existing.found) return "create";
+  if (existing.matchesExpectedTeam === false) return "block";
+  if (existing.matchesExpectedRepository === false) return "block";
+  if (!existing.matchesVerificationTarget) return "block";
+  if (existing.matchesExpectedRepository === true && existing.id) return "reuse";
+  if (existing.sourceIdentityAvailable === false || existing.matchesExpectedRepository == null) return "block";
+  return existing.id ? "reuse" : "block";
+}
+
 export function createVercelLiveGatewayPort(input: {
   adapter?: ExternalActionAdapter;
   testResourceName: string;
   organizationId?: string;
+  sessionId?: string;
+  ventureId?: string;
+  missionId?: string;
+  eagAuthorizationId?: string | null;
+  treasuryAuthorizationId?: string | null;
+  maxAuthorizedUsd?: number | null;
+  expectedRepository?: string | null;
+  expectedSha?: string | null;
+  expectedTeamId?: string | null;
   accounting?: VercelLiveAccounting;
   telemetry?: VercelLiveTelemetry[];
+  ledger?: GdeLiveActionLedger | null;
+  lookupProject?: (name: string) => Promise<VercelProjectLookupResult>;
+  lookupDeployment?: (input: {
+    projectId: string;
+    commitSha: string;
+  }) => Promise<VercelDeploymentLookupResult>;
+  projectLookupSupported?: boolean;
 }): LiveGatewayPort {
   const adapter = input.adapter ?? vercelAdapter;
   const accounting = input.accounting ?? emptyVercelLiveAccounting();
   const telemetry = input.telemetry ?? [];
+  const lookupSupported = input.projectLookupSupported ?? VERCEL_PROJECT_LOOKUP_SUPPORTED;
 
   return {
     async execute(request) {
@@ -405,6 +446,243 @@ export function createVercelLiveGatewayPort(input: {
           gatewayActionType: request.gatewayActionType,
         });
       }
+      if (request.gatewayActionType === "hosting.create_project" && accounting.projectCreations >= 1) {
+        throw new VercelLiveExecutionError({
+          message: "Vercel live verification already created the maximum of 1 project in this run.",
+          classification: "conflict",
+          gatewayActionType: request.gatewayActionType,
+        });
+      }
+      if (request.gatewayActionType === "hosting.deploy" && accounting.deployments >= 1) {
+        throw new VercelLiveExecutionError({
+          message: "Vercel live verification already created the maximum of 1 deployment in this run.",
+          classification: "conflict",
+          gatewayActionType: request.gatewayActionType,
+        });
+      }
+      const ledger = input.ledger ?? null;
+      if (!ledger) {
+        throw new VercelLiveExecutionError({
+          message: "durable external action ledger is required before a Vercel write",
+          classification: "persistence_failure",
+          gatewayActionType: request.gatewayActionType,
+        });
+      }
+      const claim = await ledger.claim({
+        organizationId: input.organizationId ?? "org-gde-vercel-live",
+        missionId: input.missionId ?? "mission-gde-vercel-live",
+        ventureId: input.ventureId ?? input.testResourceName,
+        sessionId: input.sessionId ?? request.executionRequestId,
+        executionRequestId: request.executionRequestId,
+        actionId: request.actionId,
+        gatewayActionType: request.gatewayActionType,
+        target: input.testResourceName,
+        idempotencyKey: request.idempotencyKey,
+        eagAuthorizationId: input.eagAuthorizationId,
+        treasuryAuthorizationId: input.treasuryAuthorizationId,
+        maxAuthorizedUsd: input.maxAuthorizedUsd,
+        publicLaunchAuthority: false,
+      });
+      const succeedFromRefs = async (
+        refs: Record<string, string>,
+        extras: { reused?: boolean; ready?: boolean; verified?: boolean; httpStatus?: number | null },
+      ) => {
+        try {
+          await ledger.complete({
+            organizationId: claim.record.organizationId,
+            externalActionId: claim.record.externalActionId,
+            providerReferences: refs,
+            result: {
+              action_type: request.gatewayActionType,
+              reused: extras.reused === true,
+              public_launch_authority: false,
+              cost_state: "UNKNOWN",
+            },
+            verifiedUrl: refs.url ?? null,
+            verificationStatus: extras.verified === false ? "failed" : "verified",
+          });
+        } catch (error) {
+          throw new VercelLiveExecutionError({
+            message: error instanceof Error ? error.message : "durable external action persist failed after provider response",
+            classification: "persistence_failure",
+            gatewayActionType: request.gatewayActionType,
+          });
+        }
+        const providerResponseId = refs.deployment_id ?? refs.project_id ?? request.actionId;
+        telemetry.push({
+          provider: VERCEL_LIVE_PROVIDER,
+          action: request.gatewayActionType,
+          requestId: request.executionRequestId,
+          status: "SUCCEEDED",
+          latencyMs: Date.now() - started,
+          providerResponseId,
+          costState: "UNKNOWN",
+          errorClassification: null,
+        });
+        return {
+          providerCallId: providerResponseId,
+          externalIds: refs,
+          actualCostUsd: null,
+          ready: extras.ready ?? true,
+          verified: extras.verified ?? true,
+          reused: extras.reused === true,
+          httpStatus: extras.httpStatus ?? 200,
+          errorClassification: null,
+          externalActionId: claim.record.externalActionId,
+          durableState: "SUCCEEDED" as const,
+        };
+      };
+
+      if (claim.decision === "reuse") {
+        return succeedFromRefs(claim.record.providerReferences, { reused: true });
+      }
+      if (claim.decision === "blocked") {
+        throw new VercelLiveExecutionError({
+          message: claim.record.error ?? "durable external action is blocked",
+          classification: "unsafe_target",
+          gatewayActionType: request.gatewayActionType,
+        });
+      }
+
+      const lookupProject =
+        input.lookupProject ??
+        (usingRealAdapter
+          ? (name: string) =>
+              lookupVercelProjectByName({
+                name,
+                teamId: input.expectedTeamId,
+                expectedRepository: input.expectedRepository,
+              })
+          : null);
+      const lookupDeployment =
+        input.lookupDeployment ??
+        (usingRealAdapter
+          ? ({ projectId, commitSha }: { projectId: string; commitSha: string }) =>
+              lookupVercelDeploymentBySha({
+                projectId,
+                commitSha,
+                repositoryFullName: input.expectedRepository,
+                teamId: input.expectedTeamId,
+              })
+          : null);
+
+      const lookupOrBlock = async <T>(op: () => Promise<T>): Promise<T> => {
+        try {
+          return await op();
+        } catch (error) {
+          if (error instanceof VercelLiveExecutionError) throw error;
+          const message = error instanceof Error ? error.message : "provider lookup failed";
+          const classified = classifyVercelLiveError(message);
+          throw new VercelLiveExecutionError({
+            message,
+            classification: classified.classification,
+            httpStatus: classified.httpStatus,
+            gatewayActionType: request.gatewayActionType,
+          });
+        }
+      };
+
+      const reconcileCreate = async () => {
+        if (!lookupProject) return null;
+        if (!lookupSupported) {
+          throw new VercelLiveExecutionError({
+            message: "provider project existence lookup is not supported; LIVE is blocked",
+            classification: "unsafe_target",
+            gatewayActionType: request.gatewayActionType,
+          });
+        }
+        const existing = await lookupOrBlock(() => lookupProject(input.testResourceName));
+        const verdict = evaluateExistingProject(existing);
+        if (verdict === "reuse" && existing.id) {
+          return succeedFromRefs(
+            { project_id: existing.id, project_name: existing.name ?? input.testResourceName },
+            { reused: true, httpStatus: existing.httpStatus },
+          );
+        }
+        if (verdict === "block") {
+          await ledger.block({
+            organizationId: claim.record.organizationId,
+            externalActionId: claim.record.externalActionId,
+            error: "existing Vercel project does not match verification identity",
+          });
+          throw new VercelLiveExecutionError({
+            message: "existing Vercel project does not match the disposable verification target",
+            classification: "resource_mismatch",
+            gatewayActionType: request.gatewayActionType,
+          });
+        }
+        return null;
+      };
+
+      const reconcileDeploy = async (projectId: string) => {
+        const sha = input.expectedSha ?? String(request.payload.commit_sha ?? "");
+        if (!lookupDeployment || !sha || !projectId) return null;
+        const existing = await lookupOrBlock(() => lookupDeployment({ projectId, commitSha: sha }));
+        if (existing.found && existing.reusable && existing.matchesSha && existing.id) {
+          if (input.expectedRepository && existing.matchesRepository === false) {
+            throw new VercelLiveExecutionError({
+              message: "existing Vercel deployment repository does not match",
+              classification: "resource_mismatch",
+              gatewayActionType: request.gatewayActionType,
+            });
+          }
+          return succeedFromRefs(
+            {
+              deployment_id: existing.id,
+              project_id: existing.projectId ?? projectId,
+              ...(existing.url ? { url: existing.url } : {}),
+            },
+            { reused: true, httpStatus: existing.httpStatus },
+          );
+        }
+        return null;
+      };
+
+      if (claim.decision === "reconcile") {
+        if (request.gatewayActionType === "hosting.create_project") {
+          return succeedFromRefs(claim.record.providerReferences, { reused: true });
+        }
+        if (request.gatewayActionType === "hosting.deploy") {
+          return succeedFromRefs(claim.record.providerReferences, { reused: true });
+        }
+      }
+      if (claim.decision === "reconciliation_required") {
+        if (request.gatewayActionType === "hosting.create_project") {
+          const reused = await reconcileCreate();
+          if (reused) return reused;
+        }
+        if (request.gatewayActionType === "hosting.deploy") {
+          const projectId = String(request.payload.project_id ?? claim.record.providerReferences.project_id ?? "");
+          try {
+            const reused = await reconcileDeploy(projectId);
+            if (reused) return reused;
+          } catch (error) {
+            if (error instanceof VercelLiveExecutionError) throw error;
+          }
+        }
+        throw new VercelLiveExecutionError({
+          message: "RECONCILIATION_REQUIRED: in-progress live action has no persisted provider reference; a blind retry is blocked",
+          classification: "reconciliation_required",
+          gatewayActionType: request.gatewayActionType,
+        });
+      }
+
+      if (request.gatewayActionType === "hosting.create_project") {
+        if (usingRealAdapter && !lookupSupported) {
+          throw new VercelLiveExecutionError({
+            message: "provider project existence lookup is not supported; LIVE is blocked",
+            classification: "unsafe_target",
+            gatewayActionType: request.gatewayActionType,
+          });
+        }
+        const reused = await reconcileCreate();
+        if (reused) return reused;
+      }
+      if (request.gatewayActionType === "hosting.deploy") {
+        const projectId = String(request.payload.project_id ?? "");
+        const reused = await reconcileDeploy(projectId);
+        if (reused) return reused;
+      }
 
       const ctx = {
         organizationId: input.organizationId ?? "org-gde-vercel-live",
@@ -427,10 +705,20 @@ export function createVercelLiveGatewayPort(input: {
           });
         }
         const result = await adapter.execute(ctx);
-        const ready = result.manifest.ready === true || request.gatewayActionType === "hosting.create_project";
+        const reused = result.manifest.reused === true;
         const verified =
           request.gatewayActionType !== "hosting.verify_deployment" || result.manifest.verified === true;
+        const ready =
+          request.gatewayActionType === "hosting.verify_deployment"
+            ? verified
+            : result.manifest.ready === true || request.gatewayActionType === "hosting.create_project";
         if (request.gatewayActionType === "hosting.deploy" && result.manifest.ready !== true) {
+          await ledger.fail({
+            organizationId: claim.record.organizationId,
+            externalActionId: claim.record.externalActionId,
+            error: String(result.manifest.provider_error ?? "deployment_not_ready"),
+            providerReferences: result.externalIds,
+          });
           throw new VercelLiveExecutionError({
             message: String(result.manifest.provider_error ?? "deployment_not_ready"),
             classification: "deployment_build_failure",
@@ -438,36 +726,33 @@ export function createVercelLiveGatewayPort(input: {
           });
         }
         if (request.gatewayActionType === "hosting.verify_deployment" && result.manifest.verified !== true) {
+          await ledger.fail({
+            organizationId: claim.record.organizationId,
+            externalActionId: claim.record.externalActionId,
+            error: "Vercel health verification failed",
+            providerReferences: result.externalIds,
+          });
           throw new VercelLiveExecutionError({
             message: "Vercel health verification failed",
             classification: "healthcheck_failure",
             gatewayActionType: request.gatewayActionType,
           });
         }
-        const providerResponseId =
-          result.externalIds.deployment_id ?? result.externalIds.project_id ?? request.actionId;
-        incrementAccounting(accounting, request.gatewayActionType);
-        telemetry.push({
-          provider: VERCEL_LIVE_PROVIDER,
-          action: request.gatewayActionType,
-          requestId: request.executionRequestId,
-          status: "SUCCEEDED",
-          latencyMs: Date.now() - started,
-          providerResponseId,
-          costState: "UNKNOWN",
-          errorClassification: null,
-        });
-        return {
-          providerCallId: providerResponseId,
-          externalIds: result.externalIds,
-          actualCostUsd: null,
-          ready,
-          verified,
-          httpStatus: 200,
-          errorClassification: null,
-        };
+        if (!reused) incrementAccounting(accounting, request.gatewayActionType);
+        return succeedFromRefs(result.externalIds, { reused, ready, verified, httpStatus: 200 });
       } catch (error) {
         if (error instanceof VercelLiveExecutionError) {
+          if (error.classification !== "persistence_failure" && error.classification !== "reconciliation_required") {
+            try {
+              await ledger.fail({
+                organizationId: claim.record.organizationId,
+                externalActionId: claim.record.externalActionId,
+                error: error.message,
+              });
+            } catch {
+              /* claim already recorded the in-progress row */
+            }
+          }
           telemetry.push({
             provider: VERCEL_LIVE_PROVIDER,
             action: request.gatewayActionType,
@@ -482,6 +767,15 @@ export function createVercelLiveGatewayPort(input: {
         }
         const message = error instanceof Error ? error.message : "Vercel live provider failure";
         const classified = classifyVercelLiveError(message);
+        try {
+          await ledger.fail({
+            organizationId: claim.record.organizationId,
+            externalActionId: claim.record.externalActionId,
+            error: message,
+          });
+        } catch {
+          /* keep the claimed executing row for reconciliation */
+        }
         telemetry.push({
           provider: VERCEL_LIVE_PROVIDER,
           action: request.gatewayActionType,

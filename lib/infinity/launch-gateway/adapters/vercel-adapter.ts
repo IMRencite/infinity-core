@@ -23,6 +23,10 @@ import {
   classifyVercelDeploymentFailure,
   sanitizeVercelError,
 } from "@/lib/infinity/production-artifact/failure-classification";
+import {
+  lookupVercelProjectByName,
+  projectNameMatchesVerificationTarget,
+} from "./vercel-project-lookup";
 
 async function resolveGithubRepositoryId(repositoryFullName: string): Promise<number> {
   const token = process.env[GITHUB_TOKEN_ENV];
@@ -129,6 +133,44 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
         translation.translation?.projectSettings.framework ??
         (manifest?.framework === "nextjs" ? "nextjs" : null);
 
+      const disposableVerificationTarget = projectNameMatchesVerificationTarget({
+        requestedName: projectName,
+        providerName: projectName,
+      });
+
+      if (disposableVerificationTarget && !linkExistingId) {
+        const existing = await lookupVercelProjectByName({
+          name: projectName,
+          expectedRepository: repositoryFullName,
+        });
+        if (existing.found && existing.matchesExpectedRepository === false) {
+          throw new Error("Vercel project lookup repository does not match verification repository");
+        }
+        if (existing.found && existing.matchesExpectedTeam === false) {
+          throw new Error("Vercel project lookup team does not match verification team");
+        }
+        if (existing.found && existing.matchesVerificationTarget && existing.id) {
+          return {
+            simulated: false,
+            externalIds: { project_id: existing.id, project_name: existing.name ?? projectName },
+            manifest: redactUnknown({
+              provider: PROVIDER_KEYS.vercel,
+              action_type: ctx.actionType,
+              execution_mode: "live",
+              deployment_mode: VERCEL_V1_DEPLOYMENT_MODE,
+              production_artifact_id: artifactId,
+              artifact_hash: artifactHash,
+              repository_full_name: repositoryFullName,
+              reused: true,
+              lookup: "provider_name",
+            }) as Record<string, unknown>,
+          };
+        }
+        if (existing.found && !existing.matchesVerificationTarget) {
+          throw new Error("Vercel project lookup name does not match disposable verification target");
+        }
+      }
+
       if (linkExistingId && ctx.payload.configure_git_link === true) {
         const res = await vercelFetch(`/v9/projects/${encodeURIComponent(linkExistingId)}/link`, {
           method: "POST",
@@ -172,6 +214,33 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
           ...(translation.translation?.projectSettings ?? {}),
         }),
       });
+      if (res.status === 409 && disposableVerificationTarget) {
+        const existing = await lookupVercelProjectByName({
+          name: projectName,
+          expectedRepository: repositoryFullName,
+        });
+        if (existing.found && existing.matchesExpectedRepository === false) {
+          throw new Error("Vercel create project failed: 409");
+        }
+        if (existing.found && existing.matchesVerificationTarget && existing.id) {
+          return {
+            simulated: false,
+            externalIds: { project_id: existing.id, project_name: existing.name ?? projectName },
+            manifest: redactUnknown({
+              provider: PROVIDER_KEYS.vercel,
+              action_type: ctx.actionType,
+              execution_mode: "live",
+              deployment_mode: VERCEL_V1_DEPLOYMENT_MODE,
+              production_artifact_id: artifactId,
+              artifact_hash: artifactHash,
+              repository_full_name: repositoryFullName,
+              reused: true,
+              lookup: "provider_name_after_conflict",
+            }) as Record<string, unknown>,
+          };
+        }
+        throw new Error(`Vercel create project failed: 409`);
+      }
       if (!res.ok) throw new Error(`Vercel create project failed: ${res.status}`);
       const body = (await res.json()) as { id: string; name: string };
       return {
@@ -185,6 +254,7 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
           production_artifact_id: artifactId,
           artifact_hash: artifactHash,
           repository_full_name: repositoryFullName,
+          reused: false,
         }) as Record<string, unknown>,
       };
     }

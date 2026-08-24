@@ -1,8 +1,10 @@
 import {
-  buildVercelGovernedVerificationSession,
+  createLaunchGatewayGdeLiveActionLedger,
+  isDurableLedgerUuid,
   parseMaxUsd,
-  sessionPublicReport,
+  runVercelGovernedLiveVerification,
 } from "@/lib/infinity/governed-deployment-execution";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -31,25 +33,21 @@ function loadEnvLocal() {
 
 loadEnvLocal();
 const maxAuthorizedUsd = parseMaxUsd(process.argv, process.env);
-const first = buildVercelGovernedVerificationSession({ maxAuthorizedUsd });
-const second = buildVercelGovernedVerificationSession({ maxAuthorizedUsd });
-if (
-  first.executionRequest?.executionRequestId &&
-  first.executionRequest.executionRequestId !== second.executionRequest?.executionRequestId
-) {
-  console.error("Vercel live verification refused: recomputed executionRequestId did not match.");
+const organizationId = process.env.INFINITY_VERCEL_ORGANIZATION_ID ?? "";
+const missionId = process.env.INFINITY_VERCEL_MISSION_ID ?? "";
+let liveLedger = null;
+try {
+  if (isDurableLedgerUuid(organizationId) && isDurableLedgerUuid(missionId)) {
+    liveLedger = createLaunchGatewayGdeLiveActionLedger(createAdminClient(), {
+      organizationId,
+      missionId,
+    });
+  }
+} catch {
+  liveLedger = null;
+}
+const result = await runVercelGovernedLiveVerification({ maxAuthorizedUsd, liveLedger });
+console.log(JSON.stringify(result, null, 2));
+if (result.state !== "SUCCEEDED") {
   process.exit(1);
 }
-
-const report = sessionPublicReport(second);
-console.log(JSON.stringify(report, null, 2));
-
-if (!report.safeToExecuteLive) {
-  console.error("Vercel live verification refused: preflight blockers remain. No Vercel write was performed.");
-  process.exit(1);
-}
-
-console.error(
-  "Vercel live verification refused: session recomputed and preflight passed, but this command will not execute LIVE in this milestone.",
-);
-process.exit(1);

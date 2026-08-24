@@ -56,17 +56,20 @@ function incrementLive(
   accounting: VercelLiveAccounting,
   action: GovernedExecutionActionType,
   eagAuthorized: boolean,
+  options?: { reused?: boolean; portOwnsAccounting?: boolean },
 ): void {
-  if (action === "CREATE_HOSTING_PROJECT") {
+  const reused = options?.reused === true;
+  const portOwnsAccounting = options?.portOwnsAccounting === true;
+  if (action === "CREATE_HOSTING_PROJECT" && !reused) {
     counts.providerWrites += 1;
     counts.providerAccountCreation += 1;
-    accounting.projectCreations += 1;
-  } else if (action === "DEPLOY_APPLICATION") {
+    if (!portOwnsAccounting) accounting.projectCreations += 1;
+  } else if (action === "DEPLOY_APPLICATION" && !reused) {
     counts.providerWrites += 1;
     counts.deployments += 1;
-    accounting.deployments += 1;
+    if (!portOwnsAccounting) accounting.deployments += 1;
   } else if (action === "VERIFY_HEALTH") {
-    accounting.verificationReads += 1;
+    if (!portOwnsAccounting) accounting.verificationReads += 1;
   }
   if (eagAuthorized) counts.eagActions += 1;
 }
@@ -84,6 +87,15 @@ function failureFromLiveError(action: GovernedExecutionActionType, error: unknow
     }
     if (error.classification === "scope_blocked" || error.classification === "unsafe_target") {
       return { code: "DEPLOYMENT_EXECUTION_LIVE_PRECONDITION", message: error.message, actionType: action };
+    }
+    if (error.classification === "rate_limit" || error.classification === "timeout" || error.classification === "conflict") {
+      return { code: "DEPLOYMENT_EXECUTION_PROVIDER_FAILURE", message: error.message, actionType: action };
+    }
+    if (error.classification === "reconciliation_required") {
+      return { code: "DEPLOYMENT_EXECUTION_RECONCILIATION_REQUIRED", message: error.message, actionType: action };
+    }
+    if (error.classification === "persistence_failure") {
+      return { code: "DEPLOYMENT_EXECUTION_AUDIT_PERSISTENCE_FAILED", message: error.message, actionType: action };
     }
     return { code: "DEPLOYMENT_EXECUTION_PROVIDER_FAILURE", message: error.message, actionType: action };
   }
@@ -179,6 +191,7 @@ export async function executeGovernedDeployment(
   }
 
   let resolvedLivePort: LiveGatewayPort | null = input.liveGateway ?? null;
+  const portOwnsAccounting = Boolean(input.allowVercelLive && !input.liveGateway);
   if (request.mode === "LIVE" && input.allowVercelLive && !resolvedLivePort) {
     const preconditions = inspectVercelLivePreconditions({
       request,
@@ -187,16 +200,34 @@ export async function executeGovernedDeployment(
       treasuryAuthorizations: input.treasuryAuthorizations,
       providerWrites: input.providerWrites,
       payload: vercelLivePayload,
+      now: input.now,
     });
     if (!preconditions.canExecuteLive) {
       blockers.push({
         code: "DEPLOYMENT_EXECUTION_LIVE_PRECONDITION",
         message: preconditions.skipReason ?? "Vercel live preconditions failed.",
       });
+    } else if (!input.liveLedger) {
+      blockers.push({
+        code: "DEPLOYMENT_EXECUTION_LIVE_PRECONDITION",
+        message: "durable external action ledger is required before a Vercel write",
+      });
     } else {
       resolvedLivePort = createVercelLiveGatewayPort({
+        adapter: input.liveAdapter,
         testResourceName: vercelLivePayload?.testResourceName ?? "",
+        organizationId: input.organizationId,
+        missionId: input.missionId,
+        sessionId: input.sessionId ?? request.executionRequestId,
+        ventureId: request.ventureId,
+        expectedRepository: vercelLivePayload?.repository_full_name,
+        expectedSha: vercelLivePayload?.commit_sha,
+        expectedTeamId: process.env.VERCEL_TEAM_ID ?? null,
         accounting: liveAccounting,
+        ledger: input.liveLedger,
+        lookupProject: input.lookupProject,
+        lookupDeployment: input.lookupDeployment,
+        projectLookupSupported: input.projectLookupSupported,
       });
     }
   }
@@ -246,6 +277,40 @@ export async function executeGovernedDeployment(
       else blocked.push(id);
       Object.assign(providerReferences, cached.providerReferences);
       if (cached.providerCallId) providerCallIds.push(cached.providerCallId);
+      continue;
+    }
+
+    if (request.mode === "LIVE" && failed.length > 0) {
+      const record: ActionExecutionRecord = {
+        actionId: id,
+        actionType,
+        gatewayActionType: binding.gatewayActionType,
+        capability: binding.capability,
+        state: "BLOCKED",
+        requiresTreasury: auth.requiresTreasury,
+        requiresEag: auth.requiresEag,
+        requiresWriteCredential: auth.requiresWriteCredential,
+        requiresProcurement: auth.requiresProcurement,
+        writeAuthority: auth.writeAuthority,
+        costKnown: auth.costKnown,
+        budgetAuthorized: auth.budgetAuthorized,
+        specificActionAuthorized: auth.specificActionAuthorized,
+        cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+        providerReferences: {},
+        providerCallId: null,
+        idempotencyKey,
+        reused: false,
+        simulated: false,
+        live: false,
+        failure: {
+          code: "DEPLOYMENT_EXECUTION_PARTIAL_FAILURE",
+          message: "Prior live action failed; later writes are not attempted.",
+          actionType,
+          actionId: id,
+        },
+      };
+      attempted.push(record);
+      blocked.push(id);
       continue;
     }
 
@@ -464,8 +529,10 @@ export async function executeGovernedDeployment(
           cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: liveResult.actualCostUsd, unknown: liveResult.actualCostUsd == null },
           providerReferences: liveResult.externalIds,
           providerCallId: liveResult.providerCallId,
+          externalActionId: liveResult.externalActionId ?? null,
+          durableState: liveResult.durableState ?? "SUCCEEDED",
           idempotencyKey,
-          reused: false,
+          reused: liveResult.reused === true,
           simulated: false,
           live: true,
           failure: null,
@@ -474,10 +541,15 @@ export async function executeGovernedDeployment(
         succeeded.push(id);
         providerCallIds.push(liveResult.providerCallId);
         Object.assign(providerReferences, liveResult.externalIds);
-        incrementLive(live, liveAccounting, actionType, auth.specificActionAuthorized);
+        incrementLive(live, liveAccounting, actionType, auth.specificActionAuthorized, {
+          reused: liveResult.reused === true,
+          portOwnsAccounting,
+        });
         replayCache.set(idempotencyKey, record);
         continue;
       } catch (error) {
+        unknownCost = true;
+        actual = null;
         const failure = { ...failureFromLiveError(actionType, error), actionId: id };
         const record: ActionExecutionRecord = {
           actionId: id,
@@ -493,7 +565,7 @@ export async function executeGovernedDeployment(
           costKnown: auth.costKnown,
           budgetAuthorized: auth.budgetAuthorized,
           specificActionAuthorized: auth.specificActionAuthorized,
-          cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: auth.unknownCost },
+          cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: true },
           providerReferences: {},
           providerCallId: null,
           idempotencyKey,

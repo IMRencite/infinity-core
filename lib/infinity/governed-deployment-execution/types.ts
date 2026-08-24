@@ -1,3 +1,7 @@
+import type { ExternalActionAdapter } from "@/lib/infinity/launch-gateway/adapters/contract";
+import type { VercelProjectLookupResult } from "@/lib/infinity/launch-gateway/adapters/vercel-project-lookup";
+import type { VercelDeploymentLookupResult } from "@/lib/infinity/launch-gateway/adapters/vercel-deployment-lookup";
+import type { GdeLiveActionLedger } from "./vercel-live-ledger";
 import type { PolicyDecision } from "@/lib/infinity/launch-gateway/autonomous-authorization/constants";
 import type { DeploymentProviderCapability } from "@/lib/infinity/governed-deployment-readiness/constants";
 import type { GovernedDeploymentReadiness } from "@/lib/infinity/governed-deployment-readiness";
@@ -105,6 +109,8 @@ export type ActionExecutionRecord = {
   cost: CostTelemetry;
   providerReferences: Record<string, string>;
   providerCallId: string | null;
+  externalActionId?: string | null;
+  durableState?: string | null;
   idempotencyKey: string;
   reused: boolean;
   simulated: boolean;
@@ -166,8 +172,11 @@ export type LiveGatewayPort = {
     actualCostUsd: number | null;
     ready?: boolean;
     verified?: boolean;
+    reused?: boolean;
     httpStatus?: number | null;
     errorClassification?: string | null;
+    externalActionId?: string;
+    durableState?: string;
   }>;
 };
 
@@ -206,8 +215,17 @@ export type ExecuteGovernedDeploymentInput = {
   liveGateway?: LiveGatewayPort | null;
   allowVercelLive?: boolean;
   vercelLivePayload?: VercelLivePayload;
+  liveAdapter?: ExternalActionAdapter;
+  liveLedger?: GdeLiveActionLedger | null;
+  organizationId?: string;
+  missionId?: string;
+  sessionId?: string;
+  lookupProject?: (name: string) => Promise<VercelProjectLookupResult>;
+  lookupDeployment?: (input: { projectId: string; commitSha: string }) => Promise<VercelDeploymentLookupResult>;
+  projectLookupSupported?: boolean;
   simulateFailures?: GovernedExecutionActionType[];
   environmentVariableNames?: string[];
   secretValuesForbidden?: string[];
   startedAt?: string;
+  now?: string;
 };

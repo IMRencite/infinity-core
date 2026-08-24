@@ -21,6 +21,7 @@ import type { ExternalActionAdapter } from "@/lib/infinity/launch-gateway/adapte
 import {
   buildGovernedDeploymentExecutionRequest,
   createVercelLiveGatewayPort,
+  createMemoryGdeLiveActionLedger,
   executeGovernedDeployment,
   classifyVercelLiveCost,
   inspectVercelLiveCredentialAttestation,
@@ -671,7 +672,11 @@ describe("Live Deployment Provider Enablement V1 — Vercel", () => {
         throw new Error("injected adapter execute must not run for rejected actions");
       },
     } as unknown as ExternalActionAdapter;
-    const port = createVercelLiveGatewayPort({ adapter, testResourceName: TEST_RESOURCE });
+    const port = createVercelLiveGatewayPort({
+      adapter,
+      testResourceName: TEST_RESOURCE,
+      ledger: createMemoryGdeLiveActionLedger(),
+    });
     await expect(
       port.execute({
         gatewayActionType: "dns.configure",
@@ -716,7 +721,11 @@ describe("Live Deployment Provider Enablement V1 — Vercel", () => {
       eagAuthorizations: eagFor(["CREATE_HOSTING_PROJECT"]),
       treasuryAuthorizations: treasuryFor(["CREATE_HOSTING_PROJECT"]),
       providerWrites: writeAuthorized(),
-      liveGateway: createVercelLiveGatewayPort({ adapter, testResourceName: TEST_RESOURCE }),
+      liveGateway: createVercelLiveGatewayPort({
+        adapter,
+        testResourceName: TEST_RESOURCE,
+        ledger: createMemoryGdeLiveActionLedger(),
+      }),
       vercelLivePayload: vercelPayload(),
     });
     expect(result.state).toBe("FAILED");

@@ -92,6 +92,7 @@ export type VercelGovernedVerificationSession = {
   eagEvaluations: Record<string, AuthorizationEvaluationResult>;
   treasuryAuthorizations: TreasuryActionGrant[];
   treasuryFinancialAuthorizations: FinancialAuthorization[];
+  providerWrites: ProviderWriteEvidence[];
   executionRequest: GovernedDeploymentExecutionRequest | null;
   preflight: VercelLiveVerificationPreflight;
   mode: "LIVE";
@@ -683,6 +684,7 @@ export function buildVercelGovernedVerificationSession(
     eagEvaluations,
     treasuryAuthorizations,
     treasuryFinancialAuthorizations,
+    providerWrites,
     executionRequest,
     preflight: { ...preflight, blockers: merged, safeToExecuteLive: merged.length === 0 && preflight.safeToExecuteLive },
     mode: "LIVE",

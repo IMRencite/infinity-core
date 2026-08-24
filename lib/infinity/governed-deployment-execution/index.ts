@@ -93,3 +93,31 @@ export type {
   VercelVerificationOperatorAuthorization,
   BuildVercelGovernedVerificationSessionInput,
 } from "./vercel-live-session";
+export {
+  createMemoryGdeLiveActionLedger,
+  createLaunchGatewayGdeLiveActionLedger,
+  isDurableLedgerUuid,
+  GDE_LIVE_LEDGER_CLAIMER,
+} from "./vercel-live-ledger";
+export type {
+  GdeLiveActionLedger,
+  GdeLiveActionRecord,
+  GdeLiveClaimResult,
+  GdeLiveDurableState,
+} from "./vercel-live-ledger";
+export { runVercelGovernedLiveVerification } from "./vercel-live-run";
+export type {
+  RunVercelGovernedLiveVerificationInput,
+  VercelLiveVerificationOperatorResult,
+  VercelLiveVerificationOperatorState,
+} from "./vercel-live-run";
+export {
+  lookupVercelProjectByName,
+  VERCEL_PROJECT_LOOKUP_SUPPORTED,
+} from "@/lib/infinity/launch-gateway/adapters/vercel-project-lookup";
+export type { VercelProjectLookupResult } from "@/lib/infinity/launch-gateway/adapters/vercel-project-lookup";
+export {
+  lookupVercelDeploymentBySha,
+  VERCEL_DEPLOYMENT_LOOKUP_SUPPORTED,
+} from "@/lib/infinity/launch-gateway/adapters/vercel-deployment-lookup";
+export type { VercelDeploymentLookupResult } from "@/lib/infinity/launch-gateway/adapters/vercel-deployment-lookup";
