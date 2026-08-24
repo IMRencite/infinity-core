@@ -74,3 +74,22 @@ export {
 export type { VercelLiveVerificationConfig } from "./vercel-live-config";
 export type { VercelLiveVerificationPreflight } from "./vercel-live-preflight";
 export type { VercelLivePayload } from "./types";
+export {
+  buildVercelGovernedVerificationSession,
+  buildVerificationProductionArtifactHandoff,
+  createVerificationDeploymentAuthority,
+  evaluateOperatorSessionEag,
+  governedExecutionActionId,
+  parseMaxUsd,
+  sessionPublicReport,
+  verificationSessionId,
+  VERCEL_LIVE_VERIFICATION_PURPOSE,
+  VERCEL_LIVE_VERIFICATION_SESSION_TTL_MS,
+  VERCEL_LIVE_VERIFICATION_ORGANIZATION_ID,
+  VERCEL_LIVE_VERIFICATION_VENTURE_ID,
+} from "./vercel-live-session";
+export type {
+  VercelGovernedVerificationSession,
+  VercelVerificationOperatorAuthorization,
+  BuildVercelGovernedVerificationSessionInput,
+} from "./vercel-live-session";

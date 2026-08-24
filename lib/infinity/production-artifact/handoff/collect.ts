@@ -427,16 +427,16 @@ export function collectProductionArtifactHandoff(input: ProductionHandoffCollect
 
   const deployment: ProductionArtifactHandoff["deploymentRequirements"] = {
     targetRuntimeCapability: runtime.find((item) => item.key === "runtimeVersion")?.value ?? null,
-    hostingCapability: null,
-    domainRequired: true,
-    dnsRequired: true,
-    tlsRequired: true,
+    hostingCapability: input.deploymentRequirements?.hostingCapability ?? null,
+    domainRequired: input.deploymentRequirements?.domainRequired ?? true,
+    dnsRequired: input.deploymentRequirements?.dnsRequired ?? true,
+    tlsRequired: input.deploymentRequirements?.tlsRequired ?? true,
     databaseRequired: database.schemaRequired,
     providerBindings: external.map((item) => item.capability),
     environmentVariableKeys: environment.map((item) => item.key),
     buildArtifactRef: input.pabArtifactId ?? withEnv.find((item) => item.kind === "APPLICATION_SOURCE")?.artifactId ?? null,
-    healthCheckPath: null,
-    rollbackRequired: true,
+    healthCheckPath: input.deploymentRequirements?.healthCheckPath ?? null,
+    rollbackRequired: input.deploymentRequirements?.rollbackRequired ?? true,
     providerChosen: false,
     deploymentAuthority: DEPLOYMENT_AUTHORITY,
   };

@@ -255,6 +255,12 @@ export type ProductionHandoffCollectInput = {
   buildVerification?: Partial<VerificationEvidence>;
   testVerification?: Partial<VerificationEvidence>;
   typecheckVerification?: Partial<VerificationEvidence>;
+  deploymentRequirements?: Partial<
+    Pick<
+      DeploymentRequirement,
+      "domainRequired" | "dnsRequired" | "tlsRequired" | "healthCheckPath" | "rollbackRequired" | "hostingCapability"
+    >
+  >;
 };
 
 export type ProductionHandoffValidation = {
