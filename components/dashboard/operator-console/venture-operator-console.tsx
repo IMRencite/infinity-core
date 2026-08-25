@@ -10,7 +10,7 @@ import { CommandChamber } from "./command-chamber";
 import { ActivityFeedPanel } from "./activity-feed-panel";
 import { SystemView } from "./system-view";
 import { DepartmentDetailPanel } from "./department-detail-panel";
-import { SystemsArchitectDetail } from "./systems-architect-blueprint";
+import { SystemsArchitectWorkspace } from "./systems-architect-workspace";
 import { SystemHealthStrip } from "./system-health-strip";
 import { CostBreakdownStrip } from "./cost-breakdown-strip";
 import { OperationsSummaryStrip } from "./operations-summary-strip";
@@ -324,34 +324,11 @@ function VentureOperatorConsoleBody({
             />
           </div>
 
-          {selectedDepartment === "systems_architect" ? (
-            <section
-              id="systems-architect-workspace"
-              data-systems-architect-workspace="true"
-              className="systems-architect-workspace"
-              aria-label="Systems Architect architecture workspace"
-            >
-              {systemsArchitectView ? (
-                <SystemsArchitectDetail
-                  view={systemsArchitectView}
-                  onClose={() => setSelectedDepartment(null)}
-                />
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className="systems-architect-back"
-                    data-systems-architect-back="true"
-                    aria-label="Back to HQ floor"
-                    onClick={() => setSelectedDepartment(null)}
-                  >
-                    ← Back to HQ
-                  </button>
-                  <p className="systems-architect-empty-copy">No architecture context is available for this room.</p>
-                </>
-              )}
-            </section>
-          ) : null}
+          <SystemsArchitectWorkspace
+            open={selectedDepartment === "systems_architect"}
+            view={systemsArchitectView}
+            onClose={() => setSelectedDepartment(null)}
+          />
 
           <div className="space-y-3 border-t border-zinc-800/60 pt-4" data-hq-region="infrastructure">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-zinc-600">System Infrastructure</p>

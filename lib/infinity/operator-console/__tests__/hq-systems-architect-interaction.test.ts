@@ -9,6 +9,8 @@ import {
   SystemsArchitectBlueprint,
   SystemsArchitectDetail,
 } from "@/components/dashboard/operator-console/systems-architect-blueprint";
+import { SystemsArchitectWorkspace } from "@/components/dashboard/operator-console/systems-architect-workspace";
+import { HQ_INSPECTION_WRITE_BOUNDARY } from "../inspection-context";
 import {
   resolveSystemsArchitectHqView,
   selectSystemsArchitectNode,
@@ -52,7 +54,6 @@ function systemsDepartment(view = namedView()): OperatorDepartmentSnapshot {
     startedAt: null,
     lastActivityAt: null,
     recordCount: view.requiredCount,
-    failureSemantics: null,
     detail: { systemsArchitectView: view },
     workArtifacts: [],
   };
@@ -63,13 +64,17 @@ describe("Systems Architect /dashboard interaction path", () => {
     const consoleSource = readFileSync(join(COMPONENTS, "venture-operator-console.tsx"), "utf8");
     const roomSource = readFileSync(join(COMPONENTS, "department-room.tsx"), "utf8");
     const floorSource = readFileSync(join(COMPONENTS, "hq-spatial-floor.tsx"), "utf8");
+    const workspaceSource = readFileSync(join(COMPONENTS, "systems-architect-workspace.tsx"), "utf8");
     expect(consoleSource).toContain('selectedDepartment === "systems_architect"');
-    expect(consoleSource).toContain("data-systems-architect-workspace");
-    expect(consoleSource).toContain("SystemsArchitectDetail");
+    expect(consoleSource).toContain("SystemsArchitectWorkspace");
     expect(consoleSource).toContain("architectureWorkspaceOpen");
     expect(consoleSource).toContain("onClose={() => setSelectedDepartment(null)}");
     expect(consoleSource).not.toMatch(/onClose=\{\(\) => \{[\s\S]*onVentureChange/);
     expect(consoleSource).not.toMatch(/onClose=\{\(\) => \{[\s\S]*router\.push/);
+    expect(workspaceSource).toContain("data-systems-architect-workspace");
+    expect(workspaceSource).toContain("HQOutputDetailShell");
+    expect(workspaceSource).toContain("SystemsArchitectDetail");
+    expect(workspaceSource).toContain('variant="workspace"');
     expect(roomSource).toContain("onActivate={onSelect}");
     expect(roomSource).toContain("<SystemsArchitectBlueprint view={systemsView} compact />");
     expect(floorSource).toContain("onSelect={() => onSelectDepartment(deptId)}");
@@ -169,5 +174,80 @@ describe("Systems Architect /dashboard interaction path", () => {
     const inspector = { scrollTop: 48 };
     resetSystemsArchitectInspectorScroll(inspector);
     expect(inspector.scrollTop).toBe(0);
+  });
+
+  it("room click opens the Systems Architect popup and close hides it without mutation", () => {
+    const view = namedView();
+    let selected: "systems_architect" | null = null;
+    const onSelect = () => {
+      selected = "systems_architect";
+    };
+    const onClose = () => {
+      selected = null;
+    };
+
+    onSelect();
+    expect(selected).toBe("systems_architect");
+    const openHtml = renderToStaticMarkup(
+      createElement(SystemsArchitectWorkspace, {
+        open: selected === "systems_architect",
+        view,
+        onClose,
+      }),
+    );
+    expect(openHtml).toContain("data-systems-architect-workspace");
+    expect(openHtml).toContain("hq-hologram-modal");
+    expect(openHtml).toContain("hq-inspector-backdrop");
+    expect(openHtml).toContain("Operating Blueprint");
+    expect(openHtml).toContain("AI SEO Website Platform");
+    expect(openHtml).toContain("Systems Architect");
+    expect(openHtml).toContain("Close inspection");
+    expect(openHtml).toContain("Back to HQ");
+
+    onClose();
+    expect(selected).toBeNull();
+    const closedHtml = renderToStaticMarkup(
+      createElement(SystemsArchitectWorkspace, {
+        open: false,
+        view,
+        onClose,
+      }),
+    );
+    expect(closedHtml).toBe("");
+
+    const emptyHtml = renderToStaticMarkup(
+      createElement(SystemsArchitectWorkspace, {
+        open: true,
+        view: null,
+        onClose,
+      }),
+    );
+    expect(emptyHtml).toContain("No architecture context is available for this room.");
+    expect(emptyHtml).not.toContain("data-family=\"SECURITY_AND_RISK\"");
+
+    expect(HQ_INSPECTION_WRITE_BOUNDARY).toEqual({
+      validationWrites: 0,
+      selectionWrites: 0,
+      missionCreation: 0,
+      treasuryMovements: 0,
+      providerWrites: 0,
+      eagActions: 0,
+      buildAuthorizations: 0,
+      deploymentActions: 0,
+    });
+  });
+
+  it("keeps other floor rooms on the shared department-select path", () => {
+    const consoleSource = readFileSync(join(COMPONENTS, "venture-operator-console.tsx"), "utf8");
+    const floorSource = readFileSync(join(COMPONENTS, "hq-spatial-floor.tsx"), "utf8");
+    const naming = readFileSync(join(process.cwd(), "lib/infinity/operator-console/room-naming.ts"), "utf8");
+    expect(naming).toContain('displayName: "Blueprint Lab"');
+    expect(naming).toContain('displayName: "Growth Nexus"');
+    expect(naming).toContain('displayName: "Validation Station"');
+    expect(naming).toContain('displayName: "Deployment Depot"');
+    expect(floorSource).toContain("onSelect={() => onSelectDepartment(deptId)}");
+    expect(consoleSource).toContain("onSelectDepartment={setSelectedDepartment}");
+    expect(consoleSource).toContain("DepartmentDetailPanel");
+    expect(consoleSource).not.toContain("router.push(`/dashboard/systems");
   });
 });

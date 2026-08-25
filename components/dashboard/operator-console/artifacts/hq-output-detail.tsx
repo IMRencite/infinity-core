@@ -269,11 +269,13 @@ export function HQOutputDetailShell({
   const [closing, setClosing] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  const ignoreCloseUntilRef = useRef(0);
 
   useEffect(() => {
     if (open) {
       setMounted(true);
       setClosing(false);
+      ignoreCloseUntilRef.current = Date.now() + 300;
       triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       const frame = requestAnimationFrame(() => closeButtonRef.current?.focus());
       return () => cancelAnimationFrame(frame);
@@ -296,6 +298,7 @@ export function HQOutputDetailShell({
 
   const requestClose = useCallback(() => {
     if (closing) return;
+    if (Date.now() < ignoreCloseUntilRef.current) return;
     setClosing(true);
     onClose();
   }, [closing, onClose]);
