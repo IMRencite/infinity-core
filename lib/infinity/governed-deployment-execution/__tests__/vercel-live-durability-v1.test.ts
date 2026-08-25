@@ -76,7 +76,7 @@ function matchingProject(name = VERCEL_LIVE_VERIFICATION_RESOURCE) {
   };
 }
 
-function countingAdapter(posts: string[]): ExternalActionAdapter {
+function countingAdapter(posts: string[], projectId = "prj_durable"): ExternalActionAdapter {
   return {
     capabilities: {
       provider: "vercel.com_v1",
@@ -98,7 +98,7 @@ function countingAdapter(posts: string[]): ExternalActionAdapter {
       if (ctx.actionType === "hosting.create_project") {
         return {
           simulated: false,
-          externalIds: { project_id: "prj_durable", project_name: VERCEL_LIVE_VERIFICATION_RESOURCE },
+          externalIds: { project_id: projectId, project_name: VERCEL_LIVE_VERIFICATION_RESOURCE },
           manifest: { ready: true, reused: false },
         };
       }
@@ -107,7 +107,7 @@ function countingAdapter(posts: string[]): ExternalActionAdapter {
           simulated: false,
           externalIds: {
             deployment_id: "dpl_durable",
-            project_id: "prj_durable",
+            project_id: projectId,
             url: "https://infinity-test-live-verification-gde.vercel.app",
           },
           manifest: { ready: true },
@@ -117,6 +117,7 @@ function countingAdapter(posts: string[]): ExternalActionAdapter {
         simulated: false,
         externalIds: {
           deployment_id: "dpl_durable",
+          project_id: projectId,
           url: "https://infinity-test-live-verification-gde.vercel.app",
         },
         manifest: { verified: true },
@@ -631,5 +632,290 @@ describe("Vercel live execution durability + replay V1", () => {
     expect(missing.executorEntered).toBe(false);
     expect(posts).toEqual([]);
     expect(missing.publicLaunchAuthority).toBe(false);
+  });
+
+  it("reuses a succeeded create with no deployment yet and POSTs at most one deploy", async () => {
+    setValidProviderEnv();
+    const now = "2026-08-24T08:00:00.000Z";
+    const posts: string[] = [];
+    const first = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      now,
+      adapter: countingAdapter([]),
+      liveLedger: createMemoryGdeLiveActionLedger(),
+      lookupProject: async () => ({ ...matchingProject(), found: false, id: null, matchesVerificationTarget: false }),
+    });
+    const createKey = `${first.executionRequestId}:CREATE_HOSTING_PROJECT:${VERCEL_LIVE_VERIFICATION_RESOURCE}`;
+    const seeded = createMemoryGdeLiveActionLedger([
+      {
+        id: "ext-create-succeeded",
+        organizationId: "org-infinity-test-vercel-live-verification",
+        missionId: "mission-infinity-test-vercel-live-verification",
+        actionType: "hosting.create_project",
+        target: VERCEL_LIVE_VERIFICATION_RESOURCE,
+        executionStatus: "succeeded",
+        idempotencyKey: createKey,
+        claimedBy: "gde.vercel_live_verification",
+        resultManifest: {
+          external_ids: {
+            project_id: "prj_188YspuXKKVurXCf2lxnP4ywyggg",
+            project_name: VERCEL_LIVE_VERIFICATION_RESOURCE,
+          },
+        },
+        payloadManifest: { purpose: "VERCEL_LIVE_VERIFICATION" },
+        error: null,
+      },
+    ]);
+    resetGovernedExecutionReplayCache();
+    const replay = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      now,
+      adapter: countingAdapter(posts, "prj_188YspuXKKVurXCf2lxnP4ywyggg"),
+      liveLedger: seeded,
+      lookupProject: async () => ({
+        ...matchingProject(),
+        id: "prj_188YspuXKKVurXCf2lxnP4ywyggg",
+      }),
+      lookupDeployment: async () => ({
+        supported: true,
+        found: false,
+        id: null,
+        projectId: "prj_188YspuXKKVurXCf2lxnP4ywyggg",
+        url: null,
+        readyState: null,
+        commitSha: null,
+        gitRepository: null,
+        matchesProject: false,
+        matchesSha: false,
+        matchesRepository: false,
+        inProgress: false,
+        reusable: false,
+        httpStatus: 200,
+      }),
+    });
+    expect(replay.projectCreationStatus).toBe("REUSED");
+    expect(replay.providerProjectReference).toBe("prj_188YspuXKKVurXCf2lxnP4ywyggg");
+    expect(posts.filter((item) => item === "hosting.create_project")).toHaveLength(0);
+    expect(posts.filter((item) => item === "hosting.deploy")).toHaveLength(1);
+    expect(posts.filter((item) => item === "hosting.verify_deployment")).toHaveLength(1);
+    expect(replay.publicLaunchAuthority).toBe(false);
+  });
+
+  it("retries a failed deploy that never reached a provider write and still blocks a crash-window executing row", async () => {
+    setValidProviderEnv();
+    const now = "2026-08-24T08:10:00.000Z";
+    const first = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      now,
+      adapter: countingAdapter([]),
+      liveLedger: createMemoryGdeLiveActionLedger(),
+      lookupProject: async () => ({ ...matchingProject(), found: false, id: null, matchesVerificationTarget: false }),
+    });
+    const createKey = `${first.executionRequestId}:CREATE_HOSTING_PROJECT:${VERCEL_LIVE_VERIFICATION_RESOURCE}`;
+    const deployKey = `${first.executionRequestId}:DEPLOY_APPLICATION:${VERCEL_LIVE_VERIFICATION_RESOURCE}`;
+    const posts: string[] = [];
+    const failedWithoutWrite = createMemoryGdeLiveActionLedger([
+      {
+        id: "ext-create-ok",
+        organizationId: "org-infinity-test-vercel-live-verification",
+        missionId: "mission-infinity-test-vercel-live-verification",
+        actionType: "hosting.create_project",
+        target: VERCEL_LIVE_VERIFICATION_RESOURCE,
+        executionStatus: "succeeded",
+        idempotencyKey: createKey,
+        claimedBy: "gde.vercel_live_verification",
+        resultManifest: { external_ids: { project_id: "prj_durable", project_name: VERCEL_LIVE_VERIFICATION_RESOURCE } },
+        payloadManifest: { purpose: "VERCEL_LIVE_VERIFICATION" },
+        error: null,
+      },
+      {
+        id: "ext-deploy-validate-failed",
+        organizationId: "org-infinity-test-vercel-live-verification",
+        missionId: "mission-infinity-test-vercel-live-verification",
+        actionType: "hosting.deploy",
+        target: VERCEL_LIVE_VERIFICATION_RESOURCE,
+        executionStatus: "failed",
+        idempotencyKey: deployKey,
+        claimedBy: "gde.vercel_live_verification",
+        resultManifest: null,
+        payloadManifest: { purpose: "VERCEL_LIVE_VERIFICATION" },
+        error: "Vercel live validate failed: unsupported_deployment_mode",
+      },
+    ]);
+    resetGovernedExecutionReplayCache();
+    const retry = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      now,
+      adapter: countingAdapter(posts),
+      liveLedger: failedWithoutWrite,
+      lookupProject: async () => matchingProject(),
+      lookupDeployment: async () => ({
+        supported: true,
+        found: false,
+        id: null,
+        projectId: "prj_durable",
+        url: null,
+        readyState: null,
+        commitSha: null,
+        gitRepository: null,
+        matchesProject: false,
+        matchesSha: false,
+        matchesRepository: false,
+        inProgress: false,
+        reusable: false,
+        httpStatus: 200,
+      }),
+    });
+    expect(posts.filter((item) => item === "hosting.create_project")).toHaveLength(0);
+    expect(posts.filter((item) => item === "hosting.deploy")).toHaveLength(1);
+    expect(retry.externalActionIds.deploy).toBeTruthy();
+    expect(retry.publicLaunchAuthority).toBe(false);
+
+    const crashPosts: string[] = [];
+    const crashDeploy = createMemoryGdeLiveActionLedger([
+      {
+        id: "ext-create-ok-2",
+        organizationId: "org-infinity-test-vercel-live-verification",
+        missionId: "mission-infinity-test-vercel-live-verification",
+        actionType: "hosting.create_project",
+        target: VERCEL_LIVE_VERIFICATION_RESOURCE,
+        executionStatus: "succeeded",
+        idempotencyKey: createKey,
+        claimedBy: "gde.vercel_live_verification",
+        resultManifest: { external_ids: { project_id: "prj_durable" } },
+        payloadManifest: { purpose: "VERCEL_LIVE_VERIFICATION" },
+        error: null,
+      },
+      {
+        id: "ext-deploy-crash",
+        organizationId: "org-infinity-test-vercel-live-verification",
+        missionId: "mission-infinity-test-vercel-live-verification",
+        actionType: "hosting.deploy",
+        target: VERCEL_LIVE_VERIFICATION_RESOURCE,
+        executionStatus: "executing",
+        idempotencyKey: deployKey,
+        claimedBy: "gde.vercel_live_verification",
+        resultManifest: null,
+        payloadManifest: { purpose: "VERCEL_LIVE_VERIFICATION" },
+        error: null,
+      },
+    ]);
+    resetGovernedExecutionReplayCache();
+    const crashed = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      now,
+      adapter: countingAdapter(crashPosts),
+      liveLedger: crashDeploy,
+      lookupProject: async () => matchingProject(),
+      lookupDeployment: async () => ({
+        supported: true,
+        found: false,
+        id: null,
+        projectId: "prj_durable",
+        url: null,
+        readyState: null,
+        commitSha: null,
+        gitRepository: null,
+        matchesProject: false,
+        matchesSha: false,
+        matchesRepository: false,
+        inProgress: false,
+        reusable: false,
+        httpStatus: 200,
+      }),
+    });
+    expect(crashed.errors.some((item) => item.code === "DEPLOYMENT_EXECUTION_RECONCILIATION_REQUIRED")).toBe(true);
+    expect(crashPosts).not.toContain("hosting.deploy");
+  });
+
+  it("maps the live deploy payload to git_integrated, reports UNKNOWN estimate, and keeps the $1 ceiling", async () => {
+    setValidProviderEnv();
+    const posts: string[] = [];
+    const modes: unknown[] = [];
+    const adapter: ExternalActionAdapter = {
+      ...countingAdapter(posts),
+      execute: async (ctx: AdapterContext) => {
+        modes.push(ctx.payload.deployment_mode);
+        return countingAdapter(posts).execute(ctx);
+      },
+    };
+    const result = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      adapter,
+      liveLedger: createMemoryGdeLiveActionLedger(),
+      lookupProject: async () => ({ ...matchingProject(), found: false, id: null, matchesVerificationTarget: false }),
+      lookupDeployment: async () => ({
+        supported: true,
+        found: false,
+        id: null,
+        projectId: "prj_durable",
+        url: null,
+        readyState: null,
+        commitSha: null,
+        gitRepository: null,
+        matchesProject: false,
+        matchesSha: false,
+        matchesRepository: false,
+        inProgress: false,
+        reusable: false,
+        httpStatus: 200,
+      }),
+    });
+    expect(modes).toContain("git_integrated");
+    expect(modes).not.toContain("git");
+    expect(result.estimatedCost).toBe("UNKNOWN");
+    expect(result.estimatedCost).not.toBe(0);
+    expect(result.estimatedCost).not.toBe(2);
+    expect(result.actualCost).toBe("UNKNOWN");
+    expect(result.authorizedCeiling).toBe(1);
+    expect(result.sideEffects.treasuryMovements).toBe(0);
+    expect(result.sideEffects.treasuryReservations).toBe(0);
+    expect(result.publicLaunchAuthority).toBe(false);
+  });
+
+  it("does not mutate the authorized ceiling after create success and later deploy failure", async () => {
+    setValidProviderEnv();
+    const posts: string[] = [];
+    const adapter: ExternalActionAdapter = {
+      ...countingAdapter(posts),
+      validate: async (ctx: AdapterContext) => {
+        if (ctx.actionType === "hosting.deploy") {
+          return { valid: false, issues: ["unsupported_deployment_mode"] };
+        }
+        return { valid: true, issues: [] };
+      },
+    };
+    const result = await runVercelGovernedLiveVerification({
+      maxAuthorizedUsd: 1,
+      adapter,
+      liveLedger: createMemoryGdeLiveActionLedger(),
+      lookupProject: async () => ({ ...matchingProject(), found: false, id: null, matchesVerificationTarget: false }),
+      lookupDeployment: async () => ({
+        supported: true,
+        found: false,
+        id: null,
+        projectId: "prj_durable",
+        url: null,
+        readyState: null,
+        commitSha: null,
+        gitRepository: null,
+        matchesProject: false,
+        matchesSha: false,
+        matchesRepository: false,
+        inProgress: false,
+        reusable: false,
+        httpStatus: 200,
+      }),
+    });
+    expect(result.projectCreationStatus).toBe("CREATED");
+    expect(result.deploymentStatus).toBe("FAILED");
+    expect(result.verificationStatus).toBe("BLOCKED");
+    expect(result.state).toBe("PARTIALLY_SUCCEEDED");
+    expect(result.externalActionIds.deploy).toBeTruthy();
+    expect(result.authorizedCeiling).toBe(1);
+    expect(result.estimatedCost).toBe("UNKNOWN");
+    expect(result.actualCost).toBe("UNKNOWN");
+    expect(posts.filter((item) => item === "hosting.create_project")).toHaveLength(1);
+    expect(posts.filter((item) => item === "hosting.deploy")).toHaveLength(0);
   });
 });

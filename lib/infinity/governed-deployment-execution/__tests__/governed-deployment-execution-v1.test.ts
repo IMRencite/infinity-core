@@ -313,6 +313,66 @@ describe("Governed Deployment Execution V1", () => {
     expect(unknownResult.costsIncurred.unknown || unknownResult.blockers.some((item) => item.code === "DEPLOYMENT_EXECUTION_UNKNOWN_COST")).toBe(true);
   });
 
+  it("blocks known estimated spend above the authorized ceiling before provider or simulation writes", async () => {
+    const { readiness } = readyReadiness();
+    const request = buildGovernedDeploymentExecutionRequest({
+      readiness,
+      mode: "SIMULATION",
+      deploymentAuthority: deploymentGrant(),
+      requestedActions: ["PURCHASE_DOMAIN"],
+    });
+    const result = await executeGovernedDeployment({
+      request,
+      readiness,
+      eagAuthorizations: eagFor(["PURCHASE_DOMAIN"]),
+      treasuryAuthorizations: [
+        {
+          actionType: "PURCHASE_DOMAIN",
+          authorizationId: "treas-low-ceiling",
+          decision: "AUTO_AUTHORIZE",
+          authorizedAmountUsd: 1,
+          costActuality: "KNOWN",
+          reservationId: null,
+        },
+      ],
+      providerWrites: writeAuthorized(),
+    });
+    expect(result.blockers.map((item) => item.code)).toContain("DEPLOYMENT_EXECUTION_TREASURY_DENIED");
+    expect(result.simulatedSideEffects.domainPurchases).toBe(0);
+    expect(result.liveSideEffects.domainPurchases).toBe(0);
+    expect(result.costsIncurred.actualUsd === 0 || result.costsIncurred.actualUsd == null).toBe(true);
+  });
+
+  it("does not treat unknown cost as zero and does not fabricate actual spend", async () => {
+    const { readiness } = readyReadiness();
+    const request = buildGovernedDeploymentExecutionRequest({
+      readiness,
+      mode: "SIMULATION",
+      deploymentAuthority: deploymentGrant(),
+      requestedActions: ["PURCHASE_DOMAIN"],
+    });
+    const result = await executeGovernedDeployment({
+      request,
+      readiness,
+      eagAuthorizations: eagFor(["PURCHASE_DOMAIN"]),
+      treasuryAuthorizations: [
+        {
+          actionType: "PURCHASE_DOMAIN",
+          authorizationId: "treas-unknown",
+          decision: "AUTO_AUTHORIZE",
+          authorizedAmountUsd: 0,
+          costActuality: "UNKNOWN",
+          reservationId: null,
+        },
+      ],
+      providerWrites: writeAuthorized(),
+    });
+    expect(result.blockers.map((item) => item.code)).toContain("DEPLOYMENT_EXECUTION_UNKNOWN_COST");
+    expect(result.costsIncurred.unknown).toBe(true);
+    expect(result.costsIncurred.actualUsd).not.toBe(0);
+    expect(result.costsIncurred.actualUsd).toBeNull();
+  });
+
   it("blocks wrong venture and wrong readiness lineage", async () => {
     const { readiness } = readyReadiness();
     const request = buildGovernedDeploymentExecutionRequest({

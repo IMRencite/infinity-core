@@ -19,6 +19,7 @@ import {
   GITHUB_TOKEN_ENV,
   VERCEL_TEAM_ID_ENV,
 } from "@/lib/infinity/launch-gateway/provider-config";
+import { VERCEL_V1_DEPLOYMENT_MODE } from "@/lib/infinity/production-artifact/constants";
 import { evaluateVercelLiveVerificationPreflight } from "./vercel-live-preflight";
 import { loadVercelLiveVerificationConfig } from "./vercel-live-config";
 import type { GovernedDeploymentReadiness } from "@/lib/infinity/governed-deployment-readiness";
@@ -299,19 +300,33 @@ export class VercelLiveExecutionError extends Error {
   readonly classification: VercelLiveErrorClassification;
   readonly httpStatus: number | null;
   readonly gatewayActionType: string;
+  readonly externalActionId: string | null;
+  readonly durableState: string | null;
 
   constructor(input: {
     message: string;
     classification: VercelLiveErrorClassification;
     httpStatus?: number | null;
     gatewayActionType: string;
+    externalActionId?: string | null;
+    durableState?: string | null;
   }) {
     super(sanitizeLiveErrorText(input.message));
     this.name = "VercelLiveExecutionError";
     this.classification = input.classification;
     this.httpStatus = input.httpStatus ?? null;
     this.gatewayActionType = input.gatewayActionType;
+    this.externalActionId = input.externalActionId ?? null;
+    this.durableState = input.durableState ?? null;
   }
+}
+
+export function mapInfinityDeployToVercelLivePayload(payload: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...payload,
+    target: "preview",
+    deployment_mode: VERCEL_V1_DEPLOYMENT_MODE,
+  };
 }
 
 export function inspectVercelLivePreconditions(input: {
@@ -688,10 +703,7 @@ export function createVercelLiveGatewayPort(input: {
         organizationId: input.organizationId ?? "org-gde-vercel-live",
         actionType: request.gatewayActionType,
         target: input.testResourceName,
-        payload: {
-          ...request.payload,
-          target: "preview",
-        },
+        payload: mapInfinityDeployToVercelLivePayload(request.payload),
         correlationId: request.executionRequestId,
       };
 
@@ -763,7 +775,14 @@ export function createVercelLiveGatewayPort(input: {
             costState: "UNKNOWN",
             errorClassification: error.classification,
           });
-          throw error;
+          throw new VercelLiveExecutionError({
+            message: error.message,
+            classification: error.classification,
+            httpStatus: error.httpStatus,
+            gatewayActionType: error.gatewayActionType,
+            externalActionId: error.externalActionId ?? claim.record.externalActionId,
+            durableState: error.durableState ?? "FAILED",
+          });
         }
         const message = error instanceof Error ? error.message : "Vercel live provider failure";
         const classified = classifyVercelLiveError(message);
@@ -791,6 +810,8 @@ export function createVercelLiveGatewayPort(input: {
           classification: classified.classification,
           httpStatus: classified.httpStatus,
           gatewayActionType: request.gatewayActionType,
+          externalActionId: claim.record.externalActionId,
+          durableState: "FAILED",
         });
       }
     },

@@ -241,8 +241,8 @@ export async function executeGovernedDeployment(
   const blocked: string[] = [];
   const providerReferences: Record<string, string> = {};
   const providerCallIds: string[] = [];
-  let estimated = 0;
-  let authorized = 0;
+  let estimated: number | null = null;
+  let authorized: number | null = null;
   let actual: number | null = 0;
   let unknownCost = false;
 
@@ -266,8 +266,10 @@ export async function executeGovernedDeployment(
     });
 
     if (auth.unknownCost) unknownCost = true;
-    if (auth.estimatedUsd != null) estimated += auth.estimatedUsd;
-    if (auth.authorizedUsd != null) authorized += auth.authorizedUsd;
+    if (auth.estimatedUsd != null) estimated = (estimated ?? 0) + auth.estimatedUsd;
+    if (auth.authorizedUsd != null) {
+      authorized = authorized == null ? auth.authorizedUsd : Math.max(authorized, auth.authorizedUsd);
+    }
 
     const cached = replayCache.get(idempotencyKey);
     if (cached && canRun && !auth.failure) {
@@ -492,8 +494,6 @@ export async function executeGovernedDeployment(
             project_id: providerReferences.project_id ?? vercelLivePayload?.project_id,
             deployment_id: providerReferences.deployment_id ?? vercelLivePayload?.deployment_id,
             github_repository_id: vercelLivePayload?.github_repository_id,
-            deployment_mode: "git",
-            target: "preview",
           },
           idempotencyKey,
           executionRequestId: request.executionRequestId,
@@ -568,6 +568,8 @@ export async function executeGovernedDeployment(
           cost: { estimatedUsd: auth.estimatedUsd, authorizedUsd: auth.authorizedUsd, actualUsd: null, unknown: true },
           providerReferences: {},
           providerCallId: null,
+          externalActionId: error instanceof VercelLiveExecutionError ? error.externalActionId ?? null : null,
+          durableState: error instanceof VercelLiveExecutionError ? error.durableState ?? "FAILED" : "FAILED",
           idempotencyKey,
           reused: false,
           simulated: false,
@@ -706,7 +708,7 @@ export async function executeGovernedDeployment(
     actionsBlocked: blocked,
     providerReferences,
     costsIncurred: {
-      estimatedUsd: estimated,
+      estimatedUsd: unknownCost ? null : (estimated ?? 0),
       authorizedUsd: authorized,
       actualUsd: unknownCost ? null : actual,
       unknown: unknownCost,

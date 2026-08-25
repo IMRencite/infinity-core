@@ -35,6 +35,7 @@ export type { GovernedDeploymentExecutionHqView } from "./hq-view";
 export { askToExecuteGovernedDeployment } from "./commercialization-gate";
 export type { CommercializationDeploymentExecutionGate } from "./commercialization-gate";
 export {
+  mapInfinityDeployToVercelLivePayload,
   createVercelLiveGatewayPort,
   inspectVercelLiveCredentialSafety,
   inspectVercelLiveCredentialAttestation,

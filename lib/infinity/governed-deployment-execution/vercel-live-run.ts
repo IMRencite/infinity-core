@@ -46,7 +46,7 @@ export type VercelLiveVerificationOperatorResult = {
   providerProjectReference: string | null;
   providerDeploymentReference: string | null;
   safeTestUrl: string | null;
-  estimatedCost: number | null;
+  estimatedCost: number | "UNKNOWN" | null;
   authorizedCeiling: number | null;
   actualCost: number | "UNKNOWN";
   publicLaunchAuthority: false;
@@ -299,7 +299,10 @@ export async function runVercelGovernedLiveVerification(
     providerProjectReference: execution.providerReferences.project_id ?? null,
     providerDeploymentReference: execution.providerReferences.deployment_id ?? null,
     safeTestUrl: safeUrl(execution.providerReferences.url),
-    estimatedCost: execution.costsIncurred.estimatedUsd,
+    estimatedCost:
+      execution.costsIncurred.unknown || execution.costsIncurred.estimatedUsd == null
+        ? "UNKNOWN"
+        : execution.costsIncurred.estimatedUsd,
     authorizedCeiling: session.maxAuthorizedUsd,
     actualCost: execution.costsIncurred.unknown || execution.costsIncurred.actualUsd == null
       ? "UNKNOWN"

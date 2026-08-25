@@ -41,6 +41,7 @@ try {
     liveLedger = createLaunchGatewayGdeLiveActionLedger(createAdminClient(), {
       organizationId,
       missionId,
+      ventureId: process.env.INFINITY_VERCEL_TEST_RESOURCE ?? "infinity-test-live-verification-gde",
     });
   }
 } catch {

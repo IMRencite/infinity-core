@@ -627,6 +627,8 @@ describe("Live Deployment Provider Enablement V1 — Vercel", () => {
     expect(result.liveProviderAccounting?.cleanupWrites).toBe(0);
     expect(result.costsIncurred.unknown).toBe(true);
     expect(result.costsIncurred.actualUsd).toBeNull();
+    expect(result.costsIncurred.estimatedUsd).toBeNull();
+    expect(result.costsIncurred.authorizedUsd).toBe(1);
     expect(JSON.stringify(result)).not.toMatch(/Bearer /);
     expect(vercelExecuteSpy?.mock.calls.length ?? 0).toBe(0);
   });

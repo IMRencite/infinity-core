@@ -183,7 +183,11 @@ function decideClaim(record: GdeLiveActionRecord): GdeLiveClaimDecision {
   if (record.executionStatus === "executing" && !hasProviderWriteRef(record.providerReferences, record.actionType)) {
     return "reconciliation_required";
   }
-  if (record.executionStatus === "failed") return "reconciliation_required";
+  if (record.executionStatus === "failed") {
+    return hasProviderWriteRef(record.providerReferences, record.actionType)
+      ? "reconciliation_required"
+      : "proceed";
+  }
   if (record.executionStatus === "blocked") return "blocked";
   if (record.claimedBy && record.claimedBy !== GDE_LIVE_LEDGER_CLAIMER && record.executionStatus === "executing") {
     return "reconciliation_required";
@@ -239,7 +243,14 @@ export function createMemoryGdeLiveActionLedger(seed: MemoryRow[] = []): GdeLive
       const existing = read(input.organizationId, input.idempotencyKey);
       if (existing) {
         const record = toRecord(existing);
-        return { decision: decideClaim(record), record };
+        const decision = decideClaim(record);
+        if (decision === "proceed" && existing.executionStatus === "failed") {
+          existing.executionStatus = "executing";
+          existing.error = null;
+          existing.claimedBy = GDE_LIVE_LEDGER_CLAIMER;
+          return { decision: "proceed", record: toRecord(existing) };
+        }
+        return { decision, record };
       }
       const row: MemoryRow = {
         id: crypto.randomUUID(),
@@ -291,6 +302,33 @@ export function createMemoryGdeLiveActionLedger(seed: MemoryRow[] = []): GdeLive
       return toRecord(row);
     },
   };
+}
+
+async function reopenFailedClaim(
+  admin: AdminSupabaseClient,
+  record: GdeLiveActionRecord,
+): Promise<GdeLiveClaimResult> {
+  const decision = decideClaim(record);
+  if (decision === "proceed" && record.executionStatus === "failed") {
+    await updateExternalAction(admin, record.organizationId, record.externalActionId, {
+      execution_status: "executing",
+      error: null,
+      claimed_by: GDE_LIVE_LEDGER_CLAIMER,
+      claimed_at: new Date().toISOString(),
+      failed_at: null,
+    });
+    return {
+      decision: "proceed",
+      record: {
+        ...record,
+        executionStatus: "executing",
+        durableState: "EXECUTING",
+        error: null,
+        claimedBy: GDE_LIVE_LEDGER_CLAIMER,
+      },
+    };
+  }
+  return { decision, record };
 }
 
 function mapPersisted(
@@ -353,7 +391,7 @@ export function createLaunchGatewayGdeLiveActionLedger(
           payloadManifest: (full?.payload_manifest as Record<string, unknown>) ?? {},
           error: full?.error ? String(full.error) : null,
         });
-        return { decision: decideClaim(record), record };
+        return reopenFailedClaim(admin, record);
       }
       const def = resolveActionType(input.gatewayActionType);
       try {
@@ -409,7 +447,7 @@ export function createLaunchGatewayGdeLiveActionLedger(
           payloadManifest: (full?.payload_manifest as Record<string, unknown>) ?? {},
           error: full?.error ? String(full.error) : null,
         });
-        return { decision: decideClaim(record), record };
+        return reopenFailedClaim(admin, record);
       }
     },
     async complete(input) {
@@ -429,32 +467,30 @@ export function createLaunchGatewayGdeLiveActionLedger(
       const providerResourceId =
         input.providerReferences.deployment_id ?? input.providerReferences.project_id ?? input.externalActionId;
       const resourceType = input.providerReferences.deployment_id ? "deployment" : "hosting_project";
-      if (binding.ventureId) {
-        try {
-          await upsertExternalResource(admin, {
+      try {
+        await upsertExternalResource(admin, {
+          organizationId: input.organizationId,
+          ventureId: binding.ventureId && isDurableLedgerUuid(binding.ventureId) ? binding.ventureId : null,
+          launchPlanId: null,
+          externalActionId: input.externalActionId,
+          resourceType,
+          provider: PROVIDER_KEYS.vercel,
+          providerResourceId,
+          canonicalName: input.providerReferences.project_name ?? providerResourceId,
+          externalUrl: input.verifiedUrl ?? input.providerReferences.url ?? null,
+          executionMode: "live",
+          createdByActionId: input.externalActionId,
+          idempotencyKey: resourceIdempotencyKey({
             organizationId: input.organizationId,
-            ventureId: isDurableLedgerUuid(binding.ventureId) ? binding.ventureId : null,
-            launchPlanId: null,
-            externalActionId: input.externalActionId,
+            ventureId: binding.ventureId ?? input.organizationId,
             resourceType,
             provider: PROVIDER_KEYS.vercel,
-            providerResourceId,
-            canonicalName: input.providerReferences.project_name ?? providerResourceId,
-            externalUrl: input.verifiedUrl ?? input.providerReferences.url ?? null,
-            executionMode: "live",
-            createdByActionId: input.externalActionId,
-            idempotencyKey: resourceIdempotencyKey({
-              organizationId: input.organizationId,
-              ventureId: binding.ventureId,
-              resourceType,
-              provider: PROVIDER_KEYS.vercel,
-              canonicalName: providerResourceId,
-            }),
-            metadata: input.providerReferences,
-          });
-        } catch {
-          /* resource registry is best-effort; the external_actions row is the ledger */
-        }
+            canonicalName: providerResourceId,
+          }),
+          metadata: input.providerReferences,
+        });
+      } catch {
+        /* resource registry is best-effort; the external_actions row is the ledger */
       }
       await emitLaunchGatewayEvent(admin, {
         organizationId: input.organizationId,

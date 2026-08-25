@@ -67,14 +67,12 @@ export function authorizeExecutionAction(input: {
     actionType === "PURCHASE_DOMAIN"
       ? 12
       : liveHostingWrite
-        ? liveCostAttested
-          ? treasury!.authorizedAmountUsd
-          : null
+        ? null
         : matrix?.costKnown === false
           ? null
           : 0;
   const unknownCost = treasury?.costActuality === "UNKNOWN" || (liveHostingWrite && !liveCostAttested);
-  const requiresTreasury = actionRequiresTreasury(actionType, estimatedUsd, Boolean(unknownCost));
+  const requiresTreasury = actionRequiresTreasury(actionType, estimatedUsd, Boolean(unknownCost)) || liveHostingWrite;
   const requiresEag = actionRequiresEag(actionType);
   const requiresWrite = actionType !== "VERIFY_HEALTH" && actionType !== "CONFIGURE_ENVIRONMENT";
   const requiresProcurement = actionType === "PURCHASE_DOMAIN" || Boolean(matrix?.requiresProcurement);
@@ -99,6 +97,16 @@ export function authorizeExecutionAction(input: {
     failure = { code: "DEPLOYMENT_EXECUTION_EAG_DENIED", message: `EAG authorization missing for ${actionType}.`, actionType };
   } else if (requiresTreasury && unknownCost) {
     failure = { code: "DEPLOYMENT_EXECUTION_UNKNOWN_COST", message: `Unknown paid cost for ${actionType} cannot be treated as zero.`, actionType };
+  } else if (
+    estimatedUsd != null &&
+    treasury?.authorizedAmountUsd != null &&
+    estimatedUsd > treasury.authorizedAmountUsd
+  ) {
+    failure = {
+      code: "DEPLOYMENT_EXECUTION_TREASURY_DENIED",
+      message: `Estimated incremental spend exceeds authorized ceiling for ${actionType}.`,
+      actionType,
+    };
   } else if (requiresTreasury && (treasury?.decision === "BLOCK" || !budgetAuthorized)) {
     failure = { code: "DEPLOYMENT_EXECUTION_TREASURY_DENIED", message: `Treasury authorization missing for ${actionType}.`, actionType };
   }
