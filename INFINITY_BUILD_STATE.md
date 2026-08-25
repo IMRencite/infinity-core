@@ -41,6 +41,11 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Founder Idea Lab V1 | VERIFIED | Manual idea intake into the canonical pipeline; founder control without Treasury bypass; see section 6i. |
 | Cursor Coding Agent Adapter V1 | VERIFIED | Optional CodingAgentProvider; Native Coder preserved; live Cursor execution NOT CONFIGURED; see section 6j. |
 | Zero-to-Production Venture Builder V1 | VERIFIED IN DRY-RUN / NON-LAUNCH MODE | Canonical closed-loop orchestrator; READY ≠ PUBLICLY_LAUNCHED; see section 6k. |
+| Vercel Live Verification Preflight V1 | VERIFIED | Governed live preflight for disposable Vercel verification; see section 6m. |
+| Vercel Governed Live Verification Session V1 | VERIFIED | Same org/mission session; replay-safe durable actions; see section 6m. |
+| Vercel Live Execution Activation + Durability V1 | VERIFIED | Real create/deploy/verify recorded on `external_actions`; see section 6m. |
+| Vercel Deployment Mode + Cost Semantics Fix V1 | VERIFIED | `git_integrated` mapping; authorized ceiling ≠ spend; see section 6m. |
+| Live Deployment Provider Enablement V1 — Vercel | VERIFIED | Capability-scoped LIVE_WRITE_VERIFIED for three hosting actions only; see section 6m. |
 
 ## 2. Product + Asset Builder V2.1 — Verified Checkpoint
 
@@ -559,6 +564,66 @@ Migration `20260818040000_zero_to_production_v1.sql` — `zero_to_production_run
 ### Real actions
 FAVC1 runs: 0. Domains purchased: 0. DNS mutations: 0. Public deployments: 0. Payment products created: 0. Payments charged: 0. Bank connections: 0. Real financial transactions: 0. Live Cursor runs: 0.
 
+## 6m. Live Deployment Provider Enablement V1 — Vercel — VERIFIED
+
+**Status:** `VERIFIED` — capability-scoped `LIVE_WRITE_VERIFIED` for three Vercel hosting actions only.
+
+This is a governed live provider-write milestone. It is not public launch, DNS, domain registration, payments, GitHub writes, production migrations, or full commercialization.
+
+Read-only commercial GET probes remain a separate harness and still do not authorize writes. This section records a later, capability-scoped write verification.
+
+### Supporting classifications
+- Vercel Live Verification Preflight V1: **VERIFIED**
+- Vercel Governed Live Verification Session V1: **VERIFIED**
+- Vercel Live Execution Activation + Durability V1: **VERIFIED**
+- Vercel Deployment Mode + Cost Semantics Fix V1: **VERIFIED**
+- Live Deployment Provider Enablement V1 — Vercel: **VERIFIED**
+
+### Capability scope (`LIVE_WRITE_VERIFIED`)
+- `hosting.create_project`
+- `hosting.deploy`
+- `hosting.verify_deployment`
+
+Provider-write verification is capability-scoped. A successful hosting deploy does not grant authority for DNS, domains, payments, repository writes, migrations, or public launch.
+
+### Not verified
+Public Launch, DNS, Domain Registration, Payments, GitHub writes, production migrations, and Full Commercialization remain **NOT VERIFIED**.
+
+### Durable evidence (read-only audit; no second Vercel execution)
+- Organization: `8ba4459b-e5f5-4ca3-86db-fbe6bbd51494`
+- Mission: `86bce9ce-38e5-4d71-91cd-02e5f2907581` (`Vercel Live Verification V1`)
+- Provider: `vercel.com_v1`
+
+| Action | External action ID | Status | Provider reference |
+|---|---|---|---|
+| `hosting.create_project` | `87432664-8f16-4631-af96-37a464db2cef` | SUCCEEDED | `prj_188YspuXKKVurXCf2lxnP4ywyggg` |
+| `hosting.deploy` | `b28e3101-0a0f-4b14-afb0-d1403f854552` | SUCCEEDED | `dpl_CyrDa7dr6aJKTT8ZEfRDEKmvwbi2` |
+| `hosting.verify_deployment` | `f48da405-d8dc-45c4-8648-f19742a3bf49` | SUCCEEDED | `dpl_CyrDa7dr6aJKTT8ZEfRDEKmvwbi2` |
+
+Resource registry: hosting project `prj_188YspuXKKVurXCf2lxnP4ywyggg` and deployment `dpl_CyrDa7dr6aJKTT8ZEfRDEKmvwbi2` are recorded for the same organization and provider. Cross-org: **NO**. Duplicate project resource: **NO**. Duplicate deployment resource: **NO**.
+
+### Lineage
+- Project: `prj_188YspuXKKVurXCf2lxnP4ywyggg`
+- Deployment: `dpl_CyrDa7dr6aJKTT8ZEfRDEKmvwbi2`
+- Repository (configured verification identity): `IMRencite/infinity-test-vercel-live-verification`
+- Commit SHA (configured verification identity): `595c12aaf628f1b0b58525e77d9adadf08e9200b`
+- Artifact (encoded on all three durable idempotency keys): `infinity-vercel-live-verification-artifact-v1`
+- Synthetic joins: **0**
+
+### Replay
+Historical first run remains truthful: CREATE originally succeeded; DEPLOY originally failed validation (`unsupported_deployment_mode`); VERIFY was blocked. Second run reused the same CREATE action (`reused: true`, `projectCreations = 0`), retried the same DEPLOY durable action, then VERIFY succeeded. Duplicate create action: **NO**. Duplicate deploy action: **NO**. Successful provider deployments recorded: **1**. Replay protection: **verified**.
+
+### Public launch separation
+`publicLaunchAuthority`: **false** on all three payload and result manifests. `PUBLICLY_LAUNCHED`: **not authorized**. DNS writes: **0**. Domain registrations: **0**. Payment writes: **0**. Custom production domain: **none**.
+
+This proves provider deployment capability. It does not prove autonomous public commercialization.
+
+### Cost truth
+Authorized ceiling: **$1**. Actual provider cost: **UNKNOWN**. Estimated incremental provider cost: **UNKNOWN**. Do not claim the Vercel deployment cost $0. Do not claim $1 was spent. Stored `estimated_cost = 0` with `cost_confidence = unknown` is an unknown estimate, not proven spend. Treasury ledger entries for this mission: **0**. Financial action requests: **0**. Treasury reservations: **0**.
+
+### Real actions
+Vercel project creations after reuse: 0. Successful Vercel deployments: 1. Verification reads: 1. DNS writes: 0. Domain purchases: 0. Payment writes: 0. Production migrations: 0. Public launches: 0. Repository writes: 0. Treasury movements: 0. Treasury reservations: 0. Secrets printed or persisted: **false**.
+
 ## 7. Explicitly Not Yet Done
 - Do not claim Organic Growth Architecture V1 is implemented until its build/test report passes.
 - Do not claim Creative Media Architecture V1 is unimplemented — **V1 foundation is VERIFIED** (see section 4); full YouTube publishing and performance learning remain future.
@@ -571,6 +636,7 @@ FAVC1 runs: 0. Domains purchased: 0. DNS mutations: 0. Public deployments: 0. Pa
 - Do not claim Founder Idea Lab V1 is unimplemented — **V1 foundation is VERIFIED** (see section 6i). Founder approval still never bypasses Treasury or public deployment.
 - Do not claim live Cursor execution is verified — **Cursor Coding Agent Adapter V1 is VERIFIED** (see section 6j). Live Cursor remains NOT CONFIGURED until a governed non-destructive probe runs.
 - Do not claim Zero-to-Production public launch, live domain/DNS/payments, or autonomous revenue — **ZTP V1 is VERIFIED IN DRY-RUN / NON-LAUNCH MODE** (see section 6k). READY is not PUBLICLY_LAUNCHED.
+- Do not claim Public Launch, DNS, Domain Registration, Payments, GitHub writes, production migrations, or Full Commercialization from the Vercel hosting write path — **Live Deployment Provider Enablement V1 — Vercel is VERIFIED** only for `hosting.create_project`, `hosting.deploy`, and `hosting.verify_deployment` (see section 6m). `LIVE_WRITE_VERIFIED` is capability-scoped. Read-only verification still never implies write authority for other actions.
 
 ## 9. First Autonomous Venture Cycle V1 — ATTEMPTED / BLOCKED
 

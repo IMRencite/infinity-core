@@ -379,6 +379,27 @@ Founder Idea / Autonomous Opportunity → Research → Monetization → Selectio
 
 V1 stops at READY / READY_FOR_CONTROLLED_LAUNCH. READY is not PUBLICLY_LAUNCHED. Technical failure is not business REJECT. Business VALIDATE does not silently build. ZTP does not depend on FAVC1; future autonomous cycles may invoke ZTP.
 
+## 15f. Live Deployment Provider Enablement — Vercel
+A provider capability becomes `LIVE_WRITE_VERIFIED` only after a real governed provider mutation succeeds and its result is durably recorded and verified. Verification is capability-scoped. Read-only verification still never implies write authority for other actions.
+
+Vercel is `LIVE_WRITE_VERIFIED` only for:
+
+- `hosting.create_project`
+- `hosting.deploy`
+- `hosting.verify_deployment`
+
+A successful hosting deploy does not grant authority for DNS, domains, payments, repository writes, migrations, or public launch.
+
+Governed Vercel live path evidence (one successful real deployment; replay protection verified; deployment verification verified; public launch remained unauthorized; cost remained UNKNOWN):
+
+- Project: `prj_188YspuXKKVurXCf2lxnP4ywyggg`
+- Deployment: `dpl_CyrDa7dr6aJKTT8ZEfRDEKmvwbi2`
+- CREATE: `87432664-8f16-4631-af96-37a464db2cef`
+- DEPLOY: `b28e3101-0a0f-4b14-afb0-d1403f854552`
+- VERIFY: `f48da405-d8dc-45c4-8648-f19742a3bf49`
+
+`publicLaunchAuthority` remains false. Authorized ceiling is not actual spend. Unknown Vercel cost must not be recorded as $0 spent.
+
 ## 16. Autonomy Boundary
 The architectural goal is autonomous execution, not arbitrary execution.
 

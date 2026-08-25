@@ -124,3 +124,12 @@ These decisions should not be casually reversed in future chats or implementatio
 90. ZTP is resumable and idempotent.
 91. Technical failure is distinct from business rejection.
 92. Actual revenue/performance cannot exist before real launch/customer events.
+
+## 16. Live Deployment Provider Enablement
+104. A provider capability becomes `LIVE_WRITE_VERIFIED` only after a real governed provider mutation succeeds and its result is durably recorded and verified.
+105. Verification is capability-scoped. `LIVE_WRITE_VERIFIED` applies only to the actions that actually succeeded.
+106. A successful hosting deploy does not grant authority for DNS, domains, payments, repository writes, migrations, or public launch.
+107. Read-only verification still never implies write authority for other actions.
+108. Vercel `LIVE_WRITE_VERIFIED` is limited to `hosting.create_project`, `hosting.deploy`, and `hosting.verify_deployment` until those other capabilities are independently proven.
+109. Public launch remains unauthorized unless a separate public-launch authority grant exists. Provider deployment capability is not autonomous public commercialization.
+110. Unknown provider deployment cost remains UNKNOWN. An authorized ceiling is not spend. Do not record unknown Vercel cost as $0 spent or as $1 spent.
