@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
 import type { OperatorVentureListItem } from "@/lib/infinity/operator-console/types";
 import { departmentStateLabel } from "@/lib/infinity/operator-console/status-derivation";
@@ -49,6 +50,12 @@ export function VentureCommandBar({
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/founder-ideas"
+            className="rounded border border-sky-500/30 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-100 hover:bg-sky-500/20"
+          >
+            Submit Idea
+          </Link>
           {live ? (
             <span className="flex items-center gap-1 text-[9px] font-medium uppercase tracking-wider text-emerald-400/90">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" aria-hidden />

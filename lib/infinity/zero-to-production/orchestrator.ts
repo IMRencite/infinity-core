@@ -286,13 +286,13 @@ async function executeFrom(ctx: ZtpContext, run: ZeroToProductionRun, input: Ztp
   }
   if (shouldStop(input, "RESEARCH")) return snapshot(ctx, run, false);
 
-  if (!grade?.evaluation.candidate.monetization) {
+  if (!grade?.evaluation?.candidate.monetization) {
     return snapshot(ctx, fail(run, ctx, "MONETIZATION_FAILED", "Canonical monetization missing", "MONETIZATION"), false);
   }
   if (!stageDone(ctx, run, "MONETIZATION")) {
     checkpoint(ctx, run, "MONETIZATION", "COMPLETE", {
       canonicalEntityType: "monetization_run",
-      canonicalEntityId: grade.evaluation.candidate.monetization.monetizationRunId,
+      canonicalEntityId: grade.evaluation?.candidate.monetization?.monetizationRunId,
     });
   }
   if (shouldStop(input, "MONETIZATION")) return snapshot(ctx, run, false);
@@ -467,8 +467,8 @@ async function executeFrom(ctx: ZtpContext, run: ZeroToProductionRun, input: Ztp
       run,
       store: ctx.commercial,
       brandName: candidate.title.slice(0, 24),
-      modelType: grade.evaluation.candidate.monetization.primaryPlan?.modelType ?? "saas_subscription",
-      plannedPriceUsd: grade.evaluation.candidate.monetization.primaryPlan?.estimatedPriceBase ?? 49,
+      modelType: grade.evaluation?.candidate.monetization?.primaryPlan?.modelType ?? "saas_subscription",
+      plannedPriceUsd: grade.evaluation?.candidate.monetization?.primaryPlan?.estimatedPriceBase ?? 49,
     });
     run.commercializationPlanId = commercial.plan.id;
     run.productReadiness.COMMERCIALIZATION_READY = true;

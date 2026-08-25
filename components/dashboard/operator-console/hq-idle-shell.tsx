@@ -37,6 +37,12 @@ export function HqIdleShell({ ventures, showPortfolioLink = true }: Props) {
         <div className="mt-4 min-w-0 max-w-2xl">
           <HqCopilotDock currentRoute="/dashboard" />
         </div>
+        <Link
+          href="/dashboard/founder-ideas"
+          className="mt-4 inline-flex rounded-md border border-sky-500/30 bg-sky-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-sky-100 hover:bg-sky-500/20"
+        >
+          Submit an Idea
+        </Link>
         {ventures.length > 0 ? (
           <div className="mt-4 max-w-xs">
             <VentureSelector

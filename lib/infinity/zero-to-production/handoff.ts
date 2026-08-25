@@ -10,7 +10,7 @@ import type { ZtpOrigin } from "./constants";
 export function handoffFromFounder(store: FounderIdeaStore, submission: FounderIdeaSubmission): LoadedVentureSelectionHandoff {
   const candidate = submission.opportunityCandidateId ? store.candidates.get(submission.opportunityCandidateId) : null;
   const grade = store.grades.get(submission.id);
-  const plan = grade?.evaluation.candidate.monetization?.primaryPlan;
+  const plan = grade?.evaluation?.candidate.monetization?.primaryPlan;
   return {
     id: null,
     organizationId: submission.organizationId,
@@ -18,7 +18,7 @@ export function handoffFromFounder(store: FounderIdeaStore, submission: FounderI
     candidateSelectionEvaluationId: null,
     opportunityCandidateId: candidate?.id ?? null,
     discoveryRunId: candidate?.discoveryRunId ?? null,
-    monetizationRunId: grade?.evaluation.candidate.monetization?.monetizationRunId ?? null,
+    monetizationRunId: grade?.evaluation?.candidate.monetization?.monetizationRunId ?? null,
     businessConcept: candidate?.title ?? submission.title,
     targetCustomer: candidate?.targetCustomer ?? submission.targetCustomer ?? "UNSPECIFIED",
     problem: candidate?.problem ?? submission.problem ?? submission.description,
@@ -32,7 +32,7 @@ export function handoffFromFounder(store: FounderIdeaStore, submission: FounderI
     mvpRequirements: ["Core workflow", "Auth", "Billing"],
     futureFeatures: ["Reporting"],
     economicTargets: {
-      expected12MonthProfit: grade?.evaluation.expectedValueDerived.expected12MonthProfit ?? null,
+      expected12MonthProfit: grade?.evaluation?.expectedValueDerived.expected12MonthProfit ?? null,
       expectedRoi: grade?.expectedRoi ?? null,
       estimatedCapitalRequired: grade?.estimatedCapitalRequired ?? null,
     },
@@ -59,7 +59,7 @@ export function handoffFromAutonomous(
   grade: FounderIdeaGrade,
   origin: ZtpOrigin,
 ): LoadedVentureSelectionHandoff {
-  const plan = grade.evaluation.candidate.monetization?.primaryPlan;
+  const plan = grade.evaluation?.candidate.monetization?.primaryPlan;
   return {
     id: null,
     organizationId,
@@ -67,7 +67,7 @@ export function handoffFromAutonomous(
     candidateSelectionEvaluationId: null,
     opportunityCandidateId: candidate.id,
     discoveryRunId: candidate.discoveryRunId,
-    monetizationRunId: grade.evaluation.candidate.monetization?.monetizationRunId ?? null,
+    monetizationRunId: grade.evaluation?.candidate.monetization?.monetizationRunId ?? null,
     businessConcept: candidate.title,
     targetCustomer: candidate.targetCustomer,
     problem: candidate.problem,
@@ -81,7 +81,7 @@ export function handoffFromAutonomous(
     mvpRequirements: ["Core workflow", "Auth", "Billing"],
     futureFeatures: ["Reporting"],
     economicTargets: {
-      expected12MonthProfit: grade.evaluation.expectedValueDerived.expected12MonthProfit ?? null,
+      expected12MonthProfit: grade.evaluation?.expectedValueDerived.expected12MonthProfit ?? null,
       expectedRoi: grade.expectedRoi ?? null,
       estimatedCapitalRequired: grade.estimatedCapitalRequired ?? null,
     },

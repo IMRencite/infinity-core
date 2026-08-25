@@ -2,6 +2,9 @@ import type { CanonicalVentureAssemblyIdentity } from "@/lib/infinity/venture-as
 import type { SelectionDecision } from "@/lib/infinity/venture-selection/constants";
 import type { NormalizedCandidateScores } from "@/lib/infinity/opportunity-scanner/types";
 import type { CandidateEvaluationDraft } from "@/lib/infinity/venture-selection/types";
+import type { EvidenceCoverage } from "./evidence-coverage";
+import type { MonetizationEvidenceLayers } from "./monetization-levels";
+import type { ScoreProvenanceRow } from "./score-from-evidence";
 import type {
   ClaimSource,
   FounderAction,
@@ -52,6 +55,8 @@ export type FounderIdeaSubmission = {
   founderDecision: SelectionDecision | FounderAction | null;
   origin: VentureOrigin;
   failureCode: FounderFailureCode | null;
+  needsReanalysis: boolean;
+  researchRunId: string | null;
   analyzedByUserId: string | null;
   approvedByUserId: string | null;
   idempotencyKey: string;
@@ -71,17 +76,26 @@ export type NormalizedFounderThesis = {
   unknowns: { values: string[]; source: ClaimSource };
 };
 
+export type FounderScoreIntegrity = "EVIDENCE_GROUNDED" | "INCOMPLETE" | "FALLBACK_HISTORICAL" | "TEST_FIXTURE";
+
 export type FounderIdeaGrade = {
-  opportunityScores: NormalizedCandidateScores;
-  selectionScore: number;
-  validationScore: number;
-  monetizationScore: number;
-  fatalAssumptionRisk: number;
+  opportunityScores: NormalizedCandidateScores | null;
+  selectionScore: number | null;
+  validationScore: number | null;
+  monetizationScore: number | null;
+  fatalAssumptionRisk: number | null;
   expectedRoi: number | null;
   estimatedCapitalRequired: number | null;
-  buildReadiness: SelectionDecision;
-  opportunityQuality: number;
-  evaluation: CandidateEvaluationDraft;
+  buildReadiness: SelectionDecision | null;
+  opportunityQuality: number | null;
+  evaluation: CandidateEvaluationDraft | null;
+  scoreIntegrity: FounderScoreIntegrity;
+  readyForDecision: boolean;
+  researchRunId: string | null;
+  monetizationRunId: string | null;
+  provenance: ScoreProvenanceRow[];
+  coverage: EvidenceCoverage | null;
+  monetizationLayers: MonetizationEvidenceLayers | null;
 };
 
 export type FounderDecisionOverride = {

@@ -32,6 +32,8 @@ export function submitFounderIdea(store: FounderIdeaStore, input: FounderIdeaSub
     founderDecision: null,
     origin: "FOUNDER_SUBMITTED",
     failureCode: null,
+    needsReanalysis: false,
+    researchRunId: null,
     analyzedByUserId: input.submittedByUserId,
     approvedByUserId: null,
     idempotencyKey: input.idempotencyKey,

@@ -1,0 +1,42 @@
+export * from "./constants";
+export * from "./types";
+export { FounderIdeaStore, newId, nowIso } from "./store";
+export { submitFounderIdea } from "./submit";
+export { normalizeFounderIdea, claimSourceLabel } from "./normalize";
+export { convertFounderIdeaToCandidate, founderDedupKey, conservativeScoringInputs, isSharedConservativeFallback, applyResearchPacketToCandidate } from "./convert";
+export { gradeFounderIdea, gradeLoadedCandidate, buildLoadedCandidate } from "./grade";
+export { applyFounderDecision, founderActionsFor, validationPlanFor } from "./decide";
+export { routeFounderBuild } from "./build-route";
+export { analyzeFounderIdea } from "./analyze";
+export type { AnalyzeOptions } from "./analyze";
+export { persistFounderIdea } from "./persist";
+export { reanalyzeFounderIdea, markNeedsReanalysis } from "./reanalyze";
+export { buildFounderResearchSeed, parseKnownCompetitors } from "./research-seed";
+export { scoreFromEvidenceCoverage, recommendScoreDisplay } from "./score-from-evidence";
+export { evaluateEvidenceReadiness } from "./readiness";
+export { monetizeFromResearchPacket } from "./monetization-from-research";
+export {
+  workflowSaasIntegrityPacket,
+  artMarketplaceIntegrityPacket,
+  categorySupportedIdeaUnprovenPacket,
+  negativeEconomicsPacket,
+  competitorSeedOnlyPacket,
+  failedProviderPacket,
+} from "./integrity-fixtures";
+export {
+  saasWorkflowResearchFixture,
+  saasWorkflowMonetizationFixture,
+  weakMonetizationFixture,
+  rejectScoringFixture,
+  applyCanonicalResearchFixture,
+  canonicalGroundedEvidence,
+} from "./fixtures";
+export { assertFounderSpendStillTreasuryGated } from "./treasury-gate";
+export { classifyFounderFailure, technicalFailureIsNotBusinessRejection } from "./failures";
+export { segmentPerformanceByOrigin, performanceRecordForOrigin } from "./origin";
+export type { OriginPerformanceRecord, OriginPerformanceSegment } from "./origin";
+export { buildFounderIdeaArtifacts, listFounderIdeas, founderHotTakes } from "./hq/artifacts";
+export type { FounderIdeaListRow } from "./hq/artifacts";
+export { mergeRoomArtifacts } from "./hq/merge";
+export { founderHotTakesFromMetadata } from "./hq/hot-takes";
+export { founderIdeaJourney } from "./hq/journey";

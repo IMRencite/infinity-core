@@ -4,6 +4,9 @@ import { nowIso } from "./store";
 import type { FounderFailureCode, FounderIdeaDesiredMode, FounderIdeaStatus, VentureOrigin } from "./constants";
 import type { SelectionDecision } from "@/lib/infinity/venture-selection/constants";
 import type { FounderAction } from "./constants";
+import { isSharedConservativeFallback } from "./convert";
+import { emptyEvidenceCoverage } from "./evidence-coverage";
+import { emptyMonetizationLayers } from "./monetization-levels";
 
 export type FounderIdeaSubmissionRow = {
   id: string;
@@ -55,6 +58,31 @@ export type FounderDecisionOverrideRow = {
   created_at: string;
 };
 
+type ScoresEnvelope = {
+  opportunityScores?: FounderIdeaGrade["opportunityScores"];
+  scoreIntegrity?: FounderIdeaGrade["scoreIntegrity"];
+  needsReanalysis?: boolean;
+  researchRunId?: string | null;
+  provenance?: FounderIdeaGrade["provenance"];
+  coverage?: FounderIdeaGrade["coverage"];
+  monetizationLayers?: FounderIdeaGrade["monetizationLayers"];
+  readyForDecision?: boolean;
+  scoringInputs?: FounderIdeaGrade["opportunityScores"] extends infer T
+    ? T extends { scoringInputs: infer S }
+      ? S
+      : never
+    : never;
+};
+
+export function readScoresEnvelope(json: unknown): ScoresEnvelope | null {
+  if (!json || typeof json !== "object") return null;
+  const record = json as Record<string, unknown>;
+  if ("opportunityScores" in record || "scoreIntegrity" in record || "needsReanalysis" in record) {
+    return record as ScoresEnvelope;
+  }
+  return { opportunityScores: json as FounderIdeaGrade["opportunityScores"] };
+}
+
 export function submissionToRow(submission: FounderIdeaSubmission, grade?: FounderIdeaGrade | null): FounderIdeaSubmissionRow {
   return {
     id: submission.id,
@@ -86,8 +114,17 @@ export function submissionToRow(submission: FounderIdeaSubmission, grade?: Found
     fatal_assumption_risk: grade?.fatalAssumptionRisk ?? null,
     expected_roi: grade?.expectedRoi ?? null,
     estimated_capital_required: grade?.estimatedCapitalRequired ?? null,
-    scores_json: grade?.opportunityScores ?? null,
-    blocking_assumptions: grade?.evaluation.blockingAssumptions ?? [],
+    scores_json: {
+      opportunityScores: grade?.opportunityScores ?? null,
+      scoreIntegrity: grade?.scoreIntegrity ?? null,
+      needsReanalysis: submission.needsReanalysis,
+      researchRunId: submission.researchRunId,
+      provenance: grade?.provenance ?? [],
+      coverage: grade?.coverage ?? null,
+      monetizationLayers: grade?.monetizationLayers ?? null,
+      readyForDecision: grade?.readyForDecision ?? false,
+    },
+    blocking_assumptions: grade?.evaluation?.blockingAssumptions ?? [],
     created_at: submission.createdAt,
     updated_at: submission.updatedAt,
   };
@@ -114,6 +151,8 @@ export function rowToSubmission(row: FounderIdeaSubmissionRow): FounderIdeaSubmi
     founderDecision: row.founder_decision as FounderIdeaSubmission["founderDecision"],
     origin: row.origin,
     failureCode: row.failure_code,
+    needsReanalysis: Boolean(readScoresEnvelope(row.scores_json)?.needsReanalysis),
+    researchRunId: readScoresEnvelope(row.scores_json)?.researchRunId ?? null,
     analyzedByUserId: row.analyzed_by_user_id,
     approvedByUserId: row.approved_by_user_id,
     idempotencyKey: row.idempotency_key,
@@ -147,47 +186,33 @@ export function hydrateFounderStore(
     const submission = rowToSubmission(row);
     store.submissions.set(submission.id, submission);
     store.registerIdempotency(submission.organizationId, submission.idempotencyKey, submission.id);
-    if (row.opportunity_quality != null) {
+    if (row.opportunity_quality != null || row.scores_json != null) {
+      const envelope = readScoresEnvelope(row.scores_json);
+      const opportunityScores = envelope?.opportunityScores ?? null;
+      const fallback = isSharedConservativeFallback(opportunityScores?.scoringInputs);
+      if (fallback) submission.needsReanalysis = true;
       store.grades.set(submission.id, {
-        opportunityScores: (row.scores_json as FounderIdeaGrade["opportunityScores"]) ?? {
-          scoringVersion: "persisted",
-          demandScore: 0,
-          marketGrowthScore: 0,
-          competitionOpportunityScore: 0,
-          monetizationPotentialScore: 0,
-          buildabilityScore: 0,
-          automationScore: 0,
-          distributionScore: 0,
-          capitalEfficiencyScore: 0,
-          speedToRevenueScore: 0,
-          evidenceConfidenceScore: 0,
-          opportunityScore: row.opportunity_quality,
-          weightedBreakdown: {},
-          scoringInputs: {
-            demandStrength: 0,
-            marketGrowth: 0,
-            competitionWeakness: 0,
-            monetizationPotential: 0,
-            buildability: 0,
-            automationPotential: 0,
-            distributionStrength: 0,
-            capitalEfficiency: 0,
-            speedToRevenue: 0,
-            evidenceConfidence: 0,
-          },
-        },
-        selectionScore: row.selection_score ?? 0,
-        validationScore: row.validation_score ?? 0,
-        monetizationScore: row.monetization_score ?? 0,
-        fatalAssumptionRisk: row.fatal_assumption_risk ?? 0,
+        opportunityScores,
+        selectionScore: row.selection_score,
+        validationScore: row.validation_score,
+        monetizationScore: row.monetization_score,
+        fatalAssumptionRisk: row.fatal_assumption_risk,
         expectedRoi: row.expected_roi,
         estimatedCapitalRequired: row.estimated_capital_required,
-        buildReadiness: row.infinity_decision ?? "HOLD",
+        buildReadiness: row.infinity_decision,
         opportunityQuality: row.opportunity_quality,
         evaluation: {
           blockingAssumptions: row.blocking_assumptions ?? [],
         } as FounderIdeaGrade["evaluation"],
+        scoreIntegrity: envelope?.scoreIntegrity ?? (fallback ? "FALLBACK_HISTORICAL" : "INCOMPLETE"),
+        readyForDecision: Boolean(envelope?.readyForDecision),
+        researchRunId: envelope?.researchRunId ?? null,
+        monetizationRunId: null,
+        provenance: envelope?.provenance ?? [],
+        coverage: envelope?.coverage ?? emptyEvidenceCoverage(),
+        monetizationLayers: envelope?.monetizationLayers ?? emptyMonetizationLayers(),
       });
+      store.submissions.set(submission.id, submission);
     }
   }
   for (const row of overrides) {

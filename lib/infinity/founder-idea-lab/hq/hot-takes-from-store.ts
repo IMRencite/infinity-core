@@ -7,11 +7,11 @@ export function founderHotTakes(submission: FounderIdeaSubmission, store: Founde
   const thesis = normalizeFounderIdea(submission);
   return [
     `[INFERENCE] Best part of the idea: ${thesis.problem.value ?? submission.description}`,
-    `[FACT] Weakest assumption: ${grade?.evaluation.blockingAssumptions[0] ?? "Demand and willingness to pay are unproven."}`,
-    `[INFERENCE] Fastest way to revenue: ${grade?.evaluation.candidate?.monetization?.recommendation.expectedTimeToRevenue ?? "UNKNOWN until researched"}`,
+    `[FACT] Weakest assumption: ${grade?.evaluation?.blockingAssumptions[0] ?? "Demand and willingness to pay are unproven."}`,
+    `[INFERENCE] Fastest way to revenue: ${grade?.evaluation?.candidate?.monetization?.recommendation.expectedTimeToRevenue ?? "UNKNOWN until researched"}`,
     `[FACT] Most dangerous risk: fatal assumption risk ${grade?.fatalAssumptionRisk ?? "UNKNOWN"}`,
     `[INFERENCE] Best initial customer: ${thesis.targetCustomer.value ?? "UNKNOWN"} (${thesis.targetCustomer.source})`,
-    `[INFERENCE] Cheapest validation: ${grade?.evaluation.candidate?.monetization?.validationExperiments[0]?.title ?? "Landing-page intent test"}`,
+    `[INFERENCE] Cheapest validation: ${grade?.evaluation?.candidate?.monetization?.validationExperiments[0]?.title ?? "UNKNOWN"}`,
     `[FACT] Why Infinity would ${grade?.buildReadiness === "BUILD" ? "" : "not "}build it now: recommendation is ${grade?.buildReadiness ?? "UNKNOWN"}.`,
   ];
 }

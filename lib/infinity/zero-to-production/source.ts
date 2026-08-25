@@ -59,6 +59,13 @@ export function createAutonomousBuildCandidate(organizationId: string): {
     buildReadiness: evaluation.decision,
     opportunityQuality: scores.opportunityScore,
     evaluation,
+    scoreIntegrity: "TEST_FIXTURE",
+    readyForDecision: true,
+    researchRunId: candidate.researchRunIds[0] ?? null,
+    monetizationRunId: loaded.monetization?.monetizationRunId ?? null,
+    provenance: [],
+    coverage: null,
+    monetizationLayers: null,
   };
   return { candidate, grade };
 }

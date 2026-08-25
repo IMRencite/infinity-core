@@ -4,6 +4,8 @@ import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 import { normalizeFounderIdea } from "../normalize";
 import type { FounderIdeaStore } from "../store";
 import type { FounderIdeaSubmission } from "../types";
+import { recommendScoreDisplay } from "../score-from-evidence";
+import type { FounderIdeaGrade } from "../types";
 import { founderHotTakes } from "./hot-takes-from-store";
 
 function push(map: HqRoomArtifactMap, roomId: DepartmentId, artifact: HqWorkArtifact): void {
@@ -44,9 +46,11 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       candidateId: submission.opportunityCandidateId,
       submittedBy: submission.submittedByUserId,
       approvedBy: submission.approvedByUserId,
-      weakestAssumption: grade?.evaluation.blockingAssumptions[0] ?? "Demand and willingness to pay are unproven.",
-      cheapestValidation: grade?.evaluation.candidate?.monetization?.validationExperiments[0]?.title ?? "Landing-page intent test",
+      weakestAssumption: grade?.evaluation?.blockingAssumptions[0] ?? "Demand and willingness to pay are unproven.",
+      cheapestValidation: grade?.evaluation?.candidate?.monetization?.validationExperiments[0]?.title ?? "UNKNOWN",
       researchPipeline: "grounded_research",
+      researchRunId: submission.researchRunId,
+      needsReanalysis: submission.needsReanalysis,
     } satisfies Record<string, string | number | boolean | null>;
 
     push(map, "opportunity_lab", {
@@ -99,8 +103,8 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       }
     }
 
-    const researched = !["DRAFT", "SUBMITTED"].includes(submission.status);
-    if (researched && grade) {
+    const packet = store.researchPackets.get(submission.id);
+    if (packet && !packet.failed) {
       push(map, "research_department", {
         id: buildArtifactRenderId({
           artifactType: "research_packet",
@@ -122,12 +126,14 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
           founderBadge: "FOUNDER",
           candidateId: submission.opportunityCandidateId,
           pipeline: "grounded_research",
-          grounded: Boolean(candidateGrounded(store, submission)),
+          grounded: packet.grounded,
+          researchRunId: packet.researchRunId,
         },
       });
     }
 
-    if (grade && grade.monetizationScore > 0) {
+    const monetization = store.monetizationBySubmission.get(submission.id);
+    if (monetization) {
       push(map, "strategy_finance", {
         id: buildArtifactRenderId({
           artifactType: "monetization_plan",
@@ -148,8 +154,8 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
           origin: submission.origin,
           founderBadge: "FOUNDER",
           candidateId: submission.opportunityCandidateId,
-          monetizationScore: grade.monetizationScore,
-          expectedRoi: grade.expectedRoi,
+          monetizationScore: monetization.monetizationScore,
+          expectedRoi: grade?.expectedRoi ?? null,
         },
       });
     }
@@ -213,9 +219,22 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
   return map;
 }
 
-function candidateGrounded(store: FounderIdeaStore, submission: FounderIdeaSubmission): boolean {
-  const candidate = submission.opportunityCandidateId ? store.candidates.get(submission.opportunityCandidateId) : null;
-  return Boolean(candidate?.demandEvidence.some((item) => item.grounded));
+function listScoreDisplay(grade: FounderIdeaGrade | undefined): string {
+  if (!grade || grade.opportunityQuality == null) return "UNKNOWN";
+  const unknownCount = grade.coverage?.unknownCount ?? 0;
+  const confidences = grade.provenance
+    .map((row) => row.confidence)
+    .filter((value): value is number => value != null);
+  const evidenceConfidence =
+    confidences.length > 0 ? confidences.reduce((sum, value) => sum + value, 0) / confidences.length : null;
+  if (grade.readyForDecision && grade.scoreIntegrity !== "INCOMPLETE") {
+    return String(Math.round(grade.opportunityQuality));
+  }
+  return recommendScoreDisplay({
+    opportunityScore: grade.opportunityQuality,
+    evidenceConfidence,
+    unknownCount: unknownCount > 0 ? unknownCount : 5,
+  });
 }
 
 export type FounderIdeaListRow = {
@@ -239,7 +258,7 @@ export function listFounderIdeas(store: FounderIdeaStore, organizationId: string
     return {
       id: submission.id,
       idea: submission.title,
-      score: grade ? String(grade.opportunityQuality) : "UNKNOWN",
+      score: listScoreDisplay(grade),
       infinityDecision: submission.infinityDecision ?? "UNKNOWN",
       founderDecision: submission.founderDecision ? String(submission.founderDecision) : "UNKNOWN",
       status: submission.status,

@@ -2,11 +2,16 @@ import { randomUUID } from "node:crypto";
 import type { OpportunityCandidate } from "@/lib/infinity/opportunity-scanner/types";
 import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission } from "./types";
 import type { FounderBuildRouteResult } from "./types";
+import type { FounderResearchPacket } from "./research-packet";
+import type { LoadedMonetizationBundle } from "@/lib/infinity/venture-selection/types";
 
 export class FounderIdeaStore {
   submissions = new Map<string, FounderIdeaSubmission>();
   candidates = new Map<string, OpportunityCandidate>();
   grades = new Map<string, FounderIdeaGrade>();
+  gradeHistory = new Map<string, FounderIdeaGrade[]>();
+  researchPackets = new Map<string, FounderResearchPacket>();
+  monetizationBySubmission = new Map<string, LoadedMonetizationBundle>();
   overrides = new Map<string, FounderDecisionOverride>();
   builds = new Map<string, FounderBuildRouteResult>();
   idempotency = new Map<string, string>();

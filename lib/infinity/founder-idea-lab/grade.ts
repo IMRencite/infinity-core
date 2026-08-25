@@ -26,9 +26,12 @@ import type {
   LoadedMonetizationBundle,
 } from "@/lib/infinity/venture-selection/types";
 import type { OpportunityCandidate, ScoringAssessmentInput } from "@/lib/infinity/opportunity-scanner/types";
-import { convertFounderIdeaToCandidate, conservativeScoringInputs } from "./convert";
+import { convertFounderIdeaToCandidate } from "./convert";
+import { emptyEvidenceCoverage } from "./evidence-coverage";
+import { emptyMonetizationLayers } from "./monetization-levels";
+import { unitEconomicsKnown } from "./monetization-levels";
 import type { FounderIdeaStore } from "./store";
-import type { FounderIdeaGrade, FounderIdeaSubmission } from "./types";
+import type { FounderIdeaGrade, FounderIdeaSubmission, FounderScoreIntegrity } from "./types";
 
 export function buildLoadedCandidate(
   candidate: OpportunityCandidate,
@@ -164,30 +167,80 @@ export function gradeFounderIdea(
     scores?: ScoringAssessmentInput;
     monetization?: LoadedMonetizationBundle | null;
     researchGrounded?: boolean;
+    evidenceSufficient?: boolean;
+    scoreIntegrity?: FounderScoreIntegrity;
+    researchRunId?: string | null;
+    skipEconomicsClassification?: boolean;
   },
 ): FounderIdeaGrade {
+  const fixtureScores = input?.scores;
   const candidate = convertFounderIdeaToCandidate(store, submission, {
-    scores: input?.scores ?? conservativeScoringInputs(Boolean(input?.researchGrounded)),
+    scores: fixtureScores,
     researchGrounded: input?.researchGrounded,
   });
-  const loaded = buildLoadedCandidate(candidate, input?.monetization ?? null);
+  const monetization = input?.monetization ?? null;
+  const integrity = input?.scoreIntegrity ?? (fixtureScores ? "TEST_FIXTURE" : "INCOMPLETE");
+  const unitKnown = monetization
+    ? unitEconomicsKnown({
+        category: "SUPPORTED",
+        ideaSpecific: "SUPPORTED",
+        unitEconomics: monetization.primaryPlan?.ltvCacRatio != null ? "SUPPORTED" : "UNKNOWN",
+      })
+    : false;
+  const sufficient = Boolean(input?.evidenceSufficient) && (integrity === "TEST_FIXTURE" || unitKnown);
+
+  if (!sufficient) {
+    const grade: FounderIdeaGrade = {
+      opportunityScores: candidate.scores,
+      selectionScore: null,
+      validationScore: null,
+      monetizationScore: monetization?.monetizationScore ?? null,
+      fatalAssumptionRisk: null,
+      expectedRoi: null,
+      estimatedCapitalRequired: monetization?.primaryPlan?.estimatedCapitalRequired ?? null,
+      buildReadiness: null,
+      opportunityQuality: candidate.opportunityScore,
+      evaluation: null,
+      scoreIntegrity: integrity,
+      readyForDecision: false,
+      researchRunId: input?.researchRunId ?? submission.researchRunId,
+      monetizationRunId: monetization?.monetizationRunId ?? null,
+      provenance: [],
+      coverage: emptyEvidenceCoverage({ researched: Boolean(input?.researchRunId) }),
+      monetizationLayers: emptyMonetizationLayers(),
+    };
+    store.grades.set(submission.id, grade);
+    if (monetization) store.monetizationBySubmission.set(submission.id, monetization);
+    return grade;
+  }
+
+  const loaded = buildLoadedCandidate(candidate, monetization);
   const evaluation = gradeLoadedCandidate(loaded);
+  const expectedRoi = unitKnown ? evaluation.expectedValueDerived.expectedRoi : null;
   const grade: FounderIdeaGrade = {
-    opportunityScores: candidate.scores!,
+    opportunityScores: candidate.scores,
     selectionScore: evaluation.selectionScore,
     validationScore: evaluation.validationScore,
-    monetizationScore: loaded.monetization?.monetizationScore ?? 0,
+    monetizationScore: monetization?.monetizationScore ?? null,
     fatalAssumptionRisk: evaluation.fatalAssumptionRiskScore,
-    expectedRoi: evaluation.expectedValueDerived.expectedRoi,
-    estimatedCapitalRequired: loaded.monetization?.primaryPlan?.estimatedCapitalRequired ?? null,
+    expectedRoi,
+    estimatedCapitalRequired: monetization?.primaryPlan?.estimatedCapitalRequired ?? null,
     buildReadiness: evaluation.decision,
-    opportunityQuality: candidate.opportunityScore ?? 0,
+    opportunityQuality: candidate.opportunityScore,
     evaluation,
+    scoreIntegrity: integrity,
+    readyForDecision: true,
+    researchRunId: input?.researchRunId ?? submission.researchRunId,
+    monetizationRunId: monetization?.monetizationRunId ?? null,
+    provenance: [],
+    coverage: emptyEvidenceCoverage({ researched: true }),
+    monetizationLayers: emptyMonetizationLayers(),
   };
   store.grades.set(submission.id, grade);
   submission.infinityDecision = evaluation.decision;
   submission.status = "READY_FOR_DECISION";
   submission.updatedAt = new Date().toISOString();
   store.submissions.set(submission.id, submission);
+  if (monetization) store.monetizationBySubmission.set(submission.id, monetization);
   return grade;
 }

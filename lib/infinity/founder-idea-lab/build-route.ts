@@ -7,7 +7,7 @@ import type { FounderBuildRouteResult, FounderIdeaSubmission } from "./types";
 function handoffFromSubmission(store: FounderIdeaStore, submission: FounderIdeaSubmission): LoadedVentureSelectionHandoff {
   const candidate = submission.opportunityCandidateId ? store.candidates.get(submission.opportunityCandidateId) : null;
   const grade = store.grades.get(submission.id);
-  const plan = grade?.evaluation.candidate.monetization?.primaryPlan;
+  const plan = grade?.evaluation?.candidate.monetization?.primaryPlan;
   return {
     id: null,
     organizationId: submission.organizationId,
@@ -15,7 +15,7 @@ function handoffFromSubmission(store: FounderIdeaStore, submission: FounderIdeaS
     candidateSelectionEvaluationId: null,
     opportunityCandidateId: candidate?.id ?? null,
     discoveryRunId: candidate?.discoveryRunId ?? null,
-    monetizationRunId: grade?.evaluation.candidate.monetization?.monetizationRunId ?? null,
+    monetizationRunId: grade?.evaluation?.candidate.monetization?.monetizationRunId ?? null,
     businessConcept: candidate?.title ?? submission.title,
     targetCustomer: candidate?.targetCustomer ?? submission.targetCustomer ?? "UNSPECIFIED",
     problem: candidate?.problem ?? submission.problem ?? submission.description,
@@ -29,7 +29,7 @@ function handoffFromSubmission(store: FounderIdeaStore, submission: FounderIdeaS
     mvpRequirements: ["Core workflow", "Auth", "Billing"],
     futureFeatures: ["Reporting"],
     economicTargets: {
-      expected12MonthProfit: grade?.evaluation.expectedValueDerived.expected12MonthProfit ?? null,
+      expected12MonthProfit: grade?.evaluation?.expectedValueDerived.expected12MonthProfit ?? null,
       expectedRoi: grade?.expectedRoi ?? null,
       estimatedCapitalRequired: grade?.estimatedCapitalRequired ?? null,
     },

@@ -1,11 +1,14 @@
 import { calculateDeterministicScores } from "@/lib/infinity/opportunity-scanner/scoring/calculate";
 import type {
   EvidenceBundle,
+  NormalizedCandidateScores,
   OpportunityCandidate,
   OpportunityCandidateDraft,
   ScoringAssessmentInput,
 } from "@/lib/infinity/opportunity-scanner/types";
 import { canonicalGroundedEvidence } from "./fixtures";
+import { evidenceBundlesFromPacket, type FounderResearchPacket } from "./research-packet";
+import { parseKnownCompetitors } from "./research-seed";
 import { normalizeFounderIdea } from "./normalize";
 import { newId, nowIso, type FounderIdeaStore } from "./store";
 import type { FounderIdeaSubmission } from "./types";
@@ -78,6 +81,15 @@ export function conservativeScoringInputs(hasResearch: boolean): ScoringAssessme
   };
 }
 
+/** Historical production defect: this vector is never a live final score. */
+export function isSharedConservativeFallback(inputs: ScoringAssessmentInput | null | undefined): boolean {
+  if (!inputs) return false;
+  const fallback = conservativeScoringInputs(false);
+  return (Object.keys(fallback) as Array<keyof ScoringAssessmentInput>).every(
+    (key) => inputs[key] === fallback[key],
+  );
+}
+
 export function convertFounderIdeaToCandidate(
   store: FounderIdeaStore,
   submission: FounderIdeaSubmission,
@@ -89,20 +101,27 @@ export function convertFounderIdeaToCandidate(
       candidate.dedupKey === founderDedupKey(submission.organizationId, submission.title, submission.description),
   );
   if (existing) {
+    if (input?.scores) {
+      const scores = calculateDeterministicScores(input.scores);
+      existing.scores = scores;
+      existing.opportunityScore = scores.opportunityScore;
+      existing.updatedAt = nowIso();
+      store.candidates.set(existing.id, existing);
+    }
     submission.opportunityCandidateId = existing.id;
     store.submissions.set(submission.id, submission);
     return existing;
   }
 
   const draft = toCandidateDraft(submission, input?.researchGrounded ? { grounded: true, sources: [{ url: "https://example.com/research", title: "Research fixture", domain: "example.com" }] } : undefined);
-  const scores = calculateDeterministicScores(input?.scores ?? conservativeScoringInputs(Boolean(input?.researchGrounded)));
+  const scores = input?.scores ? calculateDeterministicScores(input.scores) : null;
   const now = nowIso();
   const candidate: OpportunityCandidate = {
     ...draft,
     id: newId(),
     organizationId: submission.organizationId,
-    discoveryRunId: `founder-discovery:${submission.id}`,
-    opportunityScore: scores.opportunityScore,
+    discoveryRunId: newId(),
+    opportunityScore: scores?.opportunityScore ?? null,
     rankPosition: 1,
     scores,
     createdAt: now,
@@ -112,5 +131,43 @@ export function convertFounderIdeaToCandidate(
   submission.opportunityCandidateId = candidate.id;
   submission.updatedAt = now;
   store.submissions.set(submission.id, submission);
+  return candidate;
+}
+
+export function applyResearchPacketToCandidate(
+  store: FounderIdeaStore,
+  submission: FounderIdeaSubmission,
+  packet: FounderResearchPacket,
+  scores?: NormalizedCandidateScores | null,
+): OpportunityCandidate {
+  const candidate = convertFounderIdeaToCandidate(store, submission);
+  const bundles = evidenceBundlesFromPacket(packet);
+  const founderCompetition = parseKnownCompetitors(submission.competitors).map((name) => ({
+    signalType: "competition",
+    claim: name,
+    observedSignal: "Founder-provided competitor lead",
+    relevance: "unknown",
+    sourceUrls: [] as string[],
+    grounded: false,
+    limitations: ["FOUNDER_PROVIDED — not independently verified"],
+  }));
+  candidate.demandEvidence = bundles.demandEvidence ?? candidate.demandEvidence;
+  candidate.marketEvidence = bundles.marketEvidence ?? candidate.marketEvidence;
+  candidate.competitionEvidence = [...(bundles.competitionEvidence ?? []), ...founderCompetition];
+  candidate.monetizationEvidence = bundles.monetizationEvidence ?? candidate.monetizationEvidence;
+  candidate.distributionEvidence = bundles.distributionEvidence ?? candidate.distributionEvidence;
+  candidate.buildabilityEvidence = bundles.buildabilityEvidence ?? candidate.buildabilityEvidence;
+  candidate.researchSources = packet.sources;
+  candidate.researchRunIds = [packet.researchRunId];
+  if (scores) {
+    candidate.scores = scores;
+    candidate.opportunityScore = scores.opportunityScore;
+  }
+  candidate.updatedAt = nowIso();
+  store.candidates.set(candidate.id, candidate);
+  submission.opportunityCandidateId = candidate.id;
+  submission.researchRunId = packet.researchRunId;
+  store.submissions.set(submission.id, submission);
+  store.researchPackets.set(submission.id, { ...packet, candidateId: candidate.id });
   return candidate;
 }

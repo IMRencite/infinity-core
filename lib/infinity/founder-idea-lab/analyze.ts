@@ -1,16 +1,25 @@
 import { applyCanonicalResearchFixture, saasWorkflowMonetizationFixture, saasWorkflowResearchFixture, weakMonetizationFixture } from "./fixtures";
 import { gradeFounderIdea } from "./grade";
-import { convertFounderIdeaToCandidate } from "./convert";
+import { applyResearchPacketToCandidate, convertFounderIdeaToCandidate } from "./convert";
+import { coverageFromPacket, layersFromPacket, type FounderResearchPacket } from "./research-packet";
+import { monetizeFromResearchPacket } from "./monetization-from-research";
+import { scoreFromEvidenceCoverage } from "./score-from-evidence";
+import { evaluateEvidenceReadiness } from "./readiness";
+import { emptyEvidenceCoverage } from "./evidence-coverage";
+import { emptyMonetizationLayers } from "./monetization-levels";
+import { buildFounderResearchSeed } from "./research-seed";
 import type { FounderIdeaStore } from "./store";
 import type { FounderIdeaGrade, FounderIdeaSubmission } from "./types";
 import type { ScoringAssessmentInput } from "@/lib/infinity/opportunity-scanner/types";
 import type { LoadedMonetizationBundle } from "@/lib/infinity/venture-selection/types";
 
 export type AnalyzeOptions = {
+  /** Test-only. Production must not pass a fixture. */
   researchFixture?: "saas_workflow" | "none" | "failed";
   monetizationFixture?: "saas_workflow" | "weak" | "none";
   scores?: ScoringAssessmentInput;
   monetization?: LoadedMonetizationBundle | null;
+  researchPacket?: FounderResearchPacket | null;
 };
 
 export function analyzeFounderIdea(
@@ -18,39 +27,160 @@ export function analyzeFounderIdea(
   submission: FounderIdeaSubmission,
   options: AnalyzeOptions = {},
 ): { submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string } {
+  const seed = buildFounderResearchSeed(submission, submission.opportunityCandidateId);
+  void seed;
+
   if (options.researchFixture === "failed") {
+    convertFounderIdeaToCandidate(store, submission);
     submission.status = "FAILED";
     submission.failureCode = "RESEARCH_FAILED";
+    submission.infinityDecision = null;
     store.submissions.set(submission.id, submission);
     return { submission, grade: null, researchPipeline: "grounded_research" };
   }
 
   submission.status = "RESEARCHING";
   store.submissions.set(submission.id, submission);
-  const research = applyCanonicalResearchFixture(options.researchFixture === "saas_workflow");
 
+  if (options.researchPacket) {
+    return analyzeFromPacket(store, submission, options.researchPacket, options);
+  }
+
+  const usingSaasFixture = options.researchFixture === "saas_workflow";
+  const explicitTestScores = Boolean(options.scores);
+  if (!usingSaasFixture && !explicitTestScores && !options.monetization && options.researchFixture !== "none") {
+    if (options.researchFixture == null && options.monetizationFixture == null) {
+      return failIncomplete(store, submission, "INSUFFICIENT_EVIDENCE", "NO_RESEARCH");
+    }
+  }
+
+  if (options.researchFixture === "none" && !explicitTestScores) {
+    return failIncomplete(store, submission, "INSUFFICIENT_EVIDENCE", "NO_RESEARCH");
+  }
+
+  if (!usingSaasFixture && !explicitTestScores) {
+    return failIncomplete(store, submission, "INSUFFICIENT_EVIDENCE", "NO_RESEARCH");
+  }
+
+  applyCanonicalResearchFixture(usingSaasFixture);
   const monetization =
     options.monetization ??
     (options.monetizationFixture === "weak"
       ? weakMonetizationFixture()
-      : options.monetizationFixture === "saas_workflow" || options.researchFixture === "saas_workflow"
+      : options.monetizationFixture === "saas_workflow" || usingSaasFixture
         ? saasWorkflowMonetizationFixture()
-        : null);
+        : options.monetizationFixture === "none"
+          ? null
+          : null);
 
-  const scores =
-    options.scores ??
-    (options.researchFixture === "saas_workflow" ? saasWorkflowResearchFixture() : undefined);
-
+  const scores = options.scores ?? (usingSaasFixture ? saasWorkflowResearchFixture() : undefined);
   convertFounderIdeaToCandidate(store, submission, {
     scores,
-    researchGrounded: options.researchFixture === "saas_workflow",
+    researchGrounded: usingSaasFixture,
   });
-  submission.status = "GRADED";
   const grade = gradeFounderIdea(store, submission, {
     scores,
     monetization,
-    researchGrounded: options.researchFixture === "saas_workflow",
+    researchGrounded: usingSaasFixture,
+    evidenceSufficient: Boolean(scores) && monetization != null,
+    scoreIntegrity: "TEST_FIXTURE",
   });
-  void research;
+  if (!grade.readyForDecision) {
+    submission.status = monetization == null ? "INSUFFICIENT_EVIDENCE" : "GRADED";
+    submission.infinityDecision = null;
+    store.submissions.set(submission.id, submission);
+  }
   return { submission, grade, researchPipeline: "grounded_research" };
 }
+
+function failIncomplete(
+  store: FounderIdeaStore,
+  submission: FounderIdeaSubmission,
+  status: FounderIdeaSubmission["status"],
+  _reason: string,
+): { submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string } {
+  convertFounderIdeaToCandidate(store, submission);
+  submission.status = status;
+  submission.failureCode = status === "FAILED" ? "RESEARCH_FAILED" : "INSUFFICIENT_EVIDENCE";
+  submission.infinityDecision = null;
+  store.submissions.set(submission.id, submission);
+  const grade = gradeFounderIdea(store, submission, {
+    evidenceSufficient: false,
+    scoreIntegrity: "INCOMPLETE",
+  });
+  return { submission, grade, researchPipeline: "grounded_research" };
+}
+
+function analyzeFromPacket(
+  store: FounderIdeaStore,
+  submission: FounderIdeaSubmission,
+  packet: FounderResearchPacket,
+  options: AnalyzeOptions,
+): { submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string } {
+  convertFounderIdeaToCandidate(store, submission);
+  const bound = { ...packet, candidateId: submission.opportunityCandidateId ?? packet.candidateId, submissionId: submission.id };
+  if (bound.failed) {
+    submission.status = "FAILED";
+    submission.failureCode = bound.failureCode === "PROVIDER_FAILED" ? "PROVIDER_FAILED" : "RESEARCH_FAILED";
+    submission.infinityDecision = null;
+    submission.researchRunId = bound.researchRunId;
+    store.researchPackets.set(submission.id, bound);
+    store.submissions.set(submission.id, submission);
+    return { submission, grade: null, researchPipeline: "grounded_research" };
+  }
+
+  const coverage = coverageFromPacket(bound);
+  const layers = layersFromPacket(bound);
+  const scored = scoreFromEvidenceCoverage({ coverage, monetizationLayers: layers });
+  const candidate = applyResearchPacketToCandidate(store, submission, bound, scored.scores);
+  const monetization =
+    options.monetization === undefined ? monetizeFromResearchPacket({ candidate, packet: bound }) : options.monetization;
+  if (monetization) store.monetizationBySubmission.set(submission.id, monetization);
+  const readiness = evaluateEvidenceReadiness({ packet: bound, coverage, monetization, layers });
+
+  if (!readiness.readyForDecision) {
+    const grade = gradeFounderIdea(store, submission, {
+      scores: scored.scores?.scoringInputs,
+      monetization,
+      evidenceSufficient: false,
+      scoreIntegrity: "INCOMPLETE",
+      researchRunId: bound.researchRunId,
+    });
+    grade.opportunityScores = scored.scores;
+    grade.opportunityQuality = scored.scores?.opportunityScore ?? null;
+    grade.provenance = scored.provenance;
+    grade.coverage = coverage;
+    grade.monetizationLayers = layers;
+    grade.monetizationScore = monetization?.monetizationScore ?? null;
+    store.grades.set(submission.id, grade);
+    submission.status = readiness.status;
+    submission.failureCode =
+      readiness.reason === "PROVIDER_FAILURE"
+        ? "PROVIDER_FAILED"
+        : readiness.reason === "RESEARCH_INCOMPLETE"
+          ? "RESEARCH_INCOMPLETE"
+          : "INSUFFICIENT_EVIDENCE";
+    submission.infinityDecision = null;
+    submission.researchRunId = bound.researchRunId;
+    store.submissions.set(submission.id, submission);
+    return { submission, grade, researchPipeline: "grounded_research" };
+  }
+
+  const grade = gradeFounderIdea(store, submission, {
+    scores: scored.scores?.scoringInputs,
+    monetization,
+    researchGrounded: bound.grounded,
+    evidenceSufficient: true,
+    scoreIntegrity: "EVIDENCE_GROUNDED",
+    researchRunId: bound.researchRunId,
+  });
+  grade.opportunityScores = scored.scores;
+  grade.opportunityQuality = scored.scores?.opportunityScore ?? null;
+  grade.provenance = scored.provenance;
+  grade.coverage = coverage;
+  grade.monetizationLayers = layers;
+  store.grades.set(submission.id, grade);
+  return { submission, grade, researchPipeline: "grounded_research" };
+}
+
+export { emptyEvidenceCoverage, emptyMonetizationLayers };

@@ -99,12 +99,12 @@ export function applyFounderDecision(
 export function validationPlanFor(store: FounderIdeaStore, submissionId: string): FounderValidationPlan {
   const grade = store.grades.get(submissionId);
   return {
-    blockingAssumptions: grade?.evaluation.blockingAssumptions ?? ["Demand and willingness to pay remain unproven."],
-    plannedValidation: grade?.evaluation.candidate?.monetization?.validationExperiments.map((e) => e.title) ?? [
+    blockingAssumptions: grade?.evaluation?.blockingAssumptions ?? ["Demand and willingness to pay remain unproven."],
+    plannedValidation: grade?.evaluation?.candidate?.monetization?.validationExperiments.map((e) => e.title) ?? [
       "Landing-page intent test",
       "Pricing interview",
     ],
-    expectedCostUsd: grade?.evaluation.candidate?.monetization?.validationExperiments[0]?.estimatedCostUsd ?? 40,
+    expectedCostUsd: grade?.evaluation?.candidate?.monetization?.validationExperiments[0]?.estimatedCostUsd ?? 40,
     expectedInformationGain: ["Demand signal", "Price sensitivity", "Channel feasibility"],
     treasuryRequired: true,
   };

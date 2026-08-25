@@ -13,7 +13,7 @@ export function founderHotTakesFromMetadata(metadata: HqWorkArtifact["metadata"]
     `[INFERENCE] Fastest way to revenue: ${revenue != null ? "If acquisition assumptions hold, early subscription revenue is the shortest path." : "UNKNOWN until researched"}`,
     `[FACT] Most dangerous risk: fatal assumption risk ${fatal ?? "UNKNOWN"}`,
     `[INFERENCE] Best initial customer: ${customer} (${customerSource})`,
-    `[INFERENCE] Cheapest validation: ${metadata.cheapestValidation ?? "Landing-page intent test"}`,
+    `[INFERENCE] Cheapest validation: ${metadata.cheapestValidation ?? "UNKNOWN"}`,
     `[FACT] Why Infinity would ${readiness === "BUILD" ? "" : "not "}build it now: recommendation is ${readiness}.`,
   ];
 }
