@@ -6,6 +6,7 @@ import type {
   OpportunityCandidateDraft,
   ScoringAssessmentInput,
 } from "@/lib/infinity/opportunity-scanner/types";
+import { founderDedupKey, founderMergeGroupKey, reconcileFounderCandidateIdentity } from "./candidate-identity";
 import { canonicalGroundedEvidence } from "./fixtures";
 import { evidenceBundlesFromPacket, type FounderResearchPacket } from "./research-packet";
 import { parseKnownCompetitors } from "./research-seed";
@@ -13,13 +14,7 @@ import { normalizeFounderIdea } from "./normalize";
 import { newId, nowIso, type FounderIdeaStore } from "./store";
 import type { FounderIdeaSubmission } from "./types";
 
-function slug(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
-}
-
-export function founderDedupKey(organizationId: string, title: string, description: string): string {
-  return `founder:${organizationId}:${slug(title)}:${slug(description).slice(0, 48)}`;
-}
+export { founderDedupKey, founderMergeGroupKey } from "./candidate-identity";
 
 export function toCandidateDraft(
   submission: FounderIdeaSubmission,
@@ -62,7 +57,7 @@ export function toCandidateDraft(
     researchRunIds: [],
     discoveryStrategies: [],
     dedupKey: founderDedupKey(submission.organizationId, submission.title, submission.description),
-    mergeGroupKey: `founder-idea:${submission.id}`,
+    mergeGroupKey: founderMergeGroupKey(submission.id),
   };
 }
 
@@ -123,13 +118,18 @@ export function convertFounderIdeaToCandidate(
       candidate.dedupKey === founderDedupKey(submission.organizationId, submission.title, submission.description),
   );
   if (byDedup) {
-    if (existingId && existingId !== byDedup.id) {
-      throw new Error("FOUNDER_CANDIDATE_ID_CONFLICT");
+    const lineage = reconcileFounderCandidateIdentity(byDedup, submission);
+    if (!lineage.ok) {
+      throw new Error(lineage.error);
     }
     const existing = applyScores(byDedup, input?.scores);
     store.candidates.set(existing.id, existing);
     submission.opportunityCandidateId = existing.id;
-    if (!store.candidateRepair.has(submission.id)) store.candidateRepair.set(submission.id, "hydrated");
+    if (existingId && existingId !== existing.id) {
+      store.candidateRepair.set(submission.id, "reconciled");
+    } else if (!store.candidateRepair.has(submission.id)) {
+      store.candidateRepair.set(submission.id, "hydrated");
+    }
     store.submissions.set(submission.id, submission);
     return existing;
   }

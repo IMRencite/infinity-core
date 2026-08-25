@@ -7,12 +7,14 @@ import { markDanglingCandidate, resolveFounderCandidate } from "../candidate-rep
 import { archiveHistoricalGrade } from "../grade-history";
 import { reanalyzeFounderIdea, reanalyzeFounderIdeaWithCanonicalResearch } from "../reanalyze";
 import { analyzeFounderIdea } from "../analyze";
-import { persistFounderIdea, FOUNDER_DISCOVERY_LINEAGE_CONFLICT } from "../persist";
+import { persistFounderIdea, FOUNDER_DISCOVERY_LINEAGE_CONFLICT, FOUNDER_CANDIDATE_LINEAGE_CONFLICT } from "../persist";
 import {
   founderDiscoveryIdempotencyKey,
   founderResearchAttemptKey,
+  derivedFounderReanalysisAttempt,
   parseFounderReanalysisAttemptField,
 } from "../idempotency";
+import { founderDedupKey, founderMergeGroupKey } from "../candidate-identity";
 import { loadFounderIdeaStoreForOrg } from "../hq/load";
 import { buildFounderIdeaArtifacts, listFounderIdeas } from "../hq/artifacts";
 import { buildFounderResearchSeed } from "../research-seed";
@@ -29,6 +31,7 @@ import { conservativeScoringInputs } from "../convert";
 import { calculateDeterministicScores } from "@/lib/infinity/opportunity-scanner/scoring/calculate";
 import { ORG_A } from "@/lib/infinity/treasury/__tests__/fixtures";
 import type { FounderIdeaSubmission } from "../types";
+import type { OpportunityCandidate } from "@/lib/infinity/opportunity-scanner/types";
 import type { ResearchResult } from "@/lib/infinity/research/types";
 
 const CMS_ID = "69d45f14-ca07-4a30-b601-54af6d05953f";
@@ -151,6 +154,22 @@ function memoryAdmin() {
                 data: null,
                 error: {
                   message: `duplicate key value violates unique constraint "opportunity_discovery_runs_org_idempotency_uidx"`,
+                },
+              };
+            }
+          }
+          if (table === "opportunity_candidates") {
+            const collision = rows[table].find(
+              (item) =>
+                item.organization_id === row.organization_id &&
+                item.dedup_key === row.dedup_key &&
+                item.id !== row.id,
+            );
+            if (collision) {
+              return {
+                data: null,
+                error: {
+                  message: `duplicate key value violates unique constraint "opportunity_candidates_org_dedup_key_uidx"`,
                 },
               };
             }
@@ -487,6 +506,8 @@ describe("founder idea lab real reanalysis integration v1", () => {
 
 const CMS_DISCOVERY = "9142bf7d-c9c8-4087-b231-59626a5530f6";
 const ART_DISCOVERY = "28b647a5-8f5e-44bc-930f-9d66c3bdff99";
+const CMS_EXISTING = "091f50e7-feb7-4dae-aba7-0e478a736ba4";
+const ART_EXISTING = "b8e298e5-aa14-4c57-afa8-0fcd3641ba40";
 
 function seedExistingDiscovery(
   admin: ReturnType<typeof memoryAdmin>,
@@ -502,6 +523,82 @@ function seedExistingDiscovery(
     correlation_id: lineageId,
     search_scope: { origin: "FOUNDER_SUBMITTED", founderIdeaSubmissionId: lineageId },
   });
+}
+
+function seedExistingCandidate(
+  admin: ReturnType<typeof memoryAdmin>,
+  submission: FounderIdeaSubmission,
+  candidateId: string,
+  discoveryId: string,
+  overrides: Record<string, unknown> = {},
+) {
+  admin.rows.opportunity_candidates.push({
+    id: candidateId,
+    organization_id: submission.organizationId,
+    discovery_run_id: discoveryId,
+    title: submission.title,
+    summary: submission.description,
+    problem: submission.problem,
+    target_customer: submission.targetCustomer,
+    market: "UNSPECIFIED",
+    business_model_candidates: [],
+    revenue_mechanism_candidates: [],
+    demand_evidence: [],
+    market_evidence: [],
+    competition_evidence: [],
+    monetization_evidence: [],
+    distribution_evidence: [],
+    buildability_evidence: [],
+    risks: [],
+    unknowns: [],
+    research_sources: [],
+    research_run_ids: [],
+    discovery_strategies: ["market_pain_discovery"],
+    dedup_key: founderDedupKey(submission.organizationId, submission.title, submission.description),
+    merge_group_key: founderMergeGroupKey(submission.id),
+    opportunity_score: null,
+    rank_position: 1,
+    created_at: "2026-08-25T04:46:28.933Z",
+    updated_at: "2026-08-25T04:46:28.933Z",
+    ...overrides,
+  });
+}
+
+function inMemoryCanonicalCandidate(
+  submission: FounderIdeaSubmission,
+  candidateId: string,
+  discoveryId: string,
+): OpportunityCandidate {
+  return {
+    id: candidateId,
+    organizationId: submission.organizationId,
+    discoveryRunId: discoveryId,
+    title: submission.title,
+    summary: submission.description,
+    problem: submission.problem ?? "",
+    targetCustomer: submission.targetCustomer ?? "UNSPECIFIED",
+    market: "UNSPECIFIED",
+    businessModelCandidates: [],
+    revenueMechanismCandidates: [],
+    demandEvidence: [],
+    marketEvidence: [],
+    competitionEvidence: [],
+    monetizationEvidence: [],
+    distributionEvidence: [],
+    buildabilityEvidence: [],
+    risks: [],
+    unknowns: [],
+    researchSources: [],
+    researchRunIds: [],
+    discoveryStrategies: ["market_pain_discovery"],
+    dedupKey: founderDedupKey(submission.organizationId, submission.title, submission.description),
+    mergeGroupKey: founderMergeGroupKey(submission.id),
+    opportunityScore: null,
+    rankPosition: 1,
+    scores: null,
+    createdAt: "2026-08-25T04:46:28.933Z",
+    updatedAt: "2026-08-25T04:46:28.933Z",
+  };
 }
 
 function canonicalReplayExecutor(submission: FounderIdeaSubmission) {
@@ -698,8 +795,196 @@ describe("founder idea reanalysis idempotency v1", () => {
     expect(page).toContain("selectedRow?.reanalysisAttempt");
     expect(action).toContain("parseFounderReanalysisAttemptField");
     expect(action).toContain("analysisAttempt: parsedAttempt.attempt");
+    expect(action).toMatch(/FOUNDER_IDEA_NOT_FOUND[\s\S]*reanalyzeFounderIdeaWithCanonicalResearch/);
+    expect(action).not.toMatch(/convertFounderIdeaToCandidate\(store, existing\);\s*const result = await reanalyzeFounderIdeaWithCanonicalResearch/);
     expect(page).not.toMatch(/Date\.now\(\)/);
     expect(action).not.toMatch(/Date\.now\(\)/);
     expect(ART_DISCOVERY).not.toBe(CMS_DISCOVERY);
+  });
+});
+
+describe("founder idea candidate identity reconciliation v1", () => {
+  it("reuses a compatible existing candidate and does not insert the dangling UUID", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const store = new FounderIdeaStore();
+    store.submissions.set(submission.id, submission);
+    markDanglingCandidate(store, submission.id);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    seedExistingCandidate(admin, submission, CMS_EXISTING, CMS_DISCOVERY);
+    const minted = convertFounderIdeaToCandidate(store, submission);
+    expect(minted.id).toBe(CMS_CANDIDATE);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, minted, []);
+    expect(persisted.ok).toBe(true);
+    expect(persisted.error).toBeUndefined();
+    expect(submission.opportunityCandidateId).toBe(CMS_EXISTING);
+    expect(minted.id).toBe(CMS_EXISTING);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.id).toBe(CMS_EXISTING);
+    expect(admin.rows.founder_idea_submissions[0]?.opportunity_candidate_id).toBe(CMS_EXISTING);
+  });
+
+  it("reuses an in-memory compatible candidate during convert without inserting A", () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const store = new FounderIdeaStore();
+    store.submissions.set(submission.id, submission);
+    store.candidates.set(CMS_EXISTING, inMemoryCanonicalCandidate(submission, CMS_EXISTING, CMS_DISCOVERY));
+    markDanglingCandidate(store, submission.id);
+    const reused = convertFounderIdeaToCandidate(store, submission);
+    expect(reused.id).toBe(CMS_EXISTING);
+    expect(submission.opportunityCandidateId).toBe(CMS_EXISTING);
+    expect(store.candidateRepair.get(submission.id)).toBe("reconciled");
+    expect(store.candidates.has(CMS_CANDIDATE)).toBe(false);
+  });
+
+  it("materializes the historical UUID when no canonical candidate exists", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const store = new FounderIdeaStore();
+    store.submissions.set(submission.id, submission);
+    markDanglingCandidate(store, submission.id);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    const candidate = convertFounderIdeaToCandidate(store, submission);
+    expect(candidate.id).toBe(CMS_CANDIDATE);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, candidate, []);
+    expect(persisted.ok).toBe(true);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.id).toBe(CMS_CANDIDATE);
+    expect(admin.rows.founder_idea_submissions[0]?.opportunity_candidate_id).toBe(CMS_CANDIDATE);
+  });
+
+  it("fails closed when org+dedup match but discovery or founder provenance does not", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const store = new FounderIdeaStore();
+    store.submissions.set(submission.id, submission);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    seedExistingCandidate(admin, submission, CMS_EXISTING, ART_DISCOVERY, {
+      merge_group_key: founderMergeGroupKey(ART_ID),
+    });
+    const candidate = convertFounderIdeaToCandidate(store, submission);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, candidate, []);
+    expect(persisted.ok).toBe(false);
+    expect(persisted.error).toBe(FOUNDER_CANDIDATE_LINEAGE_CONFLICT);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.id).toBe(CMS_EXISTING);
+    expect(admin.rows.founder_idea_submissions).toHaveLength(0);
+    expect(store.submissions.get(CMS_ID)?.opportunityCandidateId).toBe(CMS_CANDIDATE);
+  });
+
+  it("archives the dangling historical pointer while reconciling the current canonical candidate", async () => {
+    const store = new FounderIdeaStore();
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    seedHistoricalFallback(store, submission);
+    store.candidates.set(CMS_EXISTING, inMemoryCanonicalCandidate(submission, CMS_EXISTING, CMS_DISCOVERY));
+    const { previousGrade } = await reanalyzeFounderIdeaWithCanonicalResearch(
+      store,
+      submission,
+      async () => ({ ok: true, result: mockResult(submission) }),
+      { analysisAttempt: 1 },
+    );
+    expect(previousGrade?.opportunityQuality).toBe(43.61);
+    expect(store.evaluationHistory.get(CMS_ID)?.[0]?.candidateId).toBe(CMS_CANDIDATE);
+    expect(store.evaluationHistory.get(CMS_ID)?.[0]?.decision).toBe("HOLD");
+    expect(store.evaluationHistory.get(CMS_ID)?.[0]?.opportunityScore).toBe(43.61);
+    expect(submission.opportunityCandidateId).toBe(CMS_EXISTING);
+    expect(store.evaluationHistory.get(CMS_ID)?.[0]?.candidateId).not.toBe(submission.opportunityCandidateId);
+  });
+
+  it("keeps old research identity on candidate A and uses B for the next explicit attempt key", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const store = new FounderIdeaStore();
+    seedHistoricalFallback(store, submission);
+    store.candidates.set(CMS_EXISTING, inMemoryCanonicalCandidate(submission, CMS_EXISTING, CMS_DISCOVERY));
+    const historicalKey = founderResearchAttemptKey({
+      submissionId: CMS_ID,
+      candidateId: CMS_CANDIDATE,
+      attempt: 1,
+    });
+    const executor = canonicalReplayExecutor(submission);
+    await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    const canonicalKey = founderResearchAttemptKey({
+      submissionId: CMS_ID,
+      candidateId: CMS_EXISTING,
+      attempt: 1,
+    });
+    expect(historicalKey).toBe(`founder-idea-research:${CMS_ID}:${CMS_CANDIDATE}:v1`);
+    expect(canonicalKey).toBe(`founder-idea-research:${CMS_ID}:${CMS_EXISTING}:v1`);
+    expect(historicalKey).not.toBe(canonicalKey);
+    expect(executor.keys).toEqual([canonicalKey]);
+    expect(derivedFounderReanalysisAttempt(store.evaluationHistory.get(CMS_ID)?.length ?? 0)).toBe(2);
+  });
+
+  it("same-attempt replay after reconciliation does not duplicate candidate, archive, or provider calls", async () => {
+    const store = new FounderIdeaStore();
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    seedHistoricalFallback(store, submission);
+    store.candidates.set(CMS_EXISTING, inMemoryCanonicalCandidate(submission, CMS_EXISTING, CMS_DISCOVERY));
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    seedExistingCandidate(admin, submission, CMS_EXISTING, CMS_DISCOVERY);
+    const executor = canonicalReplayExecutor(submission);
+    const first = await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    const firstPersist = await persistFounderIdea(
+      admin as never,
+      first.submission,
+      first.grade,
+      null,
+      store.candidates.get(first.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(CMS_ID) ?? [],
+    );
+    const second = await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    const secondPersist = await persistFounderIdea(
+      admin as never,
+      second.submission,
+      second.grade,
+      null,
+      store.candidates.get(second.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(CMS_ID) ?? [],
+    );
+    expect(firstPersist.ok).toBe(true);
+    expect(secondPersist.ok).toBe(true);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.id).toBe(CMS_EXISTING);
+    expect(store.evaluationHistory.get(CMS_ID)?.filter((row) => row.opportunityScore === 43.61)).toHaveLength(1);
+    expect(executor.providerCalls).toBe(1);
+    expect(submission.opportunityCandidateId).toBe(CMS_EXISTING);
+  });
+
+  it("read-only load hydrates the canonical candidate without rewriting the dangling pointer", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    seedExistingCandidate(admin, submission, CMS_EXISTING, CMS_DISCOVERY);
+    const persistStore = new FounderIdeaStore();
+    persistStore.submissions.set(submission.id, submission);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, null, []);
+    expect(persisted.ok).toBe(true);
+    const loaded = await loadFounderIdeaStoreForOrg(admin as never, ORG_A);
+    expect(loaded.submissions.get(CMS_ID)?.opportunityCandidateId).toBe(CMS_CANDIDATE);
+    expect(loaded.candidates.has(CMS_EXISTING)).toBe(true);
+    expect(loaded.candidates.has(CMS_CANDIDATE)).toBe(false);
+    expect(loaded.candidateRepair.get(CMS_ID)).toBe("dangling");
+  });
+
+  it("Art Bay live shape reuses a compatible existing candidate rather than the dangling UUID", async () => {
+    const submission = historicalSubmission(ART_ID, ART_CANDIDATE, "Art Bay Code Name");
+    const store = new FounderIdeaStore();
+    store.submissions.set(submission.id, submission);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, ART_ID, ART_DISCOVERY);
+    seedExistingCandidate(admin, submission, ART_EXISTING, ART_DISCOVERY);
+    const candidate = convertFounderIdeaToCandidate(store, submission);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, candidate, []);
+    expect(persisted.ok).toBe(true);
+    expect(submission.opportunityCandidateId).toBe(ART_EXISTING);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.id).toBe(ART_EXISTING);
   });
 });

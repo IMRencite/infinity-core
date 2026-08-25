@@ -7,6 +7,7 @@ export function snapshotFromGrade(
   submission: FounderIdeaSubmission,
   grade: FounderIdeaGrade,
   reason: HistoricalGradeSnapshot["reason"] = "REANALYSIS",
+  pointer?: { candidateId?: string | null },
 ): HistoricalGradeSnapshot {
   return {
     archivedAt: nowIso(),
@@ -19,7 +20,7 @@ export function snapshotFromGrade(
     status: submission.status,
     scoreIntegrity: grade.scoreIntegrity,
     provenance: grade.provenance,
-    candidateId: submission.opportunityCandidateId,
+    candidateId: pointer?.candidateId !== undefined ? pointer.candidateId : submission.opportunityCandidateId,
     researchRunId: grade.researchRunId ?? submission.researchRunId,
     reason,
   };
@@ -42,10 +43,11 @@ export function sameHistoricalSnapshot(left: HistoricalGradeSnapshot, right: His
 export function archiveHistoricalGrade(
   store: FounderIdeaStore,
   submission: FounderIdeaSubmission,
+  pointer?: { candidateId?: string | null },
 ): HistoricalGradeSnapshot | null {
   const current = store.grades.get(submission.id);
   if (!current) return null;
-  const snapshot = snapshotFromGrade(submission, current);
+  const snapshot = snapshotFromGrade(submission, current, "REANALYSIS", pointer);
   const history = store.evaluationHistory.get(submission.id) ?? [];
   const existing = history.find((item) => sameHistoricalSnapshot(item, snapshot));
   if (existing) {

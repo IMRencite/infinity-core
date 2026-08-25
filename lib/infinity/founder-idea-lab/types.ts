@@ -78,7 +78,7 @@ export type NormalizedFounderThesis = {
 
 export type FounderScoreIntegrity = "EVIDENCE_GROUNDED" | "INCOMPLETE" | "FALLBACK_HISTORICAL" | "TEST_FIXTURE";
 
-export type CandidateRepairState = "hydrated" | "dangling" | "repaired" | "created";
+export type CandidateRepairState = "hydrated" | "dangling" | "repaired" | "created" | "reconciled";
 
 export type HistoricalGradeSnapshot = {
   archivedAt: string;

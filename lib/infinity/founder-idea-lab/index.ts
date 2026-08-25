@@ -3,13 +3,13 @@ export * from "./types";
 export { FounderIdeaStore, newId, nowIso } from "./store";
 export { submitFounderIdea } from "./submit";
 export { normalizeFounderIdea, claimSourceLabel } from "./normalize";
-export { convertFounderIdeaToCandidate, founderDedupKey, conservativeScoringInputs, isSharedConservativeFallback, applyResearchPacketToCandidate } from "./convert";
+export { convertFounderIdeaToCandidate, conservativeScoringInputs, isSharedConservativeFallback, applyResearchPacketToCandidate } from "./convert";
 export { gradeFounderIdea, gradeLoadedCandidate, buildLoadedCandidate } from "./grade";
 export { applyFounderDecision, founderActionsFor, validationPlanFor } from "./decide";
 export { routeFounderBuild } from "./build-route";
 export { analyzeFounderIdea, analyzeFounderIdeaWithCanonicalResearch } from "./analyze";
 export type { AnalyzeOptions, CanonicalResearchExecutor } from "./analyze";
-export { persistFounderIdea, lookupFounderDiscoveryRun, FOUNDER_DISCOVERY_LINEAGE_CONFLICT } from "./persist";
+export { persistFounderIdea, lookupFounderDiscoveryRun, FOUNDER_DISCOVERY_LINEAGE_CONFLICT, FOUNDER_CANDIDATE_LINEAGE_CONFLICT } from "./persist";
 export {
   founderDiscoveryIdempotencyKey,
   founderResearchAttemptKey,
@@ -17,6 +17,7 @@ export {
   resolveFounderReanalysisAttempt,
   parseFounderReanalysisAttemptField,
 } from "./idempotency";
+export { founderDedupKey, founderMergeGroupKey, reconcileFounderCandidateIdentity } from "./candidate-identity";
 export { reanalyzeFounderIdea, reanalyzeFounderIdeaWithCanonicalResearch, markNeedsReanalysis } from "./reanalyze";
 export { buildFounderResearchSeed, parseKnownCompetitors } from "./research-seed";
 export { buildCanonicalResearchRequest } from "./research-request";

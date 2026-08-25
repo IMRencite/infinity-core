@@ -77,6 +77,22 @@ function memoryAdmin() {
               };
             }
           }
+          if (table === "opportunity_candidates") {
+            const collision = rows[table].find(
+              (item) =>
+                item.organization_id === row.organization_id &&
+                item.dedup_key === row.dedup_key &&
+                item.id !== row.id,
+            );
+            if (collision) {
+              return {
+                data: null,
+                error: {
+                  message: `duplicate key value violates unique constraint "opportunity_candidates_org_dedup_key_uidx"`,
+                },
+              };
+            }
+          }
           const idx = rows[table].findIndex((item) => item.id === row.id);
           if (idx >= 0) rows[table][idx] = { ...rows[table][idx], ...row };
           else rows[table].push(row);

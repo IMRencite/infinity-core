@@ -1,13 +1,14 @@
 import { FounderIdeaStore } from "../store";
 import { hydrateFounderStore, type FounderDecisionOverrideRow, type FounderIdeaSubmissionRow } from "../persistence";
 import { markDanglingCandidate } from "../candidate-repair";
+import { founderDedupKey } from "../candidate-identity";
 import { buildFounderIdeaArtifacts } from "./artifacts";
 import type { HqRoomArtifactMap } from "@/lib/infinity/operator-console/artifacts/types";
 import type { OpportunityCandidate } from "@/lib/infinity/opportunity-scanner/types";
 
 type LooseQuery = {
-  eq?: (column: string, value: string) => PromiseLike<{ data: unknown; error: { message?: string } | null }>;
-  in?: (column: string, values: string[]) => PromiseLike<{ data: unknown; error: { message?: string } | null }>;
+  eq?: (column: string, value: string) => LooseQuery & PromiseLike<{ data: unknown; error: { message?: string } | null }>;
+  in?: (column: string, values: string[]) => LooseQuery & PromiseLike<{ data: unknown; error: { message?: string } | null }>;
 };
 
 type LooseAdmin = {
@@ -79,16 +80,30 @@ export async function loadFounderIdeaStoreForOrg(
         .filter((id): id is string => Boolean(id)),
     )];
     const found = new Set<string>();
-    if (candidateIds.length > 0) {
-      const query = admin.from("opportunity_candidates").select("*");
-      const result = query.in
-        ? await query.in("id", candidateIds)
-        : { data: [], error: null };
+    async function ingestCandidateRows(result: { data: unknown; error: { message?: string } | null }) {
       const rows = (result.data as Record<string, unknown>[] | null) ?? [];
       for (const row of rows) {
         const candidate = candidateFromRow(row);
         store.candidates.set(candidate.id, candidate);
         found.add(candidate.id);
+      }
+    }
+    if (candidateIds.length > 0) {
+      const query = admin.from("opportunity_candidates").select("*");
+      const result = query.in
+        ? await query.in("id", candidateIds)
+        : { data: [], error: null };
+      await ingestCandidateRows(result);
+    }
+    const dedupKeys = [...new Set(
+      store.scoped(organizationId).map((row) => founderDedupKey(row.organizationId, row.title, row.description)),
+    )];
+    if (dedupKeys.length > 0) {
+      const query = admin.from("opportunity_candidates").select("*");
+      if (typeof query.eq === "function" && typeof query.in === "function") {
+        const filtered = query.eq("organization_id", organizationId);
+        const result = await filtered.in!("dedup_key", dedupKeys);
+        await ingestCandidateRows(result);
       }
     }
     for (const submission of store.scoped(organizationId)) {

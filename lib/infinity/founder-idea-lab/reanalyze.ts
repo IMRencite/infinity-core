@@ -58,6 +58,7 @@ export async function reanalyzeFounderIdeaWithCanonicalResearch(
   analysisAttempt: number;
 }> {
   const previousGrade = store.grades.get(submission.id) ?? null;
+  const historicalCandidateId = submission.opportunityCandidateId;
   const persistedHistoryLength = store.evaluationHistory.get(submission.id)?.length ?? 0;
   const resolved = resolveFounderReanalysisAttempt({
     formAttempt: options.analysisAttempt,
@@ -68,7 +69,7 @@ export async function reanalyzeFounderIdeaWithCanonicalResearch(
   }
   const derived = derivedFounderReanalysisAttempt(persistedHistoryLength);
   if (resolved.attempt === derived) {
-    archiveHistoricalGrade(store, submission);
+    archiveHistoricalGrade(store, submission, { candidateId: historicalCandidateId });
   }
   submission.needsReanalysis = false;
   submission.failureCode = null;

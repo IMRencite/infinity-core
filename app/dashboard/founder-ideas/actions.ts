@@ -132,7 +132,6 @@ export async function reanalyzeFounderIdeaAction(
     const store = await loadFounderIdeaStoreForOrg(admin as never, org.organizationId);
     const existing = store.submissions.get(submissionId);
     if (!existing) return { ok: false, message: "FOUNDER_IDEA_NOT_FOUND" };
-    convertFounderIdeaToCandidate(store, existing);
     const result = await reanalyzeFounderIdeaWithCanonicalResearch(
       store,
       existing,

@@ -1,10 +1,19 @@
 import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission, HistoricalGradeSnapshot } from "./types";
 import { founderDiscoveryIdempotencyKey, founderDiscoveryLineageId } from "./idempotency";
+import {
+  applyCanonicalCandidateIdentity,
+  founderDedupKey,
+  FOUNDER_CANDIDATE_LINEAGE_CONFLICT,
+  FOUNDER_CANDIDATE_UNIQUE,
+  reconcileFounderCandidateLineage,
+  type FounderCandidateLookupRow,
+} from "./candidate-identity";
 import { overrideToRow, submissionToRow } from "./persistence";
 import type { OpportunityCandidate } from "@/lib/infinity/opportunity-scanner/types";
 
 export const FOUNDER_DISCOVERY_LINEAGE_CONFLICT = "FOUNDER_DISCOVERY_LINEAGE_CONFLICT";
 export const FOUNDER_DISCOVERY_UNIQUE = "opportunity_discovery_runs_org_idempotency_uidx";
+export { FOUNDER_CANDIDATE_LINEAGE_CONFLICT, FOUNDER_CANDIDATE_UNIQUE };
 
 type DiscoveryLookupRow = {
   id: string;
@@ -164,6 +173,59 @@ async function persistDiscoveryRun(
   return { ok: true, discoveryRunId: raced.row.id };
 }
 
+async function lookupFounderCandidateByDedup(
+  admin: LooseWriter,
+  organizationId: string,
+  dedupKey: string,
+): Promise<{ ok: true; row: FounderCandidateLookupRow | null } | { ok: false; error: string }> {
+  const table = admin.from("opportunity_candidates");
+  if (typeof table.select !== "function") {
+    return { ok: false, error: "FOUNDER_CANDIDATE_LOOKUP_UNAVAILABLE" };
+  }
+  const result = await table
+    .select("id, organization_id, discovery_run_id, dedup_key, merge_group_key, title, created_at")
+    .eq("organization_id", organizationId)
+    .eq("dedup_key", dedupKey)
+    .maybeSingle();
+  if (result.error) return { ok: false, error: result.error.message ?? "FOUNDER_CANDIDATE_LOOKUP_FAILED" };
+  const row = Array.isArray(result.data) ? result.data[0] ?? null : result.data;
+  return { ok: true, row: (row as FounderCandidateLookupRow | null) ?? null };
+}
+
+function isCandidateUniqueViolation(message?: string): boolean {
+  return Boolean(message && message.includes(FOUNDER_CANDIDATE_UNIQUE));
+}
+
+async function persistCanonicalCandidate(
+  admin: LooseWriter,
+  submission: FounderIdeaSubmission,
+  candidate: OpportunityCandidate,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const dedupKey = founderDedupKey(submission.organizationId, submission.title, submission.description);
+  const lookedUp = await lookupFounderCandidateByDedup(admin, candidate.organizationId, dedupKey);
+  if (!lookedUp.ok) return lookedUp;
+
+  if (lookedUp.row) {
+    const lineage = reconcileFounderCandidateLineage(lookedUp.row, submission, candidate.discoveryRunId);
+    if (!lineage.ok) return lineage;
+    applyCanonicalCandidateIdentity(candidate, submission, lookedUp.row);
+    const updated = await admin.from("opportunity_candidates").upsert(candidateToRow(candidate), {
+      onConflict: "id",
+    });
+    if (updated.error) return { ok: false, error: updated.error.message ?? "FOUNDER_CANDIDATE_UPSERT_FAILED" };
+    return { ok: true };
+  }
+
+  const inserted = await admin.from("opportunity_candidates").upsert(candidateToRow(candidate), {
+    onConflict: "id",
+  });
+  if (!inserted.error) return { ok: true };
+  if (isCandidateUniqueViolation(inserted.error.message)) {
+    return { ok: false, error: FOUNDER_CANDIDATE_LINEAGE_CONFLICT };
+  }
+  return { ok: false, error: inserted.error.message ?? "FOUNDER_CANDIDATE_INSERT_FAILED" };
+}
+
 export async function persistFounderIdea(
   admin: LooseWriter,
   submission: FounderIdeaSubmission,
@@ -175,10 +237,8 @@ export async function persistFounderIdea(
   if (candidate) {
     const discovery = await persistDiscoveryRun(admin, submission, candidate);
     if (!discovery.ok) return { ok: false, error: discovery.error };
-    const candidateResult = await admin.from("opportunity_candidates").upsert(candidateToRow(candidate), {
-      onConflict: "id",
-    });
-    if (candidateResult.error) return { ok: false, error: candidateResult.error.message };
+    const candidateResult = await persistCanonicalCandidate(admin, submission, candidate);
+    if (!candidateResult.ok) return { ok: false, error: candidateResult.error };
   }
   const submissionResult = await admin.from("founder_idea_submissions").upsert(
     submissionToRow(submission, grade, evaluationHistory),
