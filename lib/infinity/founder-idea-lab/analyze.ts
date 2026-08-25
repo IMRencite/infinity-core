@@ -26,6 +26,7 @@ export type AnalyzeOptions = {
   monetization?: LoadedMonetizationBundle | null;
   researchPacket?: FounderResearchPacket | null;
   runResearch?: CanonicalResearchExecutor;
+  analysisAttempt?: number;
 };
 
 export function analyzeFounderIdea(
@@ -33,7 +34,7 @@ export function analyzeFounderIdea(
   submission: FounderIdeaSubmission,
   options: AnalyzeOptions = {},
 ): { submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string } {
-  buildFounderResearchSeed(submission, submission.opportunityCandidateId);
+  buildFounderResearchSeed(submission, submission.opportunityCandidateId, options.analysisAttempt ?? 1);
 
   if (options.researchFixture === "failed") {
     convertFounderIdeaToCandidate(store, submission);
@@ -105,7 +106,11 @@ export async function analyzeFounderIdeaWithCanonicalResearch(
   options: AnalyzeOptions = {},
 ): Promise<{ submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string }> {
   convertFounderIdeaToCandidate(store, submission);
-  const seed = buildFounderResearchSeed(submission, submission.opportunityCandidateId);
+  const seed = buildFounderResearchSeed(
+    submission,
+    submission.opportunityCandidateId,
+    options.analysisAttempt ?? 1,
+  );
   const request = buildCanonicalResearchRequest(seed);
   submission.status = "RESEARCHING";
   store.submissions.set(submission.id, submission);

@@ -9,7 +9,14 @@ export { applyFounderDecision, founderActionsFor, validationPlanFor } from "./de
 export { routeFounderBuild } from "./build-route";
 export { analyzeFounderIdea, analyzeFounderIdeaWithCanonicalResearch } from "./analyze";
 export type { AnalyzeOptions, CanonicalResearchExecutor } from "./analyze";
-export { persistFounderIdea } from "./persist";
+export { persistFounderIdea, lookupFounderDiscoveryRun, FOUNDER_DISCOVERY_LINEAGE_CONFLICT } from "./persist";
+export {
+  founderDiscoveryIdempotencyKey,
+  founderResearchAttemptKey,
+  derivedFounderReanalysisAttempt,
+  resolveFounderReanalysisAttempt,
+  parseFounderReanalysisAttemptField,
+} from "./idempotency";
 export { reanalyzeFounderIdea, reanalyzeFounderIdeaWithCanonicalResearch, markNeedsReanalysis } from "./reanalyze";
 export { buildFounderResearchSeed, parseKnownCompetitors } from "./research-seed";
 export { buildCanonicalResearchRequest } from "./research-request";

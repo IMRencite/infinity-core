@@ -33,7 +33,7 @@ function input(overrides: Partial<FounderIdeaSubmissionInput> = {}): FounderIdea
 }
 
 function memoryAdmin() {
-  const rows: Record<string, unknown[]> = {
+  const rows: Record<string, Record<string, unknown>[]> = {
     opportunity_discovery_runs: [],
     opportunity_candidates: [],
     founder_idea_submissions: [],
@@ -43,9 +43,43 @@ function memoryAdmin() {
     rows,
     from(table: string) {
       return {
-        upsert: async (row: unknown) => {
+        select() {
+          const filters: Array<{ column: string; value: string }> = [];
+          const query = {
+            eq(column: string, value: string) {
+              filters.push({ column, value });
+              return query;
+            },
+            maybeSingle() {
+              const data = (rows[table] ?? []).filter((row) =>
+                filters.every((filter) => String(row[filter.column] ?? "") === filter.value),
+              );
+              return Promise.resolve({ data: data[0] ?? null, error: null });
+            },
+          };
+          return query;
+        },
+        upsert: async (row: Record<string, unknown>) => {
           rows[table] = rows[table] ?? [];
-          rows[table].push(row);
+          if (table === "opportunity_discovery_runs") {
+            const collision = rows[table].find(
+              (item) =>
+                item.organization_id === row.organization_id &&
+                item.idempotency_key === row.idempotency_key &&
+                item.id !== row.id,
+            );
+            if (collision) {
+              return {
+                data: null,
+                error: {
+                  message: `duplicate key value violates unique constraint "opportunity_discovery_runs_org_idempotency_uidx"`,
+                },
+              };
+            }
+          }
+          const idx = rows[table].findIndex((item) => item.id === row.id);
+          if (idx >= 0) rows[table][idx] = { ...rows[table][idx], ...row };
+          else rows[table].push(row);
           return { data: row, error: null };
         },
       };
@@ -235,7 +269,7 @@ describe("founder-idea-lab research + scoring integrity v1", () => {
 
     const admin = memoryAdmin();
     const persisted = await persistFounderIdea(
-      admin,
+      admin as never,
       submission,
       grade,
       null,

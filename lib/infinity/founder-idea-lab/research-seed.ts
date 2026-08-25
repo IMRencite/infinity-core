@@ -16,6 +16,7 @@ export type FounderResearchSeed = {
   founderStatementsAreHypotheses: true;
   researchObjective: string;
   requiredDimensions: string[];
+  analysisAttempt: number;
 };
 
 export function parseKnownCompetitors(value: string | null | undefined): string[] {
@@ -29,6 +30,7 @@ export function parseKnownCompetitors(value: string | null | undefined): string[
 export function buildFounderResearchSeed(
   submission: FounderIdeaSubmission,
   candidateId?: string | null,
+  analysisAttempt = 1,
 ): FounderResearchSeed {
   const thesis = normalizeFounderIdea(submission);
   const knownCompetitors = parseKnownCompetitors(submission.competitors);
@@ -82,5 +84,6 @@ export function buildFounderResearchSeed(
     founderStatementsAreHypotheses: true,
     researchObjective,
     requiredDimensions,
+    analysisAttempt,
   };
 }

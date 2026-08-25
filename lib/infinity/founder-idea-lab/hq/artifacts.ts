@@ -4,6 +4,7 @@ import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 import { normalizeFounderIdea } from "../normalize";
 import type { FounderIdeaStore } from "../store";
 import type { FounderIdeaSubmission } from "../types";
+import { derivedFounderReanalysisAttempt } from "../idempotency";
 import { recommendScoreDisplay } from "../score-from-evidence";
 import type { FounderIdeaGrade } from "../types";
 import { founderHotTakes } from "./hot-takes-from-store";
@@ -254,6 +255,7 @@ export type FounderIdeaListRow = {
   profit: string;
   submitted: string;
   origin: string;
+  reanalysisAttempt: number;
 };
 
 export function listFounderIdeas(store: FounderIdeaStore, organizationId: string): FounderIdeaListRow[] {
@@ -276,6 +278,7 @@ export function listFounderIdeas(store: FounderIdeaStore, organizationId: string
       profit: "NOT YET MEASURED",
       submitted: submission.createdAt,
       origin: submission.origin,
+      reanalysisAttempt: derivedFounderReanalysisAttempt(store.evaluationHistory.get(submission.id)?.length ?? 0),
     };
   });
 }

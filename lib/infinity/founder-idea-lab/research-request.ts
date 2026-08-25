@@ -1,8 +1,16 @@
 import type { RunGroundedResearchInput } from "@/lib/infinity/research/types";
+import { founderResearchAttemptKey } from "./idempotency";
 import type { FounderResearchSeed } from "./research-seed";
 
 export function founderResearchIdempotencyKey(seed: FounderResearchSeed): string {
-  return `founder-idea-research:${seed.submissionId}:${seed.candidateId ?? "none"}`;
+  if (!seed.candidateId) {
+    throw new Error("FOUNDER_RESEARCH_REQUIRES_CANDIDATE_ID");
+  }
+  return founderResearchAttemptKey({
+    submissionId: seed.submissionId,
+    candidateId: seed.candidateId,
+    attempt: seed.analysisAttempt,
+  });
 }
 
 /**

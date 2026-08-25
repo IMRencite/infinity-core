@@ -12,6 +12,7 @@ import { routeFounderBuild } from "@/lib/infinity/founder-idea-lab/build-route";
 import { persistFounderIdea } from "@/lib/infinity/founder-idea-lab/persist";
 import { loadFounderIdeaStoreForOrg } from "@/lib/infinity/founder-idea-lab/hq/load";
 import { reanalyzeFounderIdeaWithCanonicalResearch } from "@/lib/infinity/founder-idea-lab/reanalyze";
+import { parseFounderReanalysisAttemptField } from "@/lib/infinity/founder-idea-lab/idempotency";
 import { runGroundedResearch } from "@/lib/infinity/research/run";
 import type { FounderAction } from "@/lib/infinity/founder-idea-lab/constants";
 import type { FounderIdeaDesiredMode } from "@/lib/infinity/founder-idea-lab/constants";
@@ -124,14 +125,19 @@ export async function reanalyzeFounderIdeaAction(
 ): Promise<FounderIdeaActionState> {
   const org = await requireFounderIdeaOrg();
   const submissionId = String(formData.get("submissionId") ?? "");
+  const parsedAttempt = parseFounderReanalysisAttemptField(formData.get("analysisAttempt"));
+  if (!parsedAttempt.ok) return { ok: false, message: parsedAttempt.error };
   try {
     const admin = createAdminClient();
     const store = await loadFounderIdeaStoreForOrg(admin as never, org.organizationId);
     const existing = store.submissions.get(submissionId);
     if (!existing) return { ok: false, message: "FOUNDER_IDEA_NOT_FOUND" };
     convertFounderIdeaToCandidate(store, existing);
-    const result = await reanalyzeFounderIdeaWithCanonicalResearch(store, existing, (input) =>
-      runGroundedResearch(admin, input),
+    const result = await reanalyzeFounderIdeaWithCanonicalResearch(
+      store,
+      existing,
+      (input) => runGroundedResearch(admin, input),
+      { analysisAttempt: parsedAttempt.attempt },
     );
     const persisted = await persistFounderIdea(
       admin as never,

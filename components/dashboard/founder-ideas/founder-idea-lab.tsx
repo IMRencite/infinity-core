@@ -48,6 +48,7 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(rows[0]?.id ?? null);
   const [detailOpen, setDetailOpen] = useState(false);
   const selected = selectedId ? decisions[selectedId] : null;
+  const selectedRow = selectedId ? rows.find((row) => row.id === selectedId) : null;
   const selectedDetail = selectedId ? details[selectedId] : null;
 
   return (
@@ -240,6 +241,7 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
           </form>
           <form action={reanalyzeAction} className="mt-3">
             <input type="hidden" name="submissionId" value={selected.id} />
+            <input type="hidden" name="analysisAttempt" value={selectedRow?.reanalysisAttempt ?? 1} />
             <button
               type="submit"
               disabled={reanalyzing}

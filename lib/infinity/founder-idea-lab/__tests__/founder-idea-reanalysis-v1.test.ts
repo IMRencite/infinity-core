@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { FounderIdeaStore } from "../store";
 import { convertFounderIdeaToCandidate } from "../convert";
@@ -5,7 +7,12 @@ import { markDanglingCandidate, resolveFounderCandidate } from "../candidate-rep
 import { archiveHistoricalGrade } from "../grade-history";
 import { reanalyzeFounderIdea, reanalyzeFounderIdeaWithCanonicalResearch } from "../reanalyze";
 import { analyzeFounderIdea } from "../analyze";
-import { persistFounderIdea } from "../persist";
+import { persistFounderIdea, FOUNDER_DISCOVERY_LINEAGE_CONFLICT } from "../persist";
+import {
+  founderDiscoveryIdempotencyKey,
+  founderResearchAttemptKey,
+  parseFounderReanalysisAttemptField,
+} from "../idempotency";
 import { loadFounderIdeaStoreForOrg } from "../hq/load";
 import { buildFounderIdeaArtifacts, listFounderIdeas } from "../hq/artifacts";
 import { buildFounderResearchSeed } from "../research-seed";
@@ -91,30 +98,65 @@ function memoryAdmin() {
     founder_idea_submissions: [],
     founder_decision_overrides: [],
   };
+
+  function applyFilters(
+    table: string,
+    filters: Array<{ kind: "eq"; column: string; value: string } | { kind: "in"; column: string; values: string[] }>,
+  ) {
+    return (rows[table] ?? []).filter((row) =>
+      filters.every((filter) => {
+        if (filter.kind === "in") return filter.values.includes(String(row[filter.column] ?? ""));
+        return String(row[filter.column] ?? "") === filter.value;
+      }),
+    );
+  }
+
   return {
     rows,
     from(table: string) {
       return {
         select() {
-          return {
-            eq(_column: string, value: string) {
-              return Promise.resolve({
-                data: (rows[table] ?? []).filter((row) => Object.values(row).includes(value)),
-                error: null,
-              });
+          const filters: Array<
+            { kind: "eq"; column: string; value: string } | { kind: "in"; column: string; values: string[] }
+          > = [];
+          const query = {
+            eq(column: string, value: string) {
+              filters.push({ kind: "eq", column, value });
+              return query;
             },
             in(column: string, values: string[]) {
-              return Promise.resolve({
-                data: (rows[table] ?? []).filter((row) => values.includes(String(row[column]))),
-                error: null,
-              });
+              filters.push({ kind: "in", column, values });
+              return query;
+            },
+            maybeSingle() {
+              return Promise.resolve({ data: applyFilters(table, filters)[0] ?? null, error: null });
+            },
+            then(onFulfilled: (value: { data: Record<string, unknown>[]; error: null }) => unknown, onRejected?: (reason: unknown) => unknown) {
+              return Promise.resolve({ data: applyFilters(table, filters), error: null }).then(onFulfilled, onRejected);
             },
           };
+          return query;
         },
         upsert: async (row: Record<string, unknown>) => {
           rows[table] = rows[table] ?? [];
+          if (table === "opportunity_discovery_runs") {
+            const collision = rows[table].find(
+              (item) =>
+                item.organization_id === row.organization_id &&
+                item.idempotency_key === row.idempotency_key &&
+                item.id !== row.id,
+            );
+            if (collision) {
+              return {
+                data: null,
+                error: {
+                  message: `duplicate key value violates unique constraint "opportunity_discovery_runs_org_idempotency_uidx"`,
+                },
+              };
+            }
+          }
           const idx = rows[table].findIndex((item) => item.id === row.id);
-          if (idx >= 0) rows[table][idx] = row;
+          if (idx >= 0) rows[table][idx] = { ...rows[table][idx], ...row };
           else rows[table].push(row);
           return { data: row, error: null };
         },
@@ -264,7 +306,7 @@ describe("founder idea lab real reanalysis integration v1", () => {
     const request = buildCanonicalResearchRequest(seed);
     expect(request.candidateId).toBe(CMS_CANDIDATE);
     expect(request.organizationId).toBe(ORG_A);
-    expect(request.idempotencyKey).toContain(CMS_ID);
+    expect(request.idempotencyKey).toBe(`founder-idea-research:${CMS_ID}:${CMS_CANDIDATE}:v1`);
     expect(request.runPurpose).toBe("FOUNDER_IDEA_REANALYSIS");
     expect(seed.founderStatementsAreHypotheses).toBe(true);
     const packet = founderResearchPacketFromResult({ result: mockResult(submission), submission });
@@ -440,5 +482,224 @@ describe("founder idea lab real reanalysis integration v1", () => {
     });
     expect(fromPacket.grade?.readyForDecision).toBe(true);
     expect(fromPacket.grade?.evaluation).not.toBeNull();
+  });
+});
+
+const CMS_DISCOVERY = "9142bf7d-c9c8-4087-b231-59626a5530f6";
+const ART_DISCOVERY = "28b647a5-8f5e-44bc-930f-9d66c3bdff99";
+
+function seedExistingDiscovery(
+  admin: ReturnType<typeof memoryAdmin>,
+  submissionId: string,
+  discoveryId: string,
+  lineageId = submissionId,
+) {
+  admin.rows.opportunity_discovery_runs.push({
+    id: discoveryId,
+    organization_id: ORG_A,
+    status: "completed",
+    idempotency_key: founderDiscoveryIdempotencyKey(submissionId),
+    correlation_id: lineageId,
+    search_scope: { origin: "FOUNDER_SUBMITTED", founderIdeaSubmissionId: lineageId },
+  });
+}
+
+function canonicalReplayExecutor(submission: FounderIdeaSubmission) {
+  const completed = new Map<string, { ok: true; result: ResearchResult }>();
+  let providerCalls = 0;
+  const keys: string[] = [];
+  return {
+    keys,
+    get providerCalls() {
+      return providerCalls;
+    },
+    async run(input: { idempotencyKey: string }) {
+      keys.push(input.idempotencyKey);
+      const existing = completed.get(input.idempotencyKey);
+      if (existing) return existing;
+      providerCalls += 1;
+      const output = {
+        ok: true as const,
+        result: mockResult(submission, {
+          researchRunId: `11111111-1111-1111-1111-11111111111${providerCalls}`,
+        }),
+      };
+      completed.set(input.idempotencyKey, output);
+      return output;
+    },
+  };
+}
+
+describe("founder idea reanalysis idempotency v1", () => {
+  it("same-attempt retry reuses one discovery row and the same research key", async () => {
+    const store = new FounderIdeaStore();
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    seedHistoricalFallback(store, submission);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    const executor = canonicalReplayExecutor(submission);
+    const first = await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    const mintedId = store.candidates.get(CMS_CANDIDATE)!.discoveryRunId;
+    const firstPersist = await persistFounderIdea(
+      admin as never,
+      first.submission,
+      first.grade,
+      null,
+      store.candidates.get(first.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(submission.id) ?? [],
+    );
+    const second = await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    const secondPersist = await persistFounderIdea(
+      admin as never,
+      second.submission,
+      second.grade,
+      null,
+      store.candidates.get(second.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(submission.id) ?? [],
+    );
+    expect(firstPersist.ok).toBe(true);
+    expect(secondPersist.ok).toBe(true);
+    expect(admin.rows.opportunity_discovery_runs).toHaveLength(1);
+    expect(admin.rows.opportunity_discovery_runs[0]?.id).toBe(CMS_DISCOVERY);
+    expect(store.candidates.get(CMS_CANDIDATE)?.discoveryRunId).toBe(CMS_DISCOVERY);
+    expect(mintedId).not.toBe(CMS_DISCOVERY);
+    expect(executor.keys).toEqual([
+      founderResearchAttemptKey({ submissionId: CMS_ID, candidateId: CMS_CANDIDATE, attempt: 1 }),
+      founderResearchAttemptKey({ submissionId: CMS_ID, candidateId: CMS_CANDIDATE, attempt: 1 }),
+    ]);
+    expect(executor.providerCalls).toBe(1);
+    expect(store.evaluationHistory.get(submission.id)?.filter((row) => row.opportunityScore === 43.61)).toHaveLength(1);
+    expect(parseFounderReanalysisAttemptField("1")).toEqual({ ok: true, attempt: 1 });
+  });
+
+  it("new explicit reanalysis creates a new research attempt without colliding discovery", async () => {
+    const store = new FounderIdeaStore();
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    seedHistoricalFallback(store, submission);
+    const admin = memoryAdmin();
+    const executor = canonicalReplayExecutor(submission);
+    await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 1,
+    });
+    await persistFounderIdea(
+      admin as never,
+      submission,
+      store.grades.get(submission.id) ?? null,
+      null,
+      store.candidates.get(CMS_CANDIDATE) ?? null,
+      store.evaluationHistory.get(submission.id) ?? [],
+    );
+    const second = await reanalyzeFounderIdeaWithCanonicalResearch(store, submission, (input) => executor.run(input), {
+      analysisAttempt: 2,
+    });
+    const persisted = await persistFounderIdea(
+      admin as never,
+      second.submission,
+      second.grade,
+      null,
+      store.candidates.get(CMS_CANDIDATE) ?? null,
+      store.evaluationHistory.get(submission.id) ?? [],
+    );
+    expect(persisted.ok).toBe(true);
+    expect(admin.rows.opportunity_discovery_runs).toHaveLength(1);
+    expect(executor.keys).toEqual([
+      founderResearchAttemptKey({ submissionId: CMS_ID, candidateId: CMS_CANDIDATE, attempt: 1 }),
+      founderResearchAttemptKey({ submissionId: CMS_ID, candidateId: CMS_CANDIDATE, attempt: 2 }),
+    ]);
+    expect(executor.providerCalls).toBe(2);
+    expect(store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore).toBe(43.61);
+    expect(store.evaluationHistory.get(submission.id)?.[0]?.decision).toBe("HOLD");
+    expect(listFounderIdeas(store, ORG_A)[0]?.reanalysisAttempt).toBe(3);
+  });
+
+  it("Infinity CMS and Art Bay never share discovery or research keys", () => {
+    expect(founderDiscoveryIdempotencyKey(CMS_ID)).toBe(`founder-idea-discovery:${CMS_ID}`);
+    expect(founderDiscoveryIdempotencyKey(ART_ID)).toBe(`founder-idea-discovery:${ART_ID}`);
+    expect(founderDiscoveryIdempotencyKey(CMS_ID)).not.toBe(founderDiscoveryIdempotencyKey(ART_ID));
+    const cmsResearch = founderResearchAttemptKey({
+      submissionId: CMS_ID,
+      candidateId: CMS_CANDIDATE,
+      attempt: 1,
+    });
+    const artResearch = founderResearchAttemptKey({
+      submissionId: ART_ID,
+      candidateId: ART_CANDIDATE,
+      attempt: 1,
+    });
+    expect(cmsResearch).toBe(`founder-idea-research:${CMS_ID}:${CMS_CANDIDATE}:v1`);
+    expect(artResearch).toBe(`founder-idea-research:${ART_ID}:${ART_CANDIDATE}:v1`);
+    expect(cmsResearch).not.toBe(artResearch);
+    const cmsSeed = buildFounderResearchSeed(historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS"), CMS_CANDIDATE, 1);
+    const artSeed = buildFounderResearchSeed(historicalSubmission(ART_ID, ART_CANDIDATE, "Art Bay Code Name"), ART_CANDIDATE, 1);
+    expect(buildCanonicalResearchRequest(cmsSeed).idempotencyKey).not.toBe(
+      buildCanonicalResearchRequest(artSeed).idempotencyKey,
+    );
+  });
+
+  it("conflicting existing discovery lineage fails closed", async () => {
+    const store = new FounderIdeaStore();
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    store.submissions.set(submission.id, submission);
+    const candidate = convertFounderIdeaToCandidate(store, submission);
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY, ART_ID);
+    const persisted = await persistFounderIdea(admin as never, submission, null, null, candidate, []);
+    expect(persisted.ok).toBe(false);
+    expect(persisted.error).toBe(FOUNDER_DISCOVERY_LINEAGE_CONFLICT);
+    expect(admin.rows.opportunity_discovery_runs).toHaveLength(1);
+    expect(admin.rows.opportunity_discovery_runs[0]?.id).toBe(CMS_DISCOVERY);
+    expect(admin.rows.opportunity_candidates).toHaveLength(0);
+    expect(admin.rows.founder_idea_submissions).toHaveLength(0);
+  });
+
+  it("partial retry after discovery creation remaps a new candidate discovery UUID onto the existing row", async () => {
+    const submission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    const admin = memoryAdmin();
+    seedExistingDiscovery(admin, CMS_ID, CMS_DISCOVERY);
+    const firstStore = new FounderIdeaStore();
+    firstStore.submissions.set(submission.id, { ...submission });
+    markDanglingCandidate(firstStore, submission.id);
+    const firstCandidate = convertFounderIdeaToCandidate(firstStore, firstStore.submissions.get(submission.id)!);
+    expect(firstCandidate.discoveryRunId).not.toBe(CMS_DISCOVERY);
+    const firstPersist = await persistFounderIdea(
+      admin as never,
+      firstStore.submissions.get(submission.id)!,
+      null,
+      null,
+      firstCandidate,
+      [],
+    );
+    expect(firstPersist.ok).toBe(true);
+    expect(firstCandidate.discoveryRunId).toBe(CMS_DISCOVERY);
+    expect(admin.rows.opportunity_discovery_runs).toHaveLength(1);
+
+    const retryStore = new FounderIdeaStore();
+    const retrySubmission = historicalSubmission(CMS_ID, CMS_CANDIDATE, "Infinity CMS");
+    retryStore.submissions.set(retrySubmission.id, retrySubmission);
+    markDanglingCandidate(retryStore, retrySubmission.id);
+    const retryCandidate = convertFounderIdeaToCandidate(retryStore, retrySubmission);
+    expect(retryCandidate.discoveryRunId).not.toBe(CMS_DISCOVERY);
+    const retryPersist = await persistFounderIdea(admin as never, retrySubmission, null, null, retryCandidate, []);
+    expect(retryPersist.ok).toBe(true);
+    expect(retryCandidate.discoveryRunId).toBe(CMS_DISCOVERY);
+    expect(admin.rows.opportunity_discovery_runs).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates).toHaveLength(1);
+    expect(admin.rows.opportunity_candidates[0]?.discovery_run_id).toBe(CMS_DISCOVERY);
+  });
+
+  it("Reanalyze UI posts a durable analysisAttempt so framework retries keep the same identity", () => {
+    const page = readFileSync(join(process.cwd(), "components/dashboard/founder-ideas/founder-idea-lab.tsx"), "utf8");
+    const action = readFileSync(join(process.cwd(), "app/dashboard/founder-ideas/actions.ts"), "utf8");
+    expect(page).toContain('name="analysisAttempt"');
+    expect(page).toContain("selectedRow?.reanalysisAttempt");
+    expect(action).toContain("parseFounderReanalysisAttemptField");
+    expect(action).toContain("analysisAttempt: parsedAttempt.attempt");
+    expect(page).not.toMatch(/Date\.now\(\)/);
+    expect(action).not.toMatch(/Date\.now\(\)/);
+    expect(ART_DISCOVERY).not.toBe(CMS_DISCOVERY);
   });
 });

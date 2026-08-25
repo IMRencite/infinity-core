@@ -5,6 +5,7 @@ import {
   type CanonicalResearchExecutor,
 } from "./analyze";
 import { archiveHistoricalGrade } from "./grade-history";
+import { derivedFounderReanalysisAttempt, resolveFounderReanalysisAttempt } from "./idempotency";
 import type { FounderIdeaStore } from "./store";
 import type { FounderIdeaGrade, FounderIdeaSubmission } from "./types";
 import { nowIso } from "./store";
@@ -54,11 +55,26 @@ export async function reanalyzeFounderIdeaWithCanonicalResearch(
   submission: FounderIdeaSubmission;
   previousGrade: FounderIdeaGrade | null;
   grade: FounderIdeaGrade | null;
+  analysisAttempt: number;
 }> {
   const previousGrade = store.grades.get(submission.id) ?? null;
-  archiveHistoricalGrade(store, submission);
+  const persistedHistoryLength = store.evaluationHistory.get(submission.id)?.length ?? 0;
+  const resolved = resolveFounderReanalysisAttempt({
+    formAttempt: options.analysisAttempt,
+    persistedHistoryLength,
+  });
+  if (!resolved.ok) {
+    throw new Error(resolved.error);
+  }
+  const derived = derivedFounderReanalysisAttempt(persistedHistoryLength);
+  if (resolved.attempt === derived) {
+    archiveHistoricalGrade(store, submission);
+  }
   submission.needsReanalysis = false;
   submission.failureCode = null;
-  const result = await analyzeFounderIdeaWithCanonicalResearch(store, submission, runResearch, options);
-  return { submission: result.submission, previousGrade, grade: result.grade };
+  const result = await analyzeFounderIdeaWithCanonicalResearch(store, submission, runResearch, {
+    ...options,
+    analysisAttempt: resolved.attempt,
+  });
+  return { submission: result.submission, previousGrade, grade: result.grade, analysisAttempt: resolved.attempt };
 }
