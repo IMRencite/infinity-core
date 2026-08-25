@@ -11,6 +11,7 @@ import { emptyMonetizationLayers } from "./monetization-levels";
 
 export type FounderResearchFinding = {
   findingId: string;
+  evidenceId?: string;
   dimension: EvidenceDimension;
   claim: string;
   polarity: EvidencePolarity;

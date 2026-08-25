@@ -1,4 +1,4 @@
-import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission } from "./types";
+import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission, HistoricalGradeSnapshot } from "./types";
 import type { FounderIdeaStore } from "./store";
 import { nowIso } from "./store";
 import type { FounderFailureCode, FounderIdeaDesiredMode, FounderIdeaStatus, VentureOrigin } from "./constants";
@@ -67,6 +67,7 @@ type ScoresEnvelope = {
   coverage?: FounderIdeaGrade["coverage"];
   monetizationLayers?: FounderIdeaGrade["monetizationLayers"];
   readyForDecision?: boolean;
+  evaluationHistory?: HistoricalGradeSnapshot[];
   scoringInputs?: FounderIdeaGrade["opportunityScores"] extends infer T
     ? T extends { scoringInputs: infer S }
       ? S
@@ -83,7 +84,11 @@ export function readScoresEnvelope(json: unknown): ScoresEnvelope | null {
   return { opportunityScores: json as FounderIdeaGrade["opportunityScores"] };
 }
 
-export function submissionToRow(submission: FounderIdeaSubmission, grade?: FounderIdeaGrade | null): FounderIdeaSubmissionRow {
+export function submissionToRow(
+  submission: FounderIdeaSubmission,
+  grade?: FounderIdeaGrade | null,
+  evaluationHistory: HistoricalGradeSnapshot[] = [],
+): FounderIdeaSubmissionRow {
   return {
     id: submission.id,
     organization_id: submission.organizationId,
@@ -123,6 +128,7 @@ export function submissionToRow(submission: FounderIdeaSubmission, grade?: Found
       coverage: grade?.coverage ?? null,
       monetizationLayers: grade?.monetizationLayers ?? null,
       readyForDecision: grade?.readyForDecision ?? false,
+      evaluationHistory,
     },
     blocking_assumptions: grade?.evaluation?.blockingAssumptions ?? [],
     created_at: submission.createdAt,
@@ -212,6 +218,9 @@ export function hydrateFounderStore(
         coverage: envelope?.coverage ?? emptyEvidenceCoverage(),
         monetizationLayers: envelope?.monetizationLayers ?? emptyMonetizationLayers(),
       });
+      if (envelope?.evaluationHistory?.length) {
+        store.evaluationHistory.set(submission.id, envelope.evaluationHistory);
+      }
       store.submissions.set(submission.id, submission);
     }
   }

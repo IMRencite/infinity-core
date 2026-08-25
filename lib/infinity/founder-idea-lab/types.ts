@@ -78,6 +78,24 @@ export type NormalizedFounderThesis = {
 
 export type FounderScoreIntegrity = "EVIDENCE_GROUNDED" | "INCOMPLETE" | "FALLBACK_HISTORICAL" | "TEST_FIXTURE";
 
+export type CandidateRepairState = "hydrated" | "dangling" | "repaired" | "created";
+
+export type HistoricalGradeSnapshot = {
+  archivedAt: string;
+  evaluationVersion: string;
+  opportunityScore: number | null;
+  selectionScore: number | null;
+  validationScore: number | null;
+  monetizationScore: number | null;
+  decision: SelectionDecision | null;
+  status: FounderIdeaStatus;
+  scoreIntegrity: FounderScoreIntegrity | null;
+  provenance: ScoreProvenanceRow[];
+  candidateId: string | null;
+  researchRunId: string | null;
+  reason: "REANALYSIS";
+};
+
 export type FounderIdeaGrade = {
   opportunityScores: NormalizedCandidateScores | null;
   selectionScore: number | null;

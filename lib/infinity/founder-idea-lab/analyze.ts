@@ -8,10 +8,15 @@ import { evaluateEvidenceReadiness } from "./readiness";
 import { emptyEvidenceCoverage } from "./evidence-coverage";
 import { emptyMonetizationLayers } from "./monetization-levels";
 import { buildFounderResearchSeed } from "./research-seed";
+import { buildCanonicalResearchRequest } from "./research-request";
+import { founderResearchPacketFromFailure, founderResearchPacketFromResult } from "./research-from-canonical";
 import type { FounderIdeaStore } from "./store";
 import type { FounderIdeaGrade, FounderIdeaSubmission } from "./types";
 import type { ScoringAssessmentInput } from "@/lib/infinity/opportunity-scanner/types";
 import type { LoadedMonetizationBundle } from "@/lib/infinity/venture-selection/types";
+import type { RunGroundedResearchInput, RunGroundedResearchOutput } from "@/lib/infinity/research/types";
+
+export type CanonicalResearchExecutor = (input: RunGroundedResearchInput) => Promise<RunGroundedResearchOutput>;
 
 export type AnalyzeOptions = {
   /** Test-only. Production must not pass a fixture. */
@@ -20,6 +25,7 @@ export type AnalyzeOptions = {
   scores?: ScoringAssessmentInput;
   monetization?: LoadedMonetizationBundle | null;
   researchPacket?: FounderResearchPacket | null;
+  runResearch?: CanonicalResearchExecutor;
 };
 
 export function analyzeFounderIdea(
@@ -27,8 +33,7 @@ export function analyzeFounderIdea(
   submission: FounderIdeaSubmission,
   options: AnalyzeOptions = {},
 ): { submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string } {
-  const seed = buildFounderResearchSeed(submission, submission.opportunityCandidateId);
-  void seed;
+  buildFounderResearchSeed(submission, submission.opportunityCandidateId);
 
   if (options.researchFixture === "failed") {
     convertFounderIdeaToCandidate(store, submission);
@@ -93,6 +98,24 @@ export function analyzeFounderIdea(
   return { submission, grade, researchPipeline: "grounded_research" };
 }
 
+export async function analyzeFounderIdeaWithCanonicalResearch(
+  store: FounderIdeaStore,
+  submission: FounderIdeaSubmission,
+  runResearch: CanonicalResearchExecutor,
+  options: AnalyzeOptions = {},
+): Promise<{ submission: FounderIdeaSubmission; grade: FounderIdeaGrade | null; researchPipeline: string }> {
+  convertFounderIdeaToCandidate(store, submission);
+  const seed = buildFounderResearchSeed(submission, submission.opportunityCandidateId);
+  const request = buildCanonicalResearchRequest(seed);
+  submission.status = "RESEARCHING";
+  store.submissions.set(submission.id, submission);
+  const output = await runResearch(request);
+  const packet = output.ok
+    ? founderResearchPacketFromResult({ result: output.result, submission })
+    : founderResearchPacketFromFailure({ failure: output.failure, submission });
+  return analyzeFromPacket(store, submission, packet, options);
+}
+
 function failIncomplete(
   store: FounderIdeaStore,
   submission: FounderIdeaSubmission,
@@ -120,13 +143,18 @@ function analyzeFromPacket(
   convertFounderIdeaToCandidate(store, submission);
   const bound = { ...packet, candidateId: submission.opportunityCandidateId ?? packet.candidateId, submissionId: submission.id };
   if (bound.failed) {
-    submission.status = "FAILED";
+    submission.status = "RESEARCH_INCOMPLETE";
     submission.failureCode = bound.failureCode === "PROVIDER_FAILED" ? "PROVIDER_FAILED" : "RESEARCH_FAILED";
     submission.infinityDecision = null;
     submission.researchRunId = bound.researchRunId;
     store.researchPackets.set(submission.id, bound);
+    const grade = gradeFounderIdea(store, submission, {
+      evidenceSufficient: false,
+      scoreIntegrity: "INCOMPLETE",
+      researchRunId: bound.researchRunId,
+    });
     store.submissions.set(submission.id, submission);
-    return { submission, grade: null, researchPipeline: "grounded_research" };
+    return { submission, grade, researchPipeline: "grounded_research" };
   }
 
   const coverage = coverageFromPacket(bound);

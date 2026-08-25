@@ -51,6 +51,9 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       researchPipeline: "grounded_research",
       researchRunId: submission.researchRunId,
       needsReanalysis: submission.needsReanalysis,
+      historicalOpportunityScore: store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore ?? null,
+      historicalDecision: store.evaluationHistory.get(submission.id)?.[0]?.decision ?? null,
+      historicalGrade: Boolean(store.evaluationHistory.get(submission.id)?.length),
     } satisfies Record<string, string | number | boolean | null>;
 
     push(map, "opportunity_lab", {
@@ -104,7 +107,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
     }
 
     const packet = store.researchPackets.get(submission.id);
-    if (packet && !packet.failed) {
+    if (packet && !packet.failed && packet.researchRunId) {
       push(map, "research_department", {
         id: buildArtifactRenderId({
           artifactType: "research_packet",
@@ -115,8 +118,8 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
         roomId: "research_department",
         artifactType: "research_packet",
         title: `Research · ${submission.title}`,
-        subtitle: "grounded_research",
-        state: "READY",
+        subtitle: packet.requiresMoreResearch || !packet.grounded ? "incomplete" : "grounded_research",
+        state: packet.requiresMoreResearch || !packet.grounded ? "CREATING" : "READY",
         createdAt: submission.updatedAt,
         sourceRecordType: "founder_idea_submission",
         sourceRecordId: submission.id,
@@ -128,6 +131,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
           pipeline: "grounded_research",
           grounded: packet.grounded,
           researchRunId: packet.researchRunId,
+          incomplete: packet.requiresMoreResearch || !packet.grounded,
         },
       });
     }
@@ -241,6 +245,7 @@ export type FounderIdeaListRow = {
   id: string;
   idea: string;
   score: string;
+  historicalScore: string;
   infinityDecision: string;
   founderDecision: string;
   status: string;
@@ -259,6 +264,10 @@ export function listFounderIdeas(store: FounderIdeaStore, organizationId: string
       id: submission.id,
       idea: submission.title,
       score: listScoreDisplay(grade),
+      historicalScore:
+        store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore == null
+          ? "NONE"
+          : String(store.evaluationHistory.get(submission.id)![0]!.opportunityScore),
       infinityDecision: submission.infinityDecision ?? "UNKNOWN",
       founderDecision: submission.founderDecision ? String(submission.founderDecision) : "UNKNOWN",
       status: submission.status,

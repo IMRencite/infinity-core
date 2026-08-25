@@ -1,4 +1,4 @@
-import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission } from "./types";
+import type { FounderDecisionOverride, FounderIdeaGrade, FounderIdeaSubmission, HistoricalGradeSnapshot } from "./types";
 import { overrideToRow, submissionToRow } from "./persistence";
 import type { OpportunityCandidate } from "@/lib/infinity/opportunity-scanner/types";
 
@@ -35,6 +35,7 @@ function candidateToRow(candidate: OpportunityCandidate) {
     merge_group_key: candidate.mergeGroupKey,
     opportunity_score: candidate.opportunityScore,
     rank_position: candidate.rankPosition,
+    created_at: candidate.createdAt,
     updated_at: candidate.updatedAt,
   };
 }
@@ -45,6 +46,7 @@ export async function persistFounderIdea(
   grade?: FounderIdeaGrade | null,
   override?: FounderDecisionOverride | null,
   candidate?: OpportunityCandidate | null,
+  evaluationHistory: HistoricalGradeSnapshot[] = [],
 ): Promise<{ ok: boolean; error?: string }> {
   if (candidate) {
     const discovery = await admin.from("opportunity_discovery_runs").upsert(
@@ -64,13 +66,14 @@ export async function persistFounderIdea(
     );
     if (discovery.error) return { ok: false, error: discovery.error.message };
     const candidateResult = await admin.from("opportunity_candidates").upsert(candidateToRow(candidate), {
-      onConflict: "organization_id,dedup_key",
+      onConflict: "id",
     });
     if (candidateResult.error) return { ok: false, error: candidateResult.error.message };
   }
-  const submissionResult = await admin.from("founder_idea_submissions").upsert(submissionToRow(submission, grade), {
-    onConflict: "id",
-  });
+  const submissionResult = await admin.from("founder_idea_submissions").upsert(
+    submissionToRow(submission, grade, evaluationHistory),
+    { onConflict: "id" },
+  );
   if (submissionResult.error) return { ok: false, error: submissionResult.error.message };
   if (override) {
     const overrideResult = await admin.from("founder_decision_overrides").upsert(overrideToRow(override), {

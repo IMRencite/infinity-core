@@ -90,35 +90,62 @@ export function isSharedConservativeFallback(inputs: ScoringAssessmentInput | nu
   );
 }
 
+function applyScores(
+  candidate: OpportunityCandidate,
+  scoresInput?: ScoringAssessmentInput,
+): OpportunityCandidate {
+  if (!scoresInput) return candidate;
+  const scores = calculateDeterministicScores(scoresInput);
+  candidate.scores = scores;
+  candidate.opportunityScore = scores.opportunityScore;
+  candidate.updatedAt = nowIso();
+  return candidate;
+}
+
 export function convertFounderIdeaToCandidate(
   store: FounderIdeaStore,
   submission: FounderIdeaSubmission,
   input?: { scores?: ScoringAssessmentInput; researchGrounded?: boolean },
 ): OpportunityCandidate {
-  const existing = [...store.candidates.values()].find(
-    (candidate) =>
-      candidate.organizationId === submission.organizationId &&
-      candidate.dedupKey === founderDedupKey(submission.organizationId, submission.title, submission.description),
-  );
-  if (existing) {
-    if (input?.scores) {
-      const scores = calculateDeterministicScores(input.scores);
-      existing.scores = scores;
-      existing.opportunityScore = scores.opportunityScore;
-      existing.updatedAt = nowIso();
-      store.candidates.set(existing.id, existing);
-    }
+  const existingId = submission.opportunityCandidateId;
+  if (existingId && store.candidates.has(existingId)) {
+    const existing = applyScores(store.candidates.get(existingId)!, input?.scores);
+    store.candidates.set(existing.id, existing);
+    if (!store.candidateRepair.has(submission.id)) store.candidateRepair.set(submission.id, "hydrated");
     submission.opportunityCandidateId = existing.id;
     store.submissions.set(submission.id, submission);
     return existing;
   }
 
-  const draft = toCandidateDraft(submission, input?.researchGrounded ? { grounded: true, sources: [{ url: "https://example.com/research", title: "Research fixture", domain: "example.com" }] } : undefined);
+  const byDedup = [...store.candidates.values()].find(
+    (candidate) =>
+      candidate.organizationId === submission.organizationId &&
+      candidate.dedupKey === founderDedupKey(submission.organizationId, submission.title, submission.description),
+  );
+  if (byDedup) {
+    if (existingId && existingId !== byDedup.id) {
+      throw new Error("FOUNDER_CANDIDATE_ID_CONFLICT");
+    }
+    const existing = applyScores(byDedup, input?.scores);
+    store.candidates.set(existing.id, existing);
+    submission.opportunityCandidateId = existing.id;
+    if (!store.candidateRepair.has(submission.id)) store.candidateRepair.set(submission.id, "hydrated");
+    store.submissions.set(submission.id, submission);
+    return existing;
+  }
+
+  const draft = toCandidateDraft(
+    submission,
+    input?.researchGrounded
+      ? { grounded: true, sources: [{ url: "https://example.com/research", title: "Research fixture", domain: "example.com" }] }
+      : undefined,
+  );
   const scores = input?.scores ? calculateDeterministicScores(input.scores) : null;
   const now = nowIso();
+  const preserveHistoricalId = Boolean(existingId);
   const candidate: OpportunityCandidate = {
     ...draft,
-    id: newId(),
+    id: existingId ?? newId(),
     organizationId: submission.organizationId,
     discoveryRunId: newId(),
     opportunityScore: scores?.opportunityScore ?? null,
@@ -128,6 +155,7 @@ export function convertFounderIdeaToCandidate(
     updatedAt: now,
   };
   store.candidates.set(candidate.id, candidate);
+  store.candidateRepair.set(submission.id, preserveHistoricalId ? "repaired" : "created");
   submission.opportunityCandidateId = candidate.id;
   submission.updatedAt = now;
   store.submissions.set(submission.id, submission);

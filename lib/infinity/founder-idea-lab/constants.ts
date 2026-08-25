@@ -8,6 +8,30 @@ export const FOUNDER_IDEA_DESIRED_MODES = [
 
 export type FounderIdeaDesiredMode = (typeof FOUNDER_IDEA_DESIRED_MODES)[number];
 
+/** Statuses accepted by founder_idea_submissions_status_valid before reanalysis V1. */
+export const FOUNDER_IDEA_SQL_STATUSES_V1 = [
+  "DRAFT",
+  "SUBMITTED",
+  "RESEARCHING",
+  "GRADED",
+  "VALIDATING",
+  "READY_FOR_DECISION",
+  "BUILD_APPROVED",
+  "BUILDING",
+  "COMPLETED",
+  "HELD",
+  "REJECTED",
+  "FAILED",
+] as const;
+
+/** Proposed CHECK after 20260825010000_founder_idea_lab_reanalysis_status_v1.sql */
+export const FOUNDER_IDEA_SQL_STATUSES_REANALYSIS_V1 = [
+  ...FOUNDER_IDEA_SQL_STATUSES_V1,
+  "INSUFFICIENT_EVIDENCE",
+  "RESEARCH_INCOMPLETE",
+  "NEEDS_REANALYSIS",
+] as const;
+
 export const FOUNDER_IDEA_STATUSES = [
   "DRAFT",
   "SUBMITTED",

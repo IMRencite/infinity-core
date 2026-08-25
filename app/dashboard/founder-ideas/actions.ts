@@ -11,7 +11,8 @@ import { applyFounderDecision, founderActionsFor } from "@/lib/infinity/founder-
 import { routeFounderBuild } from "@/lib/infinity/founder-idea-lab/build-route";
 import { persistFounderIdea } from "@/lib/infinity/founder-idea-lab/persist";
 import { loadFounderIdeaStoreForOrg } from "@/lib/infinity/founder-idea-lab/hq/load";
-import { reanalyzeFounderIdea } from "@/lib/infinity/founder-idea-lab/reanalyze";
+import { reanalyzeFounderIdeaWithCanonicalResearch } from "@/lib/infinity/founder-idea-lab/reanalyze";
+import { runGroundedResearch } from "@/lib/infinity/research/run";
 import type { FounderAction } from "@/lib/infinity/founder-idea-lab/constants";
 import type { FounderIdeaDesiredMode } from "@/lib/infinity/founder-idea-lab/constants";
 
@@ -59,6 +60,7 @@ export async function analyzeFounderIdeaAction(
       store.grades.get(submission.id) ?? null,
       null,
       store.candidates.get(submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(submission.id) ?? [],
     );
     if (!persisted.ok) {
       return { ok: false, message: persisted.error ?? "Persist failed", submissionId: submission.id };
@@ -105,6 +107,7 @@ export async function decideFounderIdeaAction(
       store.grades.get(result.submission.id) ?? null,
       result.override,
       store.candidates.get(result.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(result.submission.id) ?? [],
     );
     if (!persisted.ok) return { ok: false, message: persisted.error ?? "Persist failed" };
     revalidatePath("/dashboard/founder-ideas");
@@ -127,20 +130,25 @@ export async function reanalyzeFounderIdeaAction(
     const existing = store.submissions.get(submissionId);
     if (!existing) return { ok: false, message: "FOUNDER_IDEA_NOT_FOUND" };
     convertFounderIdeaToCandidate(store, existing);
-    const result = reanalyzeFounderIdea(store, existing, {});
+    const result = await reanalyzeFounderIdeaWithCanonicalResearch(store, existing, (input) =>
+      runGroundedResearch(admin, input),
+    );
     const persisted = await persistFounderIdea(
       admin as never,
       result.submission,
       result.grade,
       null,
       store.candidates.get(result.submission.opportunityCandidateId ?? "") ?? null,
+      store.evaluationHistory.get(result.submission.id) ?? [],
     );
     if (!persisted.ok) return { ok: false, message: persisted.error ?? "Persist failed", submissionId };
     revalidatePath("/dashboard/founder-ideas");
     revalidatePath("/dashboard");
     return {
       ok: true,
-      message: result.grade?.readyForDecision ? "Reanalysis complete" : "Reanalysis recorded; evidence still insufficient (no paid research executed)",
+      message: result.grade?.readyForDecision
+        ? "Reanalysis complete"
+        : "Reanalysis recorded; evidence still insufficient",
       submissionId,
     };
   } catch (error) {

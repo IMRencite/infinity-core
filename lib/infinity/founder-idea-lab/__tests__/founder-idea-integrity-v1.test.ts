@@ -195,8 +195,9 @@ describe("founder-idea-lab research + scoring integrity v1", () => {
     const { grade } = analyzeFounderIdea(store, submission, {
       researchPacket: failedProviderPacket(submission.id, submission.opportunityCandidateId!),
     });
-    expect(grade).toBeNull();
-    expect(submission.status).toBe("FAILED");
+    expect(grade?.scoreIntegrity).toBe("INCOMPLETE");
+    expect(grade?.opportunityQuality).toBeNull();
+    expect(submission.status).toBe("RESEARCH_INCOMPLETE");
     expect(submission.failureCode).toBe("PROVIDER_FAILED");
     expect(submission.infinityDecision).toBeNull();
   });

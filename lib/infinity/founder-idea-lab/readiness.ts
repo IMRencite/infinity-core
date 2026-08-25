@@ -27,7 +27,7 @@ export function evaluateEvidenceReadiness(input: {
     return { readyForDecision: false, status: "INSUFFICIENT_EVIDENCE", reason: "NO_RESEARCH_RUN" };
   }
   if (input.packet.failed) {
-    return { readyForDecision: false, status: "FAILED", reason: "PROVIDER_FAILURE" };
+    return { readyForDecision: false, status: "RESEARCH_INCOMPLETE", reason: "PROVIDER_FAILURE" };
   }
   if (input.packet.requiresMoreResearch && !input.coverage.materialCoverageSufficient) {
     return { readyForDecision: false, status: "RESEARCH_INCOMPLETE", reason: "RESEARCH_INCOMPLETE" };

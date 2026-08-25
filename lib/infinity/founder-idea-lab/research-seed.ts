@@ -3,6 +3,7 @@ import { normalizeFounderIdea } from "./normalize";
 
 export type FounderResearchSeed = {
   submissionId: string;
+  organizationId: string;
   candidateId: string | null;
   ideaTitle: string;
   ideaDescription: string;
@@ -68,6 +69,7 @@ export function buildFounderResearchSeed(
 
   return {
     submissionId: submission.id,
+    organizationId: submission.organizationId,
     candidateId: candidateId ?? submission.opportunityCandidateId,
     ideaTitle: submission.title,
     ideaDescription: submission.description,
