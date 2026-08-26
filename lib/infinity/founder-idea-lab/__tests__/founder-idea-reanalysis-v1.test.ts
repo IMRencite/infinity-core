@@ -327,6 +327,7 @@ describe("founder idea lab real reanalysis integration v1", () => {
     expect(request.organizationId).toBe(ORG_A);
     expect(request.idempotencyKey).toBe(`founder-idea-research:${CMS_ID}:${CMS_CANDIDATE}:v1`);
     expect(request.runPurpose).toBe("FOUNDER_IDEA_REANALYSIS");
+    expect(request.requireSourceBackedFindings).toBe(true);
     expect(seed.founderStatementsAreHypotheses).toBe(true);
     const packet = founderResearchPacketFromResult({ result: mockResult(submission), submission });
     expect(packet.researchRunId).toBe("11111111-1111-1111-1111-111111111111");

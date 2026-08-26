@@ -21,8 +21,12 @@ const SIGNAL_TO_DIMENSION: Partial<Record<EvidenceSignalType, EvidenceDimension>
   regulatory_change: "market",
   technological_shift: "market",
   competitor_weakness: "competition",
+  competitor_presence: "competition",
   distribution_opportunity: "distribution",
   workflow_inefficiency: "buildability",
+  monetization_precedent: "monetization",
+  capital_requirement: "capital_efficiency",
+  time_to_revenue: "speed_to_revenue",
 };
 
 function polarityFromEvidence(item: NormalizedEvidenceItem): EvidencePolarity {

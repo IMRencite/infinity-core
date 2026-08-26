@@ -207,7 +207,7 @@ export function normalizeGroundedResearch(input: {
 
     const evidenceType = finding.inference
       ? "inference_from_evidence"
-      : finding.grounded
+      : finding.grounded && validatedUrls.length > 0
         ? "direct_grounded"
         : "ungrounded";
 
@@ -218,7 +218,7 @@ export function normalizeGroundedResearch(input: {
       observedSignal: finding.observedSignal,
       signalType: finding.signalType,
       evidenceType,
-      grounded: finding.grounded && validatedUrls.length > 0,
+      grounded: evidenceType === "direct_grounded",
       sourceIds,
       sourceUrls: validatedUrls,
       relevance: finding.relevance,

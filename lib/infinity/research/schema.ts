@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import {
+  EVIDENCE_RELEVANCE_VALUES,
   EVIDENCE_SIGNAL_TYPES,
   GROUNDED_RESEARCH_SCHEMA_VERSION,
   RESEARCH_LIMITS,
@@ -94,12 +95,17 @@ export function validateProviderResearchStructuredOutput(
       throw new Error(`findings[${index}].claim is required and within limits.`);
     }
 
+    const rawRelevance = String(finding.relevance ?? "").trim().toLowerCase();
+    const relevance = (EVIDENCE_RELEVANCE_VALUES as readonly string[]).includes(rawRelevance)
+      ? rawRelevance
+      : "unknown";
+
     return {
       findingId: String(finding.findingId ?? `finding_${index + 1}`),
       claim,
       signalType: signalType as ProviderResearchStructuredOutput["findings"][number]["signalType"],
       observedSignal: String(finding.observedSignal ?? ""),
-      relevance: String(finding.relevance ?? ""),
+      relevance,
       confidence: optionalConfidence(finding.confidence, `findings[${index}].confidence`),
       grounded,
       inference,

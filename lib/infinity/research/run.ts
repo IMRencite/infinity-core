@@ -25,8 +25,17 @@ import {
   parseProviderResearchJson,
   providerResearchJsonSchema,
 } from "./schema";
-import type { RunGroundedResearchInput, RunGroundedResearchOutput } from "./types";
+import type {
+  ResearchProviderCallResult,
+  RunGroundedResearchInput,
+  RunGroundedResearchOutput,
+} from "./types";
 import { canonicalizeResearchCandidateId } from "./candidate-lineage";
+import {
+  buildResearchCoveragePlan,
+  loadResearchCoveragePolicy,
+  runCoverageDirectedPhases,
+} from "./coverage";
 
 async function persistResearchFailure(
   admin: AdminSupabaseClient,
@@ -134,22 +143,40 @@ export async function runGroundedResearch(
     throw classifyResearchFailure(error);
   }
 
-  const systemInstructions = buildResearchSystemInstructions();
-  const userPrompt = buildResearchUserPrompt(input.researchObjective);
+  const modelProvidedSources = /^gemini-3/i.test(modelId);
+  const requireSourceUrls = Boolean(input.requireSourceBackedFindings) || modelProvidedSources;
+  const costPolicy = loadResearchCostPolicy(config);
+  const coveragePolicy = loadResearchCoveragePolicy(process.env, costPolicy);
+  const coveragePlan = buildResearchCoveragePlan({
+    seed: input.coverageSeed,
+    objective: input.researchObjective,
+    policy: coveragePolicy,
+    requireSourceBackedFindings: requireSourceUrls,
+  });
+  const systemInstructions = buildResearchSystemInstructions({
+    modelProvidedSources,
+    requireSourceUrls,
+  });
+  const initialPrompt = buildResearchUserPrompt(input.researchObjective, {
+    requireSourceUrls,
+    modelProvidedSources,
+    plannedQueries: coveragePlan.steps[0]?.queries.map((query) => query.query) ?? [],
+    targetDimensions: coveragePlan.steps[0]?.targetDimensions,
+    maxFindings: coveragePolicy.maxFindings,
+    phase: "initial",
+  });
   const inputHash = hashResearchInput({
-    researchObjective: input.researchObjective,
+    researchObjective: `${input.researchObjective}\n${initialPrompt}`,
     systemInstructions,
     providerId,
     modelId,
   });
-
-  const costPolicy = loadResearchCostPolicy(config);
-  const estimatedInputTokens = estimateInputTokens(`${systemInstructions}\n${userPrompt}`);
+  const estimatedInputTokens = estimateInputTokens(`${systemInstructions}\n${initialPrompt}`);
   const preCost = estimateResearchCostUsd({
     modelId,
     inputTokens: estimatedInputTokens,
     outputTokens: config.maxOutputTokens,
-    searchQueryCount: 1,
+    searchQueryCount: Math.max(1, coveragePlan.steps[0]?.queries.length ?? 1),
   });
 
   try {
@@ -208,66 +235,92 @@ export async function runGroundedResearch(
     }));
 
   const provider = getGroundedResearchProvider(providerId, config);
-  let providerResult: Awaited<ReturnType<typeof provider.executeGroundedResearch>> | null = null;
-  let parsedStructured: ReturnType<typeof parseProviderResearchJson> | null = null;
+  const lastProviderCall: { value: ResearchProviderCallResult | null } = { value: null };
+  const lastStructured: { value: ReturnType<typeof parseProviderResearchJson> | null } = { value: null };
 
   try {
     await updateResearchRun(admin, input.organizationId, runRow.id, {
       status: "provider_called",
     });
 
-    providerResult = await provider.executeGroundedResearch({
-      correlationId,
-      systemInstructions,
-      researchObjective: userPrompt,
+    const directed = await runCoverageDirectedPhases({
+      plan: coveragePlan,
+      policy: coveragePolicy,
+      seed: input.coverageSeed,
+      objective: input.researchObjective,
       modelId,
-      responseSchema: providerResearchJsonSchema(),
-      maxOutputTokens: config.maxOutputTokens,
-      timeoutMs: costPolicy.timeoutMs,
-      maxRetries: costPolicy.maxRetries,
+      executePhase: async ({ phase, queries }) => {
+        const userPrompt = buildResearchUserPrompt(input.researchObjective, {
+          requireSourceUrls,
+          modelProvidedSources,
+          plannedQueries: queries.map((query) => query.query),
+          targetDimensions: [...new Set(queries.flatMap((query) => query.targetDimensions))],
+          maxFindings: coveragePolicy.maxFindings,
+          phase,
+        });
+        const providerResult = await provider.executeGroundedResearch({
+          correlationId,
+          systemInstructions,
+          researchObjective: userPrompt,
+          modelId,
+          responseSchema: providerResearchJsonSchema(),
+          maxOutputTokens: config.maxOutputTokens,
+          timeoutMs: costPolicy.timeoutMs,
+          maxRetries: coveragePolicy.maxRetries,
+        });
+        lastProviderCall.value = providerResult;
+        assertNoSecretsInPayload(providerResult);
+        const parsedStructured = parseProviderResearchJson(providerResult.rawText);
+        lastStructured.value = parsedStructured;
+        const phaseResult = normalizeGroundedResearch({
+          researchRunId: runRow.id,
+          organizationId: input.organizationId,
+          missionId: input.missionId ?? null,
+          providerId,
+          modelId,
+          researchObjective: input.researchObjective,
+          inputHash,
+          structured: parsedStructured,
+          groundingMetadata: providerResult.groundingMetadata as never,
+          tokenUsage: providerResult.tokenUsage,
+          groundingUsage: providerResult.groundingUsage,
+          estimatedCostUsd: providerResult.estimatedCostUsd,
+          costUncertainty: providerResult.costUncertainty,
+          latencyMs: providerResult.latencyMs,
+          requestId: providerResult.requestId,
+          retryMetadata: providerResult.retryMetadata,
+          rawProviderResponseStored: true,
+          runPurpose: input.runPurpose,
+          candidateId,
+        });
+        return { result: phaseResult, attemptCount: providerResult.retryMetadata.attemptCount };
+      },
     });
 
-    assertNoSecretsInPayload(providerResult);
-
-    parsedStructured = parseProviderResearchJson(providerResult.rawText);
-    const result = normalizeGroundedResearch({
-      researchRunId: runRow.id,
-      organizationId: input.organizationId,
-      missionId: input.missionId ?? null,
-      providerId,
-      modelId,
-      researchObjective: input.researchObjective,
-      inputHash,
-      structured: parsedStructured,
-      groundingMetadata: providerResult.groundingMetadata as never,
-      tokenUsage: providerResult.tokenUsage,
-      groundingUsage: providerResult.groundingUsage,
-      estimatedCostUsd: providerResult.estimatedCostUsd,
-      costUncertainty: providerResult.costUncertainty,
-      latencyMs: providerResult.latencyMs,
-      requestId: providerResult.requestId,
-      retryMetadata: providerResult.retryMetadata,
-      rawProviderResponseStored: true,
-      runPurpose: input.runPurpose,
-      candidateId,
-    });
+    const result = {
+      ...directed.result,
+      coverage: directed.coverage,
+      callTelemetry: directed.telemetry,
+      stopReason: directed.stopReason,
+      issuedQueries: directed.issuedQueries.map((query) => query.query),
+    };
 
     const completedAt = new Date().toISOString();
     await updateResearchRun(admin, input.organizationId, runRow.id, {
       status: "completed",
       validation_status: "validated",
       structured_result: result as never,
-      raw_provider_response: providerResult.rawProviderResponse as never,
-      grounding_metadata: (providerResult.groundingMetadata ?? {}) as never,
+      raw_provider_response: (lastProviderCall.value?.rawProviderResponse ?? {}) as never,
+      grounding_metadata: (lastProviderCall.value?.groundingMetadata ?? {}) as never,
       normalized_evidence: result.evidence as never,
       normalized_sources: result.sources as never,
-      token_usage: providerResult.tokenUsage as never,
-      grounding_usage: providerResult.groundingUsage as never,
-      estimated_cost: providerResult.estimatedCostUsd,
-      cost_uncertainty: providerResult.costUncertainty,
-      latency_ms: providerResult.latencyMs,
-      request_id: providerResult.requestId,
-      retry_count: providerResult.retryMetadata.attemptCount - 1,
+      token_usage: result.tokenUsage as never,
+      grounding_usage: result.groundingUsage as never,
+      estimated_cost: result.estimatedCostUsd,
+      cost_uncertainty: result.costUncertainty,
+      latency_ms: result.latencyMs,
+      request_id: result.requestId,
+      retry_count: directed.telemetry.transportRetryCount,
       completed_at: completedAt,
       failure_classification: null,
       error_message: null,
@@ -290,16 +343,16 @@ export async function runGroundedResearch(
       runId: runRow.id,
       classification: classified.classification,
       message: classified.message,
-      tokenUsage: providerResult?.tokenUsage ?? null,
-      estimatedCostUsd: providerResult?.estimatedCostUsd ?? null,
-      costUncertainty: providerResult?.costUncertainty ?? null,
-      latencyMs: providerResult?.latencyMs ?? null,
-      requestId: providerResult?.requestId ?? null,
-      retryCount: providerResult ? providerResult.retryMetadata.attemptCount - 1 : 0,
-      groundingMetadata: (providerResult?.groundingMetadata as Record<string, unknown> | null) ?? null,
-      groundingUsage: providerResult?.groundingUsage ?? null,
-      rawProviderResponse: (providerResult?.rawProviderResponse as Record<string, unknown> | null) ?? null,
-      structuredResult: parsedStructured as Record<string, unknown> | null,
+      tokenUsage: lastProviderCall.value?.tokenUsage ?? null,
+      estimatedCostUsd: lastProviderCall.value?.estimatedCostUsd ?? null,
+      costUncertainty: lastProviderCall.value?.costUncertainty ?? null,
+      latencyMs: lastProviderCall.value?.latencyMs ?? null,
+      requestId: lastProviderCall.value?.requestId ?? null,
+      retryCount: lastProviderCall.value ? lastProviderCall.value.retryMetadata.attemptCount - 1 : 0,
+      groundingMetadata: (lastProviderCall.value?.groundingMetadata as Record<string, unknown> | null) ?? null,
+      groundingUsage: lastProviderCall.value?.groundingUsage ?? null,
+      rawProviderResponse: (lastProviderCall.value?.rawProviderResponse as Record<string, unknown> | null) ?? null,
+      structuredResult: lastStructured.value as Record<string, unknown> | null,
       candidateId,
     });
   }

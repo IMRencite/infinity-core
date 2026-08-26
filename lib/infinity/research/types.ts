@@ -113,6 +113,24 @@ export type ResearchResult = {
     normalizationApplied: true;
     purpose?: string;
   };
+  coverage?: {
+    coveredDimensions: string[];
+    partialDimensions: string[];
+    unknownDimensions: string[];
+    researchableGaps: string[];
+    directEvidenceCount: number;
+    derivedEvidenceCount: number;
+    sourceCount: number;
+    materialCoverageSufficient: boolean;
+  };
+  callTelemetry?: {
+    initialResearchCallCount: number;
+    transportRetryCount: number;
+    gapFillCallCount: number;
+    totalProviderCalls: number;
+  };
+  stopReason?: string;
+  issuedQueries?: string[];
   completedAt: string;
 };
 
@@ -144,6 +162,16 @@ export type RunGroundedResearchInput = {
   providerId?: ResearchProviderId;
   modelId?: string;
   runPurpose?: string;
+  requireSourceBackedFindings?: boolean;
+  coverageSeed?: {
+    ideaTitle?: string | null;
+    ideaDescription?: string | null;
+    targetCustomer?: string | null;
+    problem?: string | null;
+    businessModelHypothesis?: string | null;
+    pricingHypothesis?: string | null;
+    competitorLeads?: string[];
+  };
 };
 
 export type RunGroundedResearchOutput =

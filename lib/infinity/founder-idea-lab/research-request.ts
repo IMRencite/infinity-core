@@ -27,5 +27,15 @@ export function buildCanonicalResearchRequest(seed: FounderResearchSeed): RunGro
     researchObjective: seed.researchObjective,
     idempotencyKey: founderResearchIdempotencyKey(seed),
     runPurpose: "FOUNDER_IDEA_REANALYSIS",
+    requireSourceBackedFindings: true,
+    coverageSeed: {
+      ideaTitle: seed.ideaTitle,
+      ideaDescription: seed.ideaDescription,
+      targetCustomer: seed.targetCustomer,
+      problem: seed.problem,
+      businessModelHypothesis: seed.businessModelHypothesis,
+      pricingHypothesis: seed.pricingHypothesis,
+      competitorLeads: seed.knownCompetitors,
+    },
   };
 }

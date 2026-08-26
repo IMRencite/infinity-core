@@ -1,6 +1,6 @@
 export const GROUNDED_RESEARCH_SCHEMA_VERSION = "grounded_research_v1";
 
-export const GROUNDED_RESEARCH_PROMPT_VERSION = "grounded_research_prompt_v1";
+export const GROUNDED_RESEARCH_PROMPT_VERSION = "grounded_research_prompt_v3";
 
 export const RESEARCH_PROVIDER_IDS = ["mock", "gemini"] as const;
 
@@ -72,6 +72,7 @@ export const EVIDENCE_SIGNAL_TYPES = [
   "pricing_pain",
   "workflow_inefficiency",
   "competitor_weakness",
+  "competitor_presence",
   "growing_market",
   "underserved_niche",
   "purchase_intent",
@@ -79,6 +80,9 @@ export const EVIDENCE_SIGNAL_TYPES = [
   "regulatory_change",
   "technological_shift",
   "distribution_opportunity",
+  "monetization_precedent",
+  "capital_requirement",
+  "time_to_revenue",
   "unknown",
 ] as const;
 
@@ -87,6 +91,16 @@ export type EvidenceSignalType = (typeof EVIDENCE_SIGNAL_TYPES)[number];
 export const EVIDENCE_TYPES = ["direct_grounded", "inference_from_evidence", "ungrounded"] as const;
 
 export type EvidenceType = (typeof EVIDENCE_TYPES)[number];
+
+export const EVIDENCE_RELEVANCE_VALUES = ["positive", "negative", "mixed", "unknown"] as const;
+
+export type EvidenceRelevance = (typeof EVIDENCE_RELEVANCE_VALUES)[number];
+
+/** Persisted retry_count is attemptCount - 1. Provider calls = retry_count + 1. */
+export function researchProviderCallCount(retryCount: number): number {
+  if (!Number.isFinite(retryCount) || retryCount < 0) return 0;
+  return Math.trunc(retryCount) + 1;
+}
 
 export const RESEARCH_LIMITS = {
   maxFindings: 12,

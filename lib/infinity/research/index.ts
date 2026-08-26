@@ -14,3 +14,4 @@ export * from "./normalization/evidence";
 export * from "./persistence";
 export * from "./run";
 export * from "./mock-output";
+export * from "./coverage";
