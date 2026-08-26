@@ -61,6 +61,7 @@ export function createAutonomousBuildCandidate(organizationId: string): {
     evaluation,
     scoreIntegrity: "TEST_FIXTURE",
     readyForDecision: true,
+    buildReady: evaluation.decision === "BUILD",
     researchRunId: candidate.researchRunIds[0] ?? null,
     monetizationRunId: loaded.monetization?.monetizationRunId ?? null,
     provenance: [],

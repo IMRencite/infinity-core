@@ -108,7 +108,13 @@ export type FounderIdeaGrade = {
   opportunityQuality: number | null;
   evaluation: CandidateEvaluationDraft | null;
   scoreIntegrity: FounderScoreIntegrity;
+  /**
+   * Enough research evidence to emit an idea classification (VALIDATE / HOLD / REJECT,
+   * or BUILD if economics also pass). Does not mean ready to build, spend, or launch.
+   */
   readyForDecision: boolean;
+  /** Canonical build gate plus known non-placeholder unit economics. */
+  buildReady: boolean;
   researchRunId: string | null;
   monetizationRunId: string | null;
   provenance: ScoreProvenanceRow[];

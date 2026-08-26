@@ -29,7 +29,9 @@ import type { OpportunityCandidate, ScoringAssessmentInput } from "@/lib/infinit
 import { convertFounderIdeaToCandidate } from "./convert";
 import { emptyEvidenceCoverage } from "./evidence-coverage";
 import { emptyMonetizationLayers } from "./monetization-levels";
-import { unitEconomicsKnown } from "./monetization-levels";
+import { statusFromInfinityDecision } from "./decision-status";
+import { unitEconomicsNumericallyKnown } from "./economics-known";
+import { evaluateBuildReadiness } from "./readiness";
 import type { FounderIdeaStore } from "./store";
 import type { FounderIdeaGrade, FounderIdeaSubmission, FounderScoreIntegrity } from "./types";
 
@@ -180,14 +182,7 @@ export function gradeFounderIdea(
   });
   const monetization = input?.monetization ?? null;
   const integrity = input?.scoreIntegrity ?? (fixtureScores ? "TEST_FIXTURE" : "INCOMPLETE");
-  const unitKnown = monetization
-    ? unitEconomicsKnown({
-        category: "SUPPORTED",
-        ideaSpecific: "SUPPORTED",
-        unitEconomics: monetization.primaryPlan?.ltvCacRatio != null ? "SUPPORTED" : "UNKNOWN",
-      })
-    : false;
-  const sufficient = Boolean(input?.evidenceSufficient) && (integrity === "TEST_FIXTURE" || unitKnown);
+  const sufficient = Boolean(input?.evidenceSufficient);
 
   if (!sufficient) {
     const grade: FounderIdeaGrade = {
@@ -199,6 +194,7 @@ export function gradeFounderIdea(
       expectedRoi: null,
       estimatedCapitalRequired: monetization?.primaryPlan?.estimatedCapitalRequired ?? null,
       buildReadiness: null,
+      buildReady: false,
       opportunityQuality: candidate.opportunityScore,
       evaluation: null,
       scoreIntegrity: integrity,
@@ -216,7 +212,21 @@ export function gradeFounderIdea(
 
   const loaded = buildLoadedCandidate(candidate, monetization);
   const evaluation = gradeLoadedCandidate(loaded);
-  const expectedRoi = unitKnown ? evaluation.expectedValueDerived.expectedRoi : null;
+  const build = evaluateBuildReadiness({ decisionReady: true, evaluation });
+  if (evaluation.decision === "BUILD" && !build.buildReady) {
+    const gate = passesBuildGate({ evaluation, thresholds: DEFAULT_BUILD_GATE_THRESHOLDS });
+    const classified = classifyDecision({
+      evaluation,
+      buildGatePassed: false,
+      buildGateReasons: gate.reasons,
+      hasResourceCapacity: false,
+      decisionThresholds: DEFAULT_DECISION_THRESHOLDS,
+    });
+    evaluation.decision = classified.decision;
+    evaluation.recommendedNextAction = classified.recommendedNextAction;
+  }
+  const economicsKnown = unitEconomicsNumericallyKnown(evaluation.candidate.monetization?.primaryPlan ?? null);
+  const expectedRoi = economicsKnown ? evaluation.expectedValueDerived.expectedRoi : null;
   const grade: FounderIdeaGrade = {
     opportunityScores: candidate.scores,
     selectionScore: evaluation.selectionScore,
@@ -226,6 +236,7 @@ export function gradeFounderIdea(
     expectedRoi,
     estimatedCapitalRequired: monetization?.primaryPlan?.estimatedCapitalRequired ?? null,
     buildReadiness: evaluation.decision,
+    buildReady: build.buildReady && evaluation.decision === "BUILD",
     opportunityQuality: candidate.opportunityScore,
     evaluation,
     scoreIntegrity: integrity,
@@ -238,7 +249,8 @@ export function gradeFounderIdea(
   };
   store.grades.set(submission.id, grade);
   submission.infinityDecision = evaluation.decision;
-  submission.status = "READY_FOR_DECISION";
+  submission.status = statusFromInfinityDecision(evaluation.decision);
+  submission.failureCode = evaluation.decision === "REJECT" ? "BUSINESS_REJECTED" : null;
   submission.updatedAt = new Date().toISOString();
   store.submissions.set(submission.id, submission);
   if (monetization) store.monetizationBySubmission.set(submission.id, monetization);

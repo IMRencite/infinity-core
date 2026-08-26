@@ -14,7 +14,7 @@ function finding(
     claim,
     polarity,
     grounded: extra?.grounded ?? true,
-    confidence: extra?.confidence ?? 0.7,
+    confidence: extra && "confidence" in extra ? extra.confidence ?? null : 0.7,
     sourceUrls: extra?.sourceUrls ?? ["https://example.com/research"],
     limitations: extra?.limitations ?? [],
     verifiesFounderCompetitor: extra?.verifiesFounderCompetitor ?? null,
@@ -157,6 +157,109 @@ export function competitorSeedOnlyPacket(
         confidence: null,
         sourceUrls: [],
         limitations: ["FOUNDER_PROVIDED — not independently verified"],
+      }),
+    ],
+  });
+}
+
+export function rejectUnknownEconomicsPacket(submissionId: string, candidateId: string): FounderResearchPacket {
+  return packet({
+    submissionId,
+    candidateId,
+    summary: "Credible negative demand, market, and competition evidence; unit economics remain unknown.",
+    layers: { category: "UNSUPPORTED", ideaSpecific: "UNSUPPORTED", unitEconomics: "UNKNOWN" },
+    findings: [
+      finding("demand", "negative", "Prospects refuse to pay for this workflow."),
+      finding("market", "negative", "The category is contracting."),
+      finding("competition", "negative", "Prior comparable businesses shut down after failing to monetize."),
+      finding("monetization", "negative", "Public filings show persistent losses and failed subscription conversions."),
+      finding("pricing", "negative", "Price cuts still did not produce paying customers."),
+      finding("distribution", "negative", "Acquisition costs exceed any observed revenue."),
+      finding("buildability", "mixed", "Software can be built, but operations require heavy manual work."),
+      finding("capital_efficiency", "unknown", "No measured CAC/LTV for this concept.", {
+        grounded: false,
+        confidence: null,
+      }),
+      finding("speed_to_revenue", "negative", "Comparables never reached revenue after 18 months."),
+    ],
+  });
+}
+
+export function validateUnknownEconomicsPacket(submissionId: string, candidateId: string): FounderResearchPacket {
+  return packet({
+    submissionId,
+    candidateId,
+    summary: "Strong material research; category monetizes; unit economics are unknown.",
+    competitorLeads: ["Acme Suite"],
+    verifiedCompetitors: ["Acme Suite"],
+    layers: { category: "SUPPORTED", ideaSpecific: "SUPPORTED", unitEconomics: "UNKNOWN" },
+    findings: [
+      finding("demand", "positive", "Operators search for and buy workflow automation for this job."),
+      finding("market", "positive", "Digital workflow software spend is expanding."),
+      finding("competition", "positive", "Incumbents are generic; workflow-specific tools remain fragmented.", {
+        verifiesFounderCompetitor: "Acme Suite",
+      }),
+      finding("monetization", "positive", "Comparable workflow SaaS products charge monthly seats."),
+      finding("pricing", "positive", "Public seat prices cluster around tens of dollars per month."),
+      finding("distribution", "positive", "Search and content can reach operators."),
+      finding("buildability", "positive", "Core product is a digitally delivered CRUD/workflow app."),
+      finding("capital_efficiency", "unknown", "No observed CAC/LTV yet.", { grounded: false, confidence: null }),
+      finding("speed_to_revenue", "positive", "Self-serve signup can produce revenue in months."),
+    ],
+  });
+}
+
+/** Replay shape of Infinity CMS live V5: material PASS, category SUPPORTED, unit UNKNOWN, score 68.7. */
+export function infinityCmsLiveV5ReplayPacket(submissionId: string, candidateId: string): FounderResearchPacket {
+  return packet({
+    submissionId,
+    candidateId,
+    summary:
+      "CMS category has commercial precedent; idea-specific conversion and unit economics remain unknown.",
+    competitorLeads: ["Dealerspike", "Hibu"],
+    verifiedCompetitors: ["Hibu"],
+    layers: { category: "SUPPORTED", ideaSpecific: "UNKNOWN", unitEconomics: "UNKNOWN" },
+    findings: [
+      finding("demand", "positive", "Businesses search for CMS platforms that produce rankable sites.", {
+        findingId: "finding_01",
+        confidence: null,
+      }),
+      finding("demand", "positive", "Owners pay for website platforms that generate leads.", {
+        findingId: "finding_02",
+        confidence: null,
+      }),
+      finding("market", "positive", "SMB website and CMS spend is an established commercial market.", {
+        findingId: "finding_03",
+        confidence: null,
+      }),
+      finding("competition", "positive", "Incumbent CMS tools leave a gap for AI-built SEO/AEO sites.", {
+        findingId: "finding_04",
+        confidence: null,
+      }),
+      finding("monetization", "positive", "Comparable CMS vendors charge monthly packages.", {
+        findingId: "finding_05",
+        confidence: null,
+      }),
+      finding("monetization", "positive", "Category pricing pages show package tiers.", {
+        findingId: "finding_06",
+        confidence: null,
+      }),
+      finding("competition", "positive", "Hibu and similar vendors sell SMB web packages.", {
+        findingId: "finding_07",
+        confidence: null,
+      }),
+      finding("competition", "positive", "Dealer-focused CMS incumbents do not cover this exact AI workflow.", {
+        findingId: "finding_08",
+        confidence: null,
+      }),
+      finding("market", "positive", "AEO/SEO site demand is shifting toward AI-assisted publishing.", {
+        findingId: "finding_09",
+        confidence: null,
+      }),
+      finding("capital_efficiency", "positive", "Software delivery keeps incremental cost relatively low.", {
+        findingId: "finding_10",
+        grounded: false,
+        confidence: null,
       }),
     ],
   });

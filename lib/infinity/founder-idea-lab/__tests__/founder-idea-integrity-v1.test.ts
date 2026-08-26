@@ -153,9 +153,12 @@ describe("founder-idea-lab research + scoring integrity v1", () => {
       researchPacket: artMarketplaceIntegrityPacket(market.id, market.opportunityCandidateId!),
     });
     expect(saasResult.grade?.scoreIntegrity).toBe("EVIDENCE_GROUNDED");
-    expect(marketResult.grade?.readyForDecision).toBe(false);
-    expect(marketResult.submission.infinityDecision).toBeNull();
-    expect(marketResult.grade?.evaluation).toBeNull();
+    expect(marketResult.grade?.readyForDecision).toBe(true);
+    expect(marketResult.submission.infinityDecision).not.toBeNull();
+    expect(marketResult.submission.infinityDecision).not.toBe("BUILD");
+    expect(["VALIDATE", "HOLD", "REJECT"]).toContain(marketResult.submission.infinityDecision);
+    expect(marketResult.grade?.evaluation).not.toBeNull();
+    expect(marketResult.grade?.buildReady).toBe(false);
     expect(marketResult.grade?.opportunityScores?.scoringInputs).not.toEqual(
       saasResult.grade?.opportunityScores?.scoringInputs,
     );

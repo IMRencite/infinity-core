@@ -369,7 +369,7 @@ describe("Gemini finding attribution + evidence coverage v1", () => {
         monetization: monetizeFromResearchPacket({ candidate: candidate(), packet }),
         layers: packet.monetizationLayers,
       }).readyForDecision,
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it("records provider-call count as retry_count + 1", () => {

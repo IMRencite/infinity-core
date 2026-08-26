@@ -86,6 +86,7 @@ function seedHistoricalFallback(store: FounderIdeaStore, submission: FounderIdea
     evaluation: null,
     scoreIntegrity: "FALLBACK_HISTORICAL",
     readyForDecision: false,
+    buildReady: false,
     researchRunId: null,
     monetizationRunId: null,
     provenance: [],

@@ -23,6 +23,9 @@ export function deriveExpectedValueInputs(candidate: LoadedCandidateBundle): Exp
     REJECT: 0.15,
   };
 
+  // Missing-plan defaults (customers 50, LTV 1000, margin 55%, capital 50000) are
+  // ranking / diagnostic substitutes only. They must not be treated as observed
+  // unit economics and cannot satisfy the BUILD gate (unknown LTV/CAC fails closed).
   const estimatedCustomersYear1 =
     plan?.estimatedCustomersYear1 != null
       ? Math.min(1_000_000, Math.max(1, plan.estimatedCustomersYear1))

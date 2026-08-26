@@ -34,23 +34,16 @@ export function monetizeFromResearchPacket(input: {
     monetizationScore,
   });
 
-  const unitPlan = unitKnown
-    ? {
-        estimatedCAC: layers.unitEconomics === "SUPPORTED" ? 140 : 900,
-        estimatedLTV: layers.unitEconomics === "SUPPORTED" ? 880 : 250,
-        ltvCacRatio: layers.unitEconomics === "SUPPORTED" ? 6.3 : 0.28,
-        estimatedGrossMarginPercent: layers.unitEconomics === "SUPPORTED" ? 78 : 22,
-        estimatedCapitalRequired: layers.unitEconomics === "SUPPORTED" ? 18000 : 240000,
-        estimatedMonthsToFirstRevenue: layers.unitEconomics === "SUPPORTED" ? 3 : 14,
-      }
-    : {
-        estimatedCAC: null,
-        estimatedLTV: null,
-        ltvCacRatio: null,
-        estimatedGrossMarginPercent: null,
-        estimatedCapitalRequired: null,
-        estimatedMonthsToFirstRevenue: null,
-      };
+  // Qualitative layers may be SUPPORTED/UNSUPPORTED without observed CAC/LTV.
+  // Never fill placeholder numerics — those must not satisfy BUILD economics.
+  const unitPlan = {
+    estimatedCAC: null,
+    estimatedLTV: null,
+    ltvCacRatio: null,
+    estimatedGrossMarginPercent: null,
+    estimatedCapitalRequired: null,
+    estimatedMonthsToFirstRevenue: null,
+  };
 
   return {
     monetizationRunId: `founder-monetization:${input.packet.researchRunId}`,
@@ -106,6 +99,31 @@ export function monetizeFromResearchPacket(input: {
       revenueStreams: [],
     },
     allPlans: [],
-    validationExperiments: [],
+    validationExperiments: [
+      {
+        id: `founder-validation-demand:${input.packet.researchRunId}`,
+        experimentType: "search_demand_evidence",
+        title: "Search demand evidence",
+        description: "Public demand evidence without paid acquisition or exposure.",
+        estimatedCostUsd: 0,
+        priority: 1,
+      },
+      {
+        id: `founder-validation-pricing:${input.packet.researchRunId}`,
+        experimentType: "pricing_evidence_research",
+        title: "Pricing evidence research",
+        description: "Public comparable pricing evidence for later economics conversion.",
+        estimatedCostUsd: 0,
+        priority: 2,
+      },
+      {
+        id: `founder-validation-distribution:${input.packet.researchRunId}`,
+        experimentType: "distribution_economics_research",
+        title: "Distribution economics research",
+        description: "Public acquisition-channel economics evidence.",
+        estimatedCostUsd: 0,
+        priority: 3,
+      },
+    ],
   };
 }

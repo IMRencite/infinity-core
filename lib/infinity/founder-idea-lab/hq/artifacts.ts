@@ -28,6 +28,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       founderDecision: submission.founderDecision ? String(submission.founderDecision) : null,
       opportunityScore: grade?.opportunityQuality ?? null,
       buildReadiness: grade?.buildReadiness ?? null,
+      buildReady: grade?.buildReady ?? false,
       thesis: thesis.businessThesis.value,
       thesisSource: thesis.businessThesis.source,
       problem: thesis.problem.value,
@@ -224,6 +225,12 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
   return map;
 }
 
+function listScoreKind(grade: FounderIdeaGrade | undefined): "DECISION_GRADE" | "DIAGNOSTIC" | "UNKNOWN" {
+  if (!grade || grade.opportunityQuality == null) return "UNKNOWN";
+  if (grade.readyForDecision && grade.scoreIntegrity !== "INCOMPLETE") return "DECISION_GRADE";
+  return "DIAGNOSTIC";
+}
+
 function listScoreDisplay(grade: FounderIdeaGrade | undefined): string {
   if (!grade || grade.opportunityQuality == null) return "UNKNOWN";
   const unknownCount = grade.coverage?.unknownCount ?? 0;
@@ -232,24 +239,27 @@ function listScoreDisplay(grade: FounderIdeaGrade | undefined): string {
     .filter((value): value is number => value != null);
   const evidenceConfidence =
     confidences.length > 0 ? confidences.reduce((sum, value) => sum + value, 0) / confidences.length : null;
-  if (grade.readyForDecision && grade.scoreIntegrity !== "INCOMPLETE") {
-    return String(Math.round(grade.opportunityQuality));
+  if (listScoreKind(grade) === "DECISION_GRADE") {
+    return String(grade.opportunityQuality);
   }
-  return recommendScoreDisplay({
+  const diagnostic = recommendScoreDisplay({
     opportunityScore: grade.opportunityQuality,
     evidenceConfidence,
     unknownCount: unknownCount > 0 ? unknownCount : 5,
   });
+  return diagnostic.startsWith("DIAGNOSTIC") ? diagnostic : `DIAGNOSTIC ${diagnostic}`;
 }
 
 export type FounderIdeaListRow = {
   id: string;
   idea: string;
   score: string;
+  scoreKind: "DECISION_GRADE" | "DIAGNOSTIC" | "UNKNOWN";
   historicalScore: string;
   infinityDecision: string;
   founderDecision: string;
   status: string;
+  buildReady: "YES" | "NO";
   venture: string;
   revenue: string;
   profit: string;
@@ -266,6 +276,7 @@ export function listFounderIdeas(store: FounderIdeaStore, organizationId: string
       id: submission.id,
       idea: submission.title,
       score: listScoreDisplay(grade),
+      scoreKind: listScoreKind(grade),
       historicalScore:
         store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore == null
           ? "NONE"
@@ -273,6 +284,7 @@ export function listFounderIdeas(store: FounderIdeaStore, organizationId: string
       infinityDecision: submission.infinityDecision ?? "UNKNOWN",
       founderDecision: submission.founderDecision ? String(submission.founderDecision) : "UNKNOWN",
       status: submission.status,
+      buildReady: grade?.buildReady ? "YES" : "NO",
       venture: build?.blueprintId ? "ROUTED" : "NONE",
       revenue: "NOT YET MEASURED",
       profit: "NOT YET MEASURED",

@@ -67,6 +67,7 @@ type ScoresEnvelope = {
   coverage?: FounderIdeaGrade["coverage"];
   monetizationLayers?: FounderIdeaGrade["monetizationLayers"];
   readyForDecision?: boolean;
+  buildReady?: boolean;
   evaluationHistory?: HistoricalGradeSnapshot[];
   scoringInputs?: FounderIdeaGrade["opportunityScores"] extends infer T
     ? T extends { scoringInputs: infer S }
@@ -128,6 +129,7 @@ export function submissionToRow(
       coverage: grade?.coverage ?? null,
       monetizationLayers: grade?.monetizationLayers ?? null,
       readyForDecision: grade?.readyForDecision ?? false,
+      buildReady: grade?.buildReady ?? false,
       evaluationHistory,
     },
     blocking_assumptions: grade?.evaluation?.blockingAssumptions ?? [],
@@ -212,6 +214,7 @@ export function hydrateFounderStore(
         } as FounderIdeaGrade["evaluation"],
         scoreIntegrity: envelope?.scoreIntegrity ?? (fallback ? "FALLBACK_HISTORICAL" : "INCOMPLETE"),
         readyForDecision: Boolean(envelope?.readyForDecision),
+        buildReady: Boolean(envelope?.buildReady),
         researchRunId: envelope?.researchRunId ?? null,
         monetizationRunId: null,
         provenance: envelope?.provenance ?? [],

@@ -6,6 +6,20 @@ import type {
 } from "../constants";
 import type { CandidateEvaluationDraft, ResourceAllocationSnapshot } from "../types";
 
+/** Fail-closed BUILD reason: missing CAC/LTV/ratio is not numeric zero. */
+export const UNKNOWN_UNIT_ECONOMICS_REASON =
+  "Unit economics unknown; LTV/CAC is not zero.";
+export const UNKNOWN_EXPECTED_ROI_REASON =
+  "Expected ROI unknown because unit economics are unknown.";
+
+function isKnownNumber(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+export function isUnknownEconomicsReason(reason: string): boolean {
+  return reason === UNKNOWN_UNIT_ECONOMICS_REASON || reason === UNKNOWN_EXPECTED_ROI_REASON;
+}
+
 export function passesBuildGate(input: {
   evaluation: CandidateEvaluationDraft;
   thresholds: typeof DEFAULT_BUILD_GATE_THRESHOLDS;
@@ -40,11 +54,25 @@ export function passesBuildGate(input: {
   if ((plan?.regulatoryRisk ?? 0) > input.thresholds.maxRegulatoryRisk) {
     reasons.push("Regulatory risk too high.");
   }
-  if ((input.evaluation.expectedValueDerived.expectedRoi ?? 0) < input.thresholds.minExpectedRoi) {
-    reasons.push("Expected ROI below minimum.");
-  }
-  if ((plan?.ltvCacRatio ?? 0) < input.thresholds.minLtvCacRatio) {
-    reasons.push("LTV/CAC below minimum.");
+
+  const cacKnown = isKnownNumber(plan?.estimatedCAC);
+  const ltvKnown = isKnownNumber(plan?.estimatedLTV);
+  const ratioKnown = isKnownNumber(plan?.ltvCacRatio);
+  const unitEconomicsKnown = cacKnown && ltvKnown && ratioKnown;
+  const expectedRoi = input.evaluation.expectedValueDerived.expectedRoi;
+
+  if (!unitEconomicsKnown) {
+    reasons.push(UNKNOWN_UNIT_ECONOMICS_REASON);
+    reasons.push(UNKNOWN_EXPECTED_ROI_REASON);
+  } else {
+    if (!isKnownNumber(expectedRoi)) {
+      reasons.push("Expected ROI unknown.");
+    } else if (expectedRoi < input.thresholds.minExpectedRoi) {
+      reasons.push("Expected ROI below minimum.");
+    }
+    if (plan!.ltvCacRatio! < input.thresholds.minLtvCacRatio) {
+      reasons.push("LTV/CAC below minimum.");
+    }
   }
 
   return { passes: reasons.length === 0, reasons };
@@ -76,8 +104,10 @@ export function classifyDecision(input: {
   const assumptionBlocked = input.buildGateReasons.some((reason) =>
     /assumption|confidence|validation/i.test(reason),
   );
-  const economicsBlocked = input.buildGateReasons.some((reason) =>
-    /ROI|capital|LTV|Monetization/i.test(reason),
+  const unknownEconomics = input.buildGateReasons.some(isUnknownEconomicsReason);
+  const knownEconomicsBlocked = input.buildGateReasons.some(
+    (reason) =>
+      !isUnknownEconomicsReason(reason) && /ROI|capital|LTV|Monetization/i.test(reason),
   );
 
   if (
@@ -100,9 +130,17 @@ export function classifyDecision(input: {
   }
 
   if (score >= input.decisionThresholds.validateSelectionScore && !input.buildGatePassed) {
+    // Unknown CAC/LTV must not coerce a validation-grade idea into HOLD.
+    // Known-bad numeric economics (LTV/CAC, ROI, capital) may still HOLD.
+    if (unknownEconomics) {
+      return {
+        decision: "VALIDATE",
+        recommendedNextAction: "Execute validation experiments to learn unit economics before build consideration.",
+      };
+    }
     return {
-      decision: economicsBlocked ? "HOLD" : "VALIDATE",
-      recommendedNextAction: economicsBlocked
+      decision: knownEconomicsBlocked ? "HOLD" : "VALIDATE",
+      recommendedNextAction: knownEconomicsBlocked
         ? "Defer until economics improve or capital constraints relax."
         : "Execute validation experiments to resolve build gate failures.",
     };

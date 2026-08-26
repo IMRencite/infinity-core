@@ -26,7 +26,12 @@ export { resolveFounderCandidate, markDanglingCandidate } from "./candidate-repa
 export { archiveHistoricalGrade, snapshotFromGrade } from "./grade-history";
 export { founderIdeaStatusesMatchProposedSql, founderIdeaSqlV1Drift } from "./status-compat";
 export { scoreFromEvidenceCoverage, recommendScoreDisplay } from "./score-from-evidence";
-export { evaluateEvidenceReadiness } from "./readiness";
+export { evaluateEvidenceReadiness, evaluateBuildReadiness } from "./readiness";
+export { statusFromInfinityDecision } from "./decision-status";
+export {
+  unitEconomicsNumericallyKnown,
+  isResearchAdapterPlaceholderEconomics,
+} from "./economics-known";
 export { monetizeFromResearchPacket } from "./monetization-from-research";
 export {
   workflowSaasIntegrityPacket,
@@ -35,6 +40,9 @@ export {
   negativeEconomicsPacket,
   competitorSeedOnlyPacket,
   failedProviderPacket,
+  rejectUnknownEconomicsPacket,
+  validateUnknownEconomicsPacket,
+  infinityCmsLiveV5ReplayPacket,
 } from "./integrity-fixtures";
 export {
   saasWorkflowResearchFixture,
