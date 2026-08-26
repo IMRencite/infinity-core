@@ -38,6 +38,13 @@ export function classifyResearchFailure(error: unknown): ResearchError {
   if (/grounding unavailable|no grounding|missing grounding/i.test(message)) {
     return new ResearchError(message, "grounding_unavailable");
   }
+  if (
+    /validated source URLs|references URL not present in grounding metadata|source provenance|evidence validation|out-of-bounds chunk|missing chunk metadata/i.test(
+      message,
+    )
+  ) {
+    return new ResearchError(message, "evidence_validation_failure", { retryable: false });
+  }
   if (/schema|validation|malformed|invalid source url|grounded requires/i.test(message)) {
     return new ResearchError(message, "schema_validation_failure");
   }

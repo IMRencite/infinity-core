@@ -27,6 +27,7 @@ export const RESEARCH_FAILURE_CLASSIFICATIONS = [
   "timeout",
   "malformed_response",
   "schema_validation_failure",
+  "evidence_validation_failure",
   "grounding_unavailable",
   "budget_exceeded",
   "unsupported_model",
@@ -35,6 +36,35 @@ export const RESEARCH_FAILURE_CLASSIFICATIONS = [
 ] as const;
 
 export type ResearchFailureClassification = (typeof RESEARCH_FAILURE_CLASSIFICATIONS)[number];
+
+/** Transport / API failures. Distinct from response grounding/evidence validation. */
+export const RESEARCH_PROVIDER_TRANSPORT_FAILURES = [
+  "provider_disabled",
+  "provider_unavailable",
+  "authentication_failure",
+  "quota_exhausted",
+  "rate_limit",
+  "timeout",
+  "unsupported_model",
+  "unknown_provider_failure",
+] as const;
+
+export const RESEARCH_VALIDATION_FAILURES = [
+  "malformed_response",
+  "schema_validation_failure",
+  "evidence_validation_failure",
+  "grounding_unavailable",
+] as const;
+
+export function isResearchProviderTransportFailure(
+  classification: string,
+): boolean {
+  return (RESEARCH_PROVIDER_TRANSPORT_FAILURES as readonly string[]).includes(classification);
+}
+
+export function isResearchValidationFailure(classification: string): boolean {
+  return (RESEARCH_VALIDATION_FAILURES as readonly string[]).includes(classification);
+}
 
 export const EVIDENCE_SIGNAL_TYPES = [
   "search_demand",

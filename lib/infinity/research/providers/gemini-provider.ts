@@ -3,6 +3,10 @@ import type { ResearchConfig } from "../config";
 import { estimateResearchCostUsd } from "../cost-pricing";
 import { ResearchError } from "../failures";
 import { buildGroundingUsageFromMetadata, extractGroundingMetadata } from "../normalization/evidence";
+import {
+  buildGroundingMetadataFromInteractionSteps,
+  mergeGroundingMetadata,
+} from "../normalization/interaction-grounding";
 import type { GroundedResearchProvider, GroundedResearchProviderRequest } from "../provider-contract";
 import { parseProviderResearchJson } from "../schema";
 import type { ResearchProviderCallResult } from "../types";
@@ -35,82 +39,6 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : null;
-}
-
-function collectUrlCitations(
-  value: unknown,
-  citations: Array<{ url: string; title?: string }>,
-  seenUrls: Set<string>,
-): void {
-  if (Array.isArray(value)) {
-    for (const entry of value) {
-      collectUrlCitations(entry, citations, seenUrls);
-    }
-    return;
-  }
-
-  const record = asRecord(value);
-  if (!record) {
-    return;
-  }
-
-  if (record.type === "url_citation" && typeof record.url === "string") {
-    const url = record.url.trim();
-    if (url && /^https?:\/\//i.test(url) && !seenUrls.has(url)) {
-      seenUrls.add(url);
-      citations.push({
-        url,
-        title: typeof record.title === "string" ? record.title : undefined,
-      });
-    }
-  }
-
-  for (const nested of Object.values(record)) {
-    collectUrlCitations(nested, citations, seenUrls);
-  }
-}
-
-function buildGroundingMetadataFromInteractionSteps(
-  steps: unknown[],
-  interaction: Record<string, unknown>,
-): Record<string, unknown> | null {
-  const webSearchQueries: string[] = [];
-  const groundingChunks: Array<{ web?: { uri?: string; title?: string } }> = [];
-  const seenUrls = new Set<string>();
-
-  for (const step of steps) {
-    const record = asRecord(step);
-    if (!record) continue;
-
-    if (record.type === "google_search_call") {
-      const args = asRecord(record.arguments);
-      const queries = args?.queries;
-      if (Array.isArray(queries)) {
-        for (const query of queries) {
-          if (typeof query === "string" && query.trim()) {
-            webSearchQueries.push(query.trim());
-          }
-        }
-      }
-    }
-  }
-
-  const citations: Array<{ url: string; title?: string }> = [];
-  collectUrlCitations(interaction, citations, seenUrls);
-  for (const citation of citations) {
-    groundingChunks.push({
-      web: {
-        uri: citation.url,
-        title: citation.title,
-      },
-    });
-  }
-
-  if (webSearchQueries.length === 0 && groundingChunks.length === 0) {
-    return null;
-  }
-
-  return { webSearchQueries, groundingChunks, groundingSupports: [] };
 }
 
 function extractInteractionOutputText(interaction: Record<string, unknown>): string {
@@ -204,7 +132,10 @@ async function executeViaInteractionsApi(
   parseStructuredResearchOutput(rawText);
 
   const steps = Array.isArray(interaction.steps) ? interaction.steps : [];
-  const groundingMetadata = buildGroundingMetadataFromInteractionSteps(steps, rawProviderResponse);
+  const groundingMetadata = mergeGroundingMetadata(
+    extractGroundingMetadata(rawProviderResponse),
+    buildGroundingMetadataFromInteractionSteps(steps, rawProviderResponse),
+  );
   const groundingUsage = buildGroundingUsageFromMetadata(groundingMetadata as never);
 
   if (!groundingUsage.groundingInvoked) {

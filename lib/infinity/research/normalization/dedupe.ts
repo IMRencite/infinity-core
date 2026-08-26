@@ -13,10 +13,30 @@ const TRACKING_PARAMS = new Set([
   "ref",
 ]);
 
+function youtubeVideoId(parsed: URL): string | null {
+  const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+  if (host === "youtu.be") {
+    const id = parsed.pathname.replace(/^\/+/, "").split("/")[0] ?? "";
+    return id || null;
+  }
+  if (host === "youtube.com" || host === "m.youtube.com" || host === "music.youtube.com") {
+    return parsed.searchParams.get("v");
+  }
+  return null;
+}
+
 export function canonicalizeSourceUrl(url: string): string {
   try {
     const parsed = new URL(url);
     parsed.hash = "";
+    parsed.protocol = "https:";
+    parsed.hostname = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+
+    const videoId = youtubeVideoId(parsed);
+    if (videoId) {
+      return `https://youtube.com/watch?v=${videoId}`;
+    }
+
     for (const key of [...parsed.searchParams.keys()]) {
       if (TRACKING_PARAMS.has(key.toLowerCase())) {
         parsed.searchParams.delete(key);
@@ -27,6 +47,11 @@ export function canonicalizeSourceUrl(url: string): string {
   } catch {
     return url.trim();
   }
+}
+
+/** Deterministic identity for matching finding URLs to provider grounding sources. */
+export function sourceIdentityKey(url: string): string {
+  return canonicalizeSourceUrl(url);
 }
 
 export function sourceDedupeKey(url: string): string {

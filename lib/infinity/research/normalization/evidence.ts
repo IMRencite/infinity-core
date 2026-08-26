@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { canonicalizeSourceUrl, dedupeSources, extractDomain } from "./dedupe";
+import { ResearchError } from "../failures";
+import { canonicalizeSourceUrl, dedupeSources, extractDomain, sourceIdentityKey } from "./dedupe";
 import type {
   GroundingUsage,
   NormalizedEvidenceItem,
@@ -11,6 +12,7 @@ import type {
 
 type GroundingChunk = {
   web?: { uri?: string; title?: string; domain?: string };
+  retrievedContext?: { uri?: string; title?: string };
 };
 
 type GroundingMetadata = {
@@ -19,29 +21,105 @@ type GroundingMetadata = {
   webSearchQueries?: string[];
 };
 
-function extractAllowedSourceUrls(groundingMetadata: GroundingMetadata | null): Map<string, NormalizedSource> {
+function chunkUri(chunk: GroundingChunk): { uri: string; title: string | null; domain: string | null } | null {
+  const webUri = chunk.web?.uri?.trim();
+  if (webUri && /^https?:\/\//i.test(webUri)) {
+    return {
+      uri: webUri,
+      title: chunk.web?.title ?? null,
+      domain: chunk.web?.domain ?? extractDomain(webUri),
+    };
+  }
+  const retrievedUri = chunk.retrievedContext?.uri?.trim();
+  if (retrievedUri && /^https?:\/\//i.test(retrievedUri)) {
+    return {
+      uri: retrievedUri,
+      title: chunk.retrievedContext?.title ?? null,
+      domain: extractDomain(retrievedUri),
+    };
+  }
+  return null;
+}
+
+function extractAllowedSourceUrls(groundingMetadata: GroundingMetadata | null): {
+  sourcesByCanonical: Map<string, NormalizedSource>;
+  sourceByChunkIndex: Map<number, NormalizedSource>;
+} {
   const retrievedAt = new Date().toISOString();
-  const map = new Map<string, NormalizedSource>();
+  const sourcesByCanonical = new Map<string, NormalizedSource>();
+  const sourceByChunkIndex = new Map<number, NormalizedSource>();
 
   for (const [index, chunk] of (groundingMetadata?.groundingChunks ?? []).entries()) {
-    const uri = chunk.web?.uri?.trim();
-    if (!uri || !/^https?:\/\//i.test(uri)) continue;
+    const extracted = chunkUri(chunk);
+    if (!extracted) continue;
 
-    const canonicalUrl = canonicalizeSourceUrl(uri);
-    if (map.has(canonicalUrl)) continue;
+    const canonicalUrl = canonicalizeSourceUrl(extracted.uri);
+    const existing = sourcesByCanonical.get(canonicalUrl);
+    if (existing) {
+      sourceByChunkIndex.set(index, existing);
+      continue;
+    }
 
-    map.set(canonicalUrl, {
+    const source: NormalizedSource = {
       sourceId: `src_${index + 1}`,
-      url: uri,
+      url: extracted.uri,
       canonicalUrl,
-      title: chunk.web?.title ?? null,
-      domain: chunk.web?.domain ?? extractDomain(uri),
+      title: extracted.title,
+      domain: extracted.domain,
       retrievedAt,
       providerChunkIndex: index,
-    });
+    };
+    sourcesByCanonical.set(canonicalUrl, source);
+    sourceByChunkIndex.set(index, source);
   }
 
-  return map;
+  return { sourcesByCanonical, sourceByChunkIndex };
+}
+
+function readGroundingChunkIndices(support: unknown): number[] {
+  const record = typeof support === "object" && support !== null ? (support as Record<string, unknown>) : null;
+  if (!record) return [];
+  const raw = record.groundingChunkIndices ?? record.grounding_chunk_indices;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((index): index is number => typeof index === "number");
+}
+
+function resolveSupportBackedSources(
+  groundingSupports: unknown[] | undefined,
+  sourceByChunkIndex: Map<number, NormalizedSource>,
+  chunkCount: number,
+): { urls: string[]; sourceIds: string[] } {
+  if (!groundingSupports?.length) {
+    return { urls: [], sourceIds: [] };
+  }
+
+  const urls: string[] = [];
+  const sourceIds: string[] = [];
+  const seen = new Set<string>();
+
+  for (const support of groundingSupports) {
+    for (const index of readGroundingChunkIndices(support)) {
+      if (!Number.isInteger(index) || index < 0 || index >= chunkCount) {
+        throw new ResearchError(
+          `Grounding support references out-of-bounds chunk index: ${index}`,
+          "evidence_validation_failure",
+        );
+      }
+      const matched = sourceByChunkIndex.get(index);
+      if (!matched) {
+        throw new ResearchError(
+          `Grounding support references missing chunk metadata at index: ${index}`,
+          "evidence_validation_failure",
+        );
+      }
+      if (seen.has(matched.sourceId)) continue;
+      seen.add(matched.sourceId);
+      urls.push(matched.url);
+      sourceIds.push(matched.sourceId);
+    }
+  }
+
+  return { urls, sourceIds };
 }
 
 function buildGroundingUsage(groundingMetadata: GroundingMetadata | null): GroundingUsage {
@@ -83,10 +161,14 @@ export function normalizeGroundedResearch(input: {
   runPurpose?: string;
   candidateId?: string | null;
 }): ResearchResult {
-  const allowedSourcesMap = extractAllowedSourceUrls(input.groundingMetadata);
-  const sources = dedupeSources([...allowedSourcesMap.values()]);
-
-  const sourceByCanonical = new Map(sources.map((source) => [source.canonicalUrl, source]));
+  const extractedSources = extractAllowedSourceUrls(input.groundingMetadata);
+  const sources = dedupeSources([...extractedSources.sourcesByCanonical.values()]);
+  const sourceByIdentity = new Map(sources.map((source) => [sourceIdentityKey(source.canonicalUrl), source]));
+  const supportBacked = resolveSupportBackedSources(
+    input.groundingMetadata?.groundingSupports,
+    extractedSources.sourceByChunkIndex,
+    input.groundingMetadata?.groundingChunks?.length ?? 0,
+  );
 
   const evidence: NormalizedEvidenceItem[] = [];
   const findings: ResearchFinding[] = [];
@@ -97,12 +179,12 @@ export function normalizeGroundedResearch(input: {
     const sourceIds: string[] = [];
 
     for (const url of finding.sourceUrls) {
-      const canonical = canonicalizeSourceUrl(url);
-      const matched = sourceByCanonical.get(canonical);
+      const matched = sourceByIdentity.get(sourceIdentityKey(url));
       if (!matched) {
         if (finding.grounded && !finding.inference) {
-          throw new Error(
+          throw new ResearchError(
             `Grounded finding ${finding.findingId} references URL not present in grounding metadata: ${url}`,
+            "evidence_validation_failure",
           );
         }
         continue;
@@ -111,15 +193,16 @@ export function normalizeGroundedResearch(input: {
       sourceIds.push(matched.sourceId);
     }
 
-    if (finding.grounded && !finding.inference && validatedUrls.length === 0) {
-      for (const matched of sources) {
-        validatedUrls.push(matched.url);
-        sourceIds.push(matched.sourceId);
-      }
+    if (finding.grounded && !finding.inference && validatedUrls.length === 0 && finding.sourceUrls.length === 0) {
+      validatedUrls.push(...supportBacked.urls);
+      sourceIds.push(...supportBacked.sourceIds);
     }
 
     if (finding.grounded && !finding.inference && validatedUrls.length === 0) {
-      throw new Error(`Grounded finding ${finding.findingId} lacks validated source URLs.`);
+      throw new ResearchError(
+        `Grounded finding ${finding.findingId} lacks validated source URLs.`,
+        "evidence_validation_failure",
+      );
     }
 
     const evidenceType = finding.inference
@@ -162,7 +245,7 @@ export function normalizeGroundedResearch(input: {
     : buildGroundingUsage(input.groundingMetadata);
 
   if (!groundingUsage.groundingInvoked) {
-    throw new Error("Google Search grounding was not invoked ΓÇö no grounding metadata returned.");
+    throw new Error("Google Search grounding was not invoked — no grounding metadata returned.");
   }
 
   return {
@@ -203,6 +286,11 @@ export function normalizeGroundedResearch(input: {
 }
 
 export function extractGroundingMetadata(raw: Record<string, unknown>): GroundingMetadata | null {
+  const topLevel = raw.groundingMetadata ?? raw.grounding_metadata;
+  if (typeof topLevel === "object" && topLevel !== null) {
+    return topLevel as GroundingMetadata;
+  }
+
   const candidates = raw.candidates;
   if (!Array.isArray(candidates) || candidates.length === 0) {
     return null;
@@ -211,7 +299,8 @@ export function extractGroundingMetadata(raw: Record<string, unknown>): Groundin
   if (typeof first !== "object" || first === null) {
     return null;
   }
-  const groundingMetadata = (first as Record<string, unknown>).groundingMetadata;
+  const candidate = first as Record<string, unknown>;
+  const groundingMetadata = candidate.groundingMetadata ?? candidate.grounding_metadata;
   if (typeof groundingMetadata !== "object" || groundingMetadata === null) {
     return null;
   }

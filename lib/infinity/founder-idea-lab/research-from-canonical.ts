@@ -1,4 +1,7 @@
-import type { EvidenceSignalType } from "@/lib/infinity/research/constants";
+import {
+  isResearchProviderTransportFailure,
+  type EvidenceSignalType,
+} from "@/lib/infinity/research/constants";
 import type { FailedResearchResult, NormalizedEvidenceItem, ResearchResult } from "@/lib/infinity/research/types";
 import type { EvidenceDimension, EvidencePolarity } from "./evidence-coverage";
 import type { MonetizationEvidenceLayers } from "./monetization-levels";
@@ -105,7 +108,9 @@ export function founderResearchPacketFromFailure(input: {
     submissionId: input.submission.id,
     grounded: false,
     failed: true,
-    failureCode: "PROVIDER_FAILED",
+    failureCode: isResearchProviderTransportFailure(input.failure.failureClassification)
+      ? "PROVIDER_FAILED"
+      : "RESEARCH_FAILED",
     summary: input.failure.message,
     findings: [],
     sources: [],

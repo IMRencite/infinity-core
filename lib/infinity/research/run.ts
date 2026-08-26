@@ -37,15 +37,21 @@ async function persistResearchFailure(
     message: string;
     tokenUsage?: import("./types").ResearchTokenUsage | null;
     estimatedCostUsd?: number | null;
+    costUncertainty?: string | null;
     latencyMs?: number | null;
     requestId?: string | null;
     retryCount?: number;
+    groundingMetadata?: Record<string, unknown> | null;
+    groundingUsage?: import("./types").GroundingUsage | null;
+    rawProviderResponse?: Record<string, unknown> | null;
+    structuredResult?: Record<string, unknown> | null;
     candidateId?: string | null;
   },
 ): Promise<RunGroundedResearchOutput> {
   const failedAt = new Date().toISOString();
   const status =
-    input.classification === "schema_validation_failure"
+    input.classification === "schema_validation_failure" ||
+    input.classification === "evidence_validation_failure"
       ? "validation_failed"
       : input.classification === "budget_exceeded"
         ? "policy_blocked"
@@ -57,11 +63,18 @@ async function persistResearchFailure(
     error_message: redactSecrets(input.message),
     token_usage: (input.tokenUsage ?? {}) as never,
     estimated_cost: input.estimatedCostUsd ?? null,
+    cost_uncertainty: input.costUncertainty ?? null,
     latency_ms: input.latencyMs ?? null,
     request_id: input.requestId ?? null,
     retry_count: input.retryCount ?? 0,
     failed_at: failedAt,
-    ...(input.candidateId ? { structured_result: { candidateId: input.candidateId } as never } : {}),
+    grounding_metadata: (input.groundingMetadata ?? {}) as never,
+    grounding_usage: (input.groundingUsage ?? {}) as never,
+    raw_provider_response: (input.rawProviderResponse ?? {}) as never,
+    structured_result: {
+      ...(input.structuredResult ?? {}),
+      ...(input.candidateId ? { candidateId: input.candidateId } : {}),
+    } as never,
   });
 
   const { data: row } = await admin
@@ -195,13 +208,15 @@ export async function runGroundedResearch(
     }));
 
   const provider = getGroundedResearchProvider(providerId, config);
+  let providerResult: Awaited<ReturnType<typeof provider.executeGroundedResearch>> | null = null;
+  let parsedStructured: ReturnType<typeof parseProviderResearchJson> | null = null;
 
   try {
     await updateResearchRun(admin, input.organizationId, runRow.id, {
       status: "provider_called",
     });
 
-    const providerResult = await provider.executeGroundedResearch({
+    providerResult = await provider.executeGroundedResearch({
       correlationId,
       systemInstructions,
       researchObjective: userPrompt,
@@ -214,7 +229,7 @@ export async function runGroundedResearch(
 
     assertNoSecretsInPayload(providerResult);
 
-    const structured = parseProviderResearchJson(providerResult.rawText);
+    parsedStructured = parseProviderResearchJson(providerResult.rawText);
     const result = normalizeGroundedResearch({
       researchRunId: runRow.id,
       organizationId: input.organizationId,
@@ -223,7 +238,7 @@ export async function runGroundedResearch(
       modelId,
       researchObjective: input.researchObjective,
       inputHash,
-      structured,
+      structured: parsedStructured,
       groundingMetadata: providerResult.groundingMetadata as never,
       tokenUsage: providerResult.tokenUsage,
       groundingUsage: providerResult.groundingUsage,
@@ -275,6 +290,16 @@ export async function runGroundedResearch(
       runId: runRow.id,
       classification: classified.classification,
       message: classified.message,
+      tokenUsage: providerResult?.tokenUsage ?? null,
+      estimatedCostUsd: providerResult?.estimatedCostUsd ?? null,
+      costUncertainty: providerResult?.costUncertainty ?? null,
+      latencyMs: providerResult?.latencyMs ?? null,
+      requestId: providerResult?.requestId ?? null,
+      retryCount: providerResult ? providerResult.retryMetadata.attemptCount - 1 : 0,
+      groundingMetadata: (providerResult?.groundingMetadata as Record<string, unknown> | null) ?? null,
+      groundingUsage: providerResult?.groundingUsage ?? null,
+      rawProviderResponse: (providerResult?.rawProviderResponse as Record<string, unknown> | null) ?? null,
+      structuredResult: parsedStructured as Record<string, unknown> | null,
       candidateId,
     });
   }
