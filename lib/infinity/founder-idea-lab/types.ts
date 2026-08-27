@@ -5,6 +5,8 @@ import type { CandidateEvaluationDraft } from "@/lib/infinity/venture-selection/
 import type { EvidenceCoverage } from "./evidence-coverage";
 import type { MonetizationEvidenceLayers } from "./monetization-levels";
 import type { ScoreProvenanceRow } from "./score-from-evidence";
+import type { ComparableEconomicsModel } from "./comparable-economics/types";
+import type { FounderExplainability } from "./explainability/types";
 import type {
   ClaimSource,
   FounderAction,
@@ -120,6 +122,8 @@ export type FounderIdeaGrade = {
   provenance: ScoreProvenanceRow[];
   coverage: EvidenceCoverage | null;
   monetizationLayers: MonetizationEvidenceLayers | null;
+  explainability?: FounderExplainability | null;
+  comparableEconomics?: ComparableEconomicsModel | null;
 };
 
 export type FounderDecisionOverride = {

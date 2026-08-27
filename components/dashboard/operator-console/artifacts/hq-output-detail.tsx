@@ -26,7 +26,7 @@ function DetailSection({ section }: { section: InspectorSection }) {
         {section.rows.length > 0 ? (
           <dl className="space-y-1.5">
             {section.rows.map((row) => (
-              <div key={`${section.id}-${row.label}`} className="grid grid-cols-[minmax(8rem,42%)_1fr] gap-2 text-sm">
+              <div key={row.id ?? `${section.id}:${row.label}`} className="grid grid-cols-[minmax(8rem,42%)_1fr] gap-2 text-sm">
                 <dt className="text-zinc-500">{row.label}</dt>
                 <dd
                   className={
@@ -133,7 +133,7 @@ export function HQOutputDetail({ detail, artifact, loading, error }: Props) {
                 <p className="hq-inspector-section-label">Key metrics</p>
                 <dl className="mt-2 space-y-1.5">
                   {detail.insights.metrics.map((metric) => (
-                    <div key={metric.label} className="grid grid-cols-[minmax(8rem,42%)_1fr] gap-2 text-sm">
+                    <div key={metric.id || `${metric.kind ?? "metric"}:${metric.label}`} className="grid grid-cols-[minmax(8rem,42%)_1fr] gap-2 text-sm">
                       <dt className="text-zinc-500">{metric.label}</dt>
                       <dd className="text-zinc-100">{metric.value}</dd>
                     </div>

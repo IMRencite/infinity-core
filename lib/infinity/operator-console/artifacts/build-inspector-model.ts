@@ -4,6 +4,7 @@ import { deriveHotTakes } from "./hot-takes";
 import { fmtTruth, buildCostLabel } from "../details/financial-truth";
 import { founderHotTakesFromMetadata } from "@/lib/infinity/founder-idea-lab/hq/hot-takes";
 import { founderIdeaJourney } from "@/lib/infinity/founder-idea-lab/hq/journey";
+import { INSIGHT_METRIC_IDS, formatBuildReadyDisplay, insightMetricRow, namedInspectorRow } from "../details/insight-metrics";
 import type {
   HqArtifactInspectorModel,
   InspectorJourney,
@@ -1090,6 +1091,11 @@ export function buildArtifactInspectorModel(
           : null;
       journeyOverride = founderIdeaJourney(artifact);
       hotTakesOverride = founderHotTakesFromMetadata(artifact.metadata);
+      const portfolioSource = artifact.metadata.classifierMetric ?? artifact.metadata.selectionScore;
+      const portfolioUnadjusted =
+        artifact.metadata.selectionScore != null &&
+        portfolioSource != null &&
+        String(artifact.metadata.selectionScore) === String(portfolioSource);
       sections = [
         {
           id: "overview",
@@ -1109,25 +1115,44 @@ export function buildArtifactInspectorModel(
           id: "insights-scores",
           title: "Scores",
           rows: [
-            { label: "Opportunity quality", value: fmt(artifact.metadata.opportunityScore) },
-            { label: "Build readiness", value: fmt(artifact.metadata.buildReadiness) },
-            { label: "Selection score", value: fmt(artifact.metadata.selectionScore) },
-            { label: "Validation score", value: fmt(artifact.metadata.validationScore) },
-            { label: "Monetization score", value: fmt(artifact.metadata.monetizationScore) },
-            { label: "Fatal assumption risk", value: fmt(artifact.metadata.fatalAssumptionRisk) },
-            { label: "Expected ROI", value: fmt(artifact.metadata.expectedRoi, "", "estimate") },
-            { label: "Estimated capital required", value: fmt(artifact.metadata.capitalRequired, "", "estimate") },
-            { label: "Infinity recommendation", value: fmt(artifact.metadata.infinityDecision) },
-            { label: "Your decision", value: fmt(artifact.metadata.founderDecision) },
-            {
-              label: "Override",
-              value:
-                artifact.metadata.overrideFounder != null
+            insightMetricRow(INSIGHT_METRIC_IDS.opportunityQuality, "Opportunity quality", fmt(artifact.metadata.opportunityScore)),
+            ...(artifact.metadata.historicalOpportunityScore != null
+              ? [
+                  insightMetricRow(
+                    INSIGHT_METRIC_IDS.historicalOpportunityQuality,
+                    "Historical opportunity quality",
+                    fmt(artifact.metadata.historicalOpportunityScore),
+                  ),
+                ]
+              : []),
+            insightMetricRow(INSIGHT_METRIC_IDS.selectionScore, "Selection score", fmt(artifact.metadata.selectionScore)),
+            insightMetricRow(INSIGHT_METRIC_IDS.portfolioAdjustedScore, "Portfolio-adjusted score", fmt(portfolioSource)),
+            insightMetricRow(
+              INSIGHT_METRIC_IDS.portfolioAdjustment,
+              "Portfolio adjustment",
+              portfolioUnadjusted
+                ? "None — no adjustment from base selection score."
+                : fmt(artifact.metadata.scorePortfolioNote),
+            ),
+            insightMetricRow(INSIGHT_METRIC_IDS.validationScore, "Validation score", fmt(artifact.metadata.validationScore)),
+            insightMetricRow(INSIGHT_METRIC_IDS.monetizationScore, "Monetization score", fmt(artifact.metadata.monetizationScore)),
+            insightMetricRow(INSIGHT_METRIC_IDS.validateThreshold, "VALIDATE threshold", fmt(artifact.metadata.validateThreshold)),
+            insightMetricRow(INSIGHT_METRIC_IDS.rejectThreshold, "REJECT threshold", fmt(artifact.metadata.rejectThreshold)),
+            insightMetricRow(INSIGHT_METRIC_IDS.buildReadiness, "Build readiness", formatBuildReadyDisplay(artifact.metadata.buildReady)),
+            namedInspectorRow("fatal-assumption-risk", "Fatal assumption risk", fmt(artifact.metadata.fatalAssumptionRisk)),
+            namedInspectorRow("expected-roi", "Expected ROI", fmt(artifact.metadata.expectedRoi, "", "estimate")),
+            namedInspectorRow("estimated-capital-required", "Estimated capital required", fmt(artifact.metadata.capitalRequired, "", "estimate")),
+            namedInspectorRow("infinity-recommendation", "Infinity recommendation", fmt(artifact.metadata.infinityDecision)),
+            namedInspectorRow("founder-decision", "Your decision", fmt(artifact.metadata.founderDecision)),
+            namedInspectorRow(
+              "founder-override",
+              "Override",
+              artifact.metadata.overrideFounder != null
+                ? "FOUNDER OVERRIDE"
+                : artifact.metadata.origin === "FOUNDER_OVERRIDE"
                   ? "FOUNDER OVERRIDE"
-                  : artifact.metadata.origin === "FOUNDER_OVERRIDE"
-                    ? "FOUNDER OVERRIDE"
-                    : "NONE",
-            },
+                  : "NONE",
+            ),
           ],
         },
         {
@@ -1137,7 +1162,97 @@ export function buildArtifactInspectorModel(
             { label: "Research pipeline", value: fmt(artifact.metadata.researchPipeline) },
             { label: "Weakest assumption", value: fmt(artifact.metadata.weakestAssumption) },
             { label: "Founder claims grounded", value: "NO — founder-provided claims are not grounded evidence" },
+            { label: "Evidence overview", value: fmt(artifact.metadata.evidenceOverview) },
           ],
+        },
+        {
+          id: "executive-summary",
+          title: "Executive summary",
+          rows: [
+            { label: "Summary", value: fmt(artifact.metadata.executiveSummary) },
+            { label: "Will this work", value: fmt(artifact.metadata.willThisWork) },
+          ],
+        },
+        {
+          id: "why-decision",
+          title: "Why Infinity chose this decision",
+          rows: [
+            namedInspectorRow("decision-why", "Why", fmt(artifact.metadata.whyDecision)),
+            namedInspectorRow("threshold-arithmetic", "Threshold arithmetic", fmt(artifact.metadata.thresholdArithmetic)),
+            namedInspectorRow("classifier-metric-field", "Classifier metric field", fmt(artifact.metadata.classifierMetricField)),
+            namedInspectorRow("classifier-metric", "Classifier metric", fmt(artifact.metadata.classifierMetric)),
+            namedInspectorRow("why-not-validate", "Why not VALIDATE/higher", fmt(artifact.metadata.whyNotValidate)),
+            namedInspectorRow("why-not-reject", "Why not REJECT/lower", fmt(artifact.metadata.whyNotReject)),
+            namedInspectorRow("why-not-build", "Why not BUILD", fmt(artifact.metadata.whyNotBuild)),
+            namedInspectorRow("what-would-change", "What would change the decision", fmt(artifact.metadata.whatWouldChange)),
+          ],
+        },
+        {
+          id: "key-insights",
+          title: "Key insights",
+          rows: [
+            { label: "Findings", value: fmt(artifact.metadata.keyInsights) },
+            { label: "Evidence overview", value: fmt(artifact.metadata.evidenceOverview) },
+          ],
+        },
+        {
+          id: "score-breakdown",
+          title: "Score breakdown",
+          rows: [
+            namedInspectorRow("opportunity-quality-explanation", "Opportunity quality explanation", fmt(artifact.metadata.scoreOpportunityNote)),
+            namedInspectorRow("selection-score-explanation", "Selection score explanation", fmt(artifact.metadata.scoreSelectionNote)),
+            namedInspectorRow("portfolio-adjusted-score-explanation", "Portfolio-adjusted score explanation", fmt(artifact.metadata.scorePortfolioNote)),
+            namedInspectorRow("validation-score-explanation", "Validation score explanation", fmt(artifact.metadata.scoreValidationNote)),
+            namedInspectorRow("monetization-score-explanation", "Monetization score explanation", fmt(artifact.metadata.scoreMonetizationNote)),
+          ],
+        },
+        {
+          id: "market-competition",
+          title: "Market + competition",
+          rows: [{ label: "Summary", value: fmt(artifact.metadata.marketCompetition) }],
+        },
+        {
+          id: "pricing-recommendation",
+          title: "Pricing recommendation",
+          rows: [
+            { label: "Recommended modeled pricing", value: fmt(artifact.metadata.pricingRecommendation) },
+            { label: "Economic provenance", value: fmt(artifact.metadata.economicProvenance) },
+            { label: "Major assumptions", value: fmt(artifact.metadata.economicAssumptions) },
+          ],
+        },
+        {
+          id: "comparable-businesses",
+          title: "Comparable businesses",
+          rows: [
+            { label: "Names", value: fmt(artifact.metadata.comparableNames) },
+            { label: "Table", value: fmt(artifact.metadata.comparableTable) },
+          ],
+        },
+        {
+          id: "modeled-unit-economics",
+          title: "Modeled unit economics",
+          rows: [
+            { label: "Modeled CAC", value: fmt(artifact.metadata.modeledCac) },
+            { label: "Modeled LTV", value: fmt(artifact.metadata.modeledLtv) },
+            { label: "Modeled LTV/CAC", value: fmt(artifact.metadata.modeledLtvCac) },
+            { label: "Economic health", value: fmt(artifact.metadata.economicHealth) },
+            { label: "Will this work", value: fmt(artifact.metadata.willThisWork) },
+          ],
+        },
+        {
+          id: "risks-uncertainties",
+          title: "Risks + uncertainties",
+          rows: [{ label: "Drivers", value: fmt(artifact.metadata.risksUncertainties) }],
+        },
+        {
+          id: "next-validation",
+          title: "Next validation steps",
+          rows: [{ label: "Questions", value: fmt(artifact.metadata.nextValidation) }],
+        },
+        {
+          id: "source-trace",
+          title: "Source trace",
+          rows: [{ label: "Finding → source → dimension → score impact", value: fmt(artifact.metadata.sourceTrace) }],
         },
         {
           id: "system",

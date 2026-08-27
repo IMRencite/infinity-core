@@ -5,6 +5,7 @@ import { coverageFromPacket, layersFromPacket, type FounderResearchPacket } from
 import { monetizeFromResearchPacket } from "./monetization-from-research";
 import { scoreFromEvidenceCoverage } from "./score-from-evidence";
 import { evaluateEvidenceReadiness } from "./readiness";
+import { attachFounderIntelligence } from "./explainability/attach";
 import { emptyEvidenceCoverage } from "./evidence-coverage";
 import { emptyMonetizationLayers } from "./monetization-levels";
 import { buildFounderResearchSeed } from "./research-seed";
@@ -185,7 +186,7 @@ function analyzeFromPacket(
     grade.coverage = coverage;
     grade.monetizationLayers = layers;
     grade.monetizationScore = monetization?.monetizationScore ?? null;
-    store.grades.set(submission.id, grade);
+    attachFounderIntelligence(store, submission, grade, bound, layers);
     submission.status = readiness.status;
     submission.failureCode =
       readiness.reason === "PROVIDER_FAILURE"
@@ -212,7 +213,7 @@ function analyzeFromPacket(
   grade.provenance = scored.provenance;
   grade.coverage = coverage;
   grade.monetizationLayers = layers;
-  store.grades.set(submission.id, grade);
+  attachFounderIntelligence(store, submission, grade, bound, layers);
   return { submission, grade, researchPipeline: "grounded_research" };
 }
 

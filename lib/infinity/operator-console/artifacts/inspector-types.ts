@@ -1,10 +1,19 @@
 import type { HqWorkArtifact } from "./types";
 
+export type InspectorSectionRow = {
+  id?: string;
+  label: string;
+  value: string;
+  tone?: "pass" | "fail" | "neutral" | "warn";
+  /** When true, this row is a canonical insight metric and owns React/detail identity. */
+  insightMetric?: boolean;
+};
+
 export type InspectorSection = {
   id: string;
   title: string;
   emptyMessage?: string;
-  rows: Array<{ label: string; value: string; tone?: "pass" | "fail" | "neutral" | "warn" }>;
+  rows: InspectorSectionRow[];
   bullets?: string[];
 };
 

@@ -1,5 +1,6 @@
 import type { HqArtifactInspectorModel } from "../artifacts/inspector-types";
-import type { HQDetailTab, HQEntityDetail, HQEntityDetailMetric } from "./entity-detail-types";
+import type { HQDetailTab, HQEntityDetail } from "./entity-detail-types";
+import { collectInsightMetrics } from "./insight-metrics";
 
 const EVIDENCE_SECTION_IDS = new Set([
   "why-work",
@@ -18,20 +19,9 @@ const EVIDENCE_SECTION_IDS = new Set([
 
 const SYSTEM_SECTION_IDS = new Set(["system", "lineage"]);
 
-function metricsFromSections(sections: HqArtifactInspectorModel["sections"]): HQEntityDetailMetric[] {
-  const metrics: HQEntityDetailMetric[] = [];
-  for (const section of sections) {
-    for (const row of section.rows.slice(0, 8)) {
-      if (/score|risk|roi|ltv|cac|revenue|cost|confidence/i.test(row.label)) {
-        metrics.push({ label: row.label, value: row.value, tone: row.tone });
-      }
-    }
-  }
-  return metrics.slice(0, 12);
-}
-
 export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDetail {
   const { artifact } = model;
+  const metrics = collectInsightMetrics(model.sections);
   const overviewSections = model.sections.filter(
     (s) => !EVIDENCE_SECTION_IDS.has(s.id) && !SYSTEM_SECTION_IDS.has(s.id),
   );
@@ -50,7 +40,7 @@ export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDeta
   ];
 
   const tabs: HQDetailTab[] = ["overview"];
-  if (model.hotTakes.length > 0 || metricsFromSections(model.sections).length > 0) tabs.push("insights");
+  if (model.hotTakes.length > 0 || metrics.length > 0) tabs.push("insights");
   if (evidenceSections.length > 0) tabs.push("evidence");
   if (model.journey.phases.some((p) => p.complete || p.current)) tabs.push("timeline");
   if (systemRows.length > 0) tabs.push("system");
@@ -67,7 +57,7 @@ export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDeta
     overview: { sections: overviewSections.length > 0 ? overviewSections : model.sections.slice(0, 2) },
     insights: {
       hotTakes: model.hotTakes,
-      metrics: metricsFromSections(model.sections),
+      metrics,
     },
     evidence: { sections: evidenceSections },
     timeline: model.journey,

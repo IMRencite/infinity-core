@@ -5,6 +5,7 @@ import { normalizeFounderIdea } from "../normalize";
 import type { FounderIdeaStore } from "../store";
 import type { FounderIdeaSubmission } from "../types";
 import { derivedFounderReanalysisAttempt } from "../idempotency";
+import { flattenExplainabilityForHq } from "../explainability/compose";
 import { recommendScoreDisplay } from "../score-from-evidence";
 import type { FounderIdeaGrade } from "../types";
 import { founderHotTakes } from "./hot-takes-from-store";
@@ -56,6 +57,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       historicalOpportunityScore: store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore ?? null,
       historicalDecision: store.evaluationHistory.get(submission.id)?.[0]?.decision ?? null,
       historicalGrade: Boolean(store.evaluationHistory.get(submission.id)?.length),
+      ...(grade?.explainability ? flattenExplainabilityForHq(grade.explainability) : {}),
     } satisfies Record<string, string | number | boolean | null>;
 
     push(map, "opportunity_lab", {

@@ -33,6 +33,8 @@ export {
   isResearchAdapterPlaceholderEconomics,
 } from "./economics-known";
 export { monetizeFromResearchPacket } from "./monetization-from-research";
+export { modelComparableEconomics } from "./comparable-economics";
+export { composeFounderExplainability, attachFounderIntelligence } from "./explainability";
 export {
   workflowSaasIntegrityPacket,
   artMarketplaceIntegrityPacket,
@@ -44,6 +46,7 @@ export {
   validateUnknownEconomicsPacket,
   infinityCmsLiveV5ReplayPacket,
 } from "./integrity-fixtures";
+export { cmsComparableEconomicsPacket, CMS_LIVE_V6_SNAPSHOT } from "./cms-live-v6-fixture";
 export {
   saasWorkflowResearchFixture,
   saasWorkflowMonetizationFixture,

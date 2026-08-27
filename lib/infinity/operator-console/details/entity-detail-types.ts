@@ -4,9 +4,12 @@ import type { InspectorJourney, InspectorRelatedItem, InspectorSection } from ".
 export type HQDetailTab = "overview" | "insights" | "evidence" | "timeline" | "system";
 
 export type HQEntityDetailMetric = {
+  /** Stable semantic identity. Never a human label, UUID, timestamp, or array index. */
+  id: string;
   label: string;
   value: string;
   tone?: "pass" | "fail" | "neutral" | "warn";
+  kind?: "insight-metric" | "harvested" | "metric";
 };
 
 export type HQEntityDetail = {
