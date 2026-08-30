@@ -8,6 +8,7 @@ import { useOptionalHqArtifactInspector } from "./hq-artifact-inspector-provider
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 
 const TAB_LABELS: Record<HQDetailTab, string> = {
+  intelligence: "Intelligence",
   overview: "Overview",
   insights: "Insights",
   evidence: "Evidence",
@@ -94,6 +95,35 @@ export function HQOutputDetail({ detail, artifact, loading, error }: Props) {
 
   const tabContent = useMemo(() => {
     switch (safeTab) {
+      case "intelligence":
+        return (
+          <div className="space-y-4">
+            {detail.insights.metrics.length > 0 ? (
+              <section className="hq-inspector-section">
+                <p className="hq-inspector-section-label">Key metrics</p>
+                <dl className="mt-2 space-y-1.5">
+                  {detail.insights.metrics.map((metric) => (
+                    <div key={metric.id || `${metric.kind ?? "metric"}:${metric.label}`} className="grid grid-cols-[minmax(8rem,42%)_1fr] gap-2 text-sm">
+                      <dt className="text-zinc-500">{metric.label}</dt>
+                      <dd className="text-zinc-100">{metric.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ) : null}
+            {detail.decisionWhy ? (
+              <section className="hq-inspector-section">
+                <p className="hq-inspector-section-label">Decision rationale</p>
+                <p className="mt-2 text-sm text-zinc-300">{detail.decisionWhy}</p>
+              </section>
+            ) : null}
+            {(detail.intelligence?.sections ?? []).length > 0 ? (
+              detail.intelligence.sections.map((section) => <DetailSection key={section.id} section={section} />)
+            ) : (
+              <p className="text-sm text-zinc-500">No persisted founder intelligence for this entity.</p>
+            )}
+          </div>
+        );
       case "overview":
         return (
           <div className="space-y-4">

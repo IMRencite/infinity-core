@@ -5,6 +5,7 @@ import { fmtTruth, buildCostLabel } from "../details/financial-truth";
 import { founderHotTakesFromMetadata } from "@/lib/infinity/founder-idea-lab/hq/hot-takes";
 import { founderIdeaJourney } from "@/lib/infinity/founder-idea-lab/hq/journey";
 import { INSIGHT_METRIC_IDS, formatBuildReadyDisplay, insightMetricRow, namedInspectorRow } from "../details/insight-metrics";
+import { founderIdeaIntelligenceSections } from "@/lib/infinity/founder-idea-lab/hq/intelligence-sections";
 import type {
   HqArtifactInspectorModel,
   InspectorJourney,
@@ -1088,7 +1089,9 @@ export function buildArtifactInspectorModel(
       decisionWhy =
         artifact.metadata.overrideFounder != null
           ? `FOUNDER OVERRIDE — Infinity ${artifact.metadata.overrideInfinity ?? artifact.metadata.infinityDecision}; founder ${artifact.metadata.overrideFounder}`
-          : null;
+          : artifact.metadata.whyDecision
+            ? String(artifact.metadata.whyDecision)
+            : null;
       journeyOverride = founderIdeaJourney(artifact);
       hotTakesOverride = founderHotTakesFromMetadata(artifact.metadata);
       const portfolioSource = artifact.metadata.classifierMetric ?? artifact.metadata.selectionScore;
@@ -1116,6 +1119,11 @@ export function buildArtifactInspectorModel(
           title: "Scores",
           rows: [
             insightMetricRow(INSIGHT_METRIC_IDS.opportunityQuality, "Opportunity quality", fmt(artifact.metadata.opportunityScore)),
+            namedInspectorRow(
+              "opportunity-quality-role",
+              "Opportunity quality role",
+              "Diagnostic idea quality. VALIDATE and REJECT use the portfolio-adjusted score, not opportunity quality.",
+            ),
             ...(artifact.metadata.historicalOpportunityScore != null
               ? [
                   insightMetricRow(
@@ -1165,95 +1173,7 @@ export function buildArtifactInspectorModel(
             { label: "Evidence overview", value: fmt(artifact.metadata.evidenceOverview) },
           ],
         },
-        {
-          id: "executive-summary",
-          title: "Executive summary",
-          rows: [
-            { label: "Summary", value: fmt(artifact.metadata.executiveSummary) },
-            { label: "Will this work", value: fmt(artifact.metadata.willThisWork) },
-          ],
-        },
-        {
-          id: "why-decision",
-          title: "Why Infinity chose this decision",
-          rows: [
-            namedInspectorRow("decision-why", "Why", fmt(artifact.metadata.whyDecision)),
-            namedInspectorRow("threshold-arithmetic", "Threshold arithmetic", fmt(artifact.metadata.thresholdArithmetic)),
-            namedInspectorRow("classifier-metric-field", "Classifier metric field", fmt(artifact.metadata.classifierMetricField)),
-            namedInspectorRow("classifier-metric", "Classifier metric", fmt(artifact.metadata.classifierMetric)),
-            namedInspectorRow("why-not-validate", "Why not VALIDATE/higher", fmt(artifact.metadata.whyNotValidate)),
-            namedInspectorRow("why-not-reject", "Why not REJECT/lower", fmt(artifact.metadata.whyNotReject)),
-            namedInspectorRow("why-not-build", "Why not BUILD", fmt(artifact.metadata.whyNotBuild)),
-            namedInspectorRow("what-would-change", "What would change the decision", fmt(artifact.metadata.whatWouldChange)),
-          ],
-        },
-        {
-          id: "key-insights",
-          title: "Key insights",
-          rows: [
-            { label: "Findings", value: fmt(artifact.metadata.keyInsights) },
-            { label: "Evidence overview", value: fmt(artifact.metadata.evidenceOverview) },
-          ],
-        },
-        {
-          id: "score-breakdown",
-          title: "Score breakdown",
-          rows: [
-            namedInspectorRow("opportunity-quality-explanation", "Opportunity quality explanation", fmt(artifact.metadata.scoreOpportunityNote)),
-            namedInspectorRow("selection-score-explanation", "Selection score explanation", fmt(artifact.metadata.scoreSelectionNote)),
-            namedInspectorRow("portfolio-adjusted-score-explanation", "Portfolio-adjusted score explanation", fmt(artifact.metadata.scorePortfolioNote)),
-            namedInspectorRow("validation-score-explanation", "Validation score explanation", fmt(artifact.metadata.scoreValidationNote)),
-            namedInspectorRow("monetization-score-explanation", "Monetization score explanation", fmt(artifact.metadata.scoreMonetizationNote)),
-          ],
-        },
-        {
-          id: "market-competition",
-          title: "Market + competition",
-          rows: [{ label: "Summary", value: fmt(artifact.metadata.marketCompetition) }],
-        },
-        {
-          id: "pricing-recommendation",
-          title: "Pricing recommendation",
-          rows: [
-            { label: "Recommended modeled pricing", value: fmt(artifact.metadata.pricingRecommendation) },
-            { label: "Economic provenance", value: fmt(artifact.metadata.economicProvenance) },
-            { label: "Major assumptions", value: fmt(artifact.metadata.economicAssumptions) },
-          ],
-        },
-        {
-          id: "comparable-businesses",
-          title: "Comparable businesses",
-          rows: [
-            { label: "Names", value: fmt(artifact.metadata.comparableNames) },
-            { label: "Table", value: fmt(artifact.metadata.comparableTable) },
-          ],
-        },
-        {
-          id: "modeled-unit-economics",
-          title: "Modeled unit economics",
-          rows: [
-            { label: "Modeled CAC", value: fmt(artifact.metadata.modeledCac) },
-            { label: "Modeled LTV", value: fmt(artifact.metadata.modeledLtv) },
-            { label: "Modeled LTV/CAC", value: fmt(artifact.metadata.modeledLtvCac) },
-            { label: "Economic health", value: fmt(artifact.metadata.economicHealth) },
-            { label: "Will this work", value: fmt(artifact.metadata.willThisWork) },
-          ],
-        },
-        {
-          id: "risks-uncertainties",
-          title: "Risks + uncertainties",
-          rows: [{ label: "Drivers", value: fmt(artifact.metadata.risksUncertainties) }],
-        },
-        {
-          id: "next-validation",
-          title: "Next validation steps",
-          rows: [{ label: "Questions", value: fmt(artifact.metadata.nextValidation) }],
-        },
-        {
-          id: "source-trace",
-          title: "Source trace",
-          rows: [{ label: "Finding → source → dimension → score impact", value: fmt(artifact.metadata.sourceTrace) }],
-        },
+        ...founderIdeaIntelligenceSections(artifact.metadata),
         {
           id: "system",
           title: "System View",

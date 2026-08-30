@@ -54,6 +54,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       researchPipeline: "grounded_research",
       researchRunId: submission.researchRunId,
       needsReanalysis: submission.needsReanalysis,
+      scoreIntegrity: grade?.scoreIntegrity ?? null,
       historicalOpportunityScore: store.evaluationHistory.get(submission.id)?.[0]?.opportunityScore ?? null,
       historicalDecision: store.evaluationHistory.get(submission.id)?.[0]?.decision ?? null,
       historicalGrade: Boolean(store.evaluationHistory.get(submission.id)?.length),

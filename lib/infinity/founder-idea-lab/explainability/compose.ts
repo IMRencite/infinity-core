@@ -23,6 +23,7 @@ import type {
   ScoreExplanation,
   SourceTraceRow,
 } from "./types";
+import { buildFounderIntelligenceView } from "./view";
 
 const DIMENSION_MATTERS: Record<EvidenceDimension, string> = {
   demand: "Supports whether customers already search for or buy this job-to-be-done.",
@@ -455,6 +456,7 @@ export function composeFounderExplainability(input: {
 
 export function flattenExplainabilityForHq(explain: FounderExplainability): Record<string, string | number | boolean | null> {
   return {
+    founderIntelligenceJson: JSON.stringify(buildFounderIntelligenceView(explain)),
     executiveSummary: explain.executiveSummary,
     whyDecision: explain.decision.why,
     whyNotValidate: explain.decision.whyNotHigher,

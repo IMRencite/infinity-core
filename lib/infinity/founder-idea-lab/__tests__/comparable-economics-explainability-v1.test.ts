@@ -364,19 +364,30 @@ describe("HQ + authority regressions", () => {
     expect(founder?.metadata.economicProvenance).toBe("COMPARABLE_MODELED");
     const inspector = buildArtifactInspectorModel(founder!, artifacts.opportunity_lab ?? []);
     const titles = inspector.sections.map((section) => section.title);
-    expect(titles).toContain("Executive summary");
-    expect(titles).toContain("Why Infinity chose this decision");
+    expect(titles).toContain("Executive Summary");
     expect(titles).toContain("Evidence");
-    expect(titles).toContain("Key insights");
-    expect(titles).toContain("Score breakdown");
-    expect(titles).toContain("Market + competition");
-    expect(titles).toContain("Pricing recommendation");
-    expect(titles).toContain("Comparable businesses");
-    expect(titles).toContain("Modeled unit economics");
-    expect(titles).toContain("Risks + uncertainties");
-    expect(titles).toContain("Next validation steps");
-    expect(titles).toContain("Source trace");
+    expect(titles).toContain("Key Insights");
+    expect(titles).toContain("Score Breakdown");
+    expect(titles).toContain("Pricing Recommendation");
+    expect(titles).toContain("Comparable Businesses");
+    expect(titles).toContain("Modeled Unit Economics");
+    expect(titles).toContain("Risks + Uncertainties");
+    expect(titles).toContain("What Would Change the Decision");
+    expect(titles).toContain("Next Validation Steps");
+    expect(titles).toContain("Source Trace");
+    expect(titles.some((title) => title.startsWith("Why Infinity Chose"))).toBe(true);
     const detail = buildEntityDetail(inspector);
+    expect(detail.availableTabs[0]).toBe("intelligence");
+    expect(detail.intelligence.sections.map((section) => section.title)).toEqual(
+      expect.arrayContaining([
+        "Executive Summary",
+        "Pricing Recommendation",
+        "Comparable Businesses",
+        "Modeled Unit Economics",
+        "What Would Change the Decision",
+        "Source Trace",
+      ]),
+    );
     const metricIds = detail.insights.metrics.map((item) => item.id);
     expect(new Set(metricIds).size).toBe(metricIds.length);
     expect(detail.insights.metrics.filter((item) => item.label === "Selection score")).toHaveLength(1);

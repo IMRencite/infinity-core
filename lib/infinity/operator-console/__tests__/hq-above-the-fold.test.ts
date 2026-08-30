@@ -221,7 +221,10 @@ describe("HQ above-the-fold command restructure", () => {
     expect(css).toContain(".hq-room-shell--command");
   });
 
-  it("does not regress Treasury, Coding, or deep linking", () => {
+  it("does not regress Founder Ideas, Treasury, Coding, or deep linking", () => {
+    const bar = readSource("venture-command-bar.tsx");
+    expect(bar).toContain("/dashboard/founder-ideas");
+    expect(bar).toContain("Submit Idea");
     const consoleSource = readSource("venture-operator-console.tsx");
     expect(consoleSource).toContain("TreasuryCapitalStrip");
     expect(consoleSource).toContain("TreasuryControlCenter");

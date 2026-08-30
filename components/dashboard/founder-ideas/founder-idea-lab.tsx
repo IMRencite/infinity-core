@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import type { HQEntityDetail } from "@/lib/infinity/operator-console/details/entity-detail-types";
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
-import { HQOutputDetail, HQOutputDetailShell } from "@/components/dashboard/operator-console/artifacts/hq-output-detail";
+import { HQOutputDetail } from "@/components/dashboard/operator-console/artifacts/hq-output-detail";
 import { analyzeFounderIdeaAction, decideFounderIdeaAction, reanalyzeFounderIdeaAction, type FounderIdeaActionState } from "@/app/dashboard/founder-ideas/actions";
 import type { FounderIdeaListRow } from "@/lib/infinity/founder-idea-lab/hq/artifacts";
 import type { FounderAction } from "@/lib/infinity/founder-idea-lab/constants";
@@ -46,7 +46,6 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
   const [decideState, decideAction, deciding] = useActionState(decideFounderIdeaAction, INITIAL);
   const [reanalyzeState, reanalyzeAction, reanalyzing] = useActionState(reanalyzeFounderIdeaAction, INITIAL);
   const [selectedId, setSelectedId] = useState<string | null>(rows[0]?.id ?? null);
-  const [detailOpen, setDetailOpen] = useState(false);
   const selected = selectedId ? decisions[selectedId] : null;
   const selectedRow = selectedId ? rows.find((row) => row.id === selectedId) : null;
   const selectedDetail = selectedId ? details[selectedId] : null;
@@ -168,7 +167,6 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
                     className={`cursor-pointer border-t border-zinc-800/80 ${selectedId === row.id ? "bg-sky-500/10" : ""}`}
                     onClick={() => {
                       setSelectedId(row.id);
-                      setDetailOpen(true);
                     }}
                   >
                     <td className="py-2">{row.idea}</td>
@@ -257,9 +255,9 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
       ) : null}
 
       {selectedDetail ? (
-        <HQOutputDetailShell open={detailOpen} onClose={() => setDetailOpen(false)}>
+        <section className="border border-zinc-800/70 bg-zinc-950/60" aria-label="Founder idea intelligence">
           <HQOutputDetail detail={selectedDetail.detail} artifact={selectedDetail.artifact} />
-        </HQOutputDetailShell>
+        </section>
       ) : null}
     </div>
   );

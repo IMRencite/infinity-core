@@ -1,7 +1,7 @@
 import type { HqArtifactType } from "../artifacts/types";
 import type { InspectorJourney, InspectorRelatedItem, InspectorSection } from "../artifacts/inspector-types";
 
-export type HQDetailTab = "overview" | "insights" | "evidence" | "timeline" | "system";
+export type HQDetailTab = "intelligence" | "overview" | "insights" | "evidence" | "timeline" | "system";
 
 export type HQEntityDetailMetric = {
   /** Stable semantic identity. Never a human label, UUID, timestamp, or array index. */
@@ -22,6 +22,9 @@ export type HQEntityDetail = {
   decision: string | null;
   decisionWhy: string | null;
   overview: {
+    sections: InspectorSection[];
+  };
+  intelligence: {
     sections: InspectorSection[];
   };
   insights: {
