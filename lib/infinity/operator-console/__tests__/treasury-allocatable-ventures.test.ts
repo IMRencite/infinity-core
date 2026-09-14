@@ -111,7 +111,10 @@ describe("Treasury allocatable venture filter", () => {
       "utf8",
     );
     expect(center).toContain("filterTreasuryAllocatableVentures");
+    expect(center).toContain("OccupancyNPV");
+    expect(center).toContain("AskReview");
     expect(center).toContain("No allocatable ventures yet.");
+    expect(center).not.toContain("Unnamed Venture");
     expect(center).not.toContain("No UUID ventures");
   });
 });

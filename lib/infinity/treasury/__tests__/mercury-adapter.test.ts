@@ -170,6 +170,7 @@ describe("mercury normalization", () => {
     expect(account?.accountId).toBe("acct-1");
     expect(account?.displayName).toBe("UNKNOWN");
     expect(account?.accountKind).toBe("CHECKING");
+    expect(account?.last4).toBe("9999");
     expect(account?.provenance?.actuality).toBe("SANDBOX_PROVIDER_DATA");
     expect(JSON.stringify(account)).not.toContain("999999");
     expect(JSON.stringify(account)).not.toContain("021000021");

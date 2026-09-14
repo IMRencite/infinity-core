@@ -176,11 +176,11 @@ describe("treasury manual control", () => {
   it("persists only the requested organization slice", async () => {
     const tables = new Map<string, Record<string, unknown>[]>();
     const client = {
-      from(table: string) {
+      from: (table: string) => {
         return {
-          select() {
+          select: (_columns: string) => {
             return {
-              eq(_column: string, organizationId: string) {
+              eq: (_column: string, organizationId: string) => {
                 return Promise.resolve({
                   data: (tables.get(table) ?? []).filter((row) => row.organization_id === organizationId),
                   error: null,
@@ -188,7 +188,7 @@ describe("treasury manual control", () => {
               },
             };
           },
-          upsert(rows: Record<string, unknown>[] | Record<string, unknown>) {
+          upsert: (rows: Record<string, unknown>[] | Record<string, unknown>, _opts?: { onConflict?: string }) => {
             const list = Array.isArray(rows) ? rows : [rows];
             const current = tables.get(table) ?? [];
             for (const row of list) {
@@ -216,12 +216,12 @@ describe("treasury manual control", () => {
       amountUsd: 50,
       idempotencyKey: "persist-alloc",
     });
-    const persisted = await persistTreasuryMutation(client, store, ORG_A);
+    const persisted = await persistTreasuryMutation(client as unknown as Parameters<typeof persistTreasuryMutation>[0], store, ORG_A);
     expect(persisted.ok).toBe(true);
 
-    const loaded = await loadTreasuryStore(client, ORG_A);
+    const loaded = await loadTreasuryStore(client as unknown as Parameters<typeof loadTreasuryStore>[0], ORG_A);
     expect(sumLedger(loaded, ORG_A, "CAPITAL_CONTRIBUTION").amount.value).toBe(300);
-    const foreign = await loadTreasuryStore(client, ORG_B);
+    const foreign = await loadTreasuryStore(client as unknown as Parameters<typeof loadTreasuryStore>[0], ORG_B);
     expect(sumLedger(foreign, ORG_B, "CAPITAL_CONTRIBUTION").amount.actuality).toBe("UNKNOWN");
     expect(foreign.allocations.size).toBe(0);
   });

@@ -21,27 +21,29 @@ describe("HQ treasury control center", () => {
     const center = readSource("treasury-control-center.tsx");
     const consoleSource = readSource("venture-operator-console.tsx");
     const strip = readSource("treasury-capital-strip.tsx");
-    expect(center).toContain("Fund Treasury");
+    expect(center).toContain("Live Treasury");
     expect(center).toContain("Capital Overview");
     expect(center).toContain("Allocate Capital");
     expect(center).toContain("Budget Controls");
     expect(center).toContain("Venture Allocations");
-    expect(center).toContain("INTERNAL / MANUAL / NON-BANK");
-    expect(center).toContain("Treasury source");
-    expect(center).toContain("Banking provider");
-    expect(center).toContain("Record manual funding");
+    expect(center).toContain("Mercury connected");
+    expect(center).toContain("READ ONLY");
+    expect(center).toContain("Record external capital event");
     expect(center).toContain("Allocate to venture");
     expect(center).toContain("Update budget limit");
-    expect(center).toContain("Spending limit");
-    expect(center).not.toMatch(/Mercury|wire transfer|Deposit completed by bank/i);
+    expect(center).toContain("Policy only");
+    expect(center).toContain("OccupancyNPV");
+    expect(center).toContain("AskReview");
+    expect(center).not.toContain("INTERNAL / MANUAL / NON-BANK");
+    expect(center).not.toMatch(/wire transfer|Deposit completed by bank/i);
     expect(center).not.toMatch(/\bACH\b/);
     expect(center).toContain('role={onInspect ? "button"');
     expect(center).not.toMatch(/drawer|dialog|modal/i);
     expect(consoleSource).toContain("TreasuryControlCenter");
     expect(consoleSource).toContain("ArtifactInspectorModal");
     expect(consoleSource).not.toContain("TreasuryVentureAllocationsPanel");
-    expect(strip).toContain("Internal capital");
-    expect(strip).toContain("Bank cash");
+    expect(strip).toContain("Authorized capital");
+    expect(strip).toContain("Verified treasury cash");
   });
 
   it("keeps allocation cards outside nested interactive shells and reuses the inspector", () => {
@@ -108,10 +110,10 @@ describe("HQ treasury control center", () => {
   it("routes mutations through org-scoped treasury API without body organizationId", () => {
     const route = readFileSync(API, "utf8");
     expect(route).toContain("getOperatorOrgContext");
-    expect(route).toContain("recordManualFunding");
-    expect(route).toContain("allocateVentureCapital");
-    expect(route).toContain("updateVentureBudget");
-    expect(route).toContain("persistTreasuryMutation");
+    expect(route).toContain("recordManualAccountingEvent");
+    expect(route).toContain("mutateVentureCapitalAllocation");
+    expect(route).toContain("mutatePortfolioBudgetPolicy");
+    expect(route).toContain("getOperatorOrgContext");
     expect(route).not.toMatch(/body\.organizationId|body\.orgId/);
     expect(route).toContain("organizationIdFromAuth");
   });

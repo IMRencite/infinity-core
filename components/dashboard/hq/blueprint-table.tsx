@@ -12,8 +12,8 @@ export function BlueprintTable({ rows }: { rows: HqBlueprintRow[] }) {
       {rows.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[800px] text-left text-[12px]">
+        <div className="hq-reflow-table-wrap">
+          <table className="hq-reflow-table text-left text-[12px]">
             <thead className="border-b border-zinc-800/80 text-[10px] uppercase tracking-wide text-zinc-600">
               <tr>
                 <th className="px-4 py-2">Name</th>

@@ -169,9 +169,9 @@ export function buildTreasuryHqReadModel(
       monthlySpend: formatHqAmount(state.monthlySpend),
       monthlyBudget: monthlyBudget
         ? formatHqAmount(monthlyBudget.allocated)
-        : policy.monthlySpendingCeiling != null
+        : policy.activeSpendAuthority && policy.monthlySpendingCeiling != null
           ? formatHqAmount({ value: policy.monthlySpendingCeiling, actuality: "ACTUAL", currency: "USD" })
-          : formatHqAmount({ value: null, actuality: "UNKNOWN", currency: "USD" }),
+          : { display: "NOT_SET", actuality: "UNKNOWN" as const, stale: false },
       revenue: formatHqAmount(state.revenue),
       expenses: formatHqAmount(state.expenses),
       netProfit: formatHqAmount(state.profit),

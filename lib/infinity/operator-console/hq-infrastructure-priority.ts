@@ -3,6 +3,7 @@ import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model"
 import type { FinancialActionStatus } from "@/lib/infinity/treasury/constants";
 import type { HqWorkArtifact } from "./artifacts/types";
 import type { OperatorVentureSnapshot } from "./types";
+import { projectCommandCycleCapability } from "./command-cycle-capability";
 
 export type InfrastructurePresentation = "COMPACT" | "EXPANDED";
 
@@ -22,7 +23,7 @@ const TREASURY_ATTENTION_STATUSES = new Set<FinancialActionStatus>([
   "FAILED",
 ]);
 
-const CODING_ACTIVE_STATUSES = new Set(["RUNNING", "QA_RUNNING", "ROUTED", "PENDING"]);
+const CODING_ACTIVE_STATUSES = new Set(["RUNNING", "QA_RUNNING", "ROUTED", "PENDING", "ACTIVE"]);
 
 export function treasuryPresentation(model: TreasuryHqReadModel | null | undefined): InfrastructurePresentation {
   if (!model) return "COMPACT";
@@ -47,6 +48,7 @@ export function treasuryAttentionLabel(model: TreasuryHqReadModel): string | nul
 
 export function codingPresentation(model: CodingHqReadModel | null | undefined): InfrastructurePresentation {
   if (!model) return "COMPACT";
+  if (model.providers.some((provider) => provider.status === "ACTIVE")) return "EXPANDED";
   return model.rows.some((row) => CODING_ACTIVE_STATUSES.has(row.status)) ? "EXPANDED" : "COMPACT";
 }
 
@@ -54,21 +56,30 @@ export function codingActiveRun(model: CodingHqReadModel) {
   return model.rows.find((row) => CODING_ACTIVE_STATUSES.has(row.status)) ?? null;
 }
 
+export function codingActiveRunCount(model: CodingHqReadModel | null | undefined): number {
+  if (!model) return 0;
+  const fromRows = model.rows.filter((row) => CODING_ACTIVE_STATUSES.has(row.status)).length;
+  if (fromRows > 0) return fromRows;
+  return model.providers.some((provider) => /cursor/i.test(provider.provider) && provider.status === "ACTIVE") ? 1 : 0;
+}
+
 function providerStatus(model: CodingHqReadModel | null | undefined, name: string): string {
   const row = model?.providers.find((provider) => provider.provider.toLowerCase().includes(name.toLowerCase()));
   if (!row) return "UNKNOWN";
   if (row.availability === "NOT_CONFIGURED" || row.status === "NOT_CONFIGURED") return "NOT CONFIGURED";
   if (row.availability === "AVAILABLE" && row.status === "READY") return "READY";
+  if (row.status === "PRESENT_IDLE" || row.status === "ACTIVE") return row.status.replace(/_/g, " ");
   return row.status.replace(/_/g, " ");
 }
 
-function treasuryCommandStatus(model: TreasuryHqReadModel | null | undefined): string {
-  if (!model) return "NOT CONFIGURED";
-  if (model.state.providerFreshness === "NOT_CONFIGURED") return "NOT CONFIGURED";
-  if (model.state.providerFreshness === "UNAVAILABLE") return "DEGRADED";
-  if (model.state.providerFreshness === "STALE") return "DEGRADED";
-  if (model.state.providerFreshness === "FRESH") return "READY";
-  return "ENGINE READY · PROVIDER NOT CONFIGURED";
+function treasuryCommandStatus(input: {
+  snapshot: OperatorVentureSnapshot;
+  treasury?: TreasuryHqReadModel | null;
+}): string {
+  return projectCommandCycleCapability({
+    financialTruth: input.snapshot.financialTruth ?? null,
+    treasuryModel: input.treasury,
+  }).treasury_display;
 }
 
 function aiBrainStatus(snapshot: OperatorVentureSnapshot): string {
@@ -103,7 +114,7 @@ export function deriveCommandSystemReadiness(input: {
 }): CommandSystemIndicator[] {
   return [
     { id: "ai_brain", label: "AI Brain", status: aiBrainStatus(input.snapshot) },
-    { id: "treasury", label: "Treasury", status: treasuryCommandStatus(input.treasury) },
+    { id: "treasury", label: "Treasury", status: treasuryCommandStatus(input) },
     { id: "native_coder", label: "Native Coder", status: providerStatus(input.coding, "native") },
     { id: "cursor", label: "Cursor", status: providerStatus(input.coding, "cursor") },
     { id: "commercialization", label: "Commercialization", status: commercializationStatus(input.snapshot) },
@@ -128,8 +139,13 @@ export function findRoomArtifact(
 
 export const HQ_DESKTOP_REGION_ORDER = [
   "welcome",
+  "ask-infinity",
+  "financial-pulse",
   "command",
-  "scoreboard",
+  "compact-operating-summary",
   "operating-floor",
+  "inspecting",
+  "venture-intelligence",
+  "financial-truth",
   "infrastructure",
 ] as const;

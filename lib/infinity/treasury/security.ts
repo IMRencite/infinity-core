@@ -1,6 +1,66 @@
 import { FORBIDDEN_TREASURY_SERIALIZATION_FIELDS } from "./constants";
 
-const FORBIDDEN_PATTERN = /secret|token|authorization|api[_-]?key|password|cardnumber|cvv|cvc|pin|credential|banklogin|routingnumber|accountnumber|privatekey|clientsecret|webhooksecret/i;
+const SAFE_POLICY_FIELD_KEYS = new Set([
+  "authorizationSource",
+  "authorization_source",
+  "authorization_state",
+  "remaining_authorization",
+  "remainingAuthorization",
+  "authorized_capital",
+  "authorizedCapital",
+  "authorized_amount",
+  "authorizedAmount",
+  "authorized_at",
+  "authorizedAt",
+  "authorized_by",
+  "authorizedBy",
+  "authorizedActor",
+  "authorized_actor",
+  "provider_account_reference",
+  "providerAccountReference",
+  "founder_decision",
+  "tokenVisible",
+  "cash_completeness",
+  "authorizationRequired",
+  "authorization_required",
+]);
+
+const EXTRA_FORBIDDEN_NORMALIZED = [
+  "apikey",
+  "apitoken",
+  "accesstoken",
+  "refreshtoken",
+  "clientsecret",
+  "password",
+  "privatekey",
+  "routingnumber",
+  "accountnumber",
+  "credential",
+  "credentials",
+  "webhooksecret",
+  "banklogin",
+  "cardnumber",
+  "mercuryapitoken",
+  "authorizationheader",
+  "secret",
+] as const;
+
+function normalizeKey(key: string): string {
+  return key.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+}
+
+const SAFE_POLICY_NORMALIZED = new Set([...SAFE_POLICY_FIELD_KEYS].map(normalizeKey));
+const EXACT_FORBIDDEN_NORMALIZED = new Set([
+  ...FORBIDDEN_TREASURY_SERIALIZATION_FIELDS.map(normalizeKey),
+  ...EXTRA_FORBIDDEN_NORMALIZED,
+]);
+
+export function isForbiddenTreasuryCredentialKey(key: string): boolean {
+  if (SAFE_POLICY_FIELD_KEYS.has(key) || SAFE_POLICY_NORMALIZED.has(normalizeKey(key))) return false;
+  const normalized = normalizeKey(key);
+  if (EXACT_FORBIDDEN_NORMALIZED.has(normalized)) return true;
+  return normalized === "authorization";
+}
 
 export function assertNoCredentialFields(value: unknown, path = "root"): string[] {
   const violations: string[] = [];
@@ -15,7 +75,7 @@ function walk(value: unknown, path: string, violations: string[]): void {
     return;
   }
   for (const [key, nested] of Object.entries(value as Record<string, unknown>)) {
-    if (FORBIDDEN_TREASURY_SERIALIZATION_FIELDS.includes(key as (typeof FORBIDDEN_TREASURY_SERIALIZATION_FIELDS)[number]) || FORBIDDEN_PATTERN.test(key)) {
+    if (isForbiddenTreasuryCredentialKey(key)) {
       violations.push(`${path}.${key}`);
     }
     walk(nested, `${path}.${key}`, violations);

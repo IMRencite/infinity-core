@@ -81,21 +81,53 @@ function idleSnapshot(overrides: Partial<OperatorVentureSnapshot> = {}): Operato
 }
 
 describe("HQ above-the-fold command restructure", () => {
-  it("desktop DOM hierarchy is Welcome → Command → Scoreboard → Operating Floor → Infrastructure", () => {
+  it("desktop DOM hierarchy is Infinity OS → Ask Infinity → HQ Command → Scoreboard → Floor → Inspecting → Intelligence → Infrastructure", () => {
     const consoleSource = readSource("venture-operator-console.tsx");
     const commandBar = readSource("venture-command-bar.tsx");
-    expect(commandBar).toContain('data-hq-region="welcome"');
-    expect(readSource("portfolio-executive-strip.tsx")).toContain('data-hq-region="scoreboard"');
+    const hero = readSource("infinity-os-hero.tsx");
+    expect(hero).toContain('data-hq-region="welcome"');
+    expect(hero).toContain('data-hq-region="ask-infinity"');
+    expect(hero).toContain('data-hq-region="global-controls"');
+    expect(commandBar).toContain("HqCopilotDock");
+    expect(commandBar).toContain("Submit Idea");
+    expect(commandBar).not.toContain("VentureSelector");
+    expect(commandBar).not.toContain("InspectionContextBar");
+    expect(consoleSource).toContain('data-hq-region="venture-stack"');
+    expect(consoleSource).toContain("<InspectionContextBar");
+    expect(consoleSource).toContain("<VentureIntelligencePanel");
+    expect(readSource("hq-secondary-status-row.tsx")).toContain('data-hq-region="secondary-status"');
     expect(readSource("hq-spatial-floor.tsx")).toContain('data-hq-region="operating-floor"');
+    const welcomeIdx = hero.indexOf('data-hq-region="welcome"');
+    const askIdx = hero.indexOf('data-hq-region="ask-infinity"');
+    const inspectIdx = consoleSource.indexOf("<InspectionContextBar");
+    const intelIdx = consoleSource.indexOf("<VentureIntelligencePanel");
+    const pulseIdx = consoleSource.indexOf("<HqFinancialPulse");
     const commandIdx = consoleSource.indexOf('data-hq-region="command"');
-    const scoreboardIdx = consoleSource.indexOf("<PortfolioExecutiveStrip");
+    const statusIdx = consoleSource.indexOf("<HqSecondaryStatusRow");
     const floorIdx = consoleSource.indexOf("<HqSpatialFloor");
+    const truthIdx = consoleSource.indexOf('data-hq-region="financial-truth"');
     const infraIdx = consoleSource.indexOf('data-hq-region="infrastructure"');
-    expect([commandIdx, scoreboardIdx, floorIdx, infraIdx].every((index) => index >= 0)).toBe(true);
-    expect(commandIdx).toBeLessThan(scoreboardIdx);
-    expect(scoreboardIdx).toBeLessThan(floorIdx);
-    expect(floorIdx).toBeLessThan(infraIdx);
-    expect(HQ_DESKTOP_REGION_ORDER).toEqual(["welcome", "command", "scoreboard", "operating-floor", "infrastructure"]);
+    expect([welcomeIdx, askIdx, inspectIdx, intelIdx, pulseIdx, commandIdx, statusIdx, floorIdx, truthIdx, infraIdx].every((index) => index >= 0)).toBe(true);
+    expect(welcomeIdx).toBeLessThan(askIdx);
+    expect(pulseIdx).toBeLessThan(commandIdx);
+    expect(commandIdx).toBeLessThan(statusIdx);
+    expect(statusIdx).toBeLessThan(floorIdx);
+    expect(floorIdx).toBeLessThan(inspectIdx);
+    expect(inspectIdx).toBeLessThan(intelIdx);
+    expect(intelIdx).toBeLessThan(truthIdx);
+    expect(truthIdx).toBeLessThan(infraIdx);
+    expect(HQ_DESKTOP_REGION_ORDER).toEqual([
+      "welcome",
+      "ask-infinity",
+      "financial-pulse",
+      "command",
+      "compact-operating-summary",
+      "operating-floor",
+      "inspecting",
+      "venture-intelligence",
+      "financial-truth",
+      "infrastructure",
+    ]);
 
     const treasuryIdx = consoleSource.indexOf("<TreasuryCapitalStrip");
     const codingIdx = consoleSource.indexOf("<CodingIntelligenceStrip");
@@ -112,10 +144,14 @@ describe("HQ above-the-fold command restructure", () => {
   });
 
   it("compresses the welcome header and keeps Command as the executive chamber", () => {
-    const welcome = readSource("venture-command-bar.tsx");
+    const welcome = readSource("infinity-os-hero.tsx") + readSource("venture-command-bar.tsx");
+    const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
     expect(welcome).toContain("HQ_WELCOME_TITLE");
-    expect(welcome).toContain("py-2");
+    expect(welcome).toContain("hq-os-hero-title");
+    expect(css).toContain(".hq-os-hero-title");
+    expect(css).toContain("text-align: center");
     expect(welcome).not.toContain("md:text-4xl");
+    expect(welcome).not.toContain("md:text-2xl");
     expect(readSource("command-chamber.tsx")).toContain("Decision core");
     expect(readSource("command-chamber.tsx")).toContain("InfinityRoomShell");
     expect(readSource("hq-spatial-floor.tsx")).not.toContain("CommandChamber");
@@ -140,11 +176,11 @@ describe("HQ above-the-fold command restructure", () => {
 
     const strip = readSource("treasury-capital-strip.tsx");
     expect(strip).toContain("View Treasury");
-    expect(strip).toContain("Internal capital");
-    expect(strip).toContain("Available capital");
+    expect(strip).toContain("Authorized capital");
+    expect(strip).toContain("Remaining authorization");
     expect(strip).toContain("Allocated capital");
     expect(strip).toContain("Unallocated capital");
-    expect(strip).toContain("Bank cash");
+    expect(strip).toContain("Verified treasury cash");
     expect(strip).toContain("Monthly budget");
     expect(strip).toContain("Monthly spend");
     expect(strip).toContain('data-infrastructure-presentation={presentation}');
@@ -195,7 +231,7 @@ describe("HQ above-the-fold command restructure", () => {
       coding,
     });
     expect(indicators.find((item) => item.id === "treasury")?.status).toBe("NOT CONFIGURED");
-    expect(indicators.find((item) => item.id === "cursor")?.status).toBe("NOT CONFIGURED");
+    expect(indicators.find((item) => item.id === "cursor")?.status).toBe("PRESENT IDLE");
     expect(indicators.find((item) => item.id === "native_coder")?.status).toBe("READY");
     expect(indicators.find((item) => item.id === "commercialization")?.status).toBe("ENGINE VERIFIED · MUTATIONS LOCKED");
     expect(indicators.find((item) => item.id === "ai_brain")?.status).not.toBe("READY");

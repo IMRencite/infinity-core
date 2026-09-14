@@ -15,8 +15,8 @@ export function WorkerCapabilityDiagnosticsPanel({
       {rows.length === 0 ? (
         <EmptyState message="No governed worker capability jobs yet." />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] text-left text-[12px]">
+        <div className="hq-reflow-table-wrap">
+          <table className="hq-reflow-table text-left text-[12px]">
             <thead className="border-b border-zinc-800/80 text-[10px] uppercase tracking-wide text-zinc-600">
               <tr>
                 <th className="px-4 py-2">Capability</th>

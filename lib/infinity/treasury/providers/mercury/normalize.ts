@@ -46,6 +46,17 @@ function stringOrNull(value: unknown): string | null {
   return typeof value === "string" && value.trim() !== "" ? value : null;
 }
 
+/** Last four digits only. Never persist the full account or routing number. */
+export function mercuryAccountLast4(raw: Record<string, unknown> | null): string | null {
+  if (!raw) return null;
+  const direct = stringOrNull(raw.accountNumberLast4) ?? stringOrNull(raw.last4);
+  if (direct && /^\d{4}$/.test(direct)) return direct;
+  const accountNumber = stringOrNull(raw.accountNumber);
+  if (!accountNumber) return null;
+  const digits = accountNumber.replace(/\D/g, "");
+  return digits.length >= 4 ? digits.slice(-4) : null;
+}
+
 export function mercuryAccountKind(raw: unknown): ProviderAccount["accountKind"] {
   const value = String(raw ?? "").toLowerCase();
   if (value === "checking") return "CHECKING";
@@ -93,6 +104,7 @@ export function normalizeMercuryAccount(raw: unknown, ctx: MercuryNormalizeConte
     currency,
     accountKind: mercuryAccountKind(row?.kind ?? row?.type),
     externalAccountId: id,
+    last4: mercuryAccountLast4(row),
     status: mercuryAccountStatus(row?.status),
     fetchedAt: ctx.fetchedAt,
     provenance: mercuryProvenance(ctx),

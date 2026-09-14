@@ -19,6 +19,8 @@ export type TreasuryPolicyConfig = {
   categoryRestrictions: TreasuryBudgetCategory[];
   unknownCostDecision: "BLOCK" | "REQUIRE_POLICY_ESCALATION";
   staleAfterMs: number;
+  classification: "CANONICAL_POLICY" | "LEGACY_STALE_POLICY";
+  activeSpendAuthority: boolean;
 };
 
 export const DEFAULT_TREASURY_POLICY: TreasuryPolicyConfig = {
@@ -47,10 +49,12 @@ export const DEFAULT_TREASURY_POLICY: TreasuryPolicyConfig = {
   categoryRestrictions: [],
   unknownCostDecision: "BLOCK",
   staleAfterMs: TREASURY_STALE_AFTER_MS,
+  classification: "LEGACY_STALE_POLICY",
+  activeSpendAuthority: false,
 };
 
 export function resolveTreasuryPolicy(overrides?: Partial<TreasuryPolicyConfig>): TreasuryPolicyConfig {
-  return {
+  const next = {
     ...DEFAULT_TREASURY_POLICY,
     ...overrides,
     categoryLimits: {
@@ -58,4 +62,13 @@ export function resolveTreasuryPolicy(overrides?: Partial<TreasuryPolicyConfig>)
       ...overrides?.categoryLimits,
     },
   };
+  if (overrides && overrides.activeSpendAuthority == null) {
+    const explicitCeiling =
+      overrides.monthlySpendingCeiling != null ||
+      overrides.dailySpendingCeiling != null ||
+      overrides.maximumSingleAutonomousPurchase != null;
+    next.activeSpendAuthority = explicitCeiling;
+    next.classification = explicitCeiling ? "CANONICAL_POLICY" : next.classification;
+  }
+  return next;
 }

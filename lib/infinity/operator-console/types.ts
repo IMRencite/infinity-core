@@ -3,6 +3,16 @@ import type { HqRoomArtifactMap, HqWorkArtifact } from "./artifacts/types";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import type { RoomActivityExplanation } from "./room-activity";
+import type {
+  ActiveWorkerProjection,
+  CommandActivityView,
+  CommandNowInspecting,
+} from "@/lib/infinity/mission-activity/types";
+import type { VentureOperatingScaleHqProjection } from "@/lib/infinity/venture-operating-scale/types";
+import type { HqFinancialTruthView } from "@/lib/infinity/financial-truth/types";
+import type { CodingHqReadModel } from "@/lib/infinity/coding-agents/hq/read-model";
+import type { CanonicalCapabilityProjection } from "@/lib/infinity/capability-truth/types";
+import type { CanonicalHQLiveProjection } from "@/lib/infinity/hq-live-truth/types";
 
 export type DepartmentId =
   | "opportunity_lab"
@@ -16,7 +26,8 @@ export type DepartmentId =
   | "quality_control"
   | "launch_operations"
   | "intelligence_center"
-  | "executive_office";
+  | "executive_office"
+  | "operations";
 
 export type DepartmentUiState =
   | "COMPLETE"
@@ -227,12 +238,51 @@ export type OperatorVentureSnapshot = {
     learning: Record<string, unknown>;
   };
   workerNodes?: OperatorWorkerNode[];
+  inspectionContext?: {
+    kind: "FAVC1_CYCLE" | "VENTURE";
+    cycleKey: string | null;
+    ventureAssemblyId: string;
+    terminalHeadline: string | null;
+    terminalDecision: string | null;
+  };
+  currentExecution?: CommandNowInspecting;
+  latestCompletedExecution?: CommandActivityView["latestCompleted"];
+  roomPresence?: Array<{ room: DepartmentId; status: string }>;
+  activeWorkers?: ActiveWorkerProjection[];
   favc1Cycle?: Favc1CycleSnapshotMeta;
   roomArtifacts?: HqRoomArtifactMap;
   handoffStage?: "discovery_to_monetization" | "monetization_to_selection" | "selection_to_validation" | null;
   handoffLineageColorKey?: string | null;
   treasury?: TreasuryHqReadModel;
   systemsArchitecture?: SystemsArchitectHqView | null;
+  commandActivity?: CommandActivityView;
+  communicationIntelligence?: {
+    newInboundReplies: number;
+    positiveInterest: number;
+    pricingQuestions: number;
+    meetingRequests: number;
+    objections: number;
+    negativeReplies: number;
+    optOuts: number;
+    bounces: number;
+    autonomousReplies: number;
+    pausedExceptions: number;
+    activeConversations: number;
+    mailboxObserver?: {
+      status: "RUNNING" | "DEGRADED" | "STOPPED";
+      provider: "gmail.com_v1";
+      lastCheckpoint: string | null;
+      lastSuccessfulObservation: string | null;
+      trackedConversations: number;
+      lastInboundProcessed: string | null;
+      lastProviderError: string | null;
+    };
+  };
+  ventureOperatingScale?: VentureOperatingScaleHqProjection;
+  financialTruth?: HqFinancialTruthView;
+  coding?: CodingHqReadModel;
+  capabilities?: CanonicalCapabilityProjection;
+  canonicalLive?: CanonicalHQLiveProjection;
 };
 
 export type OperatorVentureListItem = {
@@ -255,4 +305,15 @@ export type OperatorVentureListItem = {
   knownSpendUsd: number | null;
   latestDecision: string | null;
   missionId: string;
+  domain?: string | null;
+  productionUrl?: string | null;
+  paidAppUrl?: string | null;
+  lifecycleState?: string | null;
+  productState?: string | null;
+  fulfillmentState?: string | null;
+  paymentState?: string | null;
+  publicLaunch?: "NO" | "YES";
+  blockers?: string[];
+  canonicalVentureId?: string | null;
+  canonicalSource?: "venture_assembly" | "venture_operational_record";
 };

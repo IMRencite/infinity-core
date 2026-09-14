@@ -21,6 +21,12 @@ import {
 } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import { architectureIdentityBind, resolveArchitectureEntity } from "./architecture-entity";
 import type { OperatorDepartmentSnapshot, OperatorVentureSnapshot } from "./types";
+import { attachCommandActivity } from "@/lib/infinity/mission-activity";
+import { projectCommunicationIntelligence } from "@/lib/infinity/inbound-communication-runtime/hq-intelligence";
+import { projectVentureOperatingScaleHq } from "@/lib/infinity/venture-operating-scale";
+import { projectOperationsRoom } from "@/lib/infinity/hq-information-architecture/operations-room";
+import { attachProfitLabToDepartment } from "@/lib/infinity/venture-economics/hq";
+import { OPERATIONS_ROOM_ID } from "./room-naming";
 
 function firstRecord(value: unknown): Record<string, unknown> | null {
   if (Array.isArray(value) && value[0] && typeof value[0] === "object") {
@@ -84,7 +90,7 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
           ? { ...dept.detail, systemsArchitectView: systemsView }
           : dept.detail,
     };
-    return next;
+    return attachProfitLabToDepartment(next, snapshot.venture.ventureAssemblyId);
   });
 
   const activityFeed = snapshot.activityFeed.map((event) => ({
@@ -118,8 +124,20 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
     displayTask: humanizeTask(currentActivityBase.task),
   };
 
-  const workerNodes = buildWorkerNodes(providers, departments);
-  const departmentsWithActivity = departments.map((dept) => ({
+  const operations = projectOperationsRoom();
+  const departmentsWithOperations = [
+    ...departments.filter((dept) => dept.id !== OPERATIONS_ROOM_ID),
+    {
+      ...operations.department,
+      displayName: getRoomDisplayNames(OPERATIONS_ROOM_ID).displayName,
+      supportingLabel: getRoomDisplayNames(OPERATIONS_ROOM_ID).supportingLabel,
+      displayHeadline: humanizeDepartmentHeadline(OPERATIONS_ROOM_ID, operations.department.state, operations.department.failureSemantics),
+      displayTask: humanizeTask(operations.department.currentTask),
+      displaySummary: humanizeDepartmentSummary(operations.department),
+    },
+  ];
+  const workerNodes = [...buildWorkerNodes(providers, departments), ...operations.workers];
+  const departmentsWithActivity = departmentsWithOperations.map((dept) => ({
     ...dept,
     activityExplanation: explainSnapshotDepartmentActivity(
       {
@@ -133,7 +151,8 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
     ),
   }));
 
-  return {
+  const communication = projectCommunicationIntelligence();
+  return attachCommandActivity({
     ...snapshot,
     departments: departmentsWithActivity,
     activityFeed,
@@ -141,5 +160,22 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
     currentActivity,
     workerNodes,
     systemsArchitecture: systemsView,
-  };
+    communicationIntelligence: {
+      newInboundReplies: communication.newInboundReplies,
+      positiveInterest: communication.positiveInterest,
+      pricingQuestions: communication.pricingQuestions,
+      meetingRequests: communication.meetingRequests,
+      objections: communication.objections,
+      negativeReplies: communication.negativeReplies,
+      optOuts: communication.optOuts,
+      bounces: communication.bounces,
+      autonomousReplies: communication.autonomousReplies,
+      pausedExceptions: communication.pausedExceptions,
+      activeConversations: communication.activeConversations,
+      mailboxObserver: communication.mailboxObserver,
+    },
+    ventureOperatingScale: projectVentureOperatingScaleHq({
+      latestCompletedMission: snapshot.latestCompletedExecution?.missionType ?? null,
+    }),
+  });
 }

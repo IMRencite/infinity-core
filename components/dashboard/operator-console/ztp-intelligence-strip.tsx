@@ -46,8 +46,8 @@ export function ZtpIntelligenceStrip({ model, inspectArtifact = null }: Props) {
             : `${model.rows.length} run${model.rows.length === 1 ? "" : "s"} · ${model.rows[0]?.stage} · ${model.rows[0]?.status}`}
         </p>
       ) : (
-        <div className="relative overflow-x-auto px-4 pb-3">
-          <table className="w-full min-w-[860px] text-left text-xs text-zinc-300">
+        <div className="hq-reflow-table-wrap relative px-4 pb-3">
+          <table className="hq-reflow-table text-left text-xs text-zinc-300">
             <thead className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
               <tr>
                 <th className="pb-2 font-medium">Venture</th>

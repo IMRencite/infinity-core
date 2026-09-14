@@ -84,6 +84,13 @@ describe("treasury-rls/security", () => {
     expect(assertNoCredentialFields(safe)).toEqual([]);
     const unsafe = { ...safe, apiSecret: "x", cardNumber: "4111" };
     expect(assertNoCredentialFields(unsafe).length).toBeGreaterThan(0);
+    expect(
+      assertNoCredentialFields({
+        remaining_authorization: 15,
+        authorizationSource: "READ_ONLY",
+        provider_account_reference: "mercury ****0351",
+      }),
+    ).toEqual([]);
     expect(FORBIDDEN_TREASURY_SERIALIZATION_FIELDS).toContain("apiSecret");
     expect(FORBIDDEN_TREASURY_SERIALIZATION_FIELDS).toContain("cardNumber");
     expect(FORBIDDEN_TREASURY_SERIALIZATION_FIELDS).toContain("routingNumber");

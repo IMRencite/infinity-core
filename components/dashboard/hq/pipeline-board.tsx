@@ -14,10 +14,10 @@ export function PipelineBoard({ stages }: { stages: HqPipelineStage[] }) {
       {!hasAny && stages.every((s) => s.count === null) ? (
         <EmptyState />
       ) : (
-        <div className="overflow-x-auto p-3">
-          <div className="flex min-w-[720px] gap-2">
+        <div className="p-3">
+          <div className="flex min-w-0 flex-wrap gap-2">
             {stages.map((stage, index) => (
-              <div key={stage.id} className="flex flex-1 items-stretch gap-2">
+              <div key={stage.id} className="flex min-w-0 flex-1 basis-full items-stretch gap-2 sm:basis-[calc(50%-0.25rem)] lg:basis-0">
                 <Link
                   href={stage.href}
                   className="flex flex-1 flex-col rounded-lg border border-zinc-800/80 bg-[#0a0a0a] px-3 py-3 hover:border-zinc-600"

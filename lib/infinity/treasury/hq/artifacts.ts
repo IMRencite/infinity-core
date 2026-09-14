@@ -45,7 +45,8 @@ export function buildTreasuryHqArtifacts(
       treasurySource: model.treasurySource,
       bankingProvider: model.bankingProvider,
       freshness: model.freshnessLabel,
-      fundingClass: "INTERNAL / MANUAL / NON-BANK",
+      fundingClass:
+        model.treasurySource === "CANONICAL FINANCIAL TRUTH" ? "MERCURY READ ONLY · POLICY LEDGER" : "INTERNAL / MANUAL / NON-BANK",
       mercuryProvider: model.mercury.provider,
       mercuryStatus: model.mercury.statusLabel,
       mercuryEnvironment: model.mercury.environment,
@@ -119,7 +120,8 @@ export function buildTreasuryHqArtifacts(
         origin: venture.origin,
         stage: venture.stage,
         updatedAt: venture.updatedAt,
-        fundingClass: "INTERNAL / MANUAL / NON-BANK",
+        fundingClass:
+          model.treasurySource === "CANONICAL FINANCIAL TRUTH" ? "MERCURY READ ONLY · POLICY LEDGER" : "INTERNAL / MANUAL / NON-BANK",
       },
     });
   }

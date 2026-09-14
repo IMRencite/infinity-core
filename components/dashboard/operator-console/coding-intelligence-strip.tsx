@@ -1,7 +1,7 @@
 "use client";
 
 import type { CodingHqReadModel } from "@/lib/infinity/coding-agents/hq/read-model";
-import { codingActiveRun, codingPresentation } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
+import { codingActiveRun, codingActiveRunCount, codingPresentation } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
 
@@ -49,19 +49,32 @@ export function CodingIntelligenceStrip({ model, inspectArtifact = null }: Props
         ) : null}
       </div>
 
-      {presentation === "COMPACT" ? (
-        <div className="relative flex flex-wrap items-center gap-x-6 gap-y-1 px-4 pb-2.5 text-[11px] text-zinc-400">
-          <span>
-            Native Coder <span className="font-medium uppercase text-zinc-200">{native?.status ?? "UNKNOWN"}</span>
+      <div className="relative flex flex-wrap items-center gap-x-6 gap-y-1 px-4 pb-2.5 text-[11px] text-zinc-400">
+        <span>
+          Native Coder <span className="font-medium uppercase text-zinc-200">{native?.status ?? "UNKNOWN"}</span>
+        </span>
+        <span>
+          External Agent{" "}
+          <span className="font-medium uppercase text-zinc-200" data-hq-cursor-status={cursor?.status ?? "UNKNOWN"}>
+            {cursor?.status ?? "UNKNOWN"}
           </span>
-          <span>
-            Cursor <span className="font-medium uppercase text-zinc-200">{cursor?.status ?? "NOT CONFIGURED"}</span>
+          <span className="ml-1 text-[10px] uppercase tracking-[0.12em] text-zinc-600">Cursor</span>
+        </span>
+        <span>
+          API Connection{" "}
+          <span className="font-medium uppercase text-zinc-200" data-hq-cursor-connector={cursor?.connectorStatus ?? "NOT_CONNECTED"}>
+            {cursor?.connectorStatus ?? "NOT_CONNECTED"}
           </span>
-          <span>
-            Active Runs <span className="font-medium text-zinc-200">0</span>
+        </span>
+        <span>
+          Active Runs{" "}
+          <span className="font-medium text-zinc-200" data-hq-active-runs={codingActiveRunCount(model)}>
+            {codingActiveRunCount(model)}
           </span>
-        </div>
-      ) : (
+        </span>
+      </div>
+
+      {presentation === "EXPANDED" && (active || model.rows.length > 0) ? (
         <div className="relative space-y-2 px-4 pb-3">
           {active ? (
             <div className="rounded border border-sky-500/20 bg-sky-950/20 px-3 py-2 text-xs text-zinc-300">
@@ -74,8 +87,8 @@ export function CodingIntelligenceStrip({ model, inspectArtifact = null }: Props
               </p>
             </div>
           ) : null}
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-xs text-zinc-300">
+          <div className="hq-reflow-table-wrap">
+            <table className="hq-reflow-table text-left text-xs text-zinc-300">
               <thead className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                 <tr>
                   <th className="pb-2 font-medium">Venture</th>
@@ -95,25 +108,25 @@ export function CodingIntelligenceStrip({ model, inspectArtifact = null }: Props
               <tbody>
                 {model.rows.map((row) => (
                   <tr key={row.runId} className="border-t border-zinc-800/80">
-                    <td className="py-1.5">{row.venture}</td>
-                    <td>{row.task.slice(0, 8)}</td>
-                    <td>{row.provider}</td>
-                    <td>{row.executionMode}</td>
-                    <td>{row.status}</td>
-                    <td>{row.duration}</td>
-                    <td>{row.knownCost}</td>
-                    <td>{row.filesAffected}</td>
-                    <td>{row.tests}</td>
-                    <td>{row.build}</td>
-                    <td>{row.repairAttempts}</td>
-                    <td>{row.validationState}</td>
+                    <td className="py-1.5" data-label="Venture">{row.venture}</td>
+                    <td data-label="Task">{row.task.slice(0, 8)}</td>
+                    <td data-label="Provider">{row.provider}</td>
+                    <td data-label="Mode">{row.executionMode}</td>
+                    <td data-label="Status">{row.status}</td>
+                    <td data-label="Duration">{row.duration}</td>
+                    <td data-label="Known cost">{row.knownCost}</td>
+                    <td data-label="Files">{row.filesAffected}</td>
+                    <td data-label="Tests">{row.tests}</td>
+                    <td data-label="Build">{row.build}</td>
+                    <td data-label="Repairs">{row.repairAttempts}</td>
+                    <td data-label="Validation">{row.validationState}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

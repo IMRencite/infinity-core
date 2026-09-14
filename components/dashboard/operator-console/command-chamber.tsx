@@ -1,9 +1,14 @@
 "use client";
 
+import { activeRoomLabelsFromView } from "@/lib/infinity/mission-activity/active-rooms";
+import type { CommandActivityView } from "@/lib/infinity/mission-activity/types";
 import type { DepartmentId, OperatorCurrentActivity, OperatorDepartmentSnapshot, OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
+import { CommandActivityStrip } from "./command-activity-strip";
 import type { Favc1CycleSnapshotMeta } from "@/lib/infinity/operator-console/favc1-cycle/types";
 import type { CommandSystemIndicator } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
 import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
+import { projectCommandOversight } from "@/lib/infinity/hq-live-activity";
+import { InfinityDecisionCore, infinitySymbolToDecisionCore } from "./infinity-decision-core";
 import { WorkerNode } from "./worker-node";
 import { closedLoopTargetLabel } from "./hq-flow-connectors";
 import { partitionCommandDecisionOrbs } from "@/lib/infinity/operator-console/command-chamber-layout";
@@ -14,6 +19,7 @@ import { InfinityRoomShell } from "./infinity-room/infinity-room-shell";
 import { buildFavc1TerminalDisplay } from "@/lib/infinity/operator-console/favc1-cycle/terminal-messaging";
 import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomCurrentActivity } from "./room-current-activity";
+import { roomPresenceFromActivityStatus } from "@/lib/infinity/operator-console/room-presence";
 
 type Props = {
   snapshot?: OperatorDepartmentSnapshot;
@@ -30,6 +36,9 @@ type Props = {
   cycleMeta?: Favc1CycleSnapshotMeta | null;
   systemReadiness?: CommandSystemIndicator[];
   ventureName?: string | null;
+  commandActivity?: CommandActivityView | null;
+  hqSystemState?: string | null;
+  waitingWork?: boolean;
 };
 
 function formatCost(meta: Favc1CycleSnapshotMeta): string {
@@ -60,6 +69,9 @@ export function CommandChamber({
   cycleMeta = null,
   systemReadiness = [],
   ventureName = null,
+  commandActivity = null,
+  hqSystemState = null,
+  waitingWork = false,
 }: Props) {
   const names = getRoomDisplayNames("executive_office");
   const commandNodes = workerNodes.filter((node) => node.departmentId === "executive_office");
@@ -70,15 +82,35 @@ export function CommandChamber({
     currentActivity,
     closedLoopRoute,
     ventureName,
+    commandRoomStatus: commandActivity?.rooms.executive_office?.status ?? null,
+    commandRoomSummary: commandActivity?.rooms.executive_office?.summary ?? null,
+    nowInspectingTask: commandActivity?.nowInspecting.currentTask ?? commandActivity?.nowInspecting.currentStep ?? null,
   });
   const terminal = cycleTerminal(cycleMeta);
-  const missionHeadline = currentActivity.active
-    ? (currentActivity.displayTask ?? snapshot?.displayHeadline ?? "Executing current mission")
-    : terminal?.headline ?? currentActivity.displayTask ?? snapshot?.displayHeadline ?? "Standing by for the next mission";
-  const decisionText =
-    terminal?.decision ??
-    snapshot?.displaySummary ??
-    (closedLoopRoute.decisionType ? closedLoopRoute.decisionType.replace(/_/g, " ") : null);
+  const inferredEvidenceWait = workerNodes.some((node) =>
+    `${node.task ?? ""} ${node.displayTask ?? ""}`.toLowerCase().includes("waiting for evidence"),
+  );
+  const oversight = projectCommandOversight({
+    workers: workerNodes,
+    systemState: hqSystemState ?? (inferredEvidenceWait ? "WAITING_FOR_EVIDENCE" : null),
+    waitingWork,
+    canonicalActiveWork: commandActivity?.nowInspecting.status === "ACTIVE_WORK",
+  });
+  const inspecting = commandActivity?.nowInspecting;
+  const activeRooms = activeRoomLabelsFromView(commandActivity);
+  const openCommandWork = inspecting?.status === "ACTIVE_WORK";
+  const liveExecution = oversight.commandState === "ACTIVE_OVERSIGHT" || inspecting?.status === "ACTIVE_WORK";
+  const missionHeadline = openCommandWork
+    ? (inspecting?.currentMission ??
+      currentActivity.displayTask ??
+      inspecting?.currentTask ??
+      snapshot?.displayHeadline ??
+      "Executing current mission")
+    : "IDLE — no active canonical work";
+  const decisionText = liveExecution
+    ? snapshot?.displaySummary ??
+      (closedLoopRoute.decisionType ? closedLoopRoute.decisionType.replace(/_/g, " ") : null)
+    : null;
   const nextRoute =
     closedLoopRoute.active && closedLoopRoute.toDepartmentId
       ? closedLoopTargetLabel(closedLoopRoute.toDepartmentId)
@@ -86,8 +118,11 @@ export function CommandChamber({
         ? "Routing next mission"
         : null;
 
-  const { primary: primaryNode, satellites: satelliteNodes } = partitionCommandDecisionOrbs(workerNodes);
-  const isActive = snapshot?.isActive ?? closedLoopRoute.active ?? currentActivity.active;
+  const { satellites: satelliteNodes } = partitionCommandDecisionOrbs(workerNodes);
+  const activityRoomStatus = commandActivity?.rooms.executive_office?.status;
+  const commandPresence =
+    roomPresenceFromActivityStatus(activityRoomStatus) ?? activity.presence;
+  const isActive = oversight.commandState === "ACTIVE_OVERSIGHT";
   const commandArtifacts = snapshot?.workArtifacts ?? [];
   const groupedDecisions = commandArtifacts.filter((a) => a.artifactType === "decision" || a.artifactType === "mission").slice(0, 3);
   const commandState = snapshot?.state ?? (isActive ? "RUNNING" : "NOT_STARTED");
@@ -102,26 +137,91 @@ export function CommandChamber({
       state={commandState}
       isSelected={isSelected}
       isActive={Boolean(isActive)}
-      ariaLabel={`Command. ${names.shortDescription}`}
+      ariaLabel={`Command. ${names.shortDescription}. ${oversight.accessibleState}`}
       onActivate={onSelect}
+      dataHq={{
+        "data-hq-command-oversight": oversight.commandState,
+        "data-hq-infinity-symbol": oversight.infinityState,
+        "data-hq-active-worker-count": String(oversight.activeWorkerCount),
+      }}
       header={
-        <div className="flex items-start gap-3 md:justify-between">
+        <div className="flex items-center gap-4 md:justify-between">
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-violet-300/90">{names.displayName}</p>
             <p className="hq-room-job mt-1">{names.shortDescription}</p>
             <RoomCurrentActivity explanation={activity} className="mt-2" />
-            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500" data-hq-room-presence={activity.presence}>
-              {activity.presence}
+            <CommandActivityStrip activity={commandActivity} />
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500" data-hq-room-presence={commandPresence}>
+              {commandPresence}
             </p>
 
             <div className="mt-1.5 grid gap-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-4">
               <div className="min-w-0 space-y-1.5">
                 <div>
                   <p className="text-[10px] uppercase tracking-wider text-zinc-500">
-                    {currentActivity.active ? "Current task" : terminal ? "Mission complete" : "Current mission"}
+                    Current work
                   </p>
-                  <p className="line-clamp-2 text-base font-semibold leading-snug text-zinc-50 md:text-lg">{missionHeadline}</p>
+                  <p
+                    className="line-clamp-2 text-base font-semibold leading-snug text-zinc-50 md:text-lg"
+                    data-hq-current-execution={commandActivity?.nowInspecting.currentMission ?? ""}
+                    data-hq-current-active={openCommandWork ? "ACTIVE" : "IDLE"}
+                  >
+                    {missionHeadline}
+                  </p>
+                  {(() => {
+                    const venture = commandActivity?.latestVentureWork;
+                    const system = commandActivity?.latestSystemActivity;
+                    const ventureLabel = commandActivity?.latestVentureWorkLabel
+                      ?? (commandActivity?.latestVentureWorkScope === "PORTFOLIO"
+                        ? "Latest portfolio venture work"
+                        : "Latest venture work");
+                    return (
+                      <div className="space-y-1">
+                        {venture ? (
+                          <p className="text-[11px] text-zinc-300" data-hq-latest-venture-work={venture.title} data-hq-latest-venture-work-id={venture.workId ?? ""}>
+                            <span className="uppercase tracking-wider text-zinc-600">{ventureLabel} </span>
+                            {venture.title}
+                            <span className="block text-[10px] text-zinc-500">
+                              {venture.status}
+                              {venture.completedAt ? ` · ${venture.completedAt}` : ""}
+                            </span>
+                          </p>
+                        ) : null}
+                        {system ? (
+                          <p className="text-[11px] text-zinc-400" data-hq-latest-system-activity={system.title}>
+                            <span className="uppercase tracking-wider text-zinc-600">Latest system activity </span>
+                            {system.title}
+                            <span className="block text-[10px] text-zinc-500">
+                              {system.status}
+                              {system.completedAt ? ` · ${system.completedAt}` : ` · ${system.updatedAt}`}
+                            </span>
+                          </p>
+                        ) : commandActivity?.latestCompleted ? (
+                          <p className="text-[11px] text-zinc-400" data-hq-latest-completed={commandActivity.latestCompleted.missionType}>
+                            <span className="uppercase tracking-wider text-zinc-600">Latest system activity </span>
+                            {commandActivity.latestCompleted.missionType}
+                          </p>
+                        ) : null}
+                      </div>
+                    );
+                  })()}
                 </div>
+                {terminal ? (
+                  <div className="rounded border border-zinc-800/80 bg-zinc-950/40 px-2 py-1.5" data-hq-inspection-context="true">
+                    <p className="text-[10px] uppercase tracking-wider text-zinc-600">Inspection</p>
+                    <p className="text-[11px] text-zinc-400">{terminal.headline}</p>
+                    {cycleMeta?.cycleKey ? (
+                      <p className="mt-0.5 font-mono text-[10px] text-zinc-600">cycleKey: {cycleMeta.cycleKey}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {activeRooms.length > 0 ? (
+                  <p className="text-xs text-zinc-300" data-hq-command-active-rooms={activeRooms.join(" · ")}>
+                    <span className="uppercase tracking-wider text-zinc-600">Active rooms </span>
+                    {activeRooms.join(" · ")}
+                  </p>
+                ) : null}
 
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-400">
                   {departmentLabel ? (
@@ -203,11 +303,13 @@ export function CommandChamber({
                 {systemReadiness.length > 0 ? (
                   <div aria-label="Command system status">
                     <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-600">Systems</p>
-                    <ul className="mt-1 grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px] sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+                    <ul className="mt-1 grid min-w-0 grid-cols-1 gap-x-3 gap-y-0.5 text-[10px] sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                       {systemReadiness.map((item) => (
-                        <li key={item.id} className="flex items-baseline justify-between gap-2">
-                          <span className="text-zinc-500">{item.label}</span>
-                          <span className="font-medium uppercase tracking-wide text-zinc-200">{item.status}</span>
+                        <li key={item.id} className="flex min-w-0 items-start justify-between gap-2">
+                          <span className="shrink-0 text-zinc-500">{item.label}</span>
+                          <span className="min-w-0 text-right font-medium uppercase tracking-wide text-zinc-200 [overflow-wrap:anywhere]">
+                            {item.status}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -221,26 +323,16 @@ export function CommandChamber({
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-col items-center gap-1 pt-0.5">
-            {primaryNode || satelliteNodes.length > 0 ? (
-              <div className="flex items-end justify-center gap-2" aria-label="Command decision sessions">
-                {primaryNode ? (
-                  <WorkerNode node={primaryNode} prominent={primaryNode.motionActive || Boolean(isActive)} />
-                ) : null}
-                {satelliteNodes.map((node) => (
-                  <WorkerNode key={node.nodeId} node={node} compact prominent={node.motionActive} />
-                ))}
-              </div>
-            ) : (
-              <div
-                className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-violet-400/50 bg-violet-950/50 shadow-[0_0_22px_rgba(167,139,250,0.35)] ${isActive ? "hq-command-ring" : ""}`}
-              >
-                <span
-                  className={`h-3 w-3 rounded-full ${isActive ? "bg-violet-200 shadow-[0_0_14px_rgba(167,139,250,0.9)]" : "bg-violet-400/80"}`}
-                  aria-hidden
-                />
-              </div>
-            )}
+          <div className="flex shrink-0 flex-col items-center justify-center gap-2 overflow-visible px-3 py-1">
+            <div className="flex items-center justify-center gap-2 overflow-visible" aria-label="Command decision sessions">
+              <InfinityDecisionCore
+                state={infinitySymbolToDecisionCore(oversight.infinityState)}
+                symbolState={oversight.infinityState}
+              />
+              {satelliteNodes.map((node) => (
+                <WorkerNode key={node.nodeId} node={node} compact prominent={false} />
+              ))}
+            </div>
             <span className="text-[10px] uppercase tracking-widest text-violet-300/70">Decision core</span>
           </div>
         </div>

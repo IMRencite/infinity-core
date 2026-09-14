@@ -65,17 +65,17 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
         ) : null}
       </div>
       <div className="relative grid grid-cols-2 gap-px bg-zinc-800/40 md:grid-cols-4">
-        <Cell label="Internal capital" value={model.cards.internalCapital.display} />
-        <Cell label="Available capital" value={model.cards.availableCapital.display} />
+        <Cell label="Authorized capital" value={model.cards.internalCapital.display} />
+        <Cell label="Remaining authorization" value={model.cards.availableCapital.display} />
         <Cell label="Allocated capital" value={model.cards.infinityAllocatedCapital.display} />
         <Cell label="Unallocated capital" value={model.cards.unallocatedCapital.display} />
       </div>
       {presentation === "EXPANDED" ? (
         <div className="relative grid grid-cols-2 gap-px border-t border-zinc-800/60 bg-zinc-800/40 md:grid-cols-4 xl:grid-cols-7">
           <Cell
-            label="Bank cash"
+            label="Verified treasury cash"
             value={model.cards.totalCash.display}
-            hint={stale ? "Provider state not current" : model.state.providerFreshness === "NOT_CONFIGURED" ? "Banking provider not configured" : null}
+            hint={stale ? "Provider state not current" : model.treasurySource === "CANONICAL FINANCIAL TRUTH" ? "Source: Mercury" : null}
           />
           <Cell
             label="Mercury"
@@ -98,8 +98,8 @@ export function TreasuryBudgetConstraintsPanel({ model }: Props) {
   return (
     <section aria-label="Budget Constraints" className="border border-zinc-800/70 bg-zinc-950/60 px-4 py-3">
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Budget Constraints</h2>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full min-w-[640px] text-left text-xs text-zinc-300">
+      <div className="hq-reflow-table-wrap mt-3">
+        <table className="hq-reflow-table text-left text-xs text-zinc-300">
           <thead className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
             <tr>
               <th className="pb-2 font-medium">Constraint</th>
@@ -112,11 +112,11 @@ export function TreasuryBudgetConstraintsPanel({ model }: Props) {
           <tbody>
             {model.constraints.map((row) => (
               <tr key={row.label} className="border-t border-zinc-800/80">
-                <td className="py-1.5">{row.label}</td>
-                <td>{row.spent.display}</td>
-                <td>{row.reserved.display}</td>
-                <td>{row.committed.display}</td>
-                <td>{row.available.display}</td>
+                <td className="py-1.5" data-label="Constraint">{row.label}</td>
+                <td data-label="Spent">{row.spent.display}</td>
+                <td data-label="Reserved">{row.reserved.display}</td>
+                <td data-label="Committed">{row.committed.display}</td>
+                <td data-label="Available">{row.available.display}</td>
               </tr>
             ))}
           </tbody>
@@ -133,8 +133,8 @@ export function TreasuryVentureAllocationsPanel({ model, ventureOptions = [] }: 
       {model.ventures.length === 0 ? (
         <p className="mt-2 text-sm italic text-zinc-500">NOT YET MEASURED</p>
       ) : (
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[800px] text-left text-xs text-zinc-300">
+        <div className="hq-reflow-table-wrap mt-3">
+          <table className="hq-reflow-table text-left text-xs text-zinc-300">
             <thead className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
               <tr>
                 <th className="pb-2 font-medium">Venture</th>
@@ -153,19 +153,19 @@ export function TreasuryVentureAllocationsPanel({ model, ventureOptions = [] }: 
             <tbody>
               {model.ventures.map((row) => (
                 <tr key={row.ventureId} className="border-t border-zinc-800/80">
-                  <td className="py-1.5" title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
+                  <td className="py-1.5" data-label="Venture" title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
                     {resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}
                   </td>
-                  <td>{row.stage}</td>
-                  <td>{row.allocated.display}</td>
-                  <td>{row.spent.display}</td>
-                  <td>{row.reserved.display}</td>
-                  <td>{row.committed.display}</td>
-                  <td>{row.available.display}</td>
-                  <td>{row.revenue.display}</td>
-                  <td>{row.profit.display}</td>
-                  <td>{row.roi.display}</td>
-                  <td>{row.status}</td>
+                  <td data-label="Stage">{row.stage}</td>
+                  <td data-label="Allocated">{row.allocated.display}</td>
+                  <td data-label="Spent">{row.spent.display}</td>
+                  <td data-label="Reserved">{row.reserved.display}</td>
+                  <td data-label="Committed">{row.committed.display}</td>
+                  <td data-label="Available">{row.available.display}</td>
+                  <td data-label="Revenue">{row.revenue.display}</td>
+                  <td data-label="Profit">{row.profit.display}</td>
+                  <td data-label="ROI">{row.roi.display}</td>
+                  <td data-label="Status">{row.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -181,10 +181,10 @@ export function TreasuryTransactionsPanel({ model, ventureOptions = [] }: Props)
     <section aria-label="Treasury Transactions" className="border border-zinc-800/70 bg-zinc-950/60 px-4 py-3">
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Transactions</h2>
       {model.transactions.length === 0 ? (
-        <p className="mt-2 text-sm italic text-zinc-500">UNKNOWN</p>
+        <p className="mt-2 text-sm italic text-zinc-500">No Mercury transactions retrieved.</p>
       ) : (
-        <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[880px] text-left text-xs text-zinc-300">
+        <div className="hq-reflow-table-wrap mt-3">
+          <table className="hq-reflow-table text-left text-xs text-zinc-300">
             <thead className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
               <tr>
                 <th className="pb-2 font-medium">Date</th>
@@ -203,19 +203,19 @@ export function TreasuryTransactionsPanel({ model, ventureOptions = [] }: Props)
             <tbody>
               {model.transactions.map((row) => (
                 <tr key={row.transactionId} className="border-t border-zinc-800/80">
-                  <td className="py-1.5">{row.date}</td>
-                  <td>{row.amount.display}</td>
-                  <td>{row.merchant}</td>
-                  <td>{row.category}</td>
-                  <td title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
+                  <td className="py-1.5" data-label="Date">{row.date}</td>
+                  <td data-label="Amount">{row.amount.display}</td>
+                  <td data-label="Merchant">{row.merchant}</td>
+                  <td data-label="Category">{row.category}</td>
+                  <td data-label="Venture" title={resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}>
                     {resolveTreasuryVentureLabel(ventureOptions, row.ventureId)}
                   </td>
-                  <td>{row.purpose}</td>
-                  <td>{row.provider}</td>
-                  <td>{row.financialActionId}</td>
-                  <td>{row.authorizationSource}</td>
-                  <td>{row.status}</td>
-                  <td>{row.transactionId}</td>
+                  <td data-label="Purpose">{row.purpose}</td>
+                  <td data-label="Provider">{row.provider}</td>
+                  <td data-label="Financial action">{row.financialActionId}</td>
+                  <td data-label="Authorization">{row.authorizationSource}</td>
+                  <td data-label="Status">{row.status}</td>
+                  <td data-label="Transaction ID">{row.transactionId}</td>
                 </tr>
               ))}
             </tbody>
@@ -226,7 +226,7 @@ export function TreasuryTransactionsPanel({ model, ventureOptions = [] }: Props)
   );
 }
 
-export function TreasuryCommitmentsPanel({ model }: Props) {
+export function TreasuryCommitmentsPanel({ model, emptyLabel = "No active commitments." }: Props & { emptyLabel?: string }) {
   return (
     <section aria-label="Treasury Commitments" className="border border-zinc-800/70 bg-zinc-950/60 px-4 py-3">
       <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-400">Commitments</h2>
@@ -234,7 +234,7 @@ export function TreasuryCommitmentsPanel({ model }: Props) {
         Monthly recurring {model.monthlyRecurring.display} · Annualized {model.annualizedRecurring.display}
       </p>
       {model.commitments.length === 0 ? (
-        <p className="mt-2 text-sm italic text-zinc-500">UNKNOWN</p>
+        <p className="mt-2 text-sm italic text-zinc-500">{emptyLabel}</p>
       ) : (
         <ul className="mt-3 space-y-1.5 text-xs text-zinc-300">
           {model.commitments.map((commitment) => (
