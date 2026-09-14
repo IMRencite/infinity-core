@@ -22,6 +22,27 @@ export const SAFE_ALLOCATION_PAYLOAD_FIELDS = [
   "increase_allocation",
 ] as const;
 
+export const SAFE_SPEND_AUTHORITY_PAYLOAD_FIELDS = [
+  "action",
+  "ventureId",
+  "venture_id",
+  "amountUsd",
+  "amount",
+  "currency",
+  "purpose",
+  "category",
+  "effective_at",
+  "effectiveAt",
+  "review_at",
+  "reviewAt",
+  "reason",
+  "authorization_source",
+  "authorizationSource",
+  "authorization_scope",
+  "idempotencyKey",
+  "idempotency_key",
+] as const;
+
 export const SAFE_BUDGET_PAYLOAD_FIELDS = [
   "action",
   "scope",
@@ -56,6 +77,15 @@ export function evaluateTreasuryAllocationPayloadSecurityGate(body: Record<strin
     gate: "TreasuryAllocationPayloadSecurityGate",
     result: refused.length ? "FAIL" : "PASS",
     reasons: refused.length ? refused : ["SAFE_ALLOCATION_FIELDS_ONLY"],
+  };
+}
+
+export function evaluateTreasurySpendAuthorityPayloadSecurityGate(body: Record<string, unknown>): NamedPayloadGate {
+  const refused = scanBody(body, SAFE_SPEND_AUTHORITY_PAYLOAD_FIELDS);
+  return {
+    gate: "TreasurySpendAuthorityPayloadSecurityGate",
+    result: refused.length ? "FAIL" : "PASS",
+    reasons: refused.length ? refused : ["SAFE_SPEND_AUTHORITY_FIELDS_ONLY"],
   };
 }
 

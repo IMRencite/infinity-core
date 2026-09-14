@@ -128,7 +128,7 @@ export function HqFinancialTruthStrip({ view }: { view: HqFinancialTruthView | n
         <div data-hq-financial-layer-group="CAPITAL">
           <p className="hq-financial-truth__layer-title">Capital authority</p>
           <p className="hq-financial-truth__settlement-note">
-            Cash is not authorization. Authorization is not allocation. Allocation is not spend.
+            Cash is not authorization. Authorization is not allocation. Allocation is not spend authority. Spend authority is not spend.
           </p>
           <div className="hq-financial-truth__grid">
             {authorized ? <MetricCard row={authorized} emphasize /> : null}

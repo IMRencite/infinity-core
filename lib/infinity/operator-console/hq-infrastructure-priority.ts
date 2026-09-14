@@ -34,8 +34,9 @@ export function treasuryPresentation(model: TreasuryHqReadModel | null | undefin
 }
 
 export function treasuryAttentionLabel(model: TreasuryHqReadModel): string | null {
-  if (model.state.providerFreshness === "STALE") return "PROVIDER STALE";
-  if (model.state.providerFreshness === "UNAVAILABLE") return "PROVIDER UNAVAILABLE";
+  if (model.mercury.founder?.headline) return model.mercury.founder.headline;
+  if (model.state.providerFreshness === "STALE") return "MERCURY VERIFICATION DEGRADED";
+  if (model.state.providerFreshness === "UNAVAILABLE") return "MERCURY VERIFICATION DEGRADED";
   if (model.requests.some((request) => request.status === "BLOCKED" || request.status === "ESCALATED")) {
     return "BUDGET BLOCKED";
   }

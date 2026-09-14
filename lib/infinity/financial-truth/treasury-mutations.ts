@@ -32,6 +32,8 @@ import type {
   VentureBudgetPolicy,
 } from "./types";
 import { SUPPORTED_BUDGET_CATEGORIES } from "./types";
+import { projectVentureSpendAuthority } from "./spend-authority";
+import { evaluateAllocationReductionAgainstAuthorityGate } from "./spend-authority-gates";
 
 export type TreasuryMutationResult =
   | { ok: true; ledger: CapitalLedger; gates: NamedFinancialGate[] }
@@ -263,6 +265,23 @@ export function mutateVentureCapitalAllocation(input: {
   }
   const now = new Date().toISOString();
   const reserved = venture.reserve_only;
+  const proposedAllocated = (existingEarly?.allocated_amount ?? 0) + (reserved ? 0 : input.amountUsd);
+  if (existingEarly && proposedAllocated < (existingEarly.allocated_amount ?? 0)) {
+    const authority = projectVentureSpendAuthority(ledger, input.ventureId, existingEarly.spent_amount);
+    const interaction = evaluateAllocationReductionAgainstAuthorityGate({
+      nextAllocation: proposedAllocated,
+      spendCeiling: authority.authorized_spend_ceiling,
+      openCommitments: authority.committed_amount,
+    });
+    if (interaction.result !== "PASS") {
+      return {
+        ok: false,
+        error: "Allocation reduction is incompatible with spend authority or commitments",
+        reason: interaction.reasons[0] ?? "ALLOCATION_INCOMPATIBLE",
+        gates: [interaction],
+      };
+    }
+  }
   const existing = existingEarly;
   ledger.idempotency[semantic] = { at: now, action: "allocate" };
   const nextAmount = (existing?.allocated_amount ?? 0) + (reserved ? 0 : input.amountUsd);

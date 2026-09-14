@@ -97,7 +97,34 @@ export {
   TREASURY_CONTROL_CENTER_WORK_TITLE,
   HQ_NAVIGATION_CLEANUP_WORK_ID,
   HQ_NAVIGATION_CLEANUP_WORK_TITLE,
+  OCCUPANCYNPV_SPEND_AUTHORITY_WORK_ID,
+  OCCUPANCYNPV_SPEND_AUTHORITY_WORK_TITLE,
 } from "./seed";
+export {
+  CANONICAL_MISSION_COMPLETION_RESOLVER,
+  closeCanonicalNamedMission,
+  evaluateNamedMissionTerminalCondition,
+  ensureVerifiedSpendAuthorityMilestone,
+  isGenericImplementationWork,
+  isNamedCanonicalMission,
+  recordVerifiedMissionMilestone,
+  resetCanonicalMissionCompletionState,
+  resolveCanonicalMissionCompletions,
+} from "./mission-completion";
+export {
+  ACTIVE_RUN_COUNT_TRUTH_GATE,
+  ACTIVE_WORK_TERMINAL_STATE_GATE,
+  CANONICAL_MISSION_COMPLETION_GATE,
+  CURRENT_CANONICAL_WORK_RESOLVER_GATE,
+  EXTERNAL_IMPLEMENTATION_AGENT_EXECUTION_GATE,
+  HQ_NO_REFRESH_COMPLETION_PROPAGATION_GATE,
+  evaluateActiveRunCountTruthGate,
+  evaluateActiveWorkTerminalStateGate,
+  evaluateCanonicalMissionCompletionGate,
+  evaluateCurrentCanonicalWorkResolverGate,
+  evaluateExternalImplementationAgentExecutionGate,
+  evaluateHQNoRefreshCompletionPropagationGate,
+} from "./mission-completion-gates";
 export {
   HQ_CURRENT_IMPLEMENTATION_WORK_ID,
   HQ_CURRENT_IMPLEMENTATION_WORK_TITLE,

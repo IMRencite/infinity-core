@@ -1,6 +1,7 @@
 import { existsSync, statSync, watch, type FSWatcher } from "node:fs";
 import { resolve } from "node:path";
 import { idleCurrentImplementationWorkIfQuiet, HQ_LIVE_TICK_PATH } from "@/lib/infinity/canonical-work/current-implementation";
+import { resolveCanonicalMissionCompletions } from "@/lib/infinity/canonical-work/mission-completion";
 import { IMPLEMENTATION_SESSION_PATH } from "@/lib/infinity/canonical-work/implementation-observe";
 import { CANONICAL_WORK_STORE_PATH, reloadCanonicalWorkIfDiskChanged } from "@/lib/infinity/canonical-work/store";
 import { missionActivityPersistFile } from "@/lib/infinity/mission-activity/persist-disk";
@@ -42,11 +43,13 @@ function watchedPaths(): string[] {
 export function reconcileHqCanonicalDisk(): { changed: boolean; paths: string[] } {
   const paths = watchedPaths().filter((path) => changed(path));
   if (paths.length === 0) {
+    resolveCanonicalMissionCompletions();
     idleCurrentImplementationWorkIfQuiet();
     return { changed: false, paths: [] };
   }
   reloadCanonicalWorkIfDiskChanged();
   refreshMissionActivityFromDisk();
+  resolveCanonicalMissionCompletions();
   idleCurrentImplementationWorkIfQuiet();
   publishHqRuntimeEvent({
     type: "HQ_SNAPSHOT_INVALIDATED",

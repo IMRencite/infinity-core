@@ -12,6 +12,7 @@ import type {
   SourcedTreasuryAmount,
 } from "./types";
 import { unallocatedVentureCapital } from "./venture-allocation";
+import { projectVentureSpendAuthority } from "./spend-authority";
 
 function sourced(
   value: number | "NOT_SET" | null,
@@ -133,6 +134,20 @@ export function projectCanonicalTreasury(
     commitments: current.commitments,
     accounting_events: current.accounting_events,
     latest_allocation_decision: decision,
+    spend_authorities: canonicalTreasuryVentures().map((venture) =>
+      projectVentureSpendAuthority(current, venture.venture_id, view.capital.spent_capital ?? 0),
+    ),
+    mercury_provider_error: view.mercury.provider_error ?? cashTruth.provider_error,
+    mercury_last_verified_at: view.mercury.last_verified,
+    mercury_last_verified_available:
+      view.mercury.connection === "LIVE" && view.mercury.operating_account_verified
+        ? null
+        : typeof view.mercury.available === "number"
+          ? view.mercury.available
+          : typeof view.mercury.current === "number"
+            ? view.mercury.current
+            : null,
+    mercury_failure_stage: view.mercury.failure_stage ?? cashTruth.failure_stage,
   };
 }
 

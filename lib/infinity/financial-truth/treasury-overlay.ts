@@ -1,4 +1,5 @@
 import { displayMoney, displayNotSet } from "./amounts";
+import { projectMercuryFounderPresentationFromTreasury } from "./mercury-founder-presentation";
 import type { CanonicalTreasuryProjection } from "./types";
 import type { TreasuryHqReadModel, TruthfulHqValue } from "@/lib/infinity/treasury/hq/read-model";
 import { unknownAmount } from "@/lib/infinity/treasury/types";
@@ -39,7 +40,10 @@ export function overlayCanonicalTreasuryOnHqReadModel(
     },
     treasurySource: "CANONICAL FINANCIAL TRUTH",
     bankingProvider: "Mercury",
-    freshnessLabel: projection.last_financial_sync ?? "LIVE",
+    freshnessLabel:
+      projection.treasury_status === "LIVE"
+        ? "TREASURY POLICY OPERATIONAL"
+        : "MERCURY VERIFICATION DEGRADED",
     constraints: [
       {
         label: "Portfolio capital ceiling",
@@ -120,9 +124,13 @@ export function overlayCanonicalTreasuryOnHqReadModel(
     })),
     mercury: {
       ...model.mercury,
-      statusLabel: projection.treasury_status === "LIVE" ? "LIVE · READ ONLY" : projection.treasury_status,
-      lastSuccessfulSync: projection.last_financial_sync,
+      statusLabel: projection.treasury_status === "LIVE" ? "LIVE · READ ONLY" : "DEGRADED",
+      lastSuccessfulSync: projection.mercury_last_verified_at ?? null,
       providerBalance: actual(projection.mercury_available.display),
+      founder: projectMercuryFounderPresentationFromTreasury(projection, {
+        accountCount: model.mercury.accountCount,
+        environment: model.mercury.environment,
+      }),
     },
   };
 }

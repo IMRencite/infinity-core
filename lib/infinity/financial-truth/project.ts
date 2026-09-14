@@ -34,6 +34,7 @@ import { portfolioVentureSlug, projectPortfolioActualEconomics } from "./portfol
 import { CANONICAL_FOUNDER_CAPITAL_POLICY } from "./founder-capital-policy";
 import { ledgerAllocationsForHq, projectCanonicalTreasury } from "./treasury-projection";
 import { evaluateTreasuryControlGates } from "./treasury-gates";
+import { displaySpendCeiling, projectOccupancyNpvSpendAuthority, projectVentureSpendAuthority } from "./spend-authority";
 import type {
   FinancialProvenance,
   FinancialTruthSnapshot,
@@ -49,6 +50,11 @@ function provenance(source: string, verifiedAt: string | null, verification: "VE
     freshness: freshnessFromAge(verifiedAt),
     verification_status: verification,
   };
+}
+
+function displaySpendAuthorityMetric(ledger: ReturnType<typeof loadCapitalLedger>, actualSpend: number): string {
+  const authority = projectOccupancyNpvSpendAuthority(ledger, actualSpend);
+  return displaySpendCeiling(authority.authorized_spend_ceiling);
 }
 
 function metric(
@@ -172,7 +178,13 @@ export function projectHqFinancialTruth(snapshot: FinancialTruthSnapshot, now = 
       snapshot.captured_at,
     ),
     metric("allocated_capital", "Allocated capital", displayMoney(capital.allocated_capital), "VENTURE", capitalProv),
-    metric("authorized_spend", "Venture authorized spend", "NOT_SET", "VENTURE", capitalProv),
+    metric(
+      "authorized_spend",
+      "OccupancyNPV spend authority",
+      displaySpendAuthorityMetric(ledger, capital.spent_capital ?? 0),
+      "VENTURE",
+      capitalProv,
+    ),
     metric("actual_spend", "Actual spend", displayMoney(capital.spent_capital), "VENTURE", ledgerProv),
   ];
   const settlementDestination = buildSettlementDestination(
@@ -205,7 +217,7 @@ export function projectHqFinancialTruth(snapshot: FinancialTruthSnapshot, now = 
       ? reconciliation.settlement_reconciliation_status
       : "UNKNOWN",
     allocated_capital: allocations.find((item) => item.venture_id === row.venture_id)?.allocated_amount ?? 0,
-    authorized_spend: "NOT_SET",
+    authorized_spend: projectVentureSpendAuthority(ledger, row.venture_id, snapshot.spent_capital ?? 0).authorized_spend_ceiling,
     actual_spend: row.venture_id === CRE_VENTURE_ID ? snapshot.spent_capital : null,
   }));
   const view: HqFinancialTruthView = {

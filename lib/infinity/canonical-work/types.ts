@@ -56,6 +56,12 @@ export const ACTIVE_WORK_STALENESS_GATE = "ActiveWorkStalenessGate" as const;
 export const OPERATING_FLOOR_CURRENT_MISSION_GATE = "OperatingFloorCurrentMissionGate" as const;
 export const HQ_LIVE_WORK_SURFACE_CONSISTENCY_GATE = "HQLiveWorkSurfaceConsistencyGate" as const;
 export const SELECTED_VENTURE_LATEST_WORK_GATE = "SelectedVentureLatestWorkGate" as const;
+export const CANONICAL_MISSION_COMPLETION_GATE = "CanonicalMissionCompletionGate" as const;
+export const ACTIVE_WORK_TERMINAL_STATE_GATE = "ActiveWorkTerminalStateGate" as const;
+export const CURRENT_CANONICAL_WORK_RESOLVER_GATE = "CurrentCanonicalWorkResolverGate" as const;
+export const EXTERNAL_IMPLEMENTATION_AGENT_EXECUTION_GATE = "ExternalImplementationAgentExecutionGate" as const;
+export const ACTIVE_RUN_COUNT_TRUTH_GATE = "ActiveRunCountTruthGate" as const;
+export const HQ_NO_REFRESH_COMPLETION_PROPAGATION_GATE = "HQNoRefreshCompletionPropagationGate" as const;
 
 export const CANONICAL_WORK_CLASSIFICATIONS = [
   "VENTURE_DELIVERY",

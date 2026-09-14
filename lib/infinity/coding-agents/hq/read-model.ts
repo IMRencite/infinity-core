@@ -36,6 +36,7 @@ export type CodingHqReadModel = {
     historicalSuccess: string;
     cost: string;
     status: string;
+    connectorStatus?: string;
   }>;
 };
 
@@ -55,12 +56,13 @@ export function emptyCodingHqReadModel(organizationId: string): CodingHqReadMode
       },
       {
         provider: "Cursor",
-        executionMode: process.env.CURSOR_API_KEY ? "CURSOR_CLI / CURSOR_CLOUD_AGENT" : "NOT_CONFIGURED",
-        capabilities: "LARGE_REPOSITORY_EXECUTION, MODIFY_MULTIPLE_FILES",
-        availability: process.env.CURSOR_API_KEY ? "AVAILABLE" : "NOT_CONFIGURED",
+        executionMode: "EXTERNAL_IMPLEMENTATION_AGENT",
+        capabilities: "EXTERNAL_IMPLEMENTATION_AGENT",
+        availability: "AVAILABLE",
         historicalSuccess: "NOT YET MEASURED",
         cost: "UNKNOWN until authorized run",
-        status: process.env.CURSOR_API_KEY ? "READY" : "NOT_CONFIGURED",
+        status: "PRESENT_IDLE",
+        connectorStatus: "NOT_CONNECTED",
       },
     ],
   };

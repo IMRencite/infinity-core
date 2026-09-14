@@ -7,6 +7,10 @@ import type { EpistemicAmount } from "../types";
 import { unknownAmount } from "../types";
 import { formatHqAmount, type TruthfulHqValue } from "./read-model";
 import type { ProviderEnvironment, ProviderHealth } from "../constants";
+import {
+  projectMercuryFounderPresentation,
+  type MercuryFounderPresentation,
+} from "@/lib/infinity/financial-truth/mercury-founder-presentation";
 
 export type MercuryHqStatus = {
   provider: "MERCURY";
@@ -21,6 +25,7 @@ export type MercuryHqStatus = {
   providerBalanceTruthClass: string;
   transactionFreshness: string;
   tokenVisible: false;
+  founder: MercuryFounderPresentation;
 };
 
 function formatSandboxBalance(amount: EpistemicAmount): TruthfulHqValue {
@@ -79,6 +84,19 @@ export function buildMercuryHqStatus(
         : lastSync
           ? "STALE"
           : "NOT VERIFIED";
+  const live = health === "READ_ONLY_VERIFIED";
+  const founder = projectMercuryFounderPresentation({
+    treasuryStatus: live || health === "NOT_CONFIGURED" ? "LIVE" : "DEGRADED",
+    verifiedCashDisplay: live ? formatHqAmount(providerBalanceAmount).display : "UNKNOWN",
+    verifiedCashValue: live ? knownValue(providerBalanceAmount) : null,
+    providerError: live || health === "NOT_CONFIGURED" ? null : health,
+    lastVerifiedAt: live ? lastSync : null,
+    lastSyncAttempt: lastSync,
+    cashCompleteness: freshness,
+    accountCount: accounts.length,
+    environment: mode,
+    adapterStatus: health,
+  });
 
   return {
     provider: "MERCURY",
@@ -97,5 +115,6 @@ export function buildMercuryHqStatus(
       mode === "PRODUCTION" ? "PROVIDER_PRODUCTION" : mode === "SANDBOX" ? "PROVIDER_SANDBOX" : "INTERNAL_MANUAL",
     transactionFreshness: lastTxn ? freshness : freshness,
     tokenVisible: false,
+    founder,
   };
 }

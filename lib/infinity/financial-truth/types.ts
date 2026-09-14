@@ -452,7 +452,7 @@ export type VentureEconomicsProjection = {
   current_month_gross_revenue?: number;
   settlement_status: SettlementReconciliationStatus;
   allocated_capital: NotSet | number;
-  authorized_spend: NotSet;
+  authorized_spend: NotSet | number;
   actual_spend: number | null;
 };
 
@@ -689,6 +689,11 @@ export type CanonicalTreasuryProjection = {
   commitments: CanonicalTreasuryCommitment[];
   accounting_events: ManualAccountingEvent[];
   latest_allocation_decision: VentureCapitalAllocationDecision | null;
+  spend_authorities: import("./spend-authority").VentureSpendAuthority[];
+  mercury_provider_error?: string | null;
+  mercury_last_verified_at?: string | null;
+  mercury_last_verified_available?: number | null;
+  mercury_failure_stage?: string | null;
 };
 
 export type FinancialAnomaly = {

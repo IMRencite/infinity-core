@@ -10,11 +10,16 @@ import {
   mutateVentureCapitalAllocation,
   recordManualAccountingEvent,
 } from "@/lib/infinity/financial-truth/treasury-mutations";
+import { isGovernedSpendCategory } from "@/lib/infinity/financial-truth/spend-authority";
+import { mutateVentureSpendAuthority } from "@/lib/infinity/financial-truth/spend-authority-mutations";
+import { projectOccupancyNpvSpendAuthority } from "@/lib/infinity/financial-truth/spend-authority";
+import { publishHqRuntimeEvent } from "@/lib/infinity/operator-console/hq-live-events";
 import { loadTreasuryHqForOrg } from "@/lib/infinity/treasury";
 import { assertNoCredentialFields } from "@/lib/infinity/treasury/security";
 import {
   evaluateTreasuryAllocationPayloadSecurityGate,
   evaluateTreasuryBudgetPayloadSecurityGate,
+  evaluateTreasurySpendAuthorityPayloadSecurityGate,
 } from "@/lib/infinity/financial-truth/treasury-payload-contracts";
 import { allocatedCapitalTotal, loadCapitalLedger } from "@/lib/infinity/financial-truth/capital-ledger";
 import { CANONICAL_FOUNDER_CAPITAL_POLICY } from "@/lib/infinity/financial-truth/founder-capital-policy";
@@ -26,6 +31,7 @@ type TreasuryAction =
   | "update_budget"
   | "update_portfolio_budget"
   | "update_venture_budget"
+  | "update_spend_authority"
   | "record_accounting";
 
 function organizationIdFromAuth(result: unknown): { organizationId: string; userId: string } | null {
@@ -90,6 +96,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     "update_budget",
     "update_portfolio_budget",
     "update_venture_budget",
+    "update_spend_authority",
     "record_accounting",
   ];
   if (!allowed.includes(action)) {
@@ -132,6 +139,31 @@ export async function POST(request: Request): Promise<NextResponse> {
       });
       if (!allocated.ok) {
         return NextResponse.json({ error: allocated.error, reason: allocated.reason }, { status: 400 });
+      }
+    } else if (action === "update_spend_authority") {
+      const payloadSecurity = evaluateTreasurySpendAuthorityPayloadSecurityGate(body);
+      if (payloadSecurity.result !== "PASS") {
+        return NextResponse.json(
+          { error: "Treasury payload refused actual credential fields", reason: "CREDENTIAL_FIELD", fields: payloadSecurity.reasons },
+          { status: 400 },
+        );
+      }
+      if (!idempotencyKey) return NextResponse.json({ error: "idempotencyKey required" }, { status: 400 });
+      const updated = mutateVentureSpendAuthority({
+        actor: auth.userId,
+        authorizedActor: true,
+        ventureId: typeof body.ventureId === "string" ? body.ventureId : "",
+        amountUsd,
+        currency: body.currency === "USD" ? "USD" : undefined,
+        purpose: typeof body.purpose === "string" ? body.purpose : null,
+        category: isGovernedSpendCategory(body.category) ? body.category : "OPERATIONS",
+        effectiveAt: typeof body.effective_at === "string" ? body.effective_at : typeof body.effectiveAt === "string" ? body.effectiveAt : null,
+        reviewAt: typeof body.review_at === "string" ? body.review_at : typeof body.reviewAt === "string" ? body.reviewAt : null,
+        reason: typeof body.reason === "string" ? body.reason : null,
+        idempotencyKey,
+      });
+      if (!updated.ok) {
+        return NextResponse.json({ error: updated.error, reason: updated.reason }, { status: 400 });
       }
     } else {
       const payloadSecurity = evaluateTreasuryBudgetPayloadSecurityGate(body);
@@ -197,7 +229,16 @@ export async function POST(request: Request): Promise<NextResponse> {
     const budget = ledger.venture_budgets.find((row) => row.venture_id === ventureId);
     const allocatedToVenture = (allocation?.allocated_amount ?? 0) + (allocation?.reserved_amount ?? 0);
     const ceiling = typeof budget?.venture_budget_ceiling === "number" ? budget.venture_budget_ceiling : 0;
-    const effective = Math.min(allocatedToVenture, ceiling);
+    const spendAuthority =
+      (ventureId
+        ? financialTruth.treasury_control.spend_authorities.find((row) => row.venture_id === ventureId)
+        : null) ?? projectOccupancyNpvSpendAuthority(ledger, allocation?.spent_amount ?? 0);
+    publishHqRuntimeEvent({
+      type: "FINANCIAL_BALANCE_UPDATED",
+      at: new Date().toISOString(),
+      ventureId: ventureId || null,
+      reason: action,
+    });
     const result =
       action === "allocate"
         ? {
@@ -206,6 +247,13 @@ export async function POST(request: Request): Promise<NextResponse> {
             money_moved: false,
             message: `$${allocatedToVenture} allocated to ${allocation?.display_name ?? "venture"}. $${authorized - allocated} remains unallocated. No bank funds moved.`,
           }
+        : action === "update_spend_authority"
+          ? {
+              ok: true,
+              action,
+              money_moved: false,
+              message: `Spend authority set to $${spendAuthority.effective_spend_authority}. Allocation $${spendAuthority.allocation_amount} unchanged. Paid acquisition $0. No bank funds moved.`,
+            }
         : action === "update_budget" || action === "update_venture_budget" || action === "update_portfolio_budget"
           ? {
               ok: true,
@@ -213,7 +261,7 @@ export async function POST(request: Request): Promise<NextResponse> {
               money_moved: false,
               message:
                 body.scope === "VENTURE" || body.ventureId
-                  ? `Venture budget ceiling updated to $${ceiling}. Effective spend authority: $${effective}. No bank funds moved.`
+                  ? `Venture budget ceiling updated to $${ceiling}. Budget is not allocation and not spend. No bank funds moved.`
                   : "Canonical portfolio budget policy updated. No bank funds moved.",
             }
           : { ok: true, action, money_moved: false, message: "Treasury mutation recorded. No bank funds moved." };

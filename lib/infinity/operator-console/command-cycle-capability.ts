@@ -1,5 +1,8 @@
 import type { HqFinancialTruthView } from "@/lib/infinity/financial-truth/types";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
+import { HQ_SERVED_ARTIFACT_MARKER } from "./served-artifact-identity";
+
+export { HQ_SERVED_ARTIFACT_MARKER };
 
 export const COMMAND_CYCLE_CAPABILITY_PROJECTION = "CommandCycleCapabilityProjection" as const;
 export const COMMAND_CYCLE_CAPABILITY_PROJECTION_GATE = "CommandCycleCapabilityProjectionGate" as const;
@@ -12,6 +15,7 @@ export type CommandCycleTreasuryLabel =
 
 export type CommandCycleCapabilityProjection = {
   contract: typeof COMMAND_CYCLE_CAPABILITY_PROJECTION;
+  served_artifact: typeof HQ_SERVED_ARTIFACT_MARKER;
   treasury: "CONNECTED" | "NOT_CONFIGURED";
   treasury_health: "READY" | "DEGRADED" | "NOT_CONFIGURED";
   mercury: "READ_ONLY" | "NOT_CONFIGURED";
@@ -51,6 +55,7 @@ export function projectCommandCycleCapability(input: {
   if (!exists) {
     return {
       contract: COMMAND_CYCLE_CAPABILITY_PROJECTION,
+      served_artifact: HQ_SERVED_ARTIFACT_MARKER,
       treasury: "NOT_CONFIGURED",
       treasury_health: "NOT_CONFIGURED",
       mercury: "NOT_CONFIGURED",
@@ -64,6 +69,7 @@ export function projectCommandCycleCapability(input: {
   const degraded = !live || completeness === "PARTIAL" || completeness === "UNKNOWN";
   return {
     contract: COMMAND_CYCLE_CAPABILITY_PROJECTION,
+    served_artifact: HQ_SERVED_ARTIFACT_MARKER,
     treasury: "CONNECTED",
     treasury_health: degraded ? "DEGRADED" : "READY",
     mercury: "READ_ONLY",

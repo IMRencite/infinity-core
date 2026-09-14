@@ -1,3 +1,4 @@
+import { resolveCanonicalMissionCompletions } from "@/lib/infinity/canonical-work/mission-completion";
 import { resolveCurrentCanonicalWork } from "@/lib/infinity/canonical-work/resolver";
 import { reloadCanonicalWorkIfDiskChanged } from "@/lib/infinity/canonical-work/store";
 import { attachCommandActivity } from "@/lib/infinity/mission-activity/attach";
@@ -74,6 +75,7 @@ export function loadHqCanonicalLiveState(organizationId: string, selectedVenture
     });
   }
   refreshMissionActivityFromDisk();
+  resolveCanonicalMissionCompletions();
   const commandActivity = projectCommandActivity({
     organizationId,
     selectedVentureId,

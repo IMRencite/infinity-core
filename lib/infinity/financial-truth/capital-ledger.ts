@@ -10,6 +10,7 @@ import type {
   VentureBudgetPolicy,
   VentureCapitalAllocationDecision,
 } from "./types";
+import type { VentureFinancialCommitment, VentureSpendAuthority } from "./spend-authority";
 
 export const CAPITAL_LEDGER_PATH = ".infinity/financial-truth/capital-ledger.json" as const;
 
@@ -29,6 +30,8 @@ export type CapitalLedger = {
   venture_budgets: VentureBudgetPolicy[];
   accounting_events: ManualAccountingEvent[];
   commitments: CanonicalTreasuryCommitment[];
+  spend_authorities: VentureSpendAuthority[];
+  venture_financial_commitments: VentureFinancialCommitment[];
   audit: TreasuryAuditEvent[];
   idempotency: Record<string, { at: string; action: string }>;
   allocation_decisions: VentureCapitalAllocationDecision[];
@@ -65,6 +68,8 @@ export function emptyCapitalLedger(): CapitalLedger {
     venture_budgets: [],
     accounting_events: [],
     commitments: [],
+    spend_authorities: [],
+    venture_financial_commitments: [],
     audit: [],
     idempotency: {},
     allocation_decisions: [],
@@ -95,6 +100,8 @@ function normalizeCapitalLedger(raw: Partial<CapitalLedger> | null | undefined):
     venture_budgets: raw.venture_budgets ?? [],
     accounting_events: raw.accounting_events ?? [],
     commitments: raw.commitments ?? [],
+    spend_authorities: raw.spend_authorities ?? [],
+    venture_financial_commitments: raw.venture_financial_commitments ?? [],
     audit: raw.audit ?? [],
     idempotency: raw.idempotency ?? {},
     allocation_decisions: raw.allocation_decisions ?? [],

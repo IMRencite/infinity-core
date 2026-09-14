@@ -162,7 +162,7 @@ export function evaluateFinancialPolicy(store: TreasuryStore, ctx: PolicyEvaluat
     const available = knownValue(categoryBudget.available);
     if (available == null) return escalate(reasons, "CATEGORY_AVAILABLE_UNKNOWN", policy.policyVersion, now);
     if (effectiveAmount > available) return blockOrEscalate(reasons, "CATEGORY_BUDGET_EXCEEDED", policy.policyVersion, now);
-  } else {
+  } else if (policy.activeSpendAuthority !== false) {
     const limit = policy.categoryLimits[request.category];
     if (limit != null && effectiveAmount > limit) {
       return blockOrEscalate(reasons, "CATEGORY_BUDGET_EXCEEDED", policy.policyVersion, now);
@@ -180,13 +180,13 @@ export function evaluateFinancialPolicy(store: TreasuryStore, ctx: PolicyEvaluat
     return blockOrEscalate(reasons, "MERCHANT_NOT_ALLOWLISTED", policy.policyVersion, now);
   }
 
-  if (policy.dailySpendingCeiling != null) {
+  if (policy.activeSpendAuthority !== false && policy.dailySpendingCeiling != null) {
     const daily = spendInWindow(store, request.organizationId, periodStart(now, "DAILY")) + effectiveAmount;
     if (daily > policy.dailySpendingCeiling) {
       return blockOrEscalate(reasons, "DAILY_CEILING_EXCEEDED", policy.policyVersion, now);
     }
   }
-  if (policy.monthlySpendingCeiling != null) {
+  if (policy.activeSpendAuthority !== false && policy.monthlySpendingCeiling != null) {
     const monthly =
       spendInWindow(store, request.organizationId, periodStart(now, "MONTHLY")) +
       existingMonthlyCommitments(store, request.organizationId, request.ventureId) +

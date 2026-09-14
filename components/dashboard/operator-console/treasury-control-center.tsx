@@ -8,7 +8,31 @@ import { filterTreasuryAllocatableVentures } from "@/lib/infinity/operator-conso
 import { buildTreasuryHqArtifacts } from "@/lib/infinity/treasury/hq/artifacts";
 import type { TreasuryHqReadModel } from "@/lib/infinity/treasury/hq/read-model";
 import type { CanonicalTreasuryProjection, HqFinancialTruthView, SupportedBudgetCategory } from "@/lib/infinity/financial-truth/types";
+import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
+import { displayMoney, displayNotSet } from "@/lib/infinity/financial-truth/amounts";
+
+const GOVERNED_SPEND_CATEGORIES = [
+  "INFRASTRUCTURE",
+  "DOMAIN",
+  "HOSTING",
+  "SOFTWARE",
+  "AI_PROVIDER",
+  "EMAIL",
+  "OPERATIONS",
+  "CREATIVE",
+  "LEGAL",
+  "DATA",
+  "OTHER",
+] as const;
+
+function displaySpendCeiling(value: number | "NOT_SET"): string {
+  return value === "NOT_SET" ? displayNotSet(value) : displayMoney(value);
+}
 import { overlayCanonicalTreasuryOnHqReadModel } from "@/lib/infinity/financial-truth/treasury-overlay";
+import {
+  formatFounderVerifiedAt,
+  projectMercuryFounderPresentationFromTreasury,
+} from "@/lib/infinity/financial-truth/mercury-founder-presentation";
 import { useOptionalHqArtifactInspector } from "./artifacts/hq-artifact-inspector-provider";
 import { handleCardKeyboardInspect } from "./infinity-room/room-keyboard";
 
@@ -81,6 +105,19 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
   const [budgetAmount, setBudgetAmount] = useState("");
   const [budgetStatus, setBudgetStatus] = useState<FormStatus>({ state: "idle", message: null });
 
+  const [authorityVenture, setAuthorityVenture] = useState(ventures[0]?.venture_id ?? CRE_VENTURE_ID);
+  const [authorityAmount, setAuthorityAmount] = useState("");
+  const [authorityPurpose, setAuthorityPurpose] = useState("");
+  const [authorityCategory, setAuthorityCategory] = useState<(typeof GOVERNED_SPEND_CATEGORIES)[number]>("OPERATIONS");
+  const [authorityReason, setAuthorityReason] = useState("");
+  const [authorityStatus, setAuthorityStatus] = useState<FormStatus>({ state: "idle", message: null });
+
+  const occupancyAuthority =
+    projection?.spend_authorities.find((row) => row.venture_id === CRE_VENTURE_ID) ??
+    projection?.spend_authorities[0] ??
+    null;
+  const selectedAuthority =
+    projection?.spend_authorities.find((row) => row.venture_id === authorityVenture) ?? occupancyAuthority;
   const selectedVenture = ventures.find((row) => row.venture_id === allocVenture) ?? ventures[0] ?? null;
   const selectedAllocation = projection?.allocations.find((row) => row.venture_id === allocVenture) ?? null;
   const selectedActiveAllocation =
@@ -123,19 +160,37 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
         ventures.find((row) => row.venture_id === ventureId)?.display_name ?? ventureId,
       lineageForVenture: () => ({ candidateId: null, blueprintId: null }),
     }).strategy_finance ?? [];
+  const mercuryFounder = projection
+    ? projectMercuryFounderPresentationFromTreasury(projection)
+    : displayModel.mercury.founder;
+  const mercuryDegraded = mercuryFounder.mercury_state === "DEGRADED";
 
   return (
     <section aria-label="Treasury control center" className="hq-treasury-console space-y-3">
       <article className="hq-treasury-panel" aria-label="Live Treasury">
         <header className="hq-treasury-panel__header">
           <h3>Live Treasury</h3>
-          <p>Mercury connected · Shared parent financial infrastructure</p>
+          <p>
+            {mercuryDegraded
+              ? "Mercury verification degraded · Treasury policy remains operational"
+              : "Mercury connected · Shared parent financial infrastructure"}
+          </p>
         </header>
+        {mercuryDegraded ? (
+          <p className="hq-treasury-mercury-warning hq-treasury-panel__note" data-hq-mercury-warning="degraded">
+            {mercuryFounder.message} Authorized and allocated capital remain unchanged.
+          </p>
+        ) : null}
         <div className="hq-treasury-status">
-          <StatusChip label="Treasury status" value={projection?.treasury_status ?? "LIVE"} />
+          <StatusChip label="Treasury policy" value="Operational" />
+          <StatusChip label="Mercury verification" value={mercuryFounder.badge} />
+          <StatusChip label="Verified cash" value={projection?.verified_treasury_cash.display ?? displayModel.cards.totalCash.display} />
           <StatusChip label="Bank provider" value="Mercury" />
           <StatusChip label="Bank connection" value="READ ONLY" />
-          <StatusChip label="Last financial sync" value={projection?.last_financial_sync ?? displayModel.freshnessLabel} />
+          <StatusChip
+            label="Last verified"
+            value={mercuryFounder.last_verified_display ?? formatFounderVerifiedAt(projection?.last_financial_sync) ?? "Not available"}
+          />
           <StatusChip label="Cash completeness" value={projection?.cash_completeness ?? "COMPLETE"} />
         </div>
       </article>
@@ -300,6 +355,90 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
             </dl>
           </article>
 
+          <article className="hq-treasury-panel" aria-label="OccupancyNPV spend authority" data-hq-spend-authority-panel="true">
+            <header className="hq-treasury-panel__header">
+              <h3>OccupancyNPV spend authority</h3>
+              <p>Allocation is not permission to spend</p>
+            </header>
+            <dl className="hq-treasury-overview" data-hq-occupancy-spend-authority="true">
+              <OverviewItem label="Allocated capital" value={occupancyAuthority ? `$${occupancyAuthority.allocation_amount}` : "$0"} />
+              <OverviewItem label="Spend authority" value={occupancyAuthority ? displaySpendCeiling(occupancyAuthority.authorized_spend_ceiling) : "NOT_SET"} />
+              <OverviewItem label="Effective spend authority" value={occupancyAuthority ? `$${occupancyAuthority.effective_spend_authority}` : "$0"} />
+              <OverviewItem label="Committed" value={occupancyAuthority ? `$${occupancyAuthority.committed_amount}` : "$0"} />
+              <OverviewItem label="Actual spend" value={occupancyAuthority ? `$${occupancyAuthority.actual_spend_amount}` : "$0"} />
+              <OverviewItem label="Remaining spend authority" value={occupancyAuthority ? `$${occupancyAuthority.remaining_spend_authority}` : "$0"} />
+              <OverviewItem label="Unused allocation" value={occupancyAuthority ? `$${occupancyAuthority.unused_allocation}` : "$0"} />
+              <OverviewItem label="Paid acquisition" value="$0" />
+              <OverviewItem label="Status" value={occupancyAuthority?.status ?? "NOT_SET"} />
+              <OverviewItem label="Source" value={occupancyAuthority?.authorization_source ?? "NONE"} />
+              <OverviewItem label="Freshness" value={occupancyAuthority?.updated_at ?? occupancyAuthority?.effective_at ?? "UNKNOWN"} />
+            </dl>
+            <p className="hq-treasury-panel__note">
+              OccupancyNPV can have $25 allocated while only a smaller ceiling is allowed to be used. Paid acquisition stays $0.
+            </p>
+            <form
+              className="hq-treasury-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (authorityStatus.state === "loading") return;
+                void mutate(
+                  {
+                    action: "update_spend_authority",
+                    ventureId: authorityVenture,
+                    amountUsd: Number(authorityAmount),
+                    currency: "USD",
+                    purpose: authorityPurpose,
+                    category: authorityCategory,
+                    reason: authorityReason,
+                    idempotencyKey: newKey(),
+                  },
+                  setAuthorityStatus,
+                  "Spend authority updated · no bank funds moved",
+                );
+              }}
+            >
+              <label>
+                Venture
+                <select className="hq-treasury-venture-select" value={authorityVenture} onChange={(event) => setAuthorityVenture(event.target.value)}>
+                  {ventures.map((venture) => (
+                    <option key={venture.venture_id} value={venture.venture_id}>
+                      {venture.display_name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Spend authority (USD)
+                <input type="number" min="0" step="0.01" value={authorityAmount} onChange={(event) => setAuthorityAmount(event.target.value)} required />
+              </label>
+              <label>
+                Category
+                <select value={authorityCategory} onChange={(event) => setAuthorityCategory(event.target.value as (typeof GOVERNED_SPEND_CATEGORIES)[number])}>
+                  {GOVERNED_SPEND_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="hq-treasury-form__full">
+                Purpose
+                <input value={authorityPurpose} onChange={(event) => setAuthorityPurpose(event.target.value)} placeholder="Why this operating ceiling exists" />
+              </label>
+              <label className="hq-treasury-form__full">
+                Reason
+                <input value={authorityReason} onChange={(event) => setAuthorityReason(event.target.value)} placeholder="Founder authorization reason" />
+              </label>
+              <p className="hq-treasury-panel__note hq-treasury-form__full">
+                Selected remaining authority {selectedAuthority ? `$${selectedAuthority.remaining_spend_authority}` : "$0"} · paid acquisition cannot use this form
+              </p>
+              <button type="submit" disabled={authorityStatus.state === "loading" || !authorityVenture}>
+                {authorityStatus.state === "loading" ? "Updating…" : "Set spend authority"}
+              </button>
+              <StatusLine status={authorityStatus} />
+            </form>
+          </article>
+
           <article className="hq-treasury-panel" aria-label="Budget Controls">
             <header className="hq-treasury-panel__header">
               <h3>Budget Controls</h3>
@@ -436,11 +575,13 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
               allocationArtifacts.find(
                 (item) => item.artifactType === "venture_capital_allocation" && item.sourceRecordId === row.venture_id,
               ) ?? null;
+            const authority = projection?.spend_authorities.find((item) => item.venture_id === row.venture_id) ?? null;
             return (
               <AllocationCard
                 key={row.venture_id}
                 title={row.display_name}
                 row={row}
+                authority={authority}
                 artifact={artifact}
                 onInspect={artifact && inspector ? () => inspector.openInspector(artifact) : undefined}
               />
@@ -501,7 +642,7 @@ function SourcedItem({
         {amount ? (
           <small>
             Source: {amount.source}
-            {amount.sync ? ` · Sync: ${amount.sync}` : ""}
+            {amount.sync ? ` · Sync: ${formatFounderVerifiedAt(amount.sync) ?? amount.sync}` : ""}
           </small>
         ) : null}
       </dd>
@@ -523,11 +664,13 @@ function StatusLine({ status }: { status: FormStatus }) {
 function AllocationCard({
   title,
   row,
+  authority,
   artifact,
   onInspect,
 }: {
   title: string;
   row: NonNullable<CanonicalTreasuryProjection["allocations"]>[number];
+  authority: NonNullable<CanonicalTreasuryProjection["spend_authorities"]>[number] | null;
   artifact: HqWorkArtifact | null;
   onInspect?: () => void;
 }) {
@@ -559,6 +702,10 @@ function AllocationCard({
         <div>
           <dt className="text-zinc-500">Allocated</dt>
           <dd>${row.allocated_amount}</dd>
+        </div>
+        <div>
+          <dt className="text-zinc-500">Spend authority</dt>
+          <dd>{authority ? displaySpendCeiling(authority.authorized_spend_ceiling) : "NOT_SET"}</dd>
         </div>
         <div>
           <dt className="text-zinc-500">Reserved</dt>

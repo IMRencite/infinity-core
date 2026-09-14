@@ -13,12 +13,22 @@ type Props = {
   ventureOptions?: OperatorVentureListItem[];
 };
 
-function Cell({ label, value, hint }: { label: string; value: string; hint?: string | null }) {
+function Cell({
+  label,
+  value,
+  hint,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  hint?: string | null;
+  tone?: "default" | "warning";
+}) {
   return (
-    <div className="bg-zinc-950/80 px-3 py-2">
+    <div className="hq-treasury-capital-cell bg-zinc-950/80 px-3 py-2">
       <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">{label}</p>
-      <p className="mt-0.5 text-sm font-medium text-zinc-100">{value}</p>
-      {hint ? <p className="mt-0.5 text-[11px] text-amber-200/80">{hint}</p> : null}
+      <p className={`mt-0.5 text-sm font-medium ${tone === "warning" ? "text-amber-100" : "text-zinc-100"}`}>{value}</p>
+      {hint ? <p className={`mt-0.5 text-[11px] ${tone === "warning" ? "text-amber-200/80" : "text-zinc-500"}`}>{hint}</p> : null}
     </div>
   );
 }
@@ -26,9 +36,10 @@ function Cell({ label, value, hint }: { label: string; value: string; hint?: str
 export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
   const inspector = useOptionalHqArtifactInspector();
   const presentation = treasuryPresentation(model);
-  const stale = model.state.providerFreshness !== "FRESH" && model.state.providerFreshness !== "NOT_CONFIGURED";
+  const founder = model.mercury.founder;
+  const degraded = founder?.mercury_state === "DEGRADED";
   const attention = treasuryAttentionLabel(model);
-  const statusLabel = attention ?? model.freshnessLabel;
+  const statusLabel = degraded ? founder.headline ?? "MERCURY VERIFICATION DEGRADED" : (attention ?? model.freshnessLabel);
   const onInspect =
     inspectArtifact && inspector
       ? () => inspector.openInspector(inspectArtifact)
@@ -38,17 +49,25 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
     <section
       aria-label="Treasury & Capital"
       data-infrastructure-presentation={presentation}
-      className="relative overflow-hidden border border-zinc-700/35 bg-gradient-to-r from-zinc-950/80 via-[#070709] to-zinc-950/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+      data-hq-mercury-state={founder?.mercury_state ?? "UNKNOWN"}
+      className="hq-treasury-capital-strip relative overflow-hidden border border-zinc-700/35 bg-gradient-to-r from-zinc-950/80 via-[#070709] to-zinc-950/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
     >
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(167,139,250,0.05),transparent)]" aria-hidden />
       <div className="relative flex items-center justify-between gap-3 px-4 py-2">
-        <div className="flex min-w-0 items-baseline gap-3">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-3">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-300">Treasury &amp; Capital</h2>
-          <p className={attention || stale ? "text-[11px] uppercase tracking-[0.16em] text-amber-200" : "text-[11px] uppercase tracking-[0.16em] text-zinc-500"}>
-            {statusLabel}
+          <p
+            className={
+              degraded
+                ? "hq-treasury-mercury-badge text-[11px] uppercase tracking-[0.16em] text-amber-200"
+                : "text-[11px] uppercase tracking-[0.16em] text-zinc-500"
+            }
+            data-hq-treasury-policy="OPERATIONAL"
+          >
+            {degraded ? "MERCURY VERIFICATION DEGRADED" : statusLabel}
           </p>
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
-            Mercury · {model.mercury.statusLabel}
+            Treasury policy · Operational
           </p>
         </div>
         {onInspect ? (
@@ -64,6 +83,37 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
           </button>
         ) : null}
       </div>
+      {degraded ? (
+        <div
+          className="hq-treasury-mercury-warning relative mx-4 mb-2 border border-amber-400/25 bg-amber-400/5 px-3 py-2"
+          data-hq-mercury-warning="degraded"
+          role="status"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-200">Mercury · {founder.badge}</p>
+          <p className="mt-1 text-sm text-amber-100">{founder.message}</p>
+          <p className="mt-1 text-[11px] text-zinc-400">
+            Last verified: {founder.last_verified_display ?? "Not available"}
+          </p>
+          {founder.last_verified_balance_display ? (
+            <p className="mt-0.5 text-[11px] text-zinc-500">
+              Last verified balance — not current: {founder.last_verified_balance_display}
+            </p>
+          ) : null}
+          <p className="mt-1 text-[11px] text-zinc-400">Authorized and allocated capital remain unchanged.</p>
+          <p className="mt-0.5 text-[11px] uppercase tracking-[0.14em] text-zinc-500">Access · {founder.access}</p>
+          <details className="hq-treasury-mercury-details mt-2">
+            <summary className="cursor-pointer text-[10px] uppercase tracking-[0.16em] text-zinc-500">View source / details</summary>
+            <dl className="mt-2 grid grid-cols-1 gap-1 text-[11px] text-zinc-400 sm:grid-cols-2">
+              {founder.details.map((row) => (
+                <div key={row.label} className="min-w-0">
+                  <dt className="uppercase tracking-[0.12em] text-zinc-600">{row.label}</dt>
+                  <dd className="break-words text-zinc-300">{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </details>
+        </div>
+      ) : null}
       <div className="relative grid grid-cols-2 gap-px bg-zinc-800/40 md:grid-cols-4">
         <Cell label="Authorized capital" value={model.cards.internalCapital.display} />
         <Cell label="Remaining authorization" value={model.cards.availableCapital.display} />
@@ -75,12 +125,14 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
           <Cell
             label="Verified treasury cash"
             value={model.cards.totalCash.display}
-            hint={stale ? "Provider state not current" : model.treasurySource === "CANONICAL FINANCIAL TRUTH" ? "Source: Mercury" : null}
+            hint={degraded ? founder.cash_supporting_line : model.treasurySource === "CANONICAL FINANCIAL TRUTH" ? "Source: Mercury" : null}
+            tone={degraded ? "warning" : "default"}
           />
           <Cell
             label="Mercury"
-            value={model.mercury.statusLabel}
-            hint={`${model.mercury.environment} · last sync ${model.mercury.lastSuccessfulSync ?? "NONE"} · accounts ${model.mercury.accountCount} · ${model.mercury.providerBalance.display}`}
+            value={founder?.badge ?? model.mercury.statusLabel}
+            hint={degraded ? `Access · ${founder.access}` : "Access · READ ONLY"}
+            tone={degraded ? "warning" : "default"}
           />
           <Cell label="Reserved capital" value={model.cards.reservedCapital.display} />
           <Cell label="Committed capital" value={model.cards.committedCapital.display} />
