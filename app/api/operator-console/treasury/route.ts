@@ -10,20 +10,40 @@ import {
   mutateVentureCapitalAllocation,
   recordManualAccountingEvent,
 } from "@/lib/infinity/financial-truth/treasury-mutations";
-import { isGovernedSpendCategory } from "@/lib/infinity/financial-truth/spend-authority";
-import { mutateVentureSpendAuthority } from "@/lib/infinity/financial-truth/spend-authority-mutations";
-import { projectOccupancyNpvSpendAuthority } from "@/lib/infinity/financial-truth/spend-authority";
+import {
+  cancelVentureFinancialCommitment,
+  createVentureFinancialCommitment,
+  mutateVentureSpendAuthority,
+} from "@/lib/infinity/financial-truth/spend-authority-mutations";
+import {
+  COMMITMENT_BILLING_CADENCES,
+  COMMITMENT_OBLIGATION_TYPES,
+  isGovernedSpendCategory,
+  PAID_ACQUISITION_CATEGORY,
+  projectOccupancyNpvSpendAuthority,
+  type CommitmentBillingCadence,
+  type CommitmentObligationType,
+} from "@/lib/infinity/financial-truth/spend-authority";
 import { publishHqRuntimeEvent } from "@/lib/infinity/operator-console/hq-live-events";
 import { loadTreasuryHqForOrg } from "@/lib/infinity/treasury";
 import { assertNoCredentialFields } from "@/lib/infinity/treasury/security";
 import {
   evaluateTreasuryAllocationPayloadSecurityGate,
   evaluateTreasuryBudgetPayloadSecurityGate,
+  evaluateTreasuryCommitmentPayloadSecurityGate,
   evaluateTreasurySpendAuthorityPayloadSecurityGate,
 } from "@/lib/infinity/financial-truth/treasury-payload-contracts";
 import { allocatedCapitalTotal, loadCapitalLedger } from "@/lib/infinity/financial-truth/capital-ledger";
 import { CANONICAL_FOUNDER_CAPITAL_POLICY } from "@/lib/infinity/financial-truth/founder-capital-policy";
 import type { SupportedBudgetCategory } from "@/lib/infinity/financial-truth/types";
+
+function parseObligationType(value: unknown): CommitmentObligationType {
+  return COMMITMENT_OBLIGATION_TYPES.includes(value as CommitmentObligationType) ? (value as CommitmentObligationType) : "ONE_TIME";
+}
+
+function parseBillingCadence(value: unknown): CommitmentBillingCadence | null {
+  return COMMITMENT_BILLING_CADENCES.includes(value as CommitmentBillingCadence) ? (value as CommitmentBillingCadence) : null;
+}
 
 type TreasuryAction =
   | "fund"
@@ -32,6 +52,8 @@ type TreasuryAction =
   | "update_portfolio_budget"
   | "update_venture_budget"
   | "update_spend_authority"
+  | "create_commitment"
+  | "cancel_commitment"
   | "record_accounting";
 
 function organizationIdFromAuth(result: unknown): { organizationId: string; userId: string } | null {
@@ -97,6 +119,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     "update_portfolio_budget",
     "update_venture_budget",
     "update_spend_authority",
+    "create_commitment",
+    "cancel_commitment",
     "record_accounting",
   ];
   if (!allowed.includes(action)) {
@@ -164,6 +188,69 @@ export async function POST(request: Request): Promise<NextResponse> {
       });
       if (!updated.ok) {
         return NextResponse.json({ error: updated.error, reason: updated.reason }, { status: 400 });
+      }
+    } else if (action === "create_commitment") {
+      const payloadSecurity = evaluateTreasuryCommitmentPayloadSecurityGate(body);
+      if (payloadSecurity.result !== "PASS") {
+        return NextResponse.json(
+          { error: "Treasury payload refused actual credential fields", reason: "CREDENTIAL_FIELD", fields: payloadSecurity.reasons },
+          { status: 400 },
+        );
+      }
+      if (!idempotencyKey) return NextResponse.json({ error: "idempotencyKey required" }, { status: 400 });
+      const category =
+        isGovernedSpendCategory(body.category) || body.category === PAID_ACQUISITION_CATEGORY ? body.category : "OTHER";
+      const created = createVentureFinancialCommitment({
+        actor: auth.userId,
+        authorizedActor: true,
+        ventureId: typeof body.ventureId === "string" ? body.ventureId : "",
+        spendAuthorityId: typeof body.spendAuthorityId === "string" ? body.spendAuthorityId : typeof body.spend_authority_id === "string" ? body.spend_authority_id : null,
+        amountUsd,
+        currency: body.currency === "USD" ? "USD" : undefined,
+        category,
+        purpose: typeof body.purpose === "string" ? body.purpose : null,
+        vendorOrProvider:
+          typeof body.vendor_or_provider === "string"
+            ? body.vendor_or_provider
+            : typeof body.vendorOrProvider === "string"
+              ? body.vendorOrProvider
+              : typeof body.vendor === "string"
+                ? body.vendor
+                : typeof body.provider === "string"
+                  ? body.provider
+                  : null,
+        obligationType: parseObligationType(body.obligation_type ?? body.obligationType),
+        periodAmount: Number.isFinite(Number(body.periodAmount ?? body.period_amount)) ? Number(body.periodAmount ?? body.period_amount) : null,
+        billingCadence: parseBillingCadence(body.billing_cadence ?? body.billingCadence),
+        maxAuthorizedExposure: Number.isFinite(Number(body.maxAuthorizedExposure ?? body.max_authorized_exposure))
+          ? Number(body.maxAuthorizedExposure ?? body.max_authorized_exposure)
+          : null,
+        reviewAt: typeof body.review_at === "string" ? body.review_at : typeof body.reviewAt === "string" ? body.reviewAt : null,
+        expiresAt: typeof body.expires_at === "string" ? body.expires_at : typeof body.expiresAt === "string" ? body.expiresAt : null,
+        reason: typeof body.reason === "string" ? body.reason : null,
+        idempotencyKey,
+      });
+      if (!created.ok) {
+        return NextResponse.json({ error: created.error, reason: created.reason }, { status: 400 });
+      }
+    } else if (action === "cancel_commitment") {
+      const payloadSecurity = evaluateTreasuryCommitmentPayloadSecurityGate(body);
+      if (payloadSecurity.result !== "PASS") {
+        return NextResponse.json(
+          { error: "Treasury payload refused actual credential fields", reason: "CREDENTIAL_FIELD", fields: payloadSecurity.reasons },
+          { status: 400 },
+        );
+      }
+      if (!idempotencyKey) return NextResponse.json({ error: "idempotencyKey required" }, { status: 400 });
+      const cancelled = cancelVentureFinancialCommitment({
+        actor: auth.userId,
+        authorizedActor: true,
+        commitmentId: typeof body.commitmentId === "string" ? body.commitmentId : typeof body.commitment_id === "string" ? body.commitment_id : "",
+        reason: typeof body.reason === "string" ? body.reason : null,
+        idempotencyKey,
+      });
+      if (!cancelled.ok) {
+        return NextResponse.json({ error: cancelled.error, reason: cancelled.reason }, { status: 400 });
       }
     } else {
       const payloadSecurity = evaluateTreasuryBudgetPayloadSecurityGate(body);
@@ -253,6 +340,20 @@ export async function POST(request: Request): Promise<NextResponse> {
               action,
               money_moved: false,
               message: `Spend authority set to $${spendAuthority.effective_spend_authority}. Allocation $${spendAuthority.allocation_amount} unchanged. Paid acquisition $0. No bank funds moved.`,
+            }
+        : action === "create_commitment"
+          ? {
+              ok: true,
+              action,
+              money_moved: false,
+              message: `Commitment reserved $${spendAuthority.committed_amount} against spend authority. No payment is sent.`,
+            }
+        : action === "cancel_commitment"
+          ? {
+              ok: true,
+              action,
+              money_moved: false,
+              message: `Commitment cancelled. Remaining spend authority $${spendAuthority.remaining_spend_authority}. No bank funds moved.`,
             }
         : action === "update_budget" || action === "update_venture_budget" || action === "update_portfolio_budget"
           ? {

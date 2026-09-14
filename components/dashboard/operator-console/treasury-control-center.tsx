@@ -112,12 +112,30 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
   const [authorityReason, setAuthorityReason] = useState("");
   const [authorityStatus, setAuthorityStatus] = useState<FormStatus>({ state: "idle", message: null });
 
+  const [commitmentVenture, setCommitmentVenture] = useState(ventures[0]?.venture_id ?? CRE_VENTURE_ID);
+  const [commitmentAmount, setCommitmentAmount] = useState("");
+  const [commitmentCategory, setCommitmentCategory] = useState<(typeof GOVERNED_SPEND_CATEGORIES)[number]>("HOSTING");
+  const [commitmentPurpose, setCommitmentPurpose] = useState("");
+  const [commitmentVendor, setCommitmentVendor] = useState("");
+  const [commitmentObligation, setCommitmentObligation] = useState<"ONE_TIME" | "RECURRING">("ONE_TIME");
+  const [commitmentMaxExposure, setCommitmentMaxExposure] = useState("");
+  const [commitmentCadence, setCommitmentCadence] = useState<"MONTHLY" | "ANNUAL">("MONTHLY");
+  const [commitmentReviewAt, setCommitmentReviewAt] = useState("");
+  const [commitmentStatus, setCommitmentStatus] = useState<FormStatus>({ state: "idle", message: null });
+  const [cancelStatus, setCancelStatus] = useState<FormStatus>({ state: "idle", message: null });
+
   const occupancyAuthority =
     projection?.spend_authorities.find((row) => row.venture_id === CRE_VENTURE_ID) ??
     projection?.spend_authorities[0] ??
     null;
   const selectedAuthority =
     projection?.spend_authorities.find((row) => row.venture_id === authorityVenture) ?? occupancyAuthority;
+  const selectedCommitmentAuthority =
+    projection?.spend_authorities.find((row) => row.venture_id === commitmentVenture) ?? occupancyAuthority;
+  const commitmentRows =
+    projection?.venture_financial_commitments.filter((row) => !commitmentVenture || row.venture_id === commitmentVenture) ??
+    [];
+  const occupancyCommitments = projection?.venture_financial_commitments.filter((row) => row.venture_id === CRE_VENTURE_ID) ?? [];
   const selectedVenture = ventures.find((row) => row.venture_id === allocVenture) ?? ventures[0] ?? null;
   const selectedAllocation = projection?.allocations.find((row) => row.venture_id === allocVenture) ?? null;
   const selectedActiveAllocation =
@@ -437,6 +455,175 @@ export function TreasuryControlCenter({ model, ventureOptions, financialTruth = 
               </button>
               <StatusLine status={authorityStatus} />
             </form>
+          </article>
+
+          <article className="hq-treasury-panel" aria-label="OccupancyNPV financial commitments" data-hq-commitment-panel="true">
+            <header className="hq-treasury-panel__header">
+              <h3>Financial commitments</h3>
+              <p>Reserves spend authority · not actual spend</p>
+            </header>
+            <dl className="hq-treasury-overview" data-hq-occupancy-commitment="true">
+              <OverviewItem label="Allocation" value={occupancyAuthority ? `$${occupancyAuthority.allocation_amount}` : "$0"} />
+              <OverviewItem label="Spend Authority" value={occupancyAuthority ? displaySpendCeiling(occupancyAuthority.authorized_spend_ceiling) : "NOT_SET"} />
+              <OverviewItem label="Committed" value={occupancyAuthority ? `$${occupancyAuthority.committed_amount}` : "$0"} />
+              <OverviewItem label="Available Spend Authority" value={occupancyAuthority ? `$${occupancyAuthority.remaining_spend_authority}` : "$0"} />
+              <OverviewItem label="Actual Spend" value={occupancyAuthority ? `$${occupancyAuthority.actual_spend_amount}` : "$0"} />
+              <OverviewItem label="Paid Acquisition" value="$0" />
+            </dl>
+            <p className="hq-treasury-panel__note">
+              This reserves part of the venture&apos;s approved spend authority. No payment is sent.
+            </p>
+            <form
+              className="hq-treasury-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (commitmentStatus.state === "loading") return;
+                void mutate(
+                  {
+                    action: "create_commitment",
+                    ventureId: commitmentVenture,
+                    amountUsd: Number(commitmentAmount),
+                    currency: "USD",
+                    category: commitmentCategory,
+                    purpose: commitmentPurpose,
+                    vendor_or_provider: commitmentVendor,
+                    obligation_type: commitmentObligation,
+                    period_amount: commitmentObligation === "RECURRING" ? Number(commitmentAmount) : undefined,
+                    billing_cadence: commitmentObligation === "RECURRING" ? commitmentCadence : undefined,
+                    max_authorized_exposure: commitmentObligation === "RECURRING" ? Number(commitmentMaxExposure) : undefined,
+                    review_at: commitmentObligation === "RECURRING" && commitmentReviewAt ? commitmentReviewAt : undefined,
+                    idempotencyKey: newKey(),
+                  },
+                  setCommitmentStatus,
+                  "Commitment reserved · no payment is sent",
+                );
+              }}
+            >
+              <label>
+                Venture
+                <select className="hq-treasury-venture-select" value={commitmentVenture} onChange={(event) => setCommitmentVenture(event.target.value)}>
+                  {ventures.map((venture) => (
+                    <option key={venture.venture_id} value={venture.venture_id}>
+                      {venture.display_name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Amount (USD)
+                <input type="number" min="0.01" step="0.01" value={commitmentAmount} onChange={(event) => setCommitmentAmount(event.target.value)} required />
+              </label>
+              <label>
+                Category
+                <select value={commitmentCategory} onChange={(event) => setCommitmentCategory(event.target.value as (typeof GOVERNED_SPEND_CATEGORIES)[number])}>
+                  {GOVERNED_SPEND_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Obligation
+                <select value={commitmentObligation} onChange={(event) => setCommitmentObligation(event.target.value as "ONE_TIME" | "RECURRING")}>
+                  <option value="ONE_TIME">One-time</option>
+                  <option value="RECURRING">Recurring</option>
+                </select>
+              </label>
+              <label className="hq-treasury-form__full">
+                Purpose
+                <input value={commitmentPurpose} onChange={(event) => setCommitmentPurpose(event.target.value)} placeholder="What this reserve is for" />
+              </label>
+              <label className="hq-treasury-form__full">
+                Vendor / provider
+                <input value={commitmentVendor} onChange={(event) => setCommitmentVendor(event.target.value)} placeholder="Vendor or provider" />
+              </label>
+              {commitmentObligation === "RECURRING" ? (
+                <>
+                  <label>
+                    Max authorized exposure
+                    <input type="number" min="0.01" step="0.01" value={commitmentMaxExposure} onChange={(event) => setCommitmentMaxExposure(event.target.value)} required />
+                  </label>
+                  <label>
+                    Billing cadence
+                    <select value={commitmentCadence} onChange={(event) => setCommitmentCadence(event.target.value as "MONTHLY" | "ANNUAL")}>
+                      <option value="MONTHLY">Monthly</option>
+                      <option value="ANNUAL">Annual</option>
+                    </select>
+                  </label>
+                  <label className="hq-treasury-form__full">
+                    Review / renewal
+                    <input type="datetime-local" value={commitmentReviewAt} onChange={(event) => setCommitmentReviewAt(event.target.value)} required />
+                  </label>
+                </>
+              ) : null}
+              <p className="hq-treasury-panel__note hq-treasury-form__full">
+                Creating a commitment does not move money. Available {selectedCommitmentAuthority ? `$${selectedCommitmentAuthority.remaining_spend_authority}` : "$0"} · paid acquisition stays $0
+              </p>
+              <button type="submit" disabled={commitmentStatus.state === "loading" || !commitmentVenture}>
+                {commitmentStatus.state === "loading" ? "Reserving…" : "Reserve commitment"}
+              </button>
+              <StatusLine status={commitmentStatus} />
+            </form>
+            <div className="hq-treasury-commitment-ledger" data-hq-commitment-ledger="true">
+              {occupancyCommitments.length === 0 && commitmentRows.length === 0 ? (
+                <p className="hq-treasury-panel__note">No active commitments.</p>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>Amount</th>
+                      <th>Category</th>
+                      <th>Purpose / vendor</th>
+                      <th>Created</th>
+                      <th>Remaining</th>
+                      <th>Source</th>
+                      <th>Release</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(commitmentRows.length ? commitmentRows : occupancyCommitments).map((row) => (
+                      <tr key={row.commitment_id}>
+                        <td>{row.status}</td>
+                        <td>${row.amount}</td>
+                        <td>{row.category}</td>
+                        <td>{[row.purpose, row.vendor_or_provider].filter(Boolean).join(" · ") || "—"}</td>
+                        <td>{row.created_at}</td>
+                        <td>${row.remaining_commitment}</td>
+                        <td>{row.authorization_source}</td>
+                        <td>
+                          {row.status === "COMMITTED" || row.status === "AUTHORIZED" || row.status === "PARTIALLY_SETTLED" ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (cancelStatus.state === "loading") return;
+                                void mutate(
+                                  {
+                                    action: "cancel_commitment",
+                                    commitmentId: row.commitment_id,
+                                    ventureId: row.venture_id,
+                                    reason: "Founder release",
+                                    idempotencyKey: newKey(),
+                                  },
+                                  setCancelStatus,
+                                  "Commitment released · no bank funds moved",
+                                );
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <StatusLine status={cancelStatus} />
+            </div>
           </article>
 
           <article className="hq-treasury-panel" aria-label="Budget Controls">

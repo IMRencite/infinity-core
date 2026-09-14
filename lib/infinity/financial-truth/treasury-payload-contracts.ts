@@ -43,6 +43,42 @@ export const SAFE_SPEND_AUTHORITY_PAYLOAD_FIELDS = [
   "idempotency_key",
 ] as const;
 
+export const SAFE_COMMITMENT_PAYLOAD_FIELDS = [
+  "action",
+  "ventureId",
+  "venture_id",
+  "spend_authority_id",
+  "spendAuthorityId",
+  "commitmentId",
+  "commitment_id",
+  "amountUsd",
+  "amount",
+  "currency",
+  "category",
+  "purpose",
+  "vendor_or_provider",
+  "vendorOrProvider",
+  "vendor",
+  "provider",
+  "obligation_type",
+  "obligationType",
+  "period_amount",
+  "periodAmount",
+  "billing_cadence",
+  "billingCadence",
+  "max_authorized_exposure",
+  "maxAuthorizedExposure",
+  "review_at",
+  "reviewAt",
+  "expires_at",
+  "expiresAt",
+  "reason",
+  "authorization_source",
+  "authorizationSource",
+  "idempotencyKey",
+  "idempotency_key",
+] as const;
+
 export const SAFE_BUDGET_PAYLOAD_FIELDS = [
   "action",
   "scope",
@@ -86,6 +122,15 @@ export function evaluateTreasurySpendAuthorityPayloadSecurityGate(body: Record<s
     gate: "TreasurySpendAuthorityPayloadSecurityGate",
     result: refused.length ? "FAIL" : "PASS",
     reasons: refused.length ? refused : ["SAFE_SPEND_AUTHORITY_FIELDS_ONLY"],
+  };
+}
+
+export function evaluateTreasuryCommitmentPayloadSecurityGate(body: Record<string, unknown>): NamedPayloadGate {
+  const refused = scanBody(body, SAFE_COMMITMENT_PAYLOAD_FIELDS);
+  return {
+    gate: "TreasuryCommitmentPayloadSecurityGate",
+    result: refused.length ? "FAIL" : "PASS",
+    reasons: refused.length ? refused : ["SAFE_COMMITMENT_FIELDS_ONLY"],
   };
 }
 

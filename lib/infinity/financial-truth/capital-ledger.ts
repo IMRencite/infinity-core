@@ -85,6 +85,10 @@ function persistEnabled(): boolean {
   return true;
 }
 
+export function capitalLedgerPersistEnabled(): boolean {
+  return persistEnabled();
+}
+
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }

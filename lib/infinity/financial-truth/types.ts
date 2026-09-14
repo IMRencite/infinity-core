@@ -690,6 +690,7 @@ export type CanonicalTreasuryProjection = {
   accounting_events: ManualAccountingEvent[];
   latest_allocation_decision: VentureCapitalAllocationDecision | null;
   spend_authorities: import("./spend-authority").VentureSpendAuthority[];
+  venture_financial_commitments: import("./spend-authority").VentureFinancialCommitment[];
   mercury_provider_error?: string | null;
   mercury_last_verified_at?: string | null;
   mercury_last_verified_available?: number | null;

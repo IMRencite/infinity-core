@@ -34,6 +34,7 @@ import type {
 import { SUPPORTED_BUDGET_CATEGORIES } from "./types";
 import { projectVentureSpendAuthority } from "./spend-authority";
 import { evaluateAllocationReductionAgainstAuthorityGate } from "./spend-authority-gates";
+import { evaluateAllocationCommitmentCompatibilityGate } from "./financial-commitment-gates";
 
 export type TreasuryMutationResult =
   | { ok: true; ledger: CapitalLedger; gates: NamedFinancialGate[] }
@@ -195,6 +196,7 @@ export function mutateVentureCapitalAllocation(input: {
   source?: AllocationSource;
   idempotencyKey: string;
   increaseAllocation?: boolean;
+  targetAllocatedAmount?: number;
 }): TreasuryMutationResult {
   const ledger = loadCapitalLedger();
   if (rememberIdempotency(ledger, input.idempotencyKey, "allocate") === null) {
@@ -207,6 +209,47 @@ export function mutateVentureCapitalAllocation(input: {
   }
   const existingEarly = ledger.allocations.find((row) => row.venture_id === input.ventureId);
   const alreadyActive = (existingEarly?.allocated_amount ?? 0) + (existingEarly?.reserved_amount ?? 0) > 0;
+  if (typeof input.targetAllocatedAmount === "number") {
+    if (!input.authorizedActor) {
+      return { ok: false, error: "Unauthorized", reason: "UNAUTHORIZED_ACTOR", gates: [] };
+    }
+    if (!Number.isFinite(input.targetAllocatedAmount) || input.targetAllocatedAmount < 0) {
+      return { ok: false, error: "Invalid allocation amount", reason: "INVALID_AMOUNT", gates: [] };
+    }
+    const authority = projectVentureSpendAuthority(ledger, input.ventureId, existingEarly?.spent_amount ?? 0);
+    const compatibility = evaluateAllocationCommitmentCompatibilityGate({
+      nextAllocation: input.targetAllocatedAmount,
+      spendCeiling: authority.authorized_spend_ceiling,
+      openCommitments: authority.committed_amount,
+    });
+    const interaction = evaluateAllocationReductionAgainstAuthorityGate({
+      nextAllocation: input.targetAllocatedAmount,
+      spendCeiling: authority.authorized_spend_ceiling,
+      openCommitments: authority.committed_amount,
+    });
+    if (compatibility.result !== "PASS" || interaction.result !== "PASS") {
+      return {
+        ok: false,
+        error: "Allocation reduction is incompatible with spend authority or commitments",
+        reason: compatibility.reasons[0] ?? interaction.reasons[0] ?? "ALLOCATION_INCOMPATIBLE",
+        gates: [compatibility, interaction],
+      };
+    }
+    const now = new Date().toISOString();
+    if (!existingEarly) {
+      return { ok: false, error: "Venture allocation required", reason: "ALLOCATION_REQUIRED", gates: [compatibility] };
+    }
+    existingEarly.allocated_amount = input.targetAllocatedAmount;
+    existingEarly.remaining =
+      existingEarly.allocated_amount + existingEarly.reserved_amount - existingEarly.committed_amount - existingEarly.spent_amount;
+    existingEarly.updated_at = now;
+    appendTreasuryAudit(ledger, "REDUCE_VENTURE_CAPITAL_ALLOCATION", input.actor, {
+      venture_id: input.ventureId,
+      amountUsd: input.targetAllocatedAmount,
+      money_moved: false,
+    });
+    return { ok: true, ledger: saveCapitalLedger(ledger), gates: [compatibility, interaction] };
+  }
   if (alreadyActive && !input.increaseAllocation) {
     return {
       ok: false,

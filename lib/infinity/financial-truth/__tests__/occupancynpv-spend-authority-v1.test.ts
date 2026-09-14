@@ -413,6 +413,6 @@ describe("OccupancyNPV governed venture spend authority v1", () => {
     expect(center).toContain("Unused allocation");
     expect(center).toContain("Paid acquisition");
     expect(center).toContain("update_spend_authority");
-    expect(center).not.toContain("create_commitment");
+    expect(center).toContain("create_commitment");
   });
 });

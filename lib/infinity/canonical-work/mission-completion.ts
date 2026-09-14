@@ -9,6 +9,8 @@ import { CANONICAL_WORK_EXECUTION_CONTRACT, type CanonicalWorkExecutionContract,
 export const CANONICAL_MISSION_COMPLETION_RESOLVER = "CanonicalMissionCompletionResolver" as const;
 export const OCCUPANCYNPV_SPEND_AUTHORITY_MISSION_ID =
   "work:occupancynpv:governed-venture-spend-authority-v1" as const;
+export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_MISSION_ID =
+  "work:occupancynpv:venture-financial-commitment-v1" as const;
 
 export const NAMED_MISSION_TERMINAL_STATUSES = [
   "COMPLETED",
@@ -163,6 +165,14 @@ export function evaluateNamedMissionTerminalCondition(
       reason: "SPEND_AUTHORITY_WORKFLOW_TERMINAL",
     };
   }
+  if (workflowLooksTerminal(work) && work.work_id === OCCUPANCYNPV_FINANCIAL_COMMITMENT_MISSION_ID) {
+    return {
+      should_close: true,
+      terminal_status: "COMPLETED",
+      kind: "WORKFLOW_TERMINAL",
+      reason: "FINANCIAL_COMMITMENT_WORKFLOW_TERMINAL",
+    };
+  }
   return { should_close: false, terminal_status: "COMPLETED", kind: "NONE", reason: "STILL_EXECUTING" };
 }
 
@@ -193,6 +203,15 @@ export function ensureVerifiedSpendAuthorityMilestone(now = new Date().toISOStri
   return recordVerifiedMissionMilestone({
     work_id: OCCUPANCYNPV_SPEND_AUTHORITY_MISSION_ID,
     milestone_id: "occupancynpv-governed-venture-spend-authority-v1",
+    qc_status: "QC_PASS",
+    at: now,
+  });
+}
+
+export function ensureVerifiedCommitmentMilestone(now = new Date().toISOString()): VerifiedMissionMilestone {
+  return recordVerifiedMissionMilestone({
+    work_id: OCCUPANCYNPV_FINANCIAL_COMMITMENT_MISSION_ID,
+    milestone_id: "occupancynpv-venture-financial-commitment-v1",
     qc_status: "QC_PASS",
     at: now,
   });

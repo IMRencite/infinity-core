@@ -28,6 +28,11 @@ describe("HQ treasury control center", () => {
     expect(center).toContain("OccupancyNPV spend authority");
     expect(center).toContain("Set spend authority");
     expect(center).toContain("Allocation is not permission to spend");
+    expect(center).toContain("Financial commitments");
+    expect(center).toContain("This reserves part of the venture");
+    expect(center).toContain("No payment is sent");
+    expect(center).toContain("Available Spend Authority");
+    expect(center).toContain("create_commitment");
     expect(center).toContain("Venture Allocations");
     expect(center).toContain("Mercury connected");
     expect(center).toContain("READ ONLY");

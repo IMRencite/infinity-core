@@ -12,7 +12,7 @@ import type {
   SourcedTreasuryAmount,
 } from "./types";
 import { unallocatedVentureCapital } from "./venture-allocation";
-import { projectVentureSpendAuthority } from "./spend-authority";
+import { persistedCommitments, projectVentureSpendAuthority } from "./spend-authority";
 
 function sourced(
   value: number | "NOT_SET" | null,
@@ -134,9 +134,11 @@ export function projectCanonicalTreasury(
     commitments: current.commitments,
     accounting_events: current.accounting_events,
     latest_allocation_decision: decision,
-    spend_authorities: canonicalTreasuryVentures().map((venture) =>
-      projectVentureSpendAuthority(current, venture.venture_id, view.capital.spent_capital ?? 0),
-    ),
+    spend_authorities: canonicalTreasuryVentures().map((venture) => {
+      const allocation = current.allocations.find((row) => row.venture_id === venture.venture_id);
+      return projectVentureSpendAuthority(current, venture.venture_id, allocation?.spent_amount ?? 0);
+    }),
+    venture_financial_commitments: persistedCommitments(current),
     mercury_provider_error: view.mercury.provider_error ?? cashTruth.provider_error,
     mercury_last_verified_at: view.mercury.last_verified,
     mercury_last_verified_available:

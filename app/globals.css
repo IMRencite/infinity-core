@@ -2801,6 +2801,46 @@ body {
   color: rgb(244, 244, 245);
 }
 
+.hq-treasury-commitment-ledger {
+  margin-top: 0.75rem;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.hq-treasury-commitment-ledger table {
+  width: 100%;
+  min-width: 0;
+  border-collapse: collapse;
+}
+
+.hq-treasury-commitment-ledger th,
+.hq-treasury-commitment-ledger td {
+  padding: 0.35rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  color: rgb(212, 212, 216);
+}
+
+.hq-treasury-commitment-ledger th {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(113, 113, 122);
+}
+
+.hq-treasury-commitment-ledger button {
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  background: transparent;
+  color: rgb(221, 214, 254);
+  padding: 0.2rem 0.45rem;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .hq-treasury-allocation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2849,7 +2889,8 @@ body {
 @media (max-width: 768px) {
   .hq-treasury-form,
   .hq-treasury-overview,
-  .hq-treasury-allocation-grid {
+  .hq-treasury-allocation-grid,
+  .hq-treasury-commitment-ledger table {
     grid-template-columns: minmax(0, 1fr);
   }
 

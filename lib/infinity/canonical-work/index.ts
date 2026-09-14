@@ -99,11 +99,14 @@ export {
   HQ_NAVIGATION_CLEANUP_WORK_TITLE,
   OCCUPANCYNPV_SPEND_AUTHORITY_WORK_ID,
   OCCUPANCYNPV_SPEND_AUTHORITY_WORK_TITLE,
+  OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID,
+  OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_TITLE,
 } from "./seed";
 export {
   CANONICAL_MISSION_COMPLETION_RESOLVER,
   closeCanonicalNamedMission,
   evaluateNamedMissionTerminalCondition,
+  ensureVerifiedCommitmentMilestone,
   ensureVerifiedSpendAuthorityMilestone,
   isGenericImplementationWork,
   isNamedCanonicalMission,

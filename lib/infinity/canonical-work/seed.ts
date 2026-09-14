@@ -4,7 +4,11 @@ import { classifyCanonicalWork, projectLatestVentureWork, projectRecentSystemAct
 import { pickCurrentCanonicalWork, pickLatestCompletedCanonicalWork } from "./rows";
 import { completeCanonicalWork, listCanonicalWork, markCanonicalWorkStatus, reloadCanonicalWorkStoreFromDisk, upsertCanonicalWork } from "./store";
 import { sourceLabel } from "./rooms";
-import { ensureVerifiedSpendAuthorityMilestone, resolveCanonicalMissionCompletions } from "./mission-completion";
+import {
+  ensureVerifiedCommitmentMilestone,
+  ensureVerifiedSpendAuthorityMilestone,
+  resolveCanonicalMissionCompletions,
+} from "./mission-completion";
 
 export const OCCUPANCYNPV_LIVE_OFFER_WORK_ID = "work:occupancynpv:live-offer-activation-v1" as const;
 export const OCCUPANCYNPV_FOUNDER_RECHECK_WORK_ID = "work:occupancynpv:founder-physical-offer-recheck" as const;
@@ -49,6 +53,10 @@ export const OCCUPANCYNPV_SPEND_AUTHORITY_WORK_ID =
   "work:occupancynpv:governed-venture-spend-authority-v1" as const;
 export const OCCUPANCYNPV_SPEND_AUTHORITY_WORK_TITLE =
   "OccupancyNPV Governed Venture Spend Authority V1" as const;
+export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID =
+  "work:occupancynpv:venture-financial-commitment-v1" as const;
+export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_TITLE =
+  "Venture Financial Commitment V1" as const;
 
 function already(id: string): boolean {
   return listCanonicalWork().some((row) => row.work_id === id);
@@ -902,6 +910,50 @@ export function ensureOccupancyNpvCanonicalWork(now = new Date().toISOString()):
     ensureVerifiedSpendAuthorityMilestone(now);
     const closed = resolveCanonicalMissionCompletions(now);
     created.push(...closed.filter((row) => row.work_id === OCCUPANCYNPV_SPEND_AUTHORITY_WORK_ID));
+  }
+  if (!already(OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID) && !process.env.VITEST) {
+    created.push(upsertCanonicalWork({
+      contract: CANONICAL_WORK_EXECUTION_CONTRACT,
+      work_id: OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID,
+      mission_id: "mission:occupancynpv:venture-financial-commitment-v1",
+      venture_id: CRE_VENTURE_ID,
+      work_type: "SYSTEM_ARCHITECTURE",
+      title: OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_TITLE,
+      description: "Create OccupancyNPV financial commitments as reserved spend authority, not money movement. Preserve $25 allocated / $5 authority / $0 committed / $0 actual / $0 paid acquisition.",
+      stage: "TREASURY / POLICY / QC",
+      status: "ACTIVE",
+      assigned_rooms: [
+        "operations",
+        "strategy_finance",
+        "systems_architect",
+        "quality_control",
+        "intelligence_center",
+      ],
+      assigned_workers: ["Venture Operator", "Profit Lab", "Systems Architect", "Validation Station"],
+      source: "EXTERNAL_IMPLEMENTATION_AGENT",
+      started_at: now,
+      updated_at: now,
+      completed_at: null,
+      blocked_reason: null,
+      authorization_state: null,
+      progress: "VentureFinancialCommitment contract, gates, Treasury UI, isolated QC",
+      latest_output: "Commitment layer in progress · no money movement · Mercury read-only",
+      artifact_refs: [],
+      evidence_refs: [
+        "lib/infinity/financial-truth/spend-authority.ts",
+        "lib/infinity/financial-truth/financial-commitment-gates.ts",
+        "components/dashboard/operator-console/treasury-control-center.tsx",
+      ],
+      parent_work_id: TREASURY_CONTROL_CENTER_WORK_ID,
+      traceability_links: [TREASURY_CONTROL_CENTER_WORK_ID],
+      requires_infinity_worker_execution: false,
+      classification: "VENTURE_FINANCIAL",
+      next_expected_transition: "WORK_COMPLETES_THEN_IDLE",
+    }));
+  } else if (listCanonicalWork().find((row) => row.work_id === OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID)?.status === "ACTIVE" && !process.env.VITEST) {
+    ensureVerifiedCommitmentMilestone(now);
+    const closed = resolveCanonicalMissionCompletions(now);
+    created.push(...closed.filter((row) => row.work_id === OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID));
   }
   return created;
 }

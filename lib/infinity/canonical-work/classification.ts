@@ -187,7 +187,7 @@ export function classifyCanonicalWork(work: CanonicalWorkExecutionContract): Can
     : fromWorkType(work);
   if (DIAGNOSTIC_WORK_ID.test(work.work_id)) {
     classification = "SYSTEM_DIAGNOSTIC";
-  } else if (/occupancynpv:governed-venture-spend-authority/i.test(work.work_id)) {
+  } else if (/occupancynpv:governed-venture-spend-authority|occupancynpv:venture-financial-commitment/i.test(work.work_id)) {
     classification = "VENTURE_FINANCIAL";
   } else if (SYSTEM_INFRA_WORK_ID.test(work.work_id)) {
     classification = "SYSTEM_INFRASTRUCTURE";
