@@ -28,7 +28,8 @@ export type DepartmentId =
   | "launch_operations"
   | "intelligence_center"
   | "executive_office"
-  | "operations";
+  | "operations"
+  | "sales_floor";
 
 export type DepartmentUiState =
   | "COMPLETE"
@@ -64,7 +65,8 @@ export type EngineId =
   | "quality_control"
   | "external_action_gateway"
   | "performance_intelligence"
-  | "executive_decision";
+  | "executive_decision"
+  | "sales_conversion";
 
 export type OperatorActivityEvent = {
   id: string;

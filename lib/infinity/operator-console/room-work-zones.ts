@@ -32,6 +32,7 @@ const ROOM_WORK_ZONES: Record<DepartmentId, RoomWorkZoneConfig> = {
   launch_operations: { intake: "Ready asset", process: "Deploy", output: "External action", motif: "launch" },
   intelligence_center: { intake: "Performance", process: "Diagnosis", output: "Learning signal", motif: "metrics" },
   executive_office: { intake: "Evidence", process: "Decision", output: "Next mission", motif: "command" },
+  sales_floor: { intake: "Demand and pipeline", process: "Sales motion", output: "Revenue conversion", motif: "pipeline" },
 };
 
 export function getRoomWorkZones(departmentId: DepartmentId): RoomWorkZoneConfig {

@@ -24,6 +24,7 @@ export type HqFloorLayoutSections = {
 export const HQ_FLOOR_FULL_WIDTH_ROOMS: DepartmentId[] = ["quality_control"];
 
 export function hqFloorSpan(id: DepartmentId): HqFloorSpan {
+  if (id === "sales_floor") return "full";
   if (HQ_FLOOR_FULL_WIDTH_ROOMS.includes(id)) return "full";
   // Keep the deployment wing stable when rooms are inserted above Validation.
   if (id === "launch_operations") return "left";
@@ -54,6 +55,7 @@ export function hqFloorWing(id: DepartmentId): HqFloorWing {
     case "creative_studio":
     case "product_lab":
     case "quality_control":
+    case "sales_floor":
       return "production";
     default:
       return "deployment";

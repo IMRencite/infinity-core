@@ -9,6 +9,8 @@ import { projectVentureSpendAuthority } from "@/lib/infinity/financial-truth/spe
 import { listVentureOperationalRecords } from "@/lib/infinity/venture-operating-scale/persist";
 import { readOccupancynpvFirstGrowthExperiment } from "@/lib/infinity/growth-engine/occupancynpv-experiment";
 import { isSuppressed } from "@/lib/infinity/growth-engine/suppression";
+import { observeSalesFloorForLoop, occupancyNpvSalesEvidence } from "@/lib/infinity/venture-sales-floor";
+import type { SalesFloorLoopObservation } from "@/lib/infinity/venture-sales-floor";
 import { loadAutonomousLoopState } from "./persist";
 import type { AutonomousLoopPersistedState, CustomerReplyClass, VentureDailyReview } from "./types";
 
@@ -55,6 +57,7 @@ export type AutonomousObservation = {
   askreview: ObservedVenture | null;
   active_missions: Array<{ work_id: string; title: string; venture_id: string | null; status: string }>;
   recent_completed: Array<{ work_id: string; title: string }>;
+  sales_floor?: SalesFloorLoopObservation;
 };
 
 export type ObserveOverrides = {
@@ -231,6 +234,10 @@ export function observeAutonomousPortfolio(input?: {
       .filter((item) => item.status === "COMPLETED" || item.status === "FAILED" || item.status === "CANCELLED")
       .slice(0, 8)
       .map((item) => ({ work_id: item.work_id, title: item.title })),
+    sales_floor: observeSalesFloorForLoop(occupancyNpvSalesEvidence({
+      sending: Boolean(experiment?.authorized_to_execute && experiment.ledger.attempted > 0),
+      authorized_to_execute: experiment?.authorized_to_execute ?? false,
+    })),
   };
 }
 

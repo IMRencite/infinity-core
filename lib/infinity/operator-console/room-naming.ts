@@ -106,6 +106,12 @@ export const ROOM_DISPLAY_NAMES: Record<DepartmentId, RoomDisplayNames> = {
     expandedDescription:
       "Collects performance signals, compares expected results with actual results, diagnoses problems, and creates optimization opportunities.",
   }),
+  sales_floor: roomCopy({
+    displayName: "Sales Floor",
+    shortDescription: "Converts qualified demand into revenue across five specialized sales rooms.",
+    expandedDescription:
+      "Keeps Outbound Acquisition, Inbound Conversion, Expansion & Retention, Partnerships & Channel, and Offer & Closing present for every commercial venture, acting only when evidence, pipeline state, and compliance allow.",
+  }),
   executive_office: roomCopy({
     displayName: "Command",
     shortDescription: "Coordinates the whole venture and decides what should happen next.",
@@ -118,7 +124,9 @@ export function getRoomDisplayNames(id: DepartmentId): RoomDisplayNames {
   return ROOM_DISPLAY_NAMES[id];
 }
 
-export const ALL_HQ_ROOM_IDS: DepartmentId[] = [...LIFECYCLE_ROOM_SEQUENCE, COMMAND_ROOM_ID];
+export const SALES_FLOOR_ROOM_ID: DepartmentId = "sales_floor";
+
+export const ALL_HQ_ROOM_IDS: DepartmentId[] = [...LIFECYCLE_ROOM_SEQUENCE, COMMAND_ROOM_ID, SALES_FLOOR_ROOM_ID];
 
 export const FINAL_ROOM_DISPLAY_NAMES: string[] = LIFECYCLE_ROOM_SEQUENCE.map(
   (id) => ROOM_DISPLAY_NAMES[id].displayName,

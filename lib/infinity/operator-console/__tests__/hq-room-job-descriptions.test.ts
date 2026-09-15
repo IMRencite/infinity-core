@@ -30,12 +30,13 @@ const EXPECTED_SHORT: Record<string, string> = {
   launch_operations: "Handles the technical steps needed to put the venture online.",
   intelligence_center: "Watches performance, learns what is working, and finds what should improve next.",
   executive_office: "Coordinates the whole venture and decides what should happen next.",
+  sales_floor: "Converts qualified demand into revenue across five specialized sales rooms.",
 };
 
 describe("HQ room job descriptions v1", () => {
   it("keeps one canonical metadata source for every HQ room", () => {
-    expect(ALL_HQ_ROOM_IDS).toHaveLength(12);
-    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(12);
+    expect(ALL_HQ_ROOM_IDS).toHaveLength(13);
+    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(13);
     for (const id of ALL_HQ_ROOM_IDS) {
       const names = getRoomDisplayNames(id);
       expect(names.shortDescription.trim().length).toBeGreaterThan(20);

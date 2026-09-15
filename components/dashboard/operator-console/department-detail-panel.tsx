@@ -15,6 +15,8 @@ import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/t
 import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomCurrentActivity } from "./room-current-activity";
 import { SystemsArchitectDetail } from "./systems-architect-blueprint";
+import type { SalesFloorHqView } from "@/lib/infinity/venture-sales-floor/types";
+import { HqSalesFloor } from "./hq-sales-floor";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import { useOptionalHqInspection } from "./hq-inspection-provider";
 import {
@@ -148,6 +150,10 @@ export function DepartmentDetailPanel({
               Architecture workspace is open above. Concrete systems are selectable there.
             </p>
           </section>
+        ) : null}
+
+        {department.id === "sales_floor" && (department.detail.salesFloorView as SalesFloorHqView | undefined) ? (
+          <HqSalesFloor snapshot={department} selected />
         ) : null}
 
         <section>

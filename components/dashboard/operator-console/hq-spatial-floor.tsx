@@ -11,6 +11,7 @@ import {
 } from "@/lib/infinity/operator-console/floor-layout";
 import { DepartmentRoom } from "./department-room";
 import { HqFlowConnectors, closedLoopTargetLabel } from "./hq-flow-connectors";
+import { HqSalesFloor } from "./hq-sales-floor";
 
 type Props = {
   departments: OperatorDepartmentSnapshot[];
@@ -173,6 +174,13 @@ export function HqSpatialFloor({
           />
 
           <div className="hq-floor-stack relative min-w-0">
+            <div className="hq-floor-full-row" data-hq-floor-full-row="sales_floor">
+              <HqSalesFloor
+                snapshot={deptMap.get("sales_floor")}
+                selected={selectedDepartment === "sales_floor"}
+                onSelect={() => onSelectDepartment("sales_floor")}
+              />
+            </div>
             <FloorColumns left={sections.above.left} right={sections.above.right} renderRoom={cell} />
             {sections.full.map((id) => (
               <div key={id} className="hq-floor-full-row" data-hq-floor-full-row={id}>

@@ -224,6 +224,17 @@ const ROOM_ACTIVE_COPY: Record<DepartmentId, { default: RoomCopyVariant; alt?: R
       withoutVenture: "Routing the current mission to the rooms that need to act next.",
     },
   },
+  sales_floor: {
+    default: {
+      withVenture: (v) => `Monitoring the sales floor and room priorities for ${v}.`,
+      withoutVenture: "Monitoring the sales floor without forcing outreach.",
+    },
+    altWhen: /pipeline|outbound|inbound|close/i,
+    alt: {
+      withVenture: () => "Advancing the highest-evidence sales room without fabricating activity.",
+      withoutVenture: "Advancing the highest-evidence sales room without fabricating activity.",
+    },
+  },
 };
 
 const SOURCE_WHY: Record<Exclude<RoomActivitySource, "idle" | "empty" | "blocker">, string> = {

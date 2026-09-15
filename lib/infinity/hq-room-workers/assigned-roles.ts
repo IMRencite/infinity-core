@@ -19,6 +19,7 @@ export const HQ_FIRST_CLASS_ROOM_ASSIGNED_ROLES: Partial<Record<DepartmentId, re
   launch_operations: ["Dispatch"],
   intelligence_center: ["Analysis"],
   executive_office: ["Decision"],
+  sales_floor: ["Outbound", "Inbound", "Expansion", "Partnerships", "Closing"],
   operations: [
     "Venture Operator",
     "Portfolio Operator",
