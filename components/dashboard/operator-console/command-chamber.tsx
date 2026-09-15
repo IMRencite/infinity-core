@@ -4,6 +4,8 @@ import { activeRoomLabelsFromView } from "@/lib/infinity/mission-activity/active
 import type { CommandActivityView } from "@/lib/infinity/mission-activity/types";
 import type { DepartmentId, OperatorCurrentActivity, OperatorDepartmentSnapshot, OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
 import { CommandActivityStrip } from "./command-activity-strip";
+import { AutonomousOperationsStrip } from "./autonomous-operations-strip";
+import type { AutonomousOperationsProjection } from "@/lib/infinity/autonomous-operating-loop/types";
 import type { Favc1CycleSnapshotMeta } from "@/lib/infinity/operator-console/favc1-cycle/types";
 import type { CommandSystemIndicator } from "@/lib/infinity/operator-console/hq-infrastructure-priority";
 import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
@@ -37,6 +39,7 @@ type Props = {
   systemReadiness?: CommandSystemIndicator[];
   ventureName?: string | null;
   commandActivity?: CommandActivityView | null;
+  autonomousOperating?: AutonomousOperationsProjection | null;
   hqSystemState?: string | null;
   waitingWork?: boolean;
 };
@@ -70,6 +73,7 @@ export function CommandChamber({
   systemReadiness = [],
   ventureName = null,
   commandActivity = null,
+  autonomousOperating = null,
   hqSystemState = null,
   waitingWork = false,
 }: Props) {
@@ -151,6 +155,7 @@ export function CommandChamber({
             <p className="hq-room-job mt-1">{names.shortDescription}</p>
             <RoomCurrentActivity explanation={activity} className="mt-2" />
             <CommandActivityStrip activity={commandActivity} />
+            <AutonomousOperationsStrip projection={autonomousOperating} />
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-500" data-hq-room-presence={commandPresence}>
               {commandPresence}
             </p>

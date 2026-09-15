@@ -11,6 +11,14 @@ import { loadOperatorVentureList, loadOperatorVentureSnapshot } from "./operator
 import { resolveDefaultVentureId } from "./resolve-default-venture";
 import type { OperatorVentureListItem, OperatorVentureSnapshot } from "./types";
 import { withHqFinancialTruth } from "@/lib/infinity/financial-truth/attach-live";
+import { projectAutonomousOperations } from "@/lib/infinity/autonomous-operating-loop/project";
+
+function withAutonomousOperating(snapshot: OperatorVentureSnapshot): OperatorVentureSnapshot {
+  return {
+    ...snapshot,
+    autonomousOperating: projectAutonomousOperations({ now: snapshot.generatedAt }),
+  };
+}
 
 export type HqDashboardContext = {
   ventureList: OperatorVentureListItem[];
@@ -88,8 +96,8 @@ export async function loadHqDashboardContext(
           selectionError: null,
         };
       }
-      snapshot = financedCycle;
-      snapshots.set(resolvedId, financedCycle);
+      snapshot = withAutonomousOperating(financedCycle);
+      snapshots.set(resolvedId, snapshot);
       return {
         ventureList,
         defaultVentureId: resolvedId,
@@ -136,8 +144,8 @@ export async function loadHqDashboardContext(
           selectionError: VENTURE_SELECTION_RESOLUTION_FAILED,
         };
       }
-      snapshot = financedPreferred;
-      snapshots.set(preferredVentureId, financedPreferred);
+      snapshot = withAutonomousOperating(financedPreferred);
+      snapshots.set(preferredVentureId, snapshot);
       return {
         ventureList,
         defaultVentureId: preferredVentureId,
@@ -173,8 +181,8 @@ export async function loadHqDashboardContext(
       await attachGlobalHqFloorRooms(snapshot, admin, organizationId),
       "ssr",
     );
-    snapshot = financed;
-    if (resolvedId && financed) snapshots.set(resolvedId, financed);
+    snapshot = financed ? withAutonomousOperating(financed) : financed;
+    if (resolvedId && snapshot) snapshots.set(resolvedId, snapshot);
   }
 
   return {

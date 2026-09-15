@@ -236,6 +236,7 @@ function VentureOperatorConsoleInner({
         ventureOperatingScale?: OperatorVentureSnapshot["ventureOperatingScale"];
         capabilityArtifacts?: OperatorVentureSnapshot["roomArtifacts"];
         canonicalLive?: OperatorVentureSnapshot["canonicalLive"];
+        autonomousOperating?: OperatorVentureSnapshot["autonomousOperating"];
       } | null = null;
       if (liveRes.ok) {
         const livePayload = (await liveRes.json()) as {
@@ -247,6 +248,7 @@ function VentureOperatorConsoleInner({
           ventureOperatingScale?: OperatorVentureSnapshot["ventureOperatingScale"];
           capabilityArtifacts?: OperatorVentureSnapshot["roomArtifacts"];
           canonicalLive?: OperatorVentureSnapshot["canonicalLive"];
+          autonomousOperating?: OperatorVentureSnapshot["autonomousOperating"];
         };
         if (livePayload.commandActivity && livePayload.generatedAt) {
           liveState = {
@@ -258,6 +260,7 @@ function VentureOperatorConsoleInner({
             ventureOperatingScale: livePayload.ventureOperatingScale,
             capabilityArtifacts: livePayload.capabilityArtifacts,
             canonicalLive: livePayload.canonicalLive,
+            autonomousOperating: livePayload.autonomousOperating,
           };
           const liveDecision = commitHqClientSnapshot({
             ventureId: authoritativeVentureId,
@@ -644,6 +647,7 @@ function VentureOperatorConsoleBody({
                 cycleMeta={snapshot.favc1Cycle ?? null}
                 ventureName={snapshot.venture.ventureName}
                 commandActivity={snapshot.commandActivity ?? null}
+                autonomousOperating={snapshot.autonomousOperating ?? null}
                 hqSystemState={
                   typeof snapshot.departments.find((d) => d.id === "operations")?.detail?.systemState === "string"
                     ? String(snapshot.departments.find((d) => d.id === "operations")?.detail?.systemState)

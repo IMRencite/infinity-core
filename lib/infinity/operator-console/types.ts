@@ -13,6 +13,7 @@ import type { HqFinancialTruthView } from "@/lib/infinity/financial-truth/types"
 import type { CodingHqReadModel } from "@/lib/infinity/coding-agents/hq/read-model";
 import type { CanonicalCapabilityProjection } from "@/lib/infinity/capability-truth/types";
 import type { CanonicalHQLiveProjection } from "@/lib/infinity/hq-live-truth/types";
+import type { AutonomousOperationsProjection } from "@/lib/infinity/autonomous-operating-loop/types";
 
 export type DepartmentId =
   | "opportunity_lab"
@@ -283,6 +284,7 @@ export type OperatorVentureSnapshot = {
   coding?: CodingHqReadModel;
   capabilities?: CanonicalCapabilityProjection;
   canonicalLive?: CanonicalHQLiveProjection;
+  autonomousOperating?: AutonomousOperationsProjection;
 };
 
 export type OperatorVentureListItem = {

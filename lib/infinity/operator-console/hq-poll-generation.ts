@@ -179,6 +179,7 @@ export function applyHqCanonicalLiveState(
     ventureOperatingScale?: OperatorVentureSnapshot["ventureOperatingScale"];
     capabilityArtifacts?: OperatorVentureSnapshot["roomArtifacts"];
     canonicalLive?: OperatorVentureSnapshot["canonicalLive"];
+    autonomousOperating?: OperatorVentureSnapshot["autonomousOperating"];
   },
 ): OperatorVentureSnapshot {
   const roomArtifacts = live.capabilityArtifacts
@@ -205,6 +206,7 @@ export function applyHqCanonicalLiveState(
     capabilities: live.capabilities ?? snapshot.capabilities,
     ventureOperatingScale: live.ventureOperatingScale ?? snapshot.ventureOperatingScale,
     canonicalLive: live.canonicalLive ?? snapshot.canonicalLive,
+    autonomousOperating: live.autonomousOperating ?? snapshot.autonomousOperating,
     roomArtifacts,
   });
 }

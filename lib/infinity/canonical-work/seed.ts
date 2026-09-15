@@ -57,6 +57,10 @@ export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID =
   "work:occupancynpv:venture-financial-commitment-v1" as const;
 export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_TITLE =
   "Venture Financial Commitment V1" as const;
+export const AUTONOMOUS_DAILY_OPERATING_LOOP_WORK_ID =
+  "work:infinity:autonomous-daily-operating-loop-v1" as const;
+export const AUTONOMOUS_DAILY_OPERATING_LOOP_WORK_TITLE =
+  "Autonomous Daily Operating Loop V1" as const;
 
 function already(id: string): boolean {
   return listCanonicalWork().some((row) => row.work_id === id);
@@ -954,6 +958,45 @@ export function ensureOccupancyNpvCanonicalWork(now = new Date().toISOString()):
     ensureVerifiedCommitmentMilestone(now);
     const closed = resolveCanonicalMissionCompletions(now);
     created.push(...closed.filter((row) => row.work_id === OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID));
+  }
+  if (!already(AUTONOMOUS_DAILY_OPERATING_LOOP_WORK_ID) && !process.env.VITEST) {
+    created.push(upsertCanonicalWork({
+      contract: CANONICAL_WORK_EXECUTION_CONTRACT,
+      work_id: AUTONOMOUS_DAILY_OPERATING_LOOP_WORK_ID,
+      mission_id: "mission:infinity:autonomous-daily-operating-loop-v1",
+      venture_id: CRE_VENTURE_ID,
+      work_type: "SYSTEM_ARCHITECTURE",
+      title: AUTONOMOUS_DAILY_OPERATING_LOOP_WORK_TITLE,
+      description: "Persistent autonomous observe → decide → execute → measure → learn loop. OccupancyNPV is the first verification target. No founder continue prompts. No autonomous money movement or commitments.",
+      stage: "OPERATIONS / GROWTH / QC",
+      status: "COMPLETED",
+      assigned_rooms: [
+        "operations",
+        "growth_department",
+        "intelligence_center",
+        "quality_control",
+        "systems_architect",
+      ],
+      assigned_workers: ["Venture Operator", "Growth Runtime", "Performance Intelligence", "Validation Station"],
+      source: "EXTERNAL_IMPLEMENTATION_AGENT",
+      started_at: now,
+      updated_at: now,
+      completed_at: now,
+      blocked_reason: null,
+      authorization_state: null,
+      progress: "AutonomousDailyOperatingLoop + NextMissionResolver + durable scheduler",
+      latest_output: "Loop V1 verified · OccupancyNPV evidence-derived decision · no busywork · money movement disabled · COMPLETED · floor idle after complete",
+      artifact_refs: [],
+      evidence_refs: [
+        "lib/infinity/autonomous-operating-loop/loop.ts",
+        "lib/infinity/autonomous-operating-loop/resolver.ts",
+      ],
+      parent_work_id: OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID,
+      traceability_links: [OCCUPANCYNPV_FINANCIAL_COMMITMENT_WORK_ID],
+      requires_infinity_worker_execution: false,
+      classification: "SYSTEM_INFRASTRUCTURE",
+      next_expected_transition: "WORK_COMPLETES_THEN_IDLE",
+    }));
   }
   return created;
 }

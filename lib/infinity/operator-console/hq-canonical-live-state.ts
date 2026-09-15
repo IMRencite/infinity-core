@@ -19,6 +19,8 @@ import type { VentureOperatingScaleHqProjection } from "@/lib/infinity/venture-o
 import type { HqRoomArtifactMap } from "./artifacts/types";
 import { projectCanonicalHQLive } from "@/lib/infinity/hq-live-truth/projection";
 import type { CanonicalHQLiveProjection } from "@/lib/infinity/hq-live-truth/types";
+import { projectAutonomousOperations } from "@/lib/infinity/autonomous-operating-loop/project";
+import type { AutonomousOperationsProjection } from "@/lib/infinity/autonomous-operating-loop/types";
 
 export type HqCanonicalLiveState = {
   generatedAt: string;
@@ -33,6 +35,7 @@ export type HqCanonicalLiveState = {
   ventureOperatingScale?: VentureOperatingScaleHqProjection;
   capabilityArtifacts?: HqRoomArtifactMap;
   canonicalLive?: CanonicalHQLiveProjection;
+  autonomousOperating?: AutonomousOperationsProjection;
 };
 
 export function hqCanonicalVersionFromActivity(
@@ -40,6 +43,7 @@ export function hqCanonicalVersionFromActivity(
   generatedAt: string,
   financialTruthVersion = "",
   capabilityVersion = "",
+  autonomousVersion = "",
 ): string {
   const current = resolveCurrentCanonicalWork(generatedAt);
   const mission = activity.nowInspecting.currentMission ?? activity.latestCompleted?.missionType ?? "";
@@ -56,6 +60,7 @@ export function hqCanonicalVersionFromActivity(
     activity.latestSystemActivity?.updatedAt ?? "",
     financialTruthVersion,
     capabilityVersion,
+    autonomousVersion,
     current.status,
   ].join(":");
 }
@@ -84,6 +89,7 @@ export function loadHqCanonicalLiveState(organizationId: string, selectedVenture
   const generatedAt = new Date().toISOString();
   const capabilities = projectCanonicalCapabilities(generatedAt);
   const coding = codingReadModelFromCapability(organizationId);
+  const autonomousOperating = projectAutonomousOperations({ now: generatedAt });
   return {
     generatedAt,
     canonicalVersion: hqCanonicalVersionFromActivity(
@@ -91,6 +97,7 @@ export function loadHqCanonicalLiveState(organizationId: string, selectedVenture
       generatedAt,
       "",
       `${coding.providers.find((row) => /cursor/i.test(row.provider))?.status ?? ""}:${capabilities.generated_at}`,
+      `${autonomousOperating.loop_state}:${autonomousOperating.current_mission ?? ""}:${autonomousOperating.why_this_mission}`,
     ),
     lastActivityAt:
       commandActivity.nowInspecting.lastActivityAt ?? commandActivity.latestCompleted?.completedAt ?? null,
@@ -112,6 +119,7 @@ export function loadHqCanonicalLiveState(organizationId: string, selectedVenture
       generatedAt,
       selectedVentureId,
     }),
+    autonomousOperating,
   };
 }
 
@@ -123,7 +131,13 @@ export function withFinancialTruthLiveState(
     ...live,
     financialTruth,
     financialTruthVersion: financialTruth.version,
-    canonicalVersion: hqCanonicalVersionFromActivity(live.commandActivity, live.generatedAt, financialTruth.version),
+    canonicalVersion: hqCanonicalVersionFromActivity(
+      live.commandActivity,
+      live.generatedAt,
+      financialTruth.version,
+      "",
+      `${live.autonomousOperating?.loop_state ?? ""}:${live.autonomousOperating?.current_mission ?? ""}`,
+    ),
     canonicalLive: projectCanonicalHQLive({
       generatedAt: live.generatedAt,
       financialTruth,
@@ -144,6 +158,7 @@ export function attachHqCanonicalLiveState(
       capabilities: live.capabilities ?? snapshot.capabilities,
       ventureOperatingScale: live.ventureOperatingScale ?? snapshot.ventureOperatingScale,
       canonicalLive: live.canonicalLive ?? snapshot.canonicalLive,
+      autonomousOperating: live.autonomousOperating ?? snapshot.autonomousOperating,
       roomArtifacts: live.capabilityArtifacts
         ? replaceProviderReadinessArtifacts(snapshot.roomArtifacts, live.capabilityArtifacts)
         : snapshot.roomArtifacts,

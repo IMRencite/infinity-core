@@ -1,3 +1,4 @@
+import { notifyAutonomousLoopMissionCompleted } from "@/lib/infinity/autonomous-operating-loop/loop";
 import { HQ_CURRENT_IMPLEMENTATION_WORK_ID } from "./current-implementation";
 import {
   completeCanonicalWork,
@@ -11,6 +12,8 @@ export const OCCUPANCYNPV_SPEND_AUTHORITY_MISSION_ID =
   "work:occupancynpv:governed-venture-spend-authority-v1" as const;
 export const OCCUPANCYNPV_FINANCIAL_COMMITMENT_MISSION_ID =
   "work:occupancynpv:venture-financial-commitment-v1" as const;
+export const AUTONOMOUS_DAILY_OPERATING_LOOP_MISSION_ID =
+  "work:infinity:autonomous-daily-operating-loop-v1" as const;
 
 export const NAMED_MISSION_TERMINAL_STATUSES = [
   "COMPLETED",
@@ -195,6 +198,14 @@ export function resolveCanonicalMissionCompletions(
             next_expected_transition: "WORK_COMPLETES_THEN_IDLE",
           });
     if (next) closed.push(next);
+  }
+  if (!process.env.VITEST && closed.length) {
+    notifyAutonomousLoopMissionCompleted({
+      workId: closed[closed.length - 1]!.work_id,
+      now,
+      persist: true,
+      createMission: true,
+    });
   }
   return closed;
 }
