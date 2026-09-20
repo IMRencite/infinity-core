@@ -12,9 +12,14 @@
 
 # testing
 /coverage
+/e2e/artifacts/
+/test-results/
+/playwright-report/
+/blob-report/
 
 # next.js
 /.next/
+/.next-verify/
 /out/
 
 # production
@@ -50,5 +55,9 @@ node_modules/
 .infinity/venture-workspaces/
 .infinity/vw/
 .infinity/workspaces/
+.infinity/mission-activity/
+.infinity/communication-provider/
+.infinity/communication-v5-private/
+.infinity/financial-truth/
 
 **/.next/
