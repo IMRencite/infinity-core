@@ -6,6 +6,7 @@ import { evaluateVentureOfferTruthGate, loadVentureOfferProfile } from "@/lib/in
 import { evaluateFirstTouchContract, planConversation } from "../conversation-planner";
 import { evaluateResponseContentQualityGate, isPositiveBuyingSignal, isStopOnly } from "../conversation-semantics";
 import { INTERNAL_LANGUAGE } from "./canary";
+import { evaluateStaleConversationLanguageGate } from "./stale-language";
 import type { CommercialAction, SalesStagePolicy } from "@/lib/infinity/always-closing-sales/doctrine";
 
 export const HARD_SALES_GATES = [
@@ -20,6 +21,7 @@ export const HARD_SALES_GATES = [
   "UnsupportedClaimGate",
   "AlwaysClosingSafetyGate",
   "DirectQuestionResponsivenessGate",
+  "StaleConversationLanguageGate",
 ] as const;
 
 export const SOFT_SALES_GATES = [
@@ -56,6 +58,7 @@ export function evaluateHardSalesGates(input: {
   prior_outbound: number;
   next_action: CommercialAction;
   stage: SalesStagePolicy;
+  inbound_age_ms?: number;
 }): { verdicts: NamedOutboundLoopGate[]; result: "PASS" | "FAIL"; first_failure: string | null } {
   const profile = loadVentureOfferProfile("occupancynpv");
   const offer = evaluateVentureOfferTruthGate({ profile, claimed: input.generated });
@@ -83,6 +86,7 @@ export function evaluateHardSalesGates(input: {
     named("UnsupportedClaimGate", quality.result === "FAIL" && quality.reasons.includes("PLACEHOLDER") ? "FAIL" : "PASS", quality.reasons),
     named("AlwaysClosingSafetyGate", safety.result, safety.reasons),
     evaluateDirectQuestionResponsivenessGate({ inbound: input.inbound, generated: input.generated }),
+    evaluateStaleConversationLanguageGate({ generated: input.generated, inbound_age_ms: input.inbound_age_ms ?? 0 }),
   ];
   const first = verdicts.find((row) => row.result === "FAIL") ?? null;
   return { verdicts, result: first ? "FAIL" : "PASS", first_failure: first?.gate ?? null };

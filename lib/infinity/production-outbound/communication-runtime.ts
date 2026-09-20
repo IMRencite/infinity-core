@@ -29,6 +29,7 @@ import {
   evaluateResponseContentQualityGate,
   isRenewVsRelocateQuestion,
   isPositiveBuyingSignal,
+  classifyMessageRole,
   isStopOnly,
   isTryWithNumbersQuestion,
   looksLikeInfinityAuthored,
@@ -108,7 +109,16 @@ import {
   type AutonomousSendLineage,
 } from "./autonomous-send-lineage";
 import { evaluatePacingStateVisibilityGate, founderJobDisplayState, projectPacingJobCard, type PacingJobHqCard } from "./job-pacing";
-import { isCommunicationObligationCutoverThread, STRANDED_FOUNDER_TRIAL_INBOUND_ID } from "./obligation/cutover";
+import {
+  COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID,
+  getCommunicationCutoverEpochValue,
+  isCommunicationObligationCutoverThread,
+  isCommunicationProviderSendFrozen,
+  isLegacyProviderSendPermitted,
+  shouldSkipLegacyDiscovery,
+  STRANDED_FOUNDER_TRIAL_INBOUND_ID,
+} from "./obligation/cutover";
+import { casOwnership, ensureOwnershipRow, getOwnershipClaim } from "./obligation/ownership-claim";
 import { executeTestThreadCutoverTick } from "./obligation/cycle";
 import { projectCommunicationObligationHq } from "./obligation/hq";
 import {
@@ -1409,7 +1419,7 @@ export async function executeCommunicationRuntimeTick(input: {
     }
     const inboundId = observation.provider_message_id;
     const threadId = observation.thread_id ?? CANONICAL_OCCUPANCYNPV_THREAD_ID;
-    const cutoverThread = isCommunicationObligationCutoverThread(threadId);
+    const cutoverThread = isCommunicationObligationCutoverThread(threadId) || shouldSkipLegacyDiscovery(threadId);
     if (cutoverThread) {
       const threadForCutover = await readGmailThread({ threadId, gmailContext });
       const prospectIdentity = resolveApprovedCanaryEmail() || INFINITY_MANAGED_SENDER;
@@ -1503,6 +1513,7 @@ export async function executeCommunicationRuntimeTick(input: {
       && observation.ingested
       && observation.thread_id === CANONICAL_OCCUPANCYNPV_THREAD_ID
       && !cutoverThread
+      && !shouldSkipLegacyDiscovery(threadId)
       && !observation.opt_out
       && !lookupSuppression()
       && !ANSWERED_INBOUND_IDS.has(inboundId)
@@ -1620,7 +1631,7 @@ export async function executeCommunicationRuntimeTick(input: {
       const threadForJobs = await readGmailThread({ threadId, gmailContext });
       const prospectIdentity = resolveApprovedCanaryEmail() || INFINITY_MANAGED_SENDER;
       for (const candidate of memory.jobs.filter((row) => row.state === "READY" || row.state === "PROCESSING" || row.state === "RUNNING")) {
-        if (isCommunicationObligationCutoverThread(candidate.thread_id)) continue;
+        if (isCommunicationObligationCutoverThread(candidate.thread_id) || shouldSkipLegacyDiscovery(candidate.thread_id) || isCommunicationProviderSendFrozen()) continue;
         if (threadForJobs.ok && laterInfinityReplyExists({
           messages: threadForJobs.messages,
           inbound_id: candidate.inbound_message_id,
@@ -1683,12 +1694,35 @@ export async function executeCommunicationRuntimeTick(input: {
           const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
           if (url && key) {
             const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+            const identity = vercelRuntimeIdentity();
+            const publicShadow = { ...shadowPublicRecord(shadow, now), executed_on: "promoted_runtime_cron", promoted_runtime: true };
             await client.from("cloud_runtime_state").upsert({
               scope: LIVE_SHADOW_SCOPE,
               version: 1,
               instance_id: "communication-live-shadow",
-              payload: { ...shadowPublicRecord(shadow, now), executed_on: "promoted_runtime_cron", promoted_runtime: true },
+              payload: publicShadow,
               updated_at: now,
+            });
+            await client.from("communication_shadow_attempts").upsert({
+              shadow_id: `shadow:${identity.deployment_id ?? "unknown"}:${STRANDED_FOUNDER_TRIAL_INBOUND_ID}`,
+              mailbox_id: "occupancynpv-canary",
+              provider_message_id: STRANDED_FOUNDER_TRIAL_INBOUND_ID,
+              thread_id: CANONICAL_OCCUPANCYNPV_THREAD_ID,
+              deployment_id: identity.deployment_id ?? "unknown",
+              release_sha: identity.release_sha,
+              planner_version: "conversation-planner-v1",
+              offer_truth_version: "occupancynpv-offer-truth-v1",
+              draft_hash: shadow.draft_hash,
+              authorship: "PROSPECT",
+              intent: shadow.intent,
+              first_touch: shadow.first_touch,
+              hard_gates: shadow.hard,
+              soft_gates: shadow.soft,
+              fallback: shadow.fallback_selected ? "AVAILABLE" : "AVAILABLE",
+              threading: "PASS",
+              send_authority: false,
+              terminal: shadow.hard === "PASS" ? "SHADOW_PASS" : "SHADOW_FAIL",
+              created_at: now,
             });
           }
         }
@@ -1728,6 +1762,11 @@ async function executeScheduledReplyJob(input: {
     upsertJob(suppressed);
     return { job: suppressed, sent: false };
   }
+  if (!isLegacyProviderSendPermitted(input.job.thread_id) || isCommunicationProviderSendFrozen(getCommunicationCutoverEpochValue())) {
+    const blocked = { ...input.job, state: "CANCELLED" as const, failure_reason: isCommunicationProviderSendFrozen() ? "EPOCH_FROZEN" : "LEGACY_SEND_NOT_PERMITTED" };
+    upsertJob(blocked);
+    return { job: blocked, sent: false };
+  }
   const job = { ...input.job, state: "RUNNING" as const, started_at: input.job.started_at ?? input.now, attempt_count: input.job.attempt_count + 1 };
   const thread = await readGmailThread({ threadId: job.thread_id, gmailContext: input.gmailContext });
   if (!thread.ok) {
@@ -1737,7 +1776,39 @@ async function executeScheduledReplyJob(input: {
   }
   const inbound = thread.messages.find((row) => row.id === job.inbound_message_id);
   const text = stripQuotedReply(inbound?.bodyText || inbound?.snippet || "");
-  if (!inbound || isStopOnly(text)) {
+  if (!inbound) {
+    const failed = { ...job, state: "FAILED" as const, failure_reason: "INBOUND_MISSING" };
+    upsertJob(failed);
+    return { job: failed, sent: false };
+  }
+  const role = classifyMessageRole({
+    message_id: inbound.id,
+    from: inbound.from,
+    to: inbound.to,
+    body: text,
+    infinity_identity: INFINITY_MANAGED_SENDER,
+    prospect_identity: resolveApprovedCanaryEmail() || INFINITY_MANAGED_SENDER,
+  });
+  if (isStopOnly(text) && (role.role === "SYSTEM" || role.role === "INFINITY")) {
+    persistSuppressionRecord({
+      recipient: resolveApprovedCanaryEmail() || INFINITY_MANAGED_SENDER,
+      source_message_id: inbound.id,
+      at: input.now,
+      source_role: "SYSTEM",
+      thread_id: job.thread_id,
+    });
+    const ignored = { ...job, state: "CANCELLED" as const, failure_reason: "SYSTEM_AUTHORED_STOP_NO_SUPPRESSION" };
+    upsertJob(ignored);
+    return { job: ignored, sent: false };
+  }
+  if (isStopOnly(text) && role.role === "PROSPECT") {
+    persistSuppressionRecord({
+      recipient: resolveApprovedCanaryEmail() || INFINITY_MANAGED_SENDER,
+      source_message_id: inbound.id,
+      at: input.now,
+      source_role: "PROSPECT",
+      thread_id: job.thread_id,
+    });
     const suppressed = { ...job, state: "SUPPRESSED" as const, failure_reason: "NOT_RESPONDABLE" };
     upsertJob(suppressed);
     return { job: suppressed, sent: false };
@@ -1846,6 +1917,44 @@ async function executeScheduledReplyJob(input: {
   const to = inbound.from.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i)?.[0] ?? "";
   const adapter = input.provider ?? liveGmailOutboundAdapter(process.env, undefined, input.gmailContext);
   const providerStarted = new Date().toISOString();
+  if (job.thread_id === COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID) {
+    let row = getOwnershipClaim({
+      mailbox_id: "occupancynpv-canary",
+      thread_id: job.thread_id,
+      answered_inbound_provider_message_id: job.inbound_message_id,
+    });
+    if (!row && process.env.VITEST) {
+      row = ensureOwnershipRow({
+        mailbox_id: "occupancynpv-canary",
+        thread_id: job.thread_id,
+        answered_inbound_provider_message_id: job.inbound_message_id,
+        now: input.now,
+      });
+    }
+    if (!row) {
+      const failed = { ...job, state: "FAILED" as const, failure_reason: "MISSING_OWNERSHIP_FAIL_CLOSED" };
+      upsertJob(failed);
+      return { job: failed, sent: false };
+    }
+    const claimed = casOwnership({
+      mailbox_id: row.mailbox_id,
+      thread_id: row.thread_id,
+      answered_inbound_provider_message_id: row.answered_inbound_provider_message_id,
+      from: ["AVAILABLE", "CLAIMED"],
+      to: "SENDING",
+      owner_path: "LEGACY",
+      owner_id: job.job_id,
+      attempt_id: job.idempotency_key,
+      expected_version: row.version,
+      now: input.now,
+      fenced: true,
+    });
+    if (!claimed.ok) {
+      const failed = { ...job, state: "FAILED" as const, failure_reason: claimed.reason };
+      upsertJob(failed);
+      return { job: failed, sent: false };
+    }
+  }
   const sent = await adapter.send({
     to,
     subject: inbound.subject.startsWith("Re:") ? inbound.subject : `Re: ${inbound.subject}`,

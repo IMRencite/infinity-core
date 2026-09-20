@@ -55,10 +55,13 @@ export function evaluateCommunicationCrossPathSendIdempotencyGate(input: {
 }
 
 export function evaluateLegacySendEpochCheckGate(input: {
-  database_epoch: "LEGACY" | "OBLIGATION";
-  cached_startup_flag?: "LEGACY" | "OBLIGATION" | null;
+  database_epoch: "LEGACY" | "FROZEN" | "OBLIGATION";
+  cached_startup_flag?: "LEGACY" | "FROZEN" | "OBLIGATION" | null;
   attempted_legacy_send: boolean;
 }): NamedOutboundLoopGate {
+  if (input.database_epoch === "FROZEN" && input.attempted_legacy_send) {
+    return named("LegacySendEpochCheckGate", "FAIL", ["LEGACY_SEND_WHILE_FROZEN"]);
+  }
   if (input.database_epoch === "OBLIGATION" && input.attempted_legacy_send) {
     return named("LegacySendEpochCheckGate", "FAIL", ["LEGACY_SEND_AFTER_OBLIGATION_EPOCH"]);
   }

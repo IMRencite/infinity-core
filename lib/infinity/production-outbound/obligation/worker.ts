@@ -19,7 +19,8 @@ import {
   updateCommunicationAttempt,
 } from "./store";
 import { evaluateNoEchoInvariant, resolveAuthorship, systemAuthorshipWins } from "./authorship";
-import { COMMUNICATION_OBLIGATION_AGE_SLO_MS, COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID, STRANDED_FOUNDER_TRIAL_INBOUND_ID } from "./cutover";
+import { COMMUNICATION_OBLIGATION_AGE_SLO_MS, COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID, getCommunicationCutoverEpochValue, isCommunicationProviderSendFrozen, STRANDED_FOUNDER_TRIAL_INBOUND_ID } from "./cutover";
+import { casOwnership, ensureOwnershipRow, getOwnershipClaim } from "./ownership-claim";
 import type { CommunicationAttempt, CommunicationObligation } from "./types";
 
 export type ObligationWorkerSendResult = {
@@ -323,6 +324,9 @@ export async function executeCommunicationObligationWorker(input: {
   if (current.thread_id !== COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID && current.thread_id !== input.obligation.thread_id) {
     return { obligation: current, attempt: null, sent: false, recovered: false, plan: null, body: null };
   }
+  if (isStopOnly(input.visible_body) && current.role !== "PROSPECT") {
+    return { obligation: current, attempt: null, sent: false, recovered: false, plan: null, body: null };
+  }
   if (isStopOnly(input.visible_body) && current.role === "PROSPECT") {
     const suppressed = applyCommunicationObligationTransition({
       current,
@@ -435,6 +439,43 @@ export async function executeCommunicationObligationWorker(input: {
   }
   if (input.crash_after_ledger) {
     return { obligation: current, attempt, sent: false, recovered: false, plan, body };
+  }
+  if (isCommunicationProviderSendFrozen(getCommunicationCutoverEpochValue())) {
+    return { obligation: current, attempt, sent: false, recovered: false, plan, body };
+  }
+  let ownership = getOwnershipClaim({
+    mailbox_id: current.mailbox_id,
+    thread_id: current.thread_id,
+    answered_inbound_provider_message_id: current.provider_message_id,
+  });
+  if (!ownership && process.env.VITEST) {
+    ownership = ensureOwnershipRow({
+      mailbox_id: current.mailbox_id,
+      thread_id: current.thread_id,
+      answered_inbound_provider_message_id: current.provider_message_id,
+      now: input.now,
+    });
+  }
+  if (!ownership && current.thread_id === COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID) {
+    return { obligation: current, attempt, sent: false, recovered: false, plan, body };
+  }
+  if (ownership) {
+    const claimed = casOwnership({
+      mailbox_id: ownership.mailbox_id,
+      thread_id: ownership.thread_id,
+      answered_inbound_provider_message_id: ownership.answered_inbound_provider_message_id,
+      from: ["AVAILABLE", "CLAIMED"],
+      to: "SENDING",
+      owner_path: "OBLIGATION",
+      owner_id: current.obligation_id,
+      attempt_id: attempt.attempt_id,
+      expected_version: ownership.version,
+      now: input.now,
+      fenced: current.thread_id === COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID,
+    });
+    if (!claimed.ok) {
+      return { obligation: current, attempt, sent: false, recovered: false, plan, body };
+    }
   }
   if (current.provider_message_id === STRANDED_FOUNDER_TRIAL_INBOUND_ID && !process.env.VITEST) {
     const inherited = inheritIncidentOntoObligation({

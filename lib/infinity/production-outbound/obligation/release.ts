@@ -15,7 +15,7 @@ import { COMMUNICATION_STALE_HEARTBEAT_MS } from "./pacing";
 
 export const COMMUNICATION_INTENDED_RELEASE_SCOPE = "communication-intended-release-v1" as const;
 export const COMMUNICATION_CUTOVER_EPOCH_SCOPE = "communication-cutover-epoch-v1" as const;
-export const COMMUNICATION_SCHEMA_VERSION = "communication-incident-recovery-v4" as const;
+export const COMMUNICATION_SCHEMA_VERSION = "communication-recovery-release-v7" as const;
 export type { CommunicationCutoverEpoch };
 
 export type CommunicationIntendedRelease = {
@@ -23,7 +23,7 @@ export type CommunicationIntendedRelease = {
   intended_git_sha: string;
   expected_deployment_target: "infinity-runtime" | "infinity-hq";
   expected_deployment_id: string | null;
-  communication_schema_version: typeof COMMUNICATION_SCHEMA_VERSION;
+  communication_schema_version: string;
   planner_version: typeof CONVERSATION_PLANNER_VERSION;
   cutover_epoch: CommunicationCutoverEpoch;
   created_at: string;

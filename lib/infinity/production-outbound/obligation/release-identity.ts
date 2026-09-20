@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { NamedOutboundLoopGate } from "../closed-loop";
 
-export const COMMUNICATION_SCHEMA_VERSION_REQUIRED = "communication-incident-recovery-v4" as const;
+export const COMMUNICATION_SCHEMA_VERSION_REQUIRED = "communication-recovery-release-v7" as const;
 export const COMMUNICATION_RELEASE_IDENTITY_FILE = "release-identity.json" as const;
 
 export type CommunicationReleaseIdentity = {
@@ -11,7 +11,7 @@ export type CommunicationReleaseIdentity = {
   release_tree_hash: string;
   release_dirty: boolean;
   build_graph_hash: string;
-  schema_version_required: typeof COMMUNICATION_SCHEMA_VERSION_REQUIRED;
+  schema_version_required: string;
   build_timestamp: string;
   release_sequence: string;
 };

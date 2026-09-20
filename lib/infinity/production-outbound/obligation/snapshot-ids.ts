@@ -1,0 +1,33 @@
+export const PRE_CUTOVER_SNAPSHOT_MESSAGE_IDS = [
+  "1a0af74557b0eb36",
+  "1a0b113843dd3f35",
+  "1a0b1cf6a7987986",
+  "1a0b2000b6fda6c0",
+  "1a0b23d641859457",
+  "1a0b254b39f5c645",
+  "1a0b2811333bb557",
+  "1a0b2c9c7407859a",
+  "1a0b2d5878bc6c17",
+  "1a0b3b2bd5ab75a7",
+  "1a0b3befb327cbcb",
+  "1a0b3e44d74d4d98",
+  "1a0b3f156756543d",
+  "1a0b40e53a28b284",
+  "1a0b41a8843df276",
+  "1a0b41fe029e3ceb",
+  "1a0b72de74236012",
+  "1a0b77dda0e77184",
+  "1a0b78e048ac03cf",
+  "1a0b78faca76d524",
+  "1a0b8fc3ebad644f",
+  "1a0b8fe61045cbdb",
+  "1a0b9fc9d7abd69b",
+  "1a0badea7b22a70f",
+  "1a0bd3490dd9fbba",
+  "1a0bd44df7eb4ce5",
+  "1a0bd50063029ad1",
+  "1a0be7a9feee5375",
+] as const;
+
+export const TARGET_INTERNAL_DATE_MS = Date.parse("2026-09-20T11:01:41.000Z");
+export const LIVE_ADMISSION_INTERNAL_DATE_WATERMARK_MS = TARGET_INTERNAL_DATE_MS;

@@ -248,7 +248,7 @@ const envKeys = {
   COMMUNICATION_RELEASE_TREE_HASH: "",
   COMMUNICATION_RELEASE_DIRTY: "false",
   COMMUNICATION_BUILD_GRAPH_HASH: "",
-  COMMUNICATION_SCHEMA_VERSION_SEEN: "communication-incident-recovery-v4",
+  COMMUNICATION_SCHEMA_VERSION_SEEN: "communication-recovery-release-v7",
   COMMUNICATION_RELEASE_SEQUENCE: "v4",
 };
 
@@ -283,7 +283,7 @@ const identity = {
   release_tree_hash: treeHash,
   release_dirty: false,
   build_graph_hash: buildGraphHash,
-  schema_version_required: "communication-incident-recovery-v4",
+  schema_version_required: "communication-recovery-release-v7",
   build_timestamp: new Date().toISOString(),
   release_sequence: "v4",
   parent_git_sha: parentSha,

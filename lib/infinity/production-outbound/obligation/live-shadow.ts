@@ -5,6 +5,7 @@ import { composeOccupancyNpvAlwaysClosingReply } from "@/lib/infinity/always-clo
 import { evaluateVentureOfferTruthGate, loadVentureOfferProfile } from "@/lib/infinity/always-closing-sales/venture-offer-profile";
 import type { CommercialAction, SalesStagePolicy } from "@/lib/infinity/always-closing-sales/doctrine";
 import { STRANDED_FOUNDER_TRIAL_INBOUND_ID } from "./cutover";
+import { TARGET_INTERNAL_DATE_MS } from "./snapshot-ids";
 import { FOUNDER_TRIAL_INBOUND_TEXT, INTERNAL_LANGUAGE } from "./canary";
 import { evaluateDirectQuestionResponsivenessGate, evaluateHardSalesGates, evaluateSoftSalesGates, OFFER_TRUTH_VERSION } from "./sales-class";
 import { composeHighIntentOfferFallback } from "./high-intent";
@@ -78,6 +79,7 @@ export function executeRealMessageShadow(input: {
     prior_outbound: input.prior_infinity_outbound_count,
     next_action: plan.next_action as CommercialAction,
     stage: plan.stage as SalesStagePolicy,
+    inbound_age_ms: Math.max(0, Date.parse(input.now) - TARGET_INTERNAL_DATE_MS),
   });
   const soft = evaluateSoftSalesGates({
     inbound,

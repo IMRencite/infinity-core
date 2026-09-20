@@ -155,7 +155,7 @@ export async function observeCommunicationSchemaVersion(): Promise<{
   incidents_present: boolean;
   recovery_constraint_present: boolean;
 }> {
-  const required = "communication-incident-recovery-v4";
+  const required = "communication-recovery-release-v7";
   if (process.env.VITEST) {
     return { required, seen: required, incidents_present: true, recovery_constraint_present: true };
   }

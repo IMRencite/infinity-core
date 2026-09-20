@@ -14,7 +14,7 @@ export const EXPECTED_COMMUNICATION_MAILBOX = "hello@imros.io";
 export const HISTORICAL_STRANDED_QUESTION_MESSAGE_ID = "1a0badea7b22a70f";
 export const HISTORICAL_BUYING_SIGNAL_MESSAGE_ID = "1a0bd44df7eb4ce5";
 export const HISTORICAL_FALSE_STOP_MESSAGE_ID = "1a0b254b39f5c645";
-export const COMMUNICATION_CUTOVER_EPOCHS = ["LEGACY", "OBLIGATION"] as const;
+export const COMMUNICATION_CUTOVER_EPOCHS = ["LEGACY", "FROZEN", "OBLIGATION"] as const;
 export type CommunicationCutoverEpoch = (typeof COMMUNICATION_CUTOVER_EPOCHS)[number];
 
 export type HistoricalInboundClassification =
@@ -50,6 +50,21 @@ export function setCommunicationCutoverEpochValue(epoch: CommunicationCutoverEpo
 
 export function classifyHistoricalInbound(providerMessageId: string): HistoricalInboundClassification | null {
   return HISTORICAL_INBOUND_COVERAGE[providerMessageId] ?? null;
+}
+
+export function isCommunicationProviderSendFrozen(epoch: CommunicationCutoverEpoch = epochMemory): boolean {
+  return epoch === "FROZEN";
+}
+
+export function isLegacyProviderSendPermitted(threadId: string | null | undefined): boolean {
+  if (!threadId || threadId !== COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID) return true;
+  return getCommunicationCutoverEpochValue() === "LEGACY";
+}
+
+export function shouldSkipLegacyDiscovery(threadId: string | null | undefined): boolean {
+  return Boolean(threadId)
+    && threadId === COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID
+    && getCommunicationCutoverEpochValue() === "OBLIGATION";
 }
 
 export function isCommunicationObligationCutoverLive(): boolean {
