@@ -37,7 +37,7 @@ if (!typecheckOnly && (!token || !team)) {
 }
 
 const root = process.cwd();
-const dest = join(tmpdir(), "infinity-runtime-isolated-v4");
+const dest = join(tmpdir(), "infinity-runtime-isolated-v7");
 const emergency = process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1";
 const gitStatus = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
 const dirtyEntries = (gitStatus.stdout || "").split(/\r?\n/).map((row) => row.trim()).filter(Boolean);
@@ -127,7 +127,7 @@ if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || exist
   process.exit(1);
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
-const runtimeRoutes = ["communication-tick"];
+const runtimeRoutes = ["communication-tick", "communication-attest"];
 for (const route of runtimeRoutes) {
   const from = join(root, "app/api/runtime", route);
   if (existsSync(from)) cpSync(from, join(dest, "app/api/runtime", route), { recursive: true });
@@ -249,7 +249,8 @@ const envKeys = {
   COMMUNICATION_RELEASE_DIRTY: "false",
   COMMUNICATION_BUILD_GRAPH_HASH: "",
   COMMUNICATION_SCHEMA_VERSION_SEEN: "communication-recovery-release-v7",
-  COMMUNICATION_RELEASE_SEQUENCE: "v4",
+  COMMUNICATION_RELEASE_SEQUENCE: "v7",
+  FOUNDER_ATTESTATION_TOKEN: process.env.FOUNDER_ATTESTATION_TOKEN || process.env.CRON_SECRET,
 };
 
 try {
@@ -273,22 +274,23 @@ function hashDestTree(dir, rel = "") {
   return hash.digest("hex");
 }
 const parentSha = (spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).stdout || "").trim();
+const gitTree = (spawnSync("git", ["log", "-1", "--format=%T"], { cwd: root, encoding: "utf8" }).stdout || "").trim();
 const destTree = hashDestTree(dest);
-const sha = destTree;
-const treeHash = destTree.slice(0, 16);
-const buildGraphHash = createHash("sha256").update("infinity-runtime:communication-tick:no-blog-os:v4").digest("hex").slice(0, 16);
+const sha = parentSha;
+const treeHash = gitTree;
+const buildGraphHash = destTree.slice(0, 16);
 const identity = {
   deployable_unit: "infinity-runtime",
   release_sha: sha,
   release_tree_hash: treeHash,
+  release_content_hash: destTree,
   release_dirty: false,
   build_graph_hash: buildGraphHash,
   schema_version_required: "communication-recovery-release-v7",
   build_timestamp: new Date().toISOString(),
-  release_sequence: "v4",
+  release_sequence: "v7",
   parent_git_sha: parentSha,
   parent_dirty: dirtyEntries.length > 0,
-  previous_sha_reconciliation: "B+C: V3/V4 Communication source was untracked; HEAD 0eb2cc70 was carried as identity and does not identify the uploaded dest tree.",
 };
 writeFileSync(join(dest, "release-identity.json"), `${JSON.stringify(identity, null, 2)}\n`);
 envKeys.COMMUNICATION_INTENDED_GIT_SHA = sha;
