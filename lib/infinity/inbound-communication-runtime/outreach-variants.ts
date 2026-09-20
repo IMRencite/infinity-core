@@ -1,0 +1,32 @@
+export const WAVE_1_FIRST_TOUCH_VARIANT = "MINIMAL_DISCOVERY" as const;
+export const CONTEXT_RICH_CONSULTATIVE_VARIANT = "CONTEXT_RICH_CONSULTATIVE" as const;
+export const HISTORICAL_MINIMAL_DISCOVERY_SENT = 2 as const;
+export const CONSULTATIVE_OUTREACH_STRUCTURE = [
+  "CONTEXT",
+  "REASON FOR CONTACT",
+  "LIGHT SOLUTION FRAME",
+  "CURRENT-PROCESS QUESTION",
+] as const;
+export const CONSULTATIVE_OUTREACH_STRUCTURE_KEYS = [
+  "CONTEXT",
+  "REASON_FOR_CONTACT",
+  "LIGHT_SOLUTION_FRAME",
+  "CURRENT_PROCESS_QUESTION",
+] as const;
+export const CONTEXT_RICH_CONSULTATIVE_VERSION = "V1" as const;
+
+export type OutreachFirstTouchVariant = typeof WAVE_1_FIRST_TOUCH_VARIANT | typeof CONTEXT_RICH_CONSULTATIVE_VARIANT;
+
+export function inspectOutreachVariantSupport(): {
+  MINIMAL_DISCOVERY: "BUILT";
+  CONTEXT_RICH_CONSULTATIVE: "BUILT";
+  wave1Labeled: typeof WAVE_1_FIRST_TOUCH_VARIANT;
+  wave2ReadyToUseContextRichVariant: false;
+} {
+  return {
+    MINIMAL_DISCOVERY: "BUILT",
+    CONTEXT_RICH_CONSULTATIVE: "BUILT",
+    wave1Labeled: WAVE_1_FIRST_TOUCH_VARIANT,
+    wave2ReadyToUseContextRichVariant: false,
+  };
+}

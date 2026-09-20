@@ -85,6 +85,7 @@ if (existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
   console.log(JSON.stringify({ ok: false, reason: "BLOG_OS_STILL_IN_DEST" }));
   process.exit(1);
 }
+mkdirSync(join(dest, "lib/infinity/market-validation-experiment"), { recursive: true });
 writeFileSync(
   join(dest, "lib/infinity/market-validation-experiment/organic-growth-role.ts"),
   `export function inspectOrganicGrowthRoleForCreValidation() {
