@@ -149,7 +149,10 @@ if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || exist
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
 const runtimeRoutes = ["communication-tick", "communication-attest"].concat(
-  tracked.has("app/api/runtime/communication-coverage/route.ts") ? ["communication-coverage"] : [],
+  tracked.has("app/api/runtime/communication-coverage/route.ts")
+    && tracked.has("lib/infinity/production-outbound/obligation/coverage-scan.ts")
+    ? ["communication-coverage"]
+    : [],
 );
 const requiredTracked = [
   "app/api/runtime/communication-tick/route.ts",
