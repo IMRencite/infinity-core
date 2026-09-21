@@ -3,26 +3,33 @@ import {
   type CheckResult,
   type DurableBlogHold,
 } from "./types";
-import { freezeExitConditionV2, SECOND_QC_ESCAPE_V2, SECOND_QC_ESCAPE_V2_CRITERIA } from "./exit-v2";
+import { freezeExitConditionV2 } from "./exit-v2";
+import { freezeExitConditionV3, SECOND_QC_ESCAPE_V3, SECOND_QC_ESCAPE_V3_CRITERIA } from "./exit-v3";
 
-export const SECOND_QC_ESCAPE_EXIT_CRITERIA = SECOND_QC_ESCAPE_V2_CRITERIA;
+export const SECOND_QC_ESCAPE_EXIT_CRITERIA = SECOND_QC_ESCAPE_V3_CRITERIA;
 
 let v2Freeze: ReturnType<typeof freezeExitConditionV2> | null = null;
+let v3Freeze: ReturnType<typeof freezeExitConditionV3> | null = null;
 
 export function freezeV2Now(now = new Date().toISOString()) {
   if (!v2Freeze) v2Freeze = freezeExitConditionV2(now);
   return v2Freeze;
 }
 
+export function freezeV3Now(now = new Date().toISOString()) {
+  if (!v3Freeze) v3Freeze = freezeExitConditionV3(now);
+  return v3Freeze;
+}
+
 export function EXIT_CONDITION_FROZEN_AT(): string {
-  return freezeV2Now().frozen_at;
+  return freezeV3Now().frozen_at;
 }
 
 export function exitConditionHash(): string {
-  return freezeV2Now().exit_condition_hash;
+  return freezeV3Now().exit_condition_hash;
 }
 
-export function evidenceIsStale(collected_at: string, frozen_at = freezeV2Now().frozen_at): boolean {
+export function evidenceIsStale(collected_at: string, frozen_at = freezeV3Now().frozen_at): boolean {
   return Date.parse(collected_at) < Date.parse(frozen_at);
 }
 
@@ -37,10 +44,11 @@ const memory = new Map<string, DurableBlogHold>();
 export function resetDurableHolds(): void {
   memory.clear();
   v2Freeze = null;
+  v3Freeze = null;
 }
 
 export function currentSecondQcHold(now = new Date().toISOString()): DurableBlogHold {
-  const frozen = freezeV2Now(now);
+  const frozen = freezeV3Now(now);
   return {
     hold_id: CURRENT_HOLD_ID,
     venture_id: "occupancynpv",
@@ -54,10 +62,10 @@ export function currentSecondQcHold(now = new Date().toISOString()): DurableBlog
     requested_at: null,
     renotify_at: null,
     escalation_count: 0,
-    exit_condition_version: SECOND_QC_ESCAPE_V2,
+    exit_condition_version: SECOND_QC_ESCAPE_V3,
     exit_condition_frozen_at: frozen.frozen_at,
     exit_condition_hash: frozen.exit_condition_hash,
-    evidence_required: [...SECOND_QC_ESCAPE_V2_CRITERIA],
+    evidence_required: [...SECOND_QC_ESCAPE_V3_CRITERIA],
     evidence_pack_url: "NOT_EXTERNAL",
     founder_review_status: "NOT_ACTIONABLE_ENGINEERING_BLOCKED",
     resolved_at: null,

@@ -27,7 +27,6 @@ export * from "./high-intent";
 export * from "./ownership";
 export * from "./provider-identity";
 export * from "./release-source";
-export * from "./legacy-replay";
 export * from "./atomic-cutover";
 export * from "./release-identity";
 export * from "./sales-class";

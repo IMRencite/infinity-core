@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -9,6 +13,7 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -19,7 +24,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ],
+      "server-only": [
+        "./lib/infinity/server-client-boundary/server-only.d.ts"
+      ]
     }
   },
   "include": [
@@ -28,7 +38,24 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    ".next-verify/types/**/*.ts",
+    ".next-verify/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "e2e",
+    "playwright.config.ts",
+    "scripts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "lib/infinity/production-outbound/obligation/legacy-replay.ts",
+    "lib/infinity/production-outbound/**/__tests__",
+    "lib/infinity/inbound-communication-runtime",
+    "lib/infinity/communication-provider",
+    "app/api/runtime/communication-tick",
+    "app/api/runtime/communication-observer",
+    "app/api/runtime/communication-attest",
+    "app/api/runtime/communication-coverage"
+  ]
 }

@@ -11,7 +11,7 @@ export type BlogPipelineState = (typeof BLOG_PIPELINE_STATES)[number];
 export const BLOG_TERMINAL_STATES: BlogPipelineState[] = ["LIVE_VERIFIED", "MISSED_RECORDED"];
 
 export const CURRENT_BLOG_QC_VERSION = "blog-render-qc-v3" as const;
-export const SECOND_QC_ESCAPE_EXIT_VERSION = "second-qc-escape-v2" as const;
+export const SECOND_QC_ESCAPE_EXIT_VERSION = "second-qc-escape-v3" as const;
 export const OCCUPANCYNPV_BLOG_TIMEZONE = "America/New_York" as const;
 export const CURRENT_HOLD_ID = "hold:occupancynpv:second-qc-escape-v1" as const;
 
