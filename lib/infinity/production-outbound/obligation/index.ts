@@ -24,7 +24,13 @@ export * from "./observer";
 export * from "./recovered";
 export * from "./incident";
 export * from "./high-intent";
-export * from "./ownership";
+export {
+  acquireOutboundOwnership,
+  getOutboundOwnership,
+  resetOutboundOwnership,
+  evaluateLegacySendEpochCheckGate,
+} from "./ownership";
+export type { CommunicationOutboundOwnership } from "./ownership";
 export * from "./provider-identity";
 export * from "./release-source";
 export * from "./legacy-replay";
