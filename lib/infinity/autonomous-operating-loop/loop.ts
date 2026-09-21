@@ -169,7 +169,11 @@ export function executeAutonomousDailyOperatingLoop(input?: {
     sameDecisionStreak: state.same_decision_streak,
     paused: state.portfolio_state === "PAUSED",
   });
-  if (state.consecutive_failures >= 5 || state.same_decision_streak >= 8) {
+  const stableContinuation =
+    state.last_decision?.outcome === "CONTINUE_EXISTING_ACTION" ||
+    state.last_decision?.outcome === "NO_ACTION_JUSTIFIED" ||
+    state.last_decision?.outcome === "WAIT_FOR_EVIDENCE";
+  if (state.consecutive_failures >= 5 || (state.same_decision_streak >= 8 && !stableContinuation)) {
     state = {
       ...state,
       portfolio_state: "PAUSED",

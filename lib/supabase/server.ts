@@ -3,27 +3,11 @@ import type { SupabaseClientOptions } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 import type { AppSupabaseClient, PublicSupabaseSchemaName } from "./admin";
-
-function getSupabaseConfig() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-  if (!url) {
-    throw new Error("Missing environment variable: NEXT_PUBLIC_SUPABASE_URL");
-  }
-
-  if (!publishableKey) {
-    throw new Error(
-      "Missing environment variable: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-    );
-  }
-
-  return { url, publishableKey };
-}
+import { getPublicSupabaseEnv } from "./public-env";
 
 export async function createClient(): Promise<AppSupabaseClient> {
   const cookieStore = await cookies();
-  const { url, publishableKey } = getSupabaseConfig();
+  const { url, publishableKey } = getPublicSupabaseEnv();
 
   const clientOptions: SupabaseClientOptions<PublicSupabaseSchemaName> & {
     cookies: {
@@ -50,11 +34,9 @@ export async function createClient(): Promise<AppSupabaseClient> {
             cookieStore.set(name, value, options);
           });
         } catch {
-          // Server Components and some server contexts expose cookies as
-          // read-only. Supabase may attempt to refresh the session during
-          // getUser()/getClaims(), which requires writing cookies. Those writes
-          // fail here by design; lib/supabase/middleware.ts refreshes the
-          // session on each request and persists cookies on the response instead.
+          // Server Components expose cookies as read-only. Supabase may attempt
+          // to refresh the session during getUser(), which requires writes.
+          // lib/supabase/middleware.ts refreshes and persists cookies on responses.
         }
       },
     },

@@ -1,0 +1,130 @@
+
+> build
+> next build
+
+▲ Next.js 16.2.11 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.0s
+  Running TypeScript ...
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+  	- include was updated to add '.next/types/**/*.ts'
+  	- include was updated to add '.next/dev/types/**/*.ts'
+
+  Finished TypeScript in 19.5s ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/97) ...
+  Generating static pages using 19 workers (24/97) 
+  Generating static pages using 19 workers (48/97) 
+  Generating static pages using 19 workers (72/97) 
+✓ Generating static pages using 19 workers (97/97) in 818ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/public/market-validation/[experimentId]/ingest
+├ ○ /commercial-lease-npv
+├ ○ /commercial-lease-npv/how-is-lease-npv-calculated
+├ ○ /commercial-lease-npv/how-to-explain-lease-npv-to-clients
+├ ○ /commercial-lease-npv/npv-vs-present-value
+├ ○ /commercial-lease-npv/npv-vs-total-lease-cost
+├ ○ /commercial-lease-npv/should-cam-be-in-lease-npv
+├ ○ /commercial-lease-npv/what-costs-belong-in-lease-npv
+├ ○ /commercial-lease-npv/what-discount-rate-should-you-use
+├ ○ /commercial-lease-npv/what-is-npv-in-a-commercial-lease
+├ ○ /commercial-lease-npv/when-is-npv-the-wrong-metric
+├ ○ /commercial-lease-npv/why-use-npv-when-comparing-leases
+├ ○ /compare-commercial-leases
+├ ○ /discount-rate-sensitivity
+├ ○ /early-access
+├ ○ /effective-rent
+├ ○ /effective-rent/blended-rent-vs-effective-rent
+├ ○ /effective-rent/common-effective-rent-mistakes
+├ ○ /effective-rent/effective-rent-on-gross-and-net-leases
+├ ○ /effective-rent/effective-rent-per-square-foot
+├ ○ /effective-rent/effective-rent-vs-asking-rent
+├ ○ /effective-rent/effective-rent-vs-face-rent
+├ ○ /effective-rent/effective-rent-vs-npv
+├ ○ /effective-rent/how-to-calculate-effective-rent
+├ ○ /effective-rent/simple-average-vs-npv-adjusted-effective-rent
+├ ○ /effective-rent/what-is-effective-rent
+├ ○ /faq
+├ ○ /for/tenant-rep-brokers
+├ ○ /how-it-works
+├ ○ /lease-comparison
+├ ○ /lease-comparison/how-do-brokers-compare-lease-offers
+├ ○ /lease-comparison/how-do-cam-charges-change-a-comparison
+├ ○ /lease-comparison/how-do-cfos-review-lease-comparisons
+├ ○ /lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv
+├ ○ /lease-comparison/how-do-you-compare-different-lease-terms
+├ ○ /lease-comparison/how-do-you-compare-gross-and-net-leases
+├ ○ /lease-comparison/how-do-you-compare-two-commercial-lease-options
+├ ○ /lease-comparison/how-do-you-normalize-commercial-lease-proposals
+├ ○ /lease-comparison/questions-to-ask-before-signing-a-commercial-lease
+├ ○ /lease-comparison/what-belongs-in-a-commercial-lease-comparison
+├ ○ /lease-financial-modeling
+├ ○ /lease-financial-modeling/how-cam-sits-in-a-lease-model
+├ ○ /lease-financial-modeling/how-free-rent-sits-in-a-lease-model
+├ ○ /lease-financial-modeling/how-rent-escalations-sit-in-a-lease-model
+├ ○ /lease-financial-modeling/how-ti-allowance-sits-in-a-lease-model
+├ ○ /lease-financial-modeling/how-to-build-a-lease-cash-flow-model
+├ ○ /lease-financial-modeling/how-to-present-a-lease-model-to-a-client
+├ ○ /lease-financial-modeling/how-to-run-scenario-analysis-in-a-lease-model
+├ ○ /lease-financial-modeling/what-are-common-lease-analysis-mistakes
+├ ○ /lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model
+├ ○ /lease-financial-modeling/what-is-a-commercial-lease-financial-model
+├ ○ /lease-sensitivity-analysis
+├ ○ /lease-sensitivity-analysis/how-cam-sensitivity-changes-ranking
+├ ○ /lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking
+├ ○ /lease-sensitivity-analysis/how-occupancy-cost-sensitivity-changes-location-choice
+├ ○ /lease-sensitivity-analysis/how-rent-escalation-sensitivity-changes-ranking
+├ ○ /lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo
+├ ○ /lease-sensitivity-analysis/sensitivity-vs-scenario-analysis
+├ ○ /lease-sensitivity-analysis/what-decision-risks-lease-sensitivity-reveals
+├ ○ /lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show
+├ ○ /lease-sensitivity-analysis/which-assumptions-flip-a-lease-ranking
+├ ○ /lease-sensitivity-analysis/why-use-lease-sensitivity-analysis
+├ ○ /occupancy-costs
+├ ○ /occupancy-costs/base-rent-vs-occupancy-cost
+├ ○ /occupancy-costs/hidden-occupancy-costs
+├ ○ /occupancy-costs/how-cam-caps-change-occupancy-cost-risk
+├ ○ /occupancy-costs/how-insurance-changes-occupancy-cost
+├ ○ /occupancy-costs/how-property-taxes-change-occupancy-cost
+├ ○ /occupancy-costs/occupancy-cost-on-gross-vs-net-leases
+├ ○ /occupancy-costs/occupancy-cost-per-square-foot
+├ ○ /occupancy-costs/what-is-cam-in-a-commercial-lease
+├ ○ /occupancy-costs/what-is-total-occupancy-cost
+├ ○ /occupancy-costs/why-lowest-rent-can-cost-more
+├ ○ /pricing
+├ ○ /privacy-policy
+├ ○ /resources
+├ ○ /resources/cam-costs
+├ ○ /resources/free-rent
+├ ○ /resources/gross-vs-net-lease
+├ ○ /resources/rent-escalations
+├ ○ /robots.txt
+├ ○ /sitemap.xml
+├ ○ /tenant-improvement-allowance
+├ ○ /tenant-rep-analysis
+├ ○ /tenant-rep-analysis/common-broker-lease-analysis-mistakes
+├ ○ /tenant-rep-analysis/how-analysis-changes-negotiation-strategy
+├ ○ /tenant-rep-analysis/how-analysis-supports-lease-negotiation
+├ ○ /tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois
+├ ○ /tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics
+├ ○ /tenant-rep-analysis/how-to-compare-multiple-spaces-for-one-client
+├ ○ /tenant-rep-analysis/how-to-compare-renewal-vs-relocation
+├ ○ /tenant-rep-analysis/lease-abstract-vs-financial-analysis
+├ ○ /tenant-rep-analysis/what-belongs-in-a-client-facing-lease-summary
+├ ○ /tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo
+└ ○ /terms-of-service
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.

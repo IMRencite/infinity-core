@@ -93,6 +93,18 @@ function operationsAssignedNodes(): OperatorWorkerNode[] {
   );
 }
 
+function salesAssignedNodes(): OperatorWorkerNode[] {
+  return assignedWorkerRolesForRoom("sales_floor").map((role) =>
+    node({
+      nodeId: `sales-${role.toLowerCase().replace(/\s+/g, "-")}`,
+      departmentId: "sales_floor",
+      role,
+      displayRole: role,
+      status: "WAITING",
+    }),
+  );
+}
+
 function assignedWaitingFixture(activeCount: number): OperatorWorkerNode[] {
   return ["Alpha", "Bravo", "Charlie", "Delta"].map((role, index) =>
     node({
@@ -111,7 +123,7 @@ function assignedWaitingFixture(activeCount: number): OperatorWorkerNode[] {
 describe("HQRoomAssignedWorkerVisibilityContract", () => {
   it("keeps assigned first-class workers visible when no work is active", () => {
     const departments = ALL_HQ_ROOM_IDS.filter((id) => id !== OPERATIONS_ROOM_ID).map(idleDept);
-    const workers = [...buildWorkerNodes([], departments), ...operationsAssignedNodes()];
+    const workers = [...buildWorkerNodes([], departments), ...operationsAssignedNodes(), ...salesAssignedNodes()];
     const rows = ALL_HQ_ROOM_IDS.map((id) => {
       const roomWorkers = workers.filter((item) => item.departmentId === id);
       const presence = deriveRoomPresence(roomWorkers, "NOT_STARTED");

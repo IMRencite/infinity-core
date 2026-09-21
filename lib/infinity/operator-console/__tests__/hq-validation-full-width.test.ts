@@ -38,13 +38,15 @@ describe("HQ Validation Station full-width layout", () => {
     const sections = HQ_FLOOR_LAYOUT_SECTIONS;
     expect(hqFloorSpan("quality_control")).toBe("full");
     expect(sections.full).toEqual(["quality_control"]);
-    expect(sections.above.left).toEqual([
-      "opportunity_lab",
+    expect(sections.above.left).toEqual(["opportunity_lab", "creative_studio"]);
+    expect(sections.above.right).toEqual([
+      "research_department",
+      "company_operations",
+      "growth_department",
+      "product_lab",
       "strategy_finance",
       "systems_architect",
-      "creative_studio",
     ]);
-    expect(sections.above.right).toEqual(["research_department", "company_operations", "growth_department", "product_lab"]);
     expect(sections.below.left).toEqual(["launch_operations"]);
     expect(sections.below.right).toEqual(["intelligence_center"]);
     expect(assembleCanonicalFloorOrder(sections)).toEqual(LIFECYCLE_ROOM_SEQUENCE);
@@ -87,8 +89,9 @@ describe("HQ Validation Station full-width layout", () => {
       HQ_FLOOR_LAYOUT_SECTIONS.above.left,
       HQ_FLOOR_LAYOUT_SECTIONS.above.right,
     );
-    expect(packed.left.find((room) => room.id === "strategy_finance")?.top).toBe(416);
-    expect(packed.left.find((room) => room.id === "strategy_finance")?.top).toBeLessThan(900);
+    expect(packed.left.find((room) => room.id === "opportunity_lab")?.top).toBe(0);
+    expect(packed.right.find((room) => room.id === "research_department")?.height).toBe(900);
+    expect(packed.left.find((room) => room.id === "strategy_finance")).toBeUndefined();
 
     const sections = packFloorSections(
       {

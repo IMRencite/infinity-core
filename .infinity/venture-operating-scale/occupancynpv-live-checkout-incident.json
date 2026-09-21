@@ -1,0 +1,28 @@
+{
+  "venture": "OccupancyNPV",
+  "subsystem": "PAYMENT / CHECKOUT DEGRADED",
+  "classification": "HIGH_PRIORITY_COMMERCIAL_INCIDENT",
+  "currentState": "RESOLVED",
+  "operatingAction": "NONE",
+  "defect": "PROFESSIONAL_SESSION_CREATE_FAILED,PER_DEAL_SESSION_CREATE_FAILED,CHECKOUT_SESSION_WRITE_PERMISSION_MISSING",
+  "originalFailure": {
+    "errorType": "invalid_request_error",
+    "errorCode": "more_permissions_required",
+    "missingPermission": "checkout_session_write",
+    "professionalRequestId": "req_HPnmluDFpb5bYc",
+    "perDealRequestId": "req_C0WUFxzvwYU9zy"
+  },
+  "provider": "stripe",
+  "account": "acct_18h5CjLdvXKx7R7G",
+  "detectedAt": "2026-09-10T04:50:00.000Z",
+  "resolvedAt": "2026-09-12T07:27:28.507Z",
+  "repairMission": "OCCUPANCYNPV_LIVE_CHECKOUT_REGRESSION_REPAIR_V1",
+  "repairMissionStatus": "COMPLETED",
+  "status": "RESOLVED",
+  "resolution": {
+    "founderAction": "Checkout Sessions Write enabled on existing restricted live key Infinity CRE Commercialization",
+    "verification": "LiveCommercialCheckoutHealthGate PASS",
+    "realPaymentCompleted": false
+  },
+  "result": "PASS"
+}

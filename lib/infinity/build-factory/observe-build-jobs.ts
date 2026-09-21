@@ -3,6 +3,7 @@ import { updateBuildJobStatus } from "./persistence-v2";
 import { BUILD_FACTORY_V2_EVENTS } from "./build-job";
 import { emitBuildFactoryEvent } from "./events";
 import { loadBuildJobByBuildId } from "./persistence-v2";
+import { enqueueArtifactQcAfterBuildComplete } from "@/lib/infinity/universal-artifact-qc/orchestrator";
 
 /**
  * Observes v2 BuildJob completion after v1 build + QA — does not advance Mission Runtime.
@@ -39,6 +40,13 @@ export async function observeBuildFactoryJobs(
     await updateBuildJobStatus(admin, organizationId, job.id, "internally_complete", {
       lifecycle_stage: "internally_complete",
       completed_at: new Date().toISOString(),
+    });
+    enqueueArtifactQcAfterBuildComplete({
+      builder_execution_id: job.id,
+      buildId: build.id,
+      organizationId,
+      missionId,
+      change_scope: "build-job internally_complete — builder cannot self-certify LIVE",
     });
 
     const correlationId = build.correlation_id ?? job.correlationId ?? crypto.randomUUID();

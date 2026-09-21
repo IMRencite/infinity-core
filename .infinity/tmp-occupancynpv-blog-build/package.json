@@ -1,0 +1,21 @@
+{
+  "name": "commercial-real-estate-cre-lease-compari",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "next": "16.2.11",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.8"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "20.19.43",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3"
+  }
+}

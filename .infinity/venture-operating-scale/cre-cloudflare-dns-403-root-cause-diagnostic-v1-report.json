@@ -1,0 +1,107 @@
+{
+  "mission": "CRE_CLOUDFLARE_DNS_403_ROOT_CAUSE_DIAGNOSTIC_V1",
+  "tokenVerify": {
+    "http": 401,
+    "success": "NO",
+    "tokenId": "ad7f4f880e304481baf3039225b9e0cc",
+    "status": "active",
+    "tokenActive": "YES",
+    "expiresOn": null,
+    "notBefore": null,
+    "userVerifyHttp": 401,
+    "userVerifySuccess": "NO",
+    "accountVerifyHttp": 200,
+    "accountVerifySuccess": "YES",
+    "userVerifyMessage": "Invalid API Token",
+    "accountVerifyMessage": "NONE"
+  },
+  "runtimeAuthentication": {
+    "credentialSource": "CLOUDFLARE_API_TOKEN",
+    "registrarTokenUsed": "NO",
+    "authorizationScheme": "Bearer",
+    "bearerHeader": "PASS",
+    "legacyApiKeyHeaders": "NO",
+    "authenticationSyntax": "PASS",
+    "tokenKind": "ACCOUNT_API_TOKEN",
+    "distinctFromRegistrar": "YES",
+    "fileKeyCount": 1,
+    "syntaxDefects": [
+      "NONE"
+    ],
+    "lineage": {
+      "envResolution": "reloadCloudflareDnsTokenFromLocalFile / process.env.CLOUDFLARE_API_TOKEN",
+      "providerAdapter": "CloudflareDnsWriteAdapter",
+      "requestBuilder": "CloudflareDnsWriteAdapter.request + CloudflareCredentials.authorizationHeader",
+      "httpClient": "global fetch",
+      "dnsCreateRequest": "CloudflareDnsWriteAdapter.createTxtRecord POST /zones/{zoneId}/dns_records"
+    }
+  },
+  "zone": {
+    "domain": "occupancynpv.com",
+    "providerZoneId": "dbc6bd7446d67b25699aa62c88d9e5a5",
+    "storedZoneId": "dbc6bd7446d67b25699aa62c88d9e5a5",
+    "match": "PASS",
+    "status": "active"
+  },
+  "adapterRequest": {
+    "method": "POST",
+    "endpoint": "https://api.cloudflare.com/client/v4/zones/dbc6bd7446d67b25699aa62c88d9e5a5/dns_records",
+    "credentialRoute": "CLOUDFLARE_API_TOKEN -> loadCloudflareConfig/CloudflareCredentials.authorizationHeader -> Authorization Bearer",
+    "requestConstruction": "PASS",
+    "defect": "NONE"
+  },
+  "rawApiProbe": {
+    "attempted": "YES",
+    "create": "FAIL",
+    "readback": "NOT_ATTEMPTED",
+    "deleted": "NOT_ATTEMPTED",
+    "remaining": "NO",
+    "http": 403,
+    "code": 10000,
+    "message": "Authentication error",
+    "success": false,
+    "dnsRecordsListHttp": 200,
+    "dnsRecordsListOk": "YES",
+    "membershipHttp": 400,
+    "membershipOk": "NO",
+    "userHttp": 403,
+    "userOk": "NO",
+    "roles": [
+      "UNKNOWN"
+    ]
+  },
+  "rootCause": "CLOUDFLARE_TOKEN_OR_ACCOUNT_AUTHORIZATION_DEFECT",
+  "authorizationSubclass": "TOKEN_RESOURCE_SCOPE_PROBLEM",
+  "repair": {
+    "codeChanged": "NO",
+    "filesChanged": [],
+    "exactDefectRepaired": "NONE"
+  },
+  "capability": {
+    "dnsRead": "READ_ONLY_VERIFIED",
+    "dnsWrite": "UNVERIFIED",
+    "currentZoneWritable": "NO"
+  },
+  "nextAction": "The loaded CLOUDFLARE_API_TOKEN is an account-owned token, not the expected user-owned token. Put the already-created user-owned DNS token into CLOUDFLARE_API_TOKEN only. Do not create another token. Do not change Cloudflare permissions.",
+  "actions": {
+    "productionDnsWrites": 0,
+    "vercelMutations": 0,
+    "domainPurchases": 0,
+    "stripeWrites": 0,
+    "deployments": 0,
+    "temporaryRecordsRemaining": 0,
+    "publiclyLaunched": "NO"
+  },
+  "usedRegistrarToken": false,
+  "tokenKind": "ACCOUNT_API_TOKEN",
+  "hqMission": {
+    "mission": "CRE_CLOUDFLARE_DNS_403_ROOT_CAUSE_DIAGNOSTIC_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

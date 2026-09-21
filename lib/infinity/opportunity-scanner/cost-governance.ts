@@ -22,6 +22,31 @@ export function assertScannerResearchBudget(input: {
   }
 }
 
+export function mergeCostSummaryBlocks(
+  current: ScannerCostSummary,
+  delta: ScannerCostSummary,
+): ScannerCostSummary {
+  return {
+    researchCallCount: current.researchCallCount + delta.researchCallCount,
+    tokenUsage: {
+      inputTokens: current.tokenUsage.inputTokens + delta.tokenUsage.inputTokens,
+      outputTokens: current.tokenUsage.outputTokens + delta.tokenUsage.outputTokens,
+      totalTokens: current.tokenUsage.totalTokens + delta.tokenUsage.totalTokens,
+    },
+    groundingUsage: {
+      searchQueryCount:
+        current.groundingUsage.searchQueryCount + delta.groundingUsage.searchQueryCount,
+      groundingChunkCount:
+        current.groundingUsage.groundingChunkCount + delta.groundingUsage.groundingChunkCount,
+    },
+    estimatedCostUsd:
+      current.estimatedCostUsd === null && delta.estimatedCostUsd === null
+        ? null
+        : (current.estimatedCostUsd ?? 0) + (delta.estimatedCostUsd ?? 0),
+    costUncertainty: delta.costUncertainty ?? current.costUncertainty,
+  };
+}
+
 export function mergeCostSummaries(
   current: ScannerCostSummary,
   next: {

@@ -1,49 +1,46 @@
 import type { FounderResearchFinding } from "../research-packet";
 import { bandAround, midpointRange, unknownRange, type EconomicRange } from "./provenance";
 import type { NormalizedPrice } from "./types";
-
-const MONEY = /\$\s*([\d,]+(?:\.\d+)?)/g;
-const RANGE = /\$\s*([\d,]+(?:\.\d+)?)\s*(?:[-–—]|to)\s*\$?\s*([\d,]+(?:\.\d+)?)/i;
-
-function parseMoney(raw: string): number {
-  return Number(raw.replace(/,/g, ""));
-}
+import { extractMoneyObservations, isVagueNonNumericLanguage } from "../revenue-model-research/extract";
 
 export function parseMoneyRange(claim: string): EconomicRange {
-  const range = claim.match(RANGE);
-  if (range) return midpointRange(parseMoney(range[1]!), parseMoney(range[2]!));
-  const singles: number[] = [];
-  for (const match of claim.matchAll(MONEY)) {
-    const value = parseMoney(match[1]!);
-    if (Number.isFinite(value)) singles.push(value);
-  }
-  if (singles.length === 0) return unknownRange();
-  if (singles.length === 1) return bandAround(singles[0]!);
-  return midpointRange(Math.min(...singles), Math.max(...singles));
+  if (isVagueNonNumericLanguage(claim)) return unknownRange();
+  const observations = extractMoneyObservations(claim).filter((item) => item.unit === "USD" && !item.vagueLanguage);
+  const amounts = observations.flatMap((item) => [item.amountLow, item.amountHigh, item.amount]).filter((item): item is number => item != null);
+  if (!amounts.length) return unknownRange();
+  if (amounts.length === 1) return bandAround(amounts[0]!);
+  return midpointRange(Math.min(...amounts), Math.max(...amounts));
 }
 
 export function isMonthlyPriceClaim(claim: string): boolean {
-  return /per month|\/\s*mo|monthly subscription/i.test(claim);
+  if (isVagueNonNumericLanguage(claim)) return false;
+  return extractMoneyObservations(claim).some(
+    (item) => item.monthlyRecurringEquivalent != null && item.kind !== "SETUP_FEE" && item.kind !== "QUALITATIVE_ONLY",
+  );
 }
 
 export function isSetupPriceClaim(claim: string): boolean {
-  return /setup|onboarding|implementation fee|one[- ]time/i.test(claim);
+  if (isVagueNonNumericLanguage(claim)) return false;
+  return extractMoneyObservations(claim).some((item) => item.kind === "SETUP_FEE");
 }
 
 export function normalizePricingObservation(finding: FounderResearchFinding): NormalizedPrice | null {
-  const range = parseMoneyRange(finding.claim);
-  if (range.base == null && range.low == null && range.high == null) return null;
-  const monthly = isMonthlyPriceClaim(finding.claim) ? range.base : /annual|per year|\/\s*yr/i.test(finding.claim) ? (range.base != null ? Math.round(range.base / 12) : null) : isSetupPriceClaim(finding.claim) ? null : range.base;
-  const setup = isSetupPriceClaim(finding.claim) ? range.base : null;
-  const annual =
-    monthly != null ? monthly * 12 : /annual|per year/i.test(finding.claim) ? range.base : null;
+  if (isVagueNonNumericLanguage(finding.claim)) return null;
+  const observations = extractMoneyObservations(finding.claim).filter((item) => !item.vagueLanguage && item.kind !== "QUALITATIVE_ONLY");
+  if (!observations.length) return null;
+  const monthlyObs = observations.filter((item) => item.monthlyRecurringEquivalent != null);
+  const setupObs = observations.filter((item) => item.kind === "SETUP_FEE");
+  const monthly = monthlyObs.length ? monthlyObs.map((item) => item.monthlyRecurringEquivalent as number).reduce((a, b) => a + b, 0) / monthlyObs.length : null;
+  const setup = setupObs.length ? setupObs.map((item) => item.amount as number).reduce((a, b) => a + b, 0) / setupObs.length : null;
+  const annual = monthly != null ? monthly * 12 : observations.find((item) => item.kind === "ANNUAL_PRICE")?.amount ?? null;
+  if (monthly == null && setup == null && annual == null && !observations.some((item) => item.kind === "COMMISSION")) return null;
   return {
     original: finding.claim,
     monthlyRecurringEquivalent: monthly,
     setupFee: setup,
     annualEquivalent: annual,
     minimumCommitment: /annual/i.test(finding.claim) ? "annual" : null,
-    variableCharges: /usage|per location|per seat|commission/i.test(finding.claim) ? finding.claim : null,
+    variableCharges: observations.some((item) => item.perSeat || item.perLocation || item.kind === "COMMISSION") ? finding.claim : null,
     includedServices: /seo|content|hosting|support/i.test(finding.claim) ? ["see source claim"] : [],
     premiumFeatures: /premium|add-on|addon/i.test(finding.claim) ? ["see source claim"] : [],
     sourceRef: finding.sourceUrls[0] ?? finding.findingId,

@@ -1,0 +1,80 @@
+{
+  "created_at": "2026-09-21T09:48:30.000Z",
+  "jobs": [
+    {
+      "job_name": "communication-tick",
+      "project_owner_intended": "infinity-runtime",
+      "route": "/api/runtime/communication-tick",
+      "schedule": "*/5 * * * *",
+      "database_effects": "discovery, ownership claim, worker state, send ledger",
+      "external_effects": "Gmail list/get/send",
+      "send_publish_capability": "SEND",
+      "lease_idempotency": "ownership-claim / outbound ownership",
+      "hq_should_schedule": "HARD_DISABLED",
+      "safe_to_activate_on_new_hq_release": "NO"
+    },
+    {
+      "job_name": "communication-observer",
+      "project_owner_intended": "observer",
+      "route": "/api/runtime/communication-observer",
+      "schedule": "*/5 * * * *",
+      "database_effects": "read heartbeats",
+      "external_effects": "none if read-only",
+      "send_publish_capability": "NONE",
+      "lease_idempotency": "none",
+      "hq_should_schedule": "BLOCKED",
+      "safe_to_activate_on_new_hq_release": "NO"
+    },
+    {
+      "job_name": "organic-tick",
+      "project_owner_intended": "infinity-hq",
+      "route": "/api/runtime/organic-tick",
+      "schedule": "0 7 * * *",
+      "database_effects": "daily obligation create/idempotent conflict",
+      "external_effects": "none while execute_publish=false",
+      "send_publish_capability": "PUBLISH_WHEN_HOLD_CLEAR",
+      "lease_idempotency": "unique venture/date obligation",
+      "hq_should_schedule": "ACTIVE_AFTER_CRON_SAFETY",
+      "safe_to_activate_on_new_hq_release": "NOT_PROVEN"
+    },
+    {
+      "job_name": "tick",
+      "project_owner_intended": "UNKNOWN",
+      "route": "/api/runtime/tick",
+      "schedule": "0 * * * *",
+      "database_effects": "growth runtime cycle",
+      "external_effects": "may invoke outbound cycle",
+      "send_publish_capability": "POSSIBLE_SEND",
+      "lease_idempotency": "NOT_PROVEN",
+      "hq_should_schedule": "BLOCKED",
+      "safe_to_activate_on_new_hq_release": "NO"
+    },
+    {
+      "job_name": "venture-operating-cycle",
+      "project_owner_intended": "UNKNOWN",
+      "route": "/api/runtime/venture-operating-cycle",
+      "schedule": "0 12 * * *",
+      "database_effects": "venture cycle",
+      "external_effects": "may invoke growth cycle",
+      "send_publish_capability": "POSSIBLE_SEND",
+      "lease_idempotency": "NOT_PROVEN",
+      "hq_should_schedule": "BLOCKED",
+      "safe_to_activate_on_new_hq_release": "NO"
+    },
+    {
+      "job_name": "daily-improvement",
+      "project_owner_intended": "UNKNOWN",
+      "route": "/api/runtime/daily-improvement",
+      "schedule": "0 6 * * *",
+      "database_effects": "improvement loop",
+      "external_effects": "NOT_PROVEN",
+      "send_publish_capability": "NOT_PROVEN",
+      "lease_idempotency": "NOT_PROVEN",
+      "hq_should_schedule": "BLOCKED",
+      "safe_to_activate_on_new_hq_release": "NO"
+    }
+  ],
+  "duplicate_communication_scheduler_risk": true,
+  "communication_scheduler_owners_expected": 1,
+  "note": "HQ vercel.json currently still lists communication-tick. Infinity-runtime also crons communication-tick. Routes were not deleted in V14."
+}

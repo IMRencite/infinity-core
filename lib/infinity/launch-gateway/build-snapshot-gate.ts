@@ -1,6 +1,8 @@
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import { evaluateProductionArtifactLaunchReadiness } from "@/lib/infinity/production-artifact/launch-readiness";
 import { hashPayloadManifest } from "./resource-registry";
+import { evaluateNoQCNoReleaseGate } from "@/lib/infinity/universal-artifact-qc/gates";
+import { findUniversalArtifactQcByBuild } from "@/lib/infinity/universal-artifact-qc/store";
 
 export async function validateBuildSnapshotForExternalDeploy(
   admin: AdminSupabaseClient,
@@ -44,6 +46,16 @@ export async function validateBuildSnapshotForExternalDeploy(
   const repro = job?.reproducibility_status ?? "";
   if (repro !== "reproducible" && repro !== "passed") {
     reasons.push("reproducibility_not_passed");
+  }
+
+  const qcArtifact = findUniversalArtifactQcByBuild(input.buildId);
+  if (qcArtifact) {
+    const qc = evaluateNoQCNoReleaseGate({
+      qc_status: qcArtifact.qc_status,
+      lifecycle_state: qcArtifact.lifecycle_state,
+      release_requested: true,
+    });
+    if (qc.result !== "PASS") reasons.push(...qc.reasons);
   }
 
   return {

@@ -27,8 +27,10 @@ const GRID_LAYOUT: Record<DepartmentId, string> = {
   quality_control: "md:col-start-1 md:row-start-5",
   launch_operations: "md:col-start-2 md:row-start-5",
   intelligence_center: "md:col-start-1 md:row-start-6",
-  executive_office: "md:col-span-2 md:row-start-7",
-  sales_floor: "md:col-span-2 md:row-start-8",
+  prospect_intelligence: "md:col-start-2 md:row-start-6",
+  executive_office: "md:col-span-2 md:row-start-8",
+  operations: "md:col-span-2 md:row-start-7",
+  sales_floor: "md:col-span-2 md:row-start-9",
 };
 
 export function HqFloor({ departments, closedLoopRoute, selectedDepartment, onSelectDepartment }: Props) {

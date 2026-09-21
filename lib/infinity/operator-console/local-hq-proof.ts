@@ -3,11 +3,14 @@ import { LIVE_ORG } from "@/lib/infinity/market-validation-experiment/constants"
 export const HQ_LIVE_PROOF_HEADER = "x-infinity-hq-live-proof";
 export const HQ_LIVE_PROOF_COOKIE = "infinity-hq-live-proof";
 export const HQ_LOCAL_PROOF_USER_ID = "local-hq-observability-proof";
-export const HQ_DEV_CLIENT_BUILD = "hq-secondary-status-readable-v1";
+export const HQ_DEV_CLIENT_BUILD = "hq-always-closing-sales-v1";
 /** Founder-facing local HQ. Port 3001 is non-canonical and must not be used as browser proof. */
 export const FOUNDER_HQ_CANONICAL_PORT = 3000;
 export const FOUNDER_HQ_CANONICAL_ORIGIN = "http://localhost:3000";
 export const FOUNDER_HQ_CANONICAL_DASHBOARD = `${FOUNDER_HQ_CANONICAL_ORIGIN}/dashboard`;
+export const FOUNDER_HQ_PRODUCTION_HOST = "hq.imros.io";
+export const FOUNDER_HQ_PRODUCTION_ORIGIN = "https://hq.imros.io";
+export const FOUNDER_HQ_PRODUCTION_DASHBOARD = `${FOUNDER_HQ_PRODUCTION_ORIGIN}/dashboard`;
 const HQ_DEV_CLIENT_BUILD_STORAGE_KEY = "infinity-hq-dev-client-build";
 
 export function hqDevClientBuildId(): string {
@@ -29,43 +32,44 @@ export function consumeHqDevClientBuildReload(): boolean {
   }
 }
 
+export function isHqProductionProofDisabled(): boolean {
+  return process.env.VERCEL === "1" || process.env.INFINITY_HQ_SURFACE === "1";
+}
+
 export function isLocalHqProofHost(hostname: string | null | undefined): boolean {
-  if (process.env.NODE_ENV === "production") return false;
-  const host = (hostname ?? "").split(":")[0];
+  if (isHqProductionProofDisabled()) return false;
+  const host = (hostname ?? "").split(":")[0].toLowerCase();
+  if (host === FOUNDER_HQ_PRODUCTION_HOST) return false;
   return host === "localhost" || host === "127.0.0.1";
 }
 
 export function isLocalHqObservabilityProofRequest(request: Request): boolean {
-  if (process.env.NODE_ENV === "production") return false;
+  if (isHqProductionProofDisabled()) return false;
   try {
     const url = new URL(request.url);
     if (!isLocalHqProofHost(url.hostname)) return false;
   } catch {
     return false;
   }
-  if (request.headers.get(HQ_LIVE_PROOF_HEADER) === "1") return true;
-  const cookie = request.headers.get("cookie") ?? "";
-  return cookie.split(";").some((part) => {
-    const [name, value] = part.trim().split("=");
-    return (name === HQ_LIVE_PROOF_COOKIE || name === HQ_LIVE_PROOF_HEADER) && value === "1";
-  });
+  return true;
 }
 
 export async function isLocalHqObservabilityProofSession(): Promise<boolean> {
-  if (process.env.NODE_ENV === "production") return false;
+  if (isHqProductionProofDisabled()) return false;
   try {
-    const { cookies, headers } = await import("next/headers");
+    const { headers } = await import("next/headers");
     const headerStore = await headers();
-    if (!isLocalHqProofHost(headerStore.get("host"))) return false;
-    if (headerStore.get(HQ_LIVE_PROOF_HEADER) === "1") return true;
-    const cookieStore = await cookies();
-    return (
-      cookieStore.get(HQ_LIVE_PROOF_COOKIE)?.value === "1" ||
-      cookieStore.get(HQ_LIVE_PROOF_HEADER)?.value === "1"
-    );
+    return isLocalHqProofHost(headerStore.get("host"));
   } catch {
     return false;
   }
+}
+
+export function founderHqActiveOrigin(): string {
+  const configured = (process.env.INFINITY_HQ_PUBLIC_URL ?? process.env.NEXT_PUBLIC_INFINITY_HQ_URL ?? "").trim().replace(/\/$/, "");
+  if (configured) return configured;
+  if (isHqProductionProofDisabled()) return FOUNDER_HQ_PRODUCTION_ORIGIN;
+  return FOUNDER_HQ_CANONICAL_ORIGIN;
 }
 
 export function localHqProofOrganizationId(): string {
@@ -104,7 +108,6 @@ export function evaluateFounderHqRuntimeSourceGate(input: {
 
 export function hqBrowserProofHeaders(): HeadersInit {
   if (typeof window === "undefined") return {};
-  if (process.env.NODE_ENV === "production") return {};
   const host = window.location.hostname;
   if (host !== "localhost" && host !== "127.0.0.1") return {};
   return { [HQ_LIVE_PROOF_HEADER]: "1" };

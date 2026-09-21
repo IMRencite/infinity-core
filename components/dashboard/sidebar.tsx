@@ -2,36 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const navItems = [
-  { label: "HQ", href: "/dashboard" },
-  { label: "Founder Ideas", href: "/dashboard/founder-ideas" },
-  { label: "Ventures", href: "/dashboard/ventures" },
-  { label: "Portfolio", href: "/dashboard/portfolio" },
-  { label: "Launch (sim)", href: "/dashboard/launch" },
-  { label: "Opportunities", href: "/dashboard/opportunities" },
-  { label: "Allocations", href: "/dashboard/allocations" },
-  { label: "Validation", href: "/dashboard/validation" },
-  { label: "Executive", href: "/dashboard/executive" },
-  { label: "Runtime", href: "/dashboard/runtime" },
-  { label: "Reasoning", href: "/dashboard/reasoning" },
-  { label: "Assets", href: "/dashboard/assets" },
-  { label: "Intelligence", href: "/dashboard/intelligence" },
-  { label: "Builds", href: "/dashboard/builds" },
-  { label: "Organizations", href: "#", disabled: true },
-  { label: "Initiatives", href: "#", disabled: true },
-  { label: "Workers", href: "#", disabled: true },
-  { label: "Activity", href: "#", disabled: true },
-  { label: "Settings", href: "#", disabled: true },
-];
-
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/dashboard") {
-    return pathname === "/dashboard" || pathname.startsWith("/dashboard/ventures/");
-  }
-
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
+import { HQ_PRIMARY_NAV_ITEMS, hqNavReactKey } from "@/lib/infinity/hq-navigation/items";
+import { hqNavItemIsActive } from "@/lib/infinity/hq-navigation/active";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -39,14 +11,16 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 top-14 z-40 hidden w-44 flex-col border-r border-white/[0.05] bg-[#090909] lg:flex">
       <nav className="flex flex-1 flex-col gap-px overflow-y-auto p-2" aria-label="Dashboard">
-        {navItems.map((item) => {
-          const active = !item.disabled && isActive(pathname, item.href);
-          const key = item.href === "#" ? `${item.label}-${item.href}` : item.href;
+        {HQ_PRIMARY_NAV_ITEMS.map((item) => {
+          const key = hqNavReactKey(item);
+          const active = hqNavItemIsActive(pathname, item);
 
-          if (item.disabled) {
+          if (item.visibility === "placeholder" || !item.href) {
             return (
               <span
                 key={key}
+                data-nav-id={item.id}
+                data-nav-placeholder="true"
                 className="rounded-md px-2.5 py-2 text-[12px] font-medium text-zinc-700"
               >
                 {item.label}
@@ -58,6 +32,7 @@ export function Sidebar() {
             <Link
               key={key}
               href={item.href}
+              data-nav-id={item.id}
               aria-current={active ? "page" : undefined}
               className={`rounded-md px-2.5 py-2 text-[12px] font-medium transition-colors ${
                 active

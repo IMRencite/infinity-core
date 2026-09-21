@@ -376,6 +376,21 @@ export async function runMissionRuntimeTick(input: {
     },
   });
 
+  const { runAutonomousAcquisitionTick } = await import(
+    "@/lib/infinity/market-validation-acquisition-runtime/tick"
+  );
+  const { persistMissionActivityToEngineEvents } = await import("@/lib/infinity/mission-activity/persist-engine");
+  const { exportMissionActivitySnapshot } = await import("@/lib/infinity/mission-activity");
+  const acquisition = await runAutonomousAcquisitionTick({
+    organizationId: input.organizationId,
+    now: new Date(now),
+    lockedBy: `${lockedBy}:acquisition`,
+    supabase: input.supabase,
+  });
+  if (!acquisition.skipped) {
+    await persistMissionActivityToEngineEvents(input.supabase as never, exportMissionActivitySnapshot()).catch(() => 0);
+  }
+
   return { processed: results.length, results };
 }
 

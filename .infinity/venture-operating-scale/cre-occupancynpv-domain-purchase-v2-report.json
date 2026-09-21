@@ -1,0 +1,127 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_DOMAIN_PURCHASE_V2",
+  "prePurchase": {
+    "domain": "occupancynpv.com",
+    "available": "YES",
+    "premium": "NO",
+    "registrationPrice": 10.46,
+    "renewal": 10.46,
+    "tax": "UNKNOWN",
+    "providerFees": "UNKNOWN",
+    "expectedTotal": 10.46,
+    "authorizationCeiling": 15,
+    "withinAuthorization": "YES"
+  },
+  "prerequisites": {
+    "registrarAuthenticated": "YES",
+    "accountVerified": "YES",
+    "billing": "UNKNOWN",
+    "registrant": "UNKNOWN",
+    "agreement": "UNKNOWN"
+  },
+  "governance": {
+    "domainAcquisitionPlan": "PASS",
+    "domainPurchaseAuthorization": "PASS",
+    "treasury": "AUTHORIZED_WITHIN_LIMIT",
+    "eag": "AUTHORIZED_WITHIN_LIMIT"
+  },
+  "purchase": {
+    "attempted": "NO",
+    "succeeded": "NO",
+    "domain": "occupancynpv.com",
+    "registrar": "Cloudflare Registrar",
+    "providerStatus": 200,
+    "providerReference": "UNKNOWN",
+    "actualCharge": "UNKNOWN",
+    "currency": "USD",
+    "duplicateProtection": "PASS"
+  },
+  "ownership": {
+    "owned": "NO",
+    "accountBinding": "FAIL",
+    "registrationState": "UNKNOWN",
+    "registrationDate": "UNKNOWN",
+    "expiration": "UNKNOWN",
+    "renewal": 10.46,
+    "autoRenew": "UNKNOWN",
+    "nameservers": "UNKNOWN"
+  },
+  "hosting": {
+    "vercelTeam": "infinite-media-resources-imr",
+    "plan": "PRO",
+    "subscription": "ACTIVE",
+    "hostingPurchaseRequired": "NO",
+    "domainBinding": "UNCONFIGURED"
+  },
+  "record": {
+    "domain": "UNCONFIGURED",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:26:40.975Z",
+        "evidence": "Selected candidate preserved; not purchased."
+      },
+      {
+        "domain": "leasenpv.com",
+        "event": "RELEASED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Cloudflare domain-check proved leasenpv.com unavailable; no longer preferred."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Selected from Cloudflare Registrar domain-check evidence; not purchased."
+      }
+    ],
+    "provider": "cloudflare.registrar_v1",
+    "registration": "CLOUDFLARE_REGISTRAR_READ_VERIFIED",
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "launch": "NO",
+    "observer": "RUNNING:4"
+  },
+  "remainingBlockers": [
+    "DOMAIN_PURCHASE",
+    "LEGAL_CONFIGURATION",
+    "CHECKOUT_CONFIGURATION",
+    "WEBHOOK_CONFIGURATION",
+    "ANALYTICS_CONFIGURATION",
+    "PAYMENT_ACTIVATION",
+    "PUBLIC_LAUNCH"
+  ],
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "purchases": 0,
+  "registrationPosts": 0,
+  "nextState": "CRE_DOMAIN_PURCHASE_BLOCKED_PROVIDER",
+  "nextGovernedAction": "CRE_DOMAIN_PURCHASE_BLOCKED_PROVIDER",
+  "hq": {
+    "mission": "CRE_OCCUPANCYNPV_DOMAIN_PURCHASE_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "PRESENT_IDLE",
+    "researchGrid": "PRESENT_IDLE",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

@@ -1,87 +1,73 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getOperatorOrgContext } from "@/lib/infinity/operator-console/auth";
+import { requireOperatorOrgContext } from "@/lib/infinity/operator-console/require-org-context";
 import { loadOperatorVentureList } from "@/lib/infinity/operator-console";
 import { VENTURE_ASSEMBLY_INTERNAL_LABEL } from "@/lib/infinity/venture-assembly/constants";
 
 export default async function VenturesPage() {
-  const orgContext = await getOperatorOrgContext();
-  if (!orgContext) redirect("/login");
-
+  const orgContext = await requireOperatorOrgContext();
   const admin = createAdminClient();
   const rows = await loadOperatorVentureList(admin, orgContext.organizationId, 40);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-6 text-zinc-200">
+    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 text-zinc-200">
       <header>
         <h1 className="text-lg font-semibold text-white">Ventures</h1>
         <p className="text-sm text-amber-200/90">{VENTURE_ASSEMBLY_INTERNAL_LABEL}</p>
         <p className="mt-1 text-xs text-zinc-500">
-          Open a venture to enter Infinity HQ — live operator observability from persisted engine state.
+          Every valid canonical venture appears here automatically, including ventures that are not publicly launched.
         </p>
       </header>
 
-      <div className="overflow-x-auto rounded-lg border border-white/10">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-white/[0.03] text-zinc-500">
-            <tr>
-              <th className="px-3 py-2">Venture</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Latest activity</th>
-              <th className="px-3 py-2">Launch</th>
-              <th className="px-3 py-2">Decision</th>
-              <th className="px-3 py-2">HQ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-3 py-4 text-zinc-600">
-                  No venture assemblies yet.
-                </td>
-              </tr>
-            ) : (
-              rows.map((row) => (
-                <tr key={row.ventureAssemblyId} className="border-t border-white/5">
-                  <td className="px-3 py-2">
-                    <Link
-                      href={`/dashboard/ventures/${row.ventureAssemblyId}`}
-                      className="font-medium text-sky-400 hover:underline"
-                    >
-                      {row.ventureName}
-                    </Link>
-                    <div className="font-mono text-[10px] text-zinc-600">{row.ventureAssemblyId}</div>
-                  </td>
-                  <td className="px-3 py-2">{row.status}</td>
-                  <td className="px-3 py-2">
-                    <div>{row.latestActivity ?? "—"}</div>
-                    {row.latestActivityAt ? (
-                      <div className="text-[10px] text-zinc-600">
-                        {new Date(row.latestActivityAt).toLocaleString()}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td className="px-3 py-2">{row.launchState ?? "—"}</td>
-                  <td className="px-3 py-2">{row.latestDecision ?? "—"}</td>
-                  <td className="px-3 py-2">
-                    <Link
-                      href={`/dashboard/ventures/${row.ventureAssemblyId}`}
-                      className="text-sky-400 hover:underline"
-                    >
-                      Open HQ
-                    </Link>
-                    {" · "}
-                    <Link href={`/dashboard/missions/${row.missionId}`} className="text-zinc-500 hover:underline">
-                      Mission
-                    </Link>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {rows.length === 0 ? (
+        <p className="text-sm text-zinc-600">No canonical ventures yet.</p>
+      ) : (
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {rows.map((row) => {
+            const href = `/dashboard/ventures/${encodeURIComponent(row.ventureAssemblyId)}`;
+            return (
+              <li key={`${row.canonicalVentureId ?? row.ventureAssemblyId}-${row.ventureAssemblyId}`} className="rounded-lg border border-white/10 p-4">
+                <Link href={href} className="text-base font-semibold text-sky-400 hover:underline">
+                  {row.ventureDisplayName ?? row.ventureName}
+                </Link>
+                <dl className="mt-3 space-y-1 text-xs sm:text-sm">
+                  {row.domain ? (
+                    <div>
+                      <dt className="text-zinc-500">Domain</dt>
+                      <dd><a className="text-sky-400 underline" href={row.productionUrl ?? `https://${row.domain}`} target="_blank" rel="noreferrer">{row.domain}</a></dd>
+                    </div>
+                  ) : null}
+                  {row.productionUrl ? (
+                    <div>
+                      <dt className="text-zinc-500">Production URL</dt>
+                      <dd><a className="break-all text-sky-400 underline" href={row.productionUrl} target="_blank" rel="noreferrer">{row.productionUrl}</a></dd>
+                    </div>
+                  ) : null}
+                  <div>
+                    <dt className="text-zinc-500">Lifecycle</dt>
+                    <dd>{row.lifecycleState ?? row.status}</dd>
+                  </div>
+                  {row.productState ? <div><dt className="text-zinc-500">Product</dt><dd>{row.productState}</dd></div> : null}
+                  {row.fulfillmentState ? <div><dt className="text-zinc-500">Fulfillment</dt><dd>{row.fulfillmentState}</dd></div> : null}
+                  {row.paymentState ? <div><dt className="text-zinc-500">Payments</dt><dd>{row.paymentState}</dd></div> : null}
+                  <div>
+                    <dt className="text-zinc-500">Public launch</dt>
+                    <dd>{row.publicLaunch ?? (row.launchState === "PUBLICLY_LAUNCHED" ? "YES" : "NO")}</dd>
+                  </div>
+                  {row.blockers?.length ? <div><dt className="text-zinc-500">Blockers</dt><dd>{row.blockers.join(", ")}</dd></div> : null}
+                  <div>
+                    <dt className="text-zinc-500">Latest mission</dt>
+                    <dd>{row.latestDecision ?? row.latestActivity ?? "—"}</dd>
+                  </div>
+                </dl>
+                <div className="mt-3 text-xs">
+                  <Link href={href} className="text-sky-400 hover:underline">Open venture</Link>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

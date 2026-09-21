@@ -1,6 +1,9 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { CommandChamber } from "@/components/dashboard/operator-console/command-chamber";
 import { departmentStateClasses } from "@/lib/infinity/operator-console/status-derivation";
 
 const ROOT = join(process.cwd(), "components/dashboard/operator-console");
@@ -48,6 +51,9 @@ describe("HQ visual system unification", () => {
     expect(desktop).not.toContain("overflow-x: auto");
     expect(css).toContain(".hq-artifact-rail-arrow");
     expect(css).toContain(".hq-agent-presence-rail");
+    expect(css).toContain(".hq-command-agent--active");
+    expect(css).toContain("hq-command-agent-breathe");
+    expect(readSource("command-chamber.tsx")).toContain("InfinityDecisionCore");
     expect(readSource("department-room.tsx")).toContain("expectedCount");
     expect(readSource("department-room.tsx")).toContain("RoomPresenceTrack");
     expect(readSource("infinity-room/room-presence-track.tsx")).toContain("PRESENT_IDLE");
@@ -57,5 +63,71 @@ describe("HQ visual system unification", () => {
     expect(readSource("artifacts/room-artifact-surface.tsx")).not.toContain("onWheel");
     expect(readSource("artifacts/artifact-inspector-modal.tsx")).toContain("RoomArtifactInventory");
     expect(readSource("hq-spatial-floor.tsx")).toContain("hq-floor-columns");
+  });
+
+  it("renders the Command decision core with extravagant active motion classes", () => {
+    const html = renderToStaticMarkup(
+      createElement(CommandChamber, {
+        workerNodes: [{
+          nodeId: "research-active",
+          departmentId: "research_department",
+          role: "Research",
+          displayRole: "Research",
+          status: "RUNNING",
+          task: "Grounded research executing",
+          displayTask: "Grounded research executing",
+          provider: null,
+          model: null,
+          isActive: true,
+          isDormant: false,
+          motionActive: true,
+        }],
+        currentActivity: {
+          active: true,
+          departmentId: "executive_office",
+          departmentLabel: "Command",
+          engine: "mission_runtime",
+          task: "Coordinating Validation Station and Deployment Depot",
+          provider: null,
+          model: null,
+          status: "ACTIVE_WORK",
+          startedAt: null,
+          elapsedSeconds: null,
+          attempt: null,
+          costUsd: null,
+          costKnown: false,
+          artifactStatus: null,
+          latestActivitySummary: null,
+          latestActivityAt: null,
+          displayTask: "Coordinating Validation Station and Deployment Depot",
+          departmentDisplayName: "Command",
+        },
+        closedLoopRoute: { active: true, toDepartmentId: null, decisionType: null, missionStatus: null },
+        isSelected: false,
+        onSelect: () => undefined,
+        snapshot: {
+          id: "executive_office",
+          label: "Command",
+          state: "RUNNING",
+          engines: ["executive_decision"],
+          summary: "Coordinating live work",
+          currentTask: "Coordinating live work",
+          provider: null,
+          model: null,
+          costUsd: null,
+          costKnown: false,
+          startedAt: null,
+          lastActivityAt: null,
+          recordCount: 0,
+          detail: {},
+          isActive: true,
+          isNextMissionTarget: false,
+        },
+      }),
+    );
+    expect(html).toContain("hq-infinity-core");
+    expect(html).toContain("data-hq-command-agent=\"ACTIVE_WORK\"");
+    expect(html).toContain("data-hq-infinity-symbol=\"ACTIVE\"");
+    expect(html).toContain("data-hq-command-oversight=\"ACTIVE_OVERSIGHT\"");
   });
 });

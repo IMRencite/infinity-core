@@ -72,6 +72,13 @@ const STATIC_TARGETS: HqCopilotNavigationTarget[] = [
     roomId: "intelligence_center",
   },
   {
+    id: "prospect-intelligence",
+    aliases: ["prospect intelligence", "prospects", "commercial intelligence"],
+    href: () => "/dashboard",
+    label: "Prospect Intelligence",
+    roomId: "prospect_intelligence",
+  },
+  {
     id: "executive",
     aliases: ["command", "executive", "command chamber"],
     href: () => "/dashboard/executive",

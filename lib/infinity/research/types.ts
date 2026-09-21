@@ -29,6 +29,7 @@ export type NormalizedSource = {
   canonicalUrl: string;
   title: string | null;
   domain: string | null;
+  publisher?: string | null;
   retrievedAt: string;
   providerChunkIndex: number | null;
 };
@@ -127,10 +128,25 @@ export type ResearchResult = {
     initialResearchCallCount: number;
     transportRetryCount: number;
     gapFillCallCount: number;
+    revenueGapFillCallCount?: number;
+    benchmarkGapFillCallCount?: number;
+    qualityReplacementCallCount?: number;
     totalProviderCalls: number;
   };
   stopReason?: string;
   issuedQueries?: string[];
+  phaseLog?: Array<{
+    phase: string;
+    queries: string[];
+    findingsBefore: number;
+    findingsAfter: number;
+    sourcesBefore: number;
+    sourcesAfter: number;
+    materialCoverageBefore: boolean;
+    materialCoverageAfter: boolean;
+    attemptCount: number;
+    estimatedCostUsd: number | null;
+  }>;
   completedAt: string;
 };
 

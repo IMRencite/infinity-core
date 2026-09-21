@@ -25,6 +25,7 @@ import {
   projectPublicOperations,
   publicOperationsPreviewModel,
   resetPublicProjectionCache,
+  resetCanonicalPublicOccupancyMemory,
   resolvePublicVentureVisibility,
   stringifyPublicProjection,
   type InternalPublicObservation,
@@ -71,6 +72,7 @@ function assertNoForbidden(projection: PublicOperationsProjection) {
 describe("Public Operations Projection V1", () => {
   beforeEach(() => {
     resetPublicProjectionCache();
+    resetCanonicalPublicOccupancyMemory();
     expect(process.env.INFINITY_CANONICAL_WORK_PERSIST).not.toBe("1");
     expect(process.env.INFINITY_AUTONOMOUS_LOOP_PERSIST).not.toBe("1");
   });
@@ -217,11 +219,12 @@ describe("Public Operations Projection V1", () => {
   it("28. public active-agent count respects real active state", () => {
     const idle = projected();
     expect(idle.active_public_agents).toBe(0);
-    expect(idle.idle_public_agents).toBe(3);
+    expect(idle.idle_public_agents).toBe(idle.public_agents.length);
+    expect(idle.idle_public_agents).toBeGreaterThan(0);
     const activeObservation = idleTruthObservation();
     activeObservation.loop = { ...activeObservation.loop!, portfolio_state: "MISSION_ACTIVE", last_outcome: "EXECUTE_ACTION" };
     const active = constructPublicOperationsProjection(activeObservation);
-    expect(active.active_public_agents).toBe(3);
+    expect(active.active_public_agents).toBe(active.public_agents.length);
     expect(evaluatePublicAgentActivityTruthGate({
       loopActive: true,
       activeCount: active.active_public_agents,

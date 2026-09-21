@@ -1,6 +1,7 @@
 import { createInternalOpenAiClient, readOutputText, readUsage } from "@/lib/infinity/ai-providers/openai/client";
 import { loadOpenAiReasoningConfig } from "@/lib/infinity/ai-providers/openai/config";
 import { ADVERSARIAL_REVIEW_SCHEMA_VERSION } from "../constants";
+import { estimateAdversarialReviewCostUsd } from "../cost/estimate-adversarial-cost";
 import type { AdversarialReviewResult, LoadedCandidateBundle } from "../types";
 
 function adversarialReviewSchema(): Record<string, unknown> {
@@ -162,12 +163,13 @@ export async function runAdversarialReview(
     outputTokens: usage.outputTokens,
     totalTokens: usage.inputTokens + usage.outputTokens,
   };
+  const cost = estimateAdversarialReviewCostUsd(tokenUsage);
 
   return {
     provider: "openai",
     model: config.model,
     ...parsed,
     tokenUsage,
-    estimatedCostUsd: null,
+    estimatedCostUsd: cost.estimatedCostUsd,
   };
 }

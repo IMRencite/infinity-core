@@ -31,7 +31,7 @@ export type FounderResearchPacket = {
   failureCode: "RESEARCH_FAILED" | "PROVIDER_FAILED" | null;
   summary: string;
   findings: FounderResearchFinding[];
-  sources: Array<{ url: string; title: string | null; domain: string | null }>;
+  sources: Array<{ url: string; title: string | null; domain: string | null; publisher?: string | null }>;
   competitorLeads: string[];
   verifiedCompetitors: string[];
   monetizationLayers: MonetizationEvidenceLayers;

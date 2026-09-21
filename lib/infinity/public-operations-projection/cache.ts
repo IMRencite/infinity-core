@@ -1,6 +1,6 @@
 import type { PublicOperationsProjection } from "./types";
 
-const DEFAULT_TTL_MS = 30_000;
+const DEFAULT_TTL_MS = 5_000;
 
 let cached: { at: number; projection: PublicOperationsProjection } | null = null;
 

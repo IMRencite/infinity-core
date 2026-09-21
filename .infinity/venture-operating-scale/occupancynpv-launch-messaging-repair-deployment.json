@@ -1,0 +1,27 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "aeac78ccd50e925616769802bbce778da18bca2edb18fe16cb4668b29321f54f",
+  "previous_deployment_id": "dpl_rwCYzXkkKzWCypr9rotUbs9kbEvj",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "69c17c4725a263d69c6b897a3dfd9081e4c91615fab8bab91e3937f4cdfcaf26",
+  "deployment_id": "dpl_XkdbXKrYkzoNaqit7kkEUwc28e69",
+  "deployed": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "supabase_migrations": 0,
+  "public_launch": 0,
+  "marketing_content_changed": "YES",
+  "reason": "Repair stale validation-stage public messaging to current OccupancyNPV product, payment, and fulfillment truth. PUBLICLY_LAUNCHED remains NO.",
+  "changed_routes": [
+    "/",
+    "/pricing",
+    "/early-access",
+    "/how-it-works",
+    "/faq",
+    "/terms-of-service",
+    "/privacy-policy"
+  ],
+  "safe_error": null,
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+}

@@ -42,7 +42,7 @@ function department(id: OperatorDepartmentSnapshot["id"], workArtifacts: HqWorkA
     startedAt: null,
     lastActivityAt: null,
     recordCount: workArtifacts.length,
-    failureSemantics: null,
+    failureSemantics: undefined,
     detail: {},
     workArtifacts,
   };

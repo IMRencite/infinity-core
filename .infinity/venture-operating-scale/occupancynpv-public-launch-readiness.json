@@ -1,0 +1,46 @@
+{
+  "gate": "PublicLaunchReadinessGate",
+  "result": "BLOCKED",
+  "publiclyLaunched": "YES",
+  "categories": {
+    "PRODUCT": "PASS",
+    "FULFILLMENT": "PASS",
+    "PAYMENTS": "PASS",
+    "PAYMENT_PATH": "PASS",
+    "LEGAL": "PASS",
+    "CUSTOMER_EXPERIENCE": "PASS",
+    "PRODUCTION": "PASS",
+    "SECURITY": "PASS",
+    "BACKEND": "PASS",
+    "OBSERVABILITY": "PASS",
+    "SUPPORT": "PASS",
+    "DISCOVERABILITY": "PASS",
+    "COMMERCIAL_CONSISTENCY": "PASS",
+    "GOVERNANCE": "PASS",
+    "FOUNDER_REVIEW": "PASS",
+    "VALIDATION_MESSAGING": "PASS",
+    "ARTIFACT_LINEAGE": "FAIL",
+    "IMPROVEMENT_INTAKE": "FAIL"
+  },
+  "failed": [
+    "ARTIFACT_LINEAGE",
+    "IMPROVEMENT_INTAKE"
+  ],
+  "missingEvidence": [],
+  "identity": {
+    "artifactId": "art_5eb5eeb74bfd2a300b85",
+    "digest": "79ba6e300182f0f5dca61a3dbf5d55e75d2354f91937d1f5aa0b8ae6d356594b",
+    "deploymentId": "dpl_DANyg3Hv3iY7GpgU3xDwfkxuPq72"
+  },
+  "launchAuthority": "FOUNDER_APPROVAL_REQUIRED",
+  "pendingFounderAction": "OCCUPANCYNPV_POST_LAUNCH_AUTONOMOUS_OPERATIONS",
+  "nextState": "OCCUPANCYNPV_PUBLICLY_LAUNCHED",
+  "writes": {
+    "stripeWrites": 0,
+    "paymentActivationChanges": 0,
+    "searchSubmissions": 0,
+    "outreach": 0,
+    "publicLaunch": 0
+  },
+  "evaluatedAt": "2026-09-16T08:32:49.853Z"
+}

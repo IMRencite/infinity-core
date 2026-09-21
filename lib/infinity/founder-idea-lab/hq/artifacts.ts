@@ -32,6 +32,7 @@ export function buildFounderIdeaArtifacts(store: FounderIdeaStore, organizationI
       buildReady: grade?.buildReady ?? false,
       thesis: thesis.businessThesis.value,
       thesisSource: thesis.businessThesis.source,
+      ventureTitle: submission.title,
       problem: thesis.problem.value,
       problemSource: thesis.problem.source,
       customer: thesis.targetCustomer.value,

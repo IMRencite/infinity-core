@@ -1,0 +1,21 @@
+{
+  "ok": false,
+  "projectId": "prj_O2rAkJ7F0DENcm2sFyhAluK7PiXg",
+  "projectName": "infinity-askreview-founder-preview",
+  "projectCreated": false,
+  "envOk": {
+    "NEXT_PUBLIC_SUPABASE_URL": true,
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": true,
+    "SUPABASE_SERVICE_ROLE_KEY": true,
+    "ASKREVIEW_ISOLATED_PREVIEW": true
+  },
+  "stripeCopied": false,
+  "occupancynpvAliasTouched": false,
+  "domainBound": false,
+  "publicLaunch": false,
+  "incrementalCost": "UNKNOWN_EXISTING_TEAM",
+  "previewUrl": "https://infinity-askreview-founder-preview-o5gqbsjcz.vercel.app",
+  "deployStatus": 1,
+  "stdoutTail": "{\n  \"id\": \"dpl_FJr9nS5WUScLovURQCdL2JupZKwB\",\n  \"url\": \"https://infinity-askreview-founder-preview-o5gqbsjcz.vercel.app\",\n  \"inspectorUrl\": \"https://vercel.com/infinite-media-resources-imr/infinity-askreview-founder-preview/FJr9nS5WUScLovURQCdL2JupZKwB\",\n  \"readyState\": \"ERROR\",\n  \"target\": null,\n  \"deploymentApiUrl\": \"https://api.vercel.com/v13/deployments/dpl_FJr9nS5WUScLovURQCdL2JupZKwB\",\n  \"error\": {\n    \"name\": \"BUILD_ERROR\",\n    \"message\": \"Command \\\"npm run build\\\" exited with 1\"\n  }\n}\n",
+  "stderrTail": "und-communication-runtime/inbound-processing-mission.ts\n./lib/infinity/inbound-communication-runtime/cre-inbound-observer-loop.ts\n./instrumentation.ts\nhttps://nextjs.org/docs/messages/module-not-found\nat <unknown> (./lib/infinity/research/run.ts:34:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/founder-idea-lab/benchmark-economics/queries.ts:3:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/founder-idea-lab/revenue-model-research/queries.ts:9:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/venture-intelligence/engines.ts:1:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/venture-intelligence/engines.ts:2:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/venture-intelligence/engines.ts:3:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/founder-idea-lab/benchmark-economics/queries.ts:1:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/founder-idea-lab/revenue-model-research/queries.ts:1:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nat <unknown> (./lib/infinity/founder-idea-lab/revenue-model-research/queries.ts:10:1)\nat <unknown> (https://nextjs.org/docs/messages/module-not-found)\nError: Command \"npm run build\" exited with 1\n"
+}

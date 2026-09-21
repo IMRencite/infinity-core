@@ -1,0 +1,9 @@
+{
+  "VentureBackendReadinessGate": "PASS",
+  "reasons": [],
+  "productionProvider": "Supabase",
+  "productionPersistence": "PASS",
+  "FulfillmentReadinessGate": "PASS",
+  "occupancyNpvStillReadable": true,
+  "jsonProductionFallback": "DISABLED"
+}

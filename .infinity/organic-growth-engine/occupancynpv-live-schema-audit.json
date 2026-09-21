@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-09-17T05:34:10.963Z",
+  "floor": {
+    "live": "https://imros.io/",
+    "status": 200,
+    "dpl": "dpl_CY9nzzqLnRTpVWPzQHMU3vHR1658",
+    "package": "imros-public-deploy"
+  },
+  "occupancynpv_live_schema": [
+    {
+      "url": "https://occupancynpv.com/commercial-lease-npv/how-is-cap-rate-calculated",
+      "status": 200,
+      "types": [
+        "Organization",
+        "WebSite",
+        "WebPage",
+        "BreadcrumbList",
+        "Article",
+        "SpeakableSpecification",
+        "FAQPage"
+      ],
+      "has_jsonld": true,
+      "has_breadcrumb_nav": true,
+      "speakable_ids": [
+        "direct-answer",
+        "summary",
+        "key-takeaways"
+      ],
+      "visible_faq": true
+    },
+    {
+      "url": "https://occupancynpv.com/blog/",
+      "status": 200,
+      "types": [
+        "Organization",
+        "WebSite",
+        "WebPage",
+        "CollectionPage",
+        "BreadcrumbList"
+      ],
+      "has_jsonld": true,
+      "has_breadcrumb_nav": true,
+      "speakable_ids": [],
+      "visible_faq": false
+    },
+    {
+      "url": "https://occupancynpv.com/blog/how-interest-rates-affect-commercial-property-values/",
+      "status": 200,
+      "types": [
+        "Organization",
+        "WebSite",
+        "WebPage",
+        "BreadcrumbList",
+        "BlogPosting",
+        "SpeakableSpecification",
+        "FAQPage"
+      ],
+      "has_jsonld": true,
+      "has_breadcrumb_nav": true,
+      "speakable_ids": [
+        "direct-answer",
+        "summary",
+        "key-takeaways"
+      ],
+      "visible_faq": true
+    }
+  ]
+}

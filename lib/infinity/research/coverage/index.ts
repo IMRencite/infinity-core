@@ -6,3 +6,6 @@ export * from "./merge";
 export * from "./plan";
 export * from "./policy";
 export * from "./queries";
+export * from "./revenue-gap-fill";
+export * from "./benchmark-gap-fill";
+export * from "./quality-replacement";

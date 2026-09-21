@@ -102,6 +102,52 @@ export function handoffFromAutonomous(
   };
 }
 
+export function handoffFromCanonicalVenture(input: {
+  organizationId: string;
+  candidateId: string;
+  name: string;
+  customer: string;
+  problem: string;
+  solution: string;
+  monetization: string;
+  researchRunIds?: string[];
+  monetizationRunId?: string | null;
+  ventureSelectionRunId?: string | null;
+  decision?: string | null;
+}): LoadedVentureSelectionHandoff {
+  return {
+    id: null,
+    organizationId: input.organizationId,
+    ventureSelectionRunId: input.ventureSelectionRunId ?? null,
+    candidateSelectionEvaluationId: null,
+    opportunityCandidateId: input.candidateId,
+    discoveryRunId: null,
+    monetizationRunId: input.monetizationRunId ?? null,
+    businessConcept: input.name,
+    targetCustomer: input.customer,
+    problem: input.problem,
+    solution: input.solution,
+    primaryMonetizationModel: input.monetization || "saas_subscription",
+    secondaryRevenueStreams: [],
+    pricingStrategy: input.monetization || "Monthly subscription ESTIMATE",
+    distributionStrategy: "Self-serve digital until evidence exists",
+    recommendedProductType: "saas",
+    requiredCapabilities: ["software_development", "automated_acquisition"],
+    mvpRequirements: ["Core workflow", "Auth", "Billing"],
+    futureFeatures: ["Reporting"],
+    economicTargets: {},
+    budgetEnvelope: { startupCapital: null, monthlyOperatingBudget: null },
+    riskConstraints: { ventureOrigin: "AUTONOMOUS_DISCOVERY" },
+    validationState: "autonomous_discovery",
+    sourceEvidenceRefs: input.researchRunIds ?? [],
+    handoffStatus: "ready",
+    decision: input.decision ?? "VALIDATE",
+    simulationOnly: true,
+    candidateTitle: input.name,
+    candidateSummary: input.solution,
+  };
+}
+
 export function assembleCanonicalBlueprint(
   ztp: ZeroToProductionStore,
   handoff: LoadedVentureSelectionHandoff,

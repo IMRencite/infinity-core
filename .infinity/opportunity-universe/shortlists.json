@@ -1,0 +1,426 @@
+{
+  "shortlists": [
+    {
+      "shortlistId": "osl_askreview_discovery_v1",
+      "version": 1,
+      "createdAt": "2026-08-17T05:37:34.508Z",
+      "sourceDiscoveryRunId": "3fd82037-0f03-425a-9212-f683d7cbd41a",
+      "selectionCriteria": "Opportunity Scanner maxCandidatesPerRun=10 for discovery run 3fd82037-0f03-425a-9212-f683d7cbd41a",
+      "status": "SUPERSEDED",
+      "members": [
+        {
+          "candidateId": "f1336945-3350-4d08-921e-4dcb5bc77b8e",
+          "name": "Affordable Google Review Automation & QR Utility",
+          "rank": 1,
+          "opportunityScore": 85.85,
+          "monetizationScore": 80.65,
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "ba261b68-2511-49a8-832b-43174a14d569",
+          "name": "Bank-Linked Tenant Income & Fraud Verification for Independent Landlords",
+          "rank": 2,
+          "opportunityScore": 84.8,
+          "monetizationScore": 72.7,
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "ce09ed5b-c085-45a2-b9c4-473e37fbf0c1",
+          "name": "Subcontractor COI Compliance & Tracking Utility",
+          "rank": 3,
+          "opportunityScore": 84.3,
+          "monetizationScore": 76.7,
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "7bf2a374-e098-4c87-8866-15e0520b3652",
+          "name": "Specialized Tattoo Studio Booking & Artist Management Platform",
+          "rank": 4,
+          "opportunityScore": 83.4,
+          "monetizationScore": 78.79,
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "30cb084a-aa84-48ce-9895-e76d935494e7",
+          "name": "Platform-Specific Embedded Analytics Utilities",
+          "rank": 5,
+          "opportunityScore": 81.4,
+          "monetizationScore": 74.85,
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "d85407d9-281a-47fe-98b4-c2f1507f5a6c",
+          "name": "Immediate Inbound Lead Router & Auto-Responder",
+          "rank": 6,
+          "opportunityScore": 80.05,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "c86c95dc-4c00-487b-9ff4-763eb8017b7b",
+          "name": "Automated Freight Quote & Warehousing Bid Normalizer",
+          "rank": 7,
+          "opportunityScore": 79.8,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "d8ac4dc8-f753-4e9b-9229-891931a1648b",
+          "name": "Mobile-First Home Inspection Reporting & Administrative Utility",
+          "rank": 8,
+          "opportunityScore": 79.3,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "0b1dfa60-f3a3-407f-876e-4434705e36f2",
+          "name": "Subcontractor Lien Waiver & COI Compliance Tracker",
+          "rank": 9,
+          "opportunityScore": 78.95,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        },
+        {
+          "candidateId": "2f5ade1a-ef5a-4c45-9f8b-be775ff9f3a7",
+          "name": "Low-Touch Spreadsheet AP Automation Utility",
+          "rank": 10,
+          "opportunityScore": 78.85,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+        }
+      ],
+      "evidenceSnapshot": "Founder-visible cycle shortlist. Not the full historical universe."
+    },
+    {
+      "shortlistId": "osl_second_venture_eval_v2",
+      "version": 2,
+      "createdAt": "2026-09-09T06:00:00.000Z",
+      "sourceDiscoveryRunId": null,
+      "selectionCriteria": "Merged historical opportunity_candidates ordered by opportunity_score, probe limit 40",
+      "status": "CURRENT",
+      "members": [
+        {
+          "candidateId": "f1336945-3350-4d08-921e-4dcb5bc77b8e",
+          "name": "Affordable Google Review Automation & QR Utility",
+          "rank": 1,
+          "opportunityScore": 85.85,
+          "monetizationScore": 80.65,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "ba261b68-2511-49a8-832b-43174a14d569",
+          "name": "Bank-Linked Tenant Income & Fraud Verification for Independent Landlords",
+          "rank": 2,
+          "opportunityScore": 84.8,
+          "monetizationScore": 72.7,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b541ad42-0c49-4ce1-bbfe-398b30d90f04",
+          "name": "Mobile-First Change Order Authorization Tool",
+          "rank": 3,
+          "opportunityScore": 84.75,
+          "monetizationScore": 80.35,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "865ce0e6-3b22-4e9c-9180-b65d2e0387f3",
+          "name": "AI-Powered RFP & Security Questionnaire Utility",
+          "rank": 4,
+          "opportunityScore": 84.36,
+          "monetizationScore": 76.65,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "ce09ed5b-c085-45a2-b9c4-473e37fbf0c1",
+          "name": "Subcontractor COI Compliance & Tracking Utility",
+          "rank": 5,
+          "opportunityScore": 84.3,
+          "monetizationScore": 76.7,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "7e7e924e-0741-4155-a729-8d529da77ea9",
+          "name": "Commercial Real Estate (CRE) Lease Comparison & NPV Calculator",
+          "rank": 6,
+          "opportunityScore": 84.03,
+          "monetizationScore": 79.45,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "558332ce-e4f4-437d-ac91-377f4d6094a3",
+          "name": "Lightweight Certificate of Insurance (COI) Tracking SaaS",
+          "rank": 7,
+          "opportunityScore": 83.65,
+          "monetizationScore": 80.74,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "7bf2a374-e098-4c87-8866-15e0520b3652",
+          "name": "Specialized Tattoo Studio Booking & Artist Management Platform",
+          "rank": 8,
+          "opportunityScore": 83.4,
+          "monetizationScore": 78.79,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "675353a4-d5b0-4d17-961a-9f85e04489c8",
+          "name": "1099 Contractor Schedule C Expense Tracker",
+          "rank": 9,
+          "opportunityScore": 83.21,
+          "monetizationScore": 77.85,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "408775d5-ffbf-42e5-9011-6c6f0d89a29d",
+          "name": "Automated Subcontractor COI Tracking Utility",
+          "rank": 10,
+          "opportunityScore": 83.05,
+          "monetizationScore": 79.1,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "dcbf770c-92e4-404a-8c2c-abf61f199dc6",
+          "name": "Freelancer Rate & Scope Creep Estimator",
+          "rank": 11,
+          "opportunityScore": 83,
+          "monetizationScore": 79.9,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "248dbeca-bbcb-462e-bb0e-f487e5931fb4",
+          "name": "Pre-Publish YouTube Thumbnail Preview & Performance Tool",
+          "rank": 12,
+          "opportunityScore": 82.6,
+          "monetizationScore": 72.05,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "903b7768-6baf-4927-adce-de905be8a87b",
+          "name": "Ecommerce Reverse Logistics & Fraud Prevention",
+          "rank": 13,
+          "opportunityScore": 82.35,
+          "monetizationScore": 71.15,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "f2a7cf74-0ac3-403d-9142-ff17fd5eca04",
+          "name": "Automated B2B Certificate of Insurance (COI) Tracking Utility",
+          "rank": 14,
+          "opportunityScore": 82.3,
+          "monetizationScore": 74.1,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "96d65096-6390-4e2c-822d-cdcdd0d6fe17",
+          "name": "B2B Instant Pricing and Quoting Generator",
+          "rank": 15,
+          "opportunityScore": 82.25,
+          "monetizationScore": 79.69,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "1190a53e-fef8-4f31-8865-6dc08774490b",
+          "name": "Programmatic Profit and Fee Calculator for E-Commerce Sellers",
+          "rank": 16,
+          "opportunityScore": 81.95,
+          "monetizationScore": 76.7,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "5a4302a3-b6b0-4121-b548-684e831dfa15",
+          "name": "Subcontractor COI Compliance Tracker",
+          "rank": 17,
+          "opportunityScore": 81.85,
+          "monetizationScore": 73.55,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "8c1ed7ee-02de-402b-b64e-e1f2737f8818",
+          "name": "Flat-Rate Jurisdiction-Aware Proposal and Contract Builder",
+          "rank": 18,
+          "opportunityScore": 81.85,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "7d64b39c-f2db-4768-8d33-948d065d61c1",
+          "name": "Generative Engine Optimization (GEO) & LLM Visibility Monitor",
+          "rank": 19,
+          "opportunityScore": 81.6,
+          "monetizationScore": 72.1,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b50a2ad5-ff6d-4bb2-bca9-fa2da17feace",
+          "name": "B2B Dynamic Pricing & Sales Quote Configurator",
+          "rank": 20,
+          "opportunityScore": 81.5,
+          "monetizationScore": 77.81,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "30cb084a-aa84-48ce-9895-e76d935494e7",
+          "name": "Platform-Specific Embedded Analytics Utilities",
+          "rank": 21,
+          "opportunityScore": 81.4,
+          "monetizationScore": 74.85,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "e5409f4c-d1d5-4e74-86c9-74b123e1c8af",
+          "name": "Affordable Plan Takeoff and Estimating Utility for Solo Subcontractors",
+          "rank": 22,
+          "opportunityScore": 81.37,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "1a0a6f94-8841-4560-8564-eb084d03b01c",
+          "name": "Layout-Preserving PDF Bank Statement to CSV/Excel Parser",
+          "rank": 23,
+          "opportunityScore": 81.3,
+          "monetizationScore": 76.65,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "3b165469-3481-4add-8f2d-10e8aefbbbf5",
+          "name": "Lightweight Tax Document Intake and Status Tracking SaaS for CPA Firms",
+          "rank": 24,
+          "opportunityScore": 81.3,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "dfb94c6d-68e9-4744-8516-b4a90d85761d",
+          "name": "Automated B2B Security Questionnaire Responder",
+          "rank": 25,
+          "opportunityScore": 80.85,
+          "monetizationScore": 78.88,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b42eeaad-d2ec-4f3b-a3f8-689bd9a63ce9",
+          "name": "HOA ARC Submission & Approval Tracker",
+          "rank": 26,
+          "opportunityScore": 80.65,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "9739e7e4-0435-4273-9dad-17cfcbd94383",
+          "name": "Freight broker rate card parser and margin calculator",
+          "rank": 27,
+          "opportunityScore": 80.55,
+          "monetizationScore": 78.05,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b28c862a-2c58-4a14-bdd7-ba37a85070bf",
+          "name": "Interactive Lead Gen Micro-Tool Builder for B2B Marketers",
+          "rank": 28,
+          "opportunityScore": 80.5,
+          "monetizationScore": 74.75,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b6740c42-9b99-443f-9ae3-50218d9d38da",
+          "name": "Construction Payment Application and Lien Waiver Automation Platform",
+          "rank": 29,
+          "opportunityScore": 80.5,
+          "monetizationScore": 77.65,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "c80d3d52-2726-4385-b694-12e035d24113",
+          "name": "Scope 1-3 Carbon Footprint Reporting Platform for SME Suppliers",
+          "rank": 30,
+          "opportunityScore": 80.25,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "b78793fe-fb1a-49ed-be31-f85a7f0ff572",
+          "name": "Privacy-Centric Browser-Native Invoice Builder",
+          "rank": 31,
+          "opportunityScore": 80.1,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "855f7290-ac8a-437b-9e14-80d8836f4d92",
+          "name": "SMB Digital Accessibility Compliance Tools",
+          "rank": 32,
+          "opportunityScore": 80.05,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "d85407d9-281a-47fe-98b4-c2f1507f5a6c",
+          "name": "Immediate Inbound Lead Router & Auto-Responder",
+          "rank": 33,
+          "opportunityScore": 80.05,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "7a1b16b2-4140-40a2-b60c-3716301c9c01",
+          "name": "Generative Engine Optimization (GEO) Analytics",
+          "rank": 34,
+          "opportunityScore": 80,
+          "monetizationScore": 66.3,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "5614c88c-afca-4b04-8547-daf38e089e51",
+          "name": "Automated SaaS Sprawl Management",
+          "rank": 35,
+          "opportunityScore": 79.9,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "4810fe25-cf99-4f58-bbd6-a9a827aa7fe4",
+          "name": "Interactive B2B ROI and Payback Calculator Builder",
+          "rank": 36,
+          "opportunityScore": 79.9,
+          "monetizationScore": 77.14,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "c86c95dc-4c00-487b-9ff4-763eb8017b7b",
+          "name": "Automated Freight Quote & Warehousing Bid Normalizer",
+          "rank": 37,
+          "opportunityScore": 79.8,
+          "monetizationScore": "UNKNOWN",
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "1abe53f4-5d19-46ad-bc3f-c1fd2144b9f0",
+          "name": "Room-by-Room Estimating Calculator for Specialty Contractors",
+          "rank": 38,
+          "opportunityScore": 79.45,
+          "monetizationScore": 76.48,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "0bc83ead-5e9a-4fff-b6f4-ee89af07eea8",
+          "name": "Digital Blueprint Takeoff Tool for Subcontractors",
+          "rank": 39,
+          "opportunityScore": 79.45,
+          "monetizationScore": 78.04,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        },
+        {
+          "candidateId": "65e55dde-2b40-409e-b76e-f79ad295cf81",
+          "name": "On-Site Estimating & Material Calculators for Blue-Collar Contractors",
+          "rank": 40,
+          "opportunityScore": 79.4,
+          "monetizationScore": 80.43,
+          "reason": "Included in SECOND_VENTURE_AUTONOMOUS_FACTORY_PROOF_V1 evaluation set."
+        }
+      ],
+      "evidenceSnapshot": "The reported 40 was a query limit over persisted scanner rows, not a 40-candidate discovery run."
+    }
+  ]
+}

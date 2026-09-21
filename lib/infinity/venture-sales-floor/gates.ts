@@ -165,4 +165,62 @@ export function evaluateSalesDuplicateOpportunityPrevention(existing: Array<{ ac
     : fail(SALES_DUPLICATE_ACTION_GATE, ["DUPLICATE_OPPORTUNITY_ALLOWED"]);
 }
 
+export const SALES_FLOOR_AGENT_PRESENCE_GATE = "SalesFloorAgentPresenceGate" as const;
+export const SALES_ROOM_ORB_TRUTH_GATE = "SalesRoomOrbTruthGate" as const;
+export const SALES_ROOM_ACTIVITY_ANIMATION_GATE = "SalesRoomActivityAnimationGate" as const;
+export const SALES_ROOM_REDUCED_MOTION_GATE = "SalesRoomReducedMotionGate" as const;
+export const SALES_ROOM_LIVE_STATE_PROJECTION_GATE = "SalesRoomLiveStateProjectionGate" as const;
+
+export function evaluateSalesFloorAgentPresenceGate(view: SalesFloorHqView): NamedSalesGate {
+  const rooms = view.live?.rooms ?? [];
+  if (rooms.length !== 5) return fail(SALES_FLOOR_AGENT_PRESENCE_GATE, ["MISSING_LIVE_ROOMS"]);
+  if (rooms.some((room) => room.agents.length === 0)) return fail(SALES_FLOOR_AGENT_PRESENCE_GATE, ["MISSING_AGENTS"]);
+  if (rooms.some((room) => room.state !== "ACTIVE" && room.agents.some((agent) => agent.isActive))) {
+    return fail(SALES_FLOOR_AGENT_PRESENCE_GATE, ["FAKE_ACTIVE_AGENT"]);
+  }
+  return pass(SALES_FLOOR_AGENT_PRESENCE_GATE, "AGENTS_PRESENT_IN_ALL_ROOMS");
+}
+
+export function evaluateSalesRoomOrbTruthGate(view: SalesFloorHqView): NamedSalesGate {
+  const rooms = view.live?.rooms ?? [];
+  if (rooms.some((room) => room.orb.active && room.state !== "ACTIVE")) {
+    return fail(SALES_ROOM_ORB_TRUTH_GATE, ["ACTIVE_ORB_WITHOUT_WORK"]);
+  }
+  if (rooms.some((room) => room.orb.state !== room.state)) {
+    return fail(SALES_ROOM_ORB_TRUTH_GATE, ["ORB_STATE_MISMATCH"]);
+  }
+  if (rooms.some((room) => room.state === "MONITORING" && room.orb.motion !== "SUBDUED")) {
+    return fail(SALES_ROOM_ORB_TRUTH_GATE, ["MONITORING_NOT_SUBDUED"]);
+  }
+  if (rooms.some((room) => room.state === "BLOCKED" && room.orb.motion !== "BLOCKED")) {
+    return fail(SALES_ROOM_ORB_TRUTH_GATE, ["BLOCKED_LOOKS_PRODUCTIVE"]);
+  }
+  return pass(SALES_ROOM_ORB_TRUTH_GATE, "ORB_MATCHES_CANONICAL_STATE");
+}
+
+export function evaluateSalesRoomActivityAnimationGate(view: SalesFloorHqView): NamedSalesGate {
+  const rooms = view.live?.rooms ?? [];
+  if (rooms.some((room) => room.state !== "ACTIVE" && room.orb.motion === "TRAVEL")) {
+    return fail(SALES_ROOM_ACTIVITY_ANIMATION_GATE, ["IDLE_ROOM_TRAVELING"]);
+  }
+  return pass(SALES_ROOM_ACTIVITY_ANIMATION_GATE, "ANIMATION_FOLLOWS_STATE");
+}
+
+export function evaluateSalesRoomReducedMotionGate(view: SalesFloorHqView): NamedSalesGate {
+  const rooms = view.live?.rooms ?? [];
+  if (rooms.some((room) => !room.orb.reducedMotionEquivalent)) {
+    return fail(SALES_ROOM_REDUCED_MOTION_GATE, ["MISSING_STATIC_EQUIVALENT"]);
+  }
+  return pass(SALES_ROOM_REDUCED_MOTION_GATE, "REDUCED_MOTION_EQUIVALENTS");
+}
+
+export function evaluateSalesRoomLiveStateProjectionGate(view: SalesFloorHqView): NamedSalesGate {
+  const rooms = view.live?.rooms ?? [];
+  if (!view.current_work) return fail(SALES_ROOM_LIVE_STATE_PROJECTION_GATE, ["MISSING_FLOOR_NOW"]);
+  if (rooms.some((room) => room.now.state !== room.state || room.orb.state !== room.state)) {
+    return fail(SALES_ROOM_LIVE_STATE_PROJECTION_GATE, ["COMPETING_CLIENT_TRUTH"]);
+  }
+  return pass(SALES_ROOM_LIVE_STATE_PROJECTION_GATE, "ONE_CANONICAL_LIVE_STATE");
+}
+
 export { projectPublicSalesFloor };

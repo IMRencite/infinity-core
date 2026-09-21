@@ -1,0 +1,293 @@
+{
+  "origin": "https://infinity-validation-cre-lease-npv-e72beb7b-obljtrsif.vercel.app",
+  "representativeRoute": "/commercial-lease-npv",
+  "pageRoutes": 87,
+  "totalNearInvisible": 609,
+  "repeatingPerPage": {
+    "7": 87
+  },
+  "seven": [
+    {
+      "component": "nav_brand",
+      "selector": "a.pv-nav-brand",
+      "text": "Lease NPV comparison",
+      "href": "/",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 178.03125,
+      "height": 28.21875,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "pv-nav-brand",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/how-it-works']",
+      "text": "How it works",
+      "href": "/how-it-works",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 91.328125,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/resources']",
+      "text": "Resources",
+      "href": "/resources",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 70.578125,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/lease-comparison']",
+      "text": "Compare",
+      "href": "/lease-comparison",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 64.34375,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/pricing']",
+      "text": "Pricing",
+      "href": "/pricing",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 48,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/faq']",
+      "text": "FAQ",
+      "href": "/faq",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 29.171875,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    },
+    {
+      "component": "nav_link",
+      "selector": "a[href='/early-access']",
+      "text": "Request Pilot Access",
+      "href": "/early-access",
+      "foreground": "rgb(21, 32, 51)",
+      "background": "color(srgb 1 1 1 / 0.92)",
+      "contrast": 1.28,
+      "luminanceDelta": 0.014,
+      "display": "block",
+      "visibilityCss": "visible",
+      "opacity": "1",
+      "width": 143.40625,
+      "height": 25.515625,
+      "intersecting": true,
+      "ariaHidden": null,
+      "inert": false,
+      "backgroundChain": [
+        {
+          "tag": "A",
+          "className": "",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-links",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "DIV",
+          "className": "pv-nav-inner",
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "tag": "NAV",
+          "className": "pv-nav",
+          "backgroundColor": "color(srgb 1 1 1 / 0.92)"
+        }
+      ],
+      "classification": "REAL_VISIBLE_CONTRAST_FAILURE"
+    }
+  ]
+}

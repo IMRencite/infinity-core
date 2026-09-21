@@ -1,4 +1,6 @@
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
+import { isCanonicalBuiltVenture, isCanonicalOperatingVenture, isCanonicalValidatingVenture } from "@/lib/infinity/hq-canonical-projection/load";
+import { listCanonicalVenturesForHq } from "@/lib/infinity/venture-operating-scale/hq-venture-registry";
 import type { PortfolioSummary, PortfolioVentureRow } from "./portfolio-types";
 import { buildPortfolioSummary } from "./portfolio-metrics";
 import {
@@ -228,7 +230,24 @@ export async function loadPortfolioSummary(
   organizationId: string,
 ): Promise<PortfolioSummary> {
   const batch = await loadPortfolioBatch(admin, organizationId);
-  return computePortfolioFromBatch(batch);
+  return mergeCanonicalVenturesIntoPortfolioSummary(computePortfolioFromBatch(batch));
+}
+
+export function mergeCanonicalVenturesIntoPortfolioSummary(summary: PortfolioSummary): PortfolioSummary {
+  const canonical = listCanonicalVenturesForHq();
+  const knownIds = new Set(summary.includedVentureIds);
+  const extra = canonical.filter((row) => !knownIds.has(row.venture_id));
+  const extraOperating = extra.filter(isCanonicalOperatingVenture).length;
+  const extraBuilt = extra.filter(isCanonicalBuiltVenture).length;
+  const validatingVentures = canonical.filter(isCanonicalValidatingVenture).length;
+  return {
+    ...summary,
+    activeVentures: summary.activeVentures + extraOperating,
+    operatingVentures: summary.operatingVentures + extraOperating,
+    validatingVentures,
+    totalVenturesBuilt: summary.totalVenturesBuilt + extraBuilt,
+    includedVentureIds: [...summary.includedVentureIds, ...extra.map((row) => row.venture_id)],
+  };
 }
 
 export { parseUsdFromRow } from "./portfolio-financials";

@@ -47,7 +47,6 @@ async function withTimeout(work: (signal: AbortSignal) => Promise<boolean>, pare
 
 function ensureLocalProofCookie(): void {
   if (typeof document === "undefined") return;
-  if (process.env.NODE_ENV === "production") return;
   const host = window.location.hostname;
   if (host !== "localhost" && host !== "127.0.0.1") return;
   if (document.cookie.split(";").some((part) => part.trim().startsWith(`${HQ_LIVE_PROOF_COOKIE}=1`))) return;

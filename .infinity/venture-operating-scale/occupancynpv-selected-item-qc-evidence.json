@@ -1,0 +1,33 @@
+{
+  "validatedAt": "2026-09-16T08:32:21.063Z",
+  "samples": [
+    {
+      "route": "/occupancynpv/app/workspaces/:id",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "selectedVisible": true,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app/workspaces/:id",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "selectedVisible": true,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app/workspaces/:id",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "selectedVisible": true,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app/workspaces/:id",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "selectedVisible": true,
+      "result": "PASS"
+    }
+  ]
+}

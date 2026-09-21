@@ -269,7 +269,9 @@ describe("Live Deployment Provider Enablement V1 — Vercel", () => {
       "hosting.deploy",
       "hosting.verify_deployment",
     ]);
-    expect(vercelAdapter.capabilities.supportedActions).toEqual([...VERCEL_LIVE_ALLOWED_ACTIONS]);
+    expect(VERCEL_LIVE_ALLOWED_ACTIONS.every((action) => vercelAdapter.capabilities.supportedActions.includes(action))).toBe(true);
+    expect(vercelAdapter.capabilities.supportedActions).toContain("hosting.deploy_source_bundle");
+    expect((VERCEL_LIVE_ALLOWED_ACTIONS as readonly string[]).includes("hosting.deploy_source_bundle")).toBe(false);
     expect(vercelCleanupSupported()).toBe(false);
     expect(isDisposableVercelTestResource(TEST_RESOURCE)).toBe(true);
     expect(isDisposableVercelTestResource("customer-prod")).toBe(false);

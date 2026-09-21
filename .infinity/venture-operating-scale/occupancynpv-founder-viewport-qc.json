@@ -1,0 +1,476 @@
+{
+  "url": "https://occupancynpv.com/pricing",
+  "captured_at": "2026-09-12T19:31:41.439Z",
+  "prior_cta_above_fold_pass": "SUPERSEDED_FALSE_POSITIVE",
+  "prior_spacing_pass": "SUPERSEDED_FALSE_POSITIVE",
+  "root_cause": {
+    "auto_scroll": false,
+    "wrong_viewport": true,
+    "dom_existence_mistaken_for_visibility": true,
+    "hero_omitted_from_geometry": true,
+    "wrong_artifact": false,
+    "other": "pricingUxReady and source-inference hierarchy/density gates treated HTML existence as above-fold visibility; 22rem photo hero and 5rem section padding were excluded from geometry; representative 1366x768/1440x900 scrollY=0 was not measured."
+  },
+  "html_ready": true,
+  "fake_paid_first": false,
+  "start_professional": true,
+  "start_one_deal": true,
+  "prices": {
+    "professional": true,
+    "perDeal": true
+  },
+  "design_system_minimum": {
+    "card_gap_px": 16,
+    "visual_gap_px": 24
+  },
+  "profiles": [
+    {
+      "name": "1366x768",
+      "width": 1366,
+      "height": 768,
+      "scrollY": 0,
+      "viewportHeight": 768,
+      "professionalPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 109.4375,
+        "right": 456.90625,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startFreeTrial": {
+        "top": 417.90625,
+        "bottom": 467.140625,
+        "left": 112.109375,
+        "right": 448.109375,
+        "height": 49.234375,
+        "width": 336
+      },
+      "startProfessional": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 471.171875,
+        "right": 655.96875,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "perDealPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 710.03125,
+        "right": 1057.5,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startOneDeal": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 1071.765625,
+        "right": 1256.5625,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "hero": {
+        "top": 68.1875,
+        "bottom": 294.984375,
+        "left": 0,
+        "right": 1366,
+        "height": 226.796875,
+        "width": 1366
+      },
+      "pricingCardProfessional": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 95,
+        "right": 670.40625,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingCardPerDeal": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 695.59375,
+        "right": 1271,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingGroup": {
+        "top": 303.375,
+        "bottom": 632.265625,
+        "left": 95,
+        "right": 1271,
+        "height": 328.890625,
+        "width": 1176
+      },
+      "nextCommercialPanel": {
+        "top": 657.453125,
+        "bottom": 683.703125,
+        "left": 95,
+        "right": 1271,
+        "height": 26.25,
+        "width": 1176
+      },
+      "siblingGapPx": 25.1875,
+      "pricingGroupToNextSectionGapPx": 25.1875
+    },
+    {
+      "name": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "scrollY": 0,
+      "viewportHeight": 900,
+      "professionalPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 146.4375,
+        "right": 493.90625,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startFreeTrial": {
+        "top": 417.90625,
+        "bottom": 467.140625,
+        "left": 149.109375,
+        "right": 485.109375,
+        "height": 49.234375,
+        "width": 336
+      },
+      "startProfessional": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 508.171875,
+        "right": 692.96875,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "perDealPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 747.03125,
+        "right": 1094.5,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startOneDeal": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 1108.765625,
+        "right": 1293.5625,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "hero": {
+        "top": 68.1875,
+        "bottom": 294.984375,
+        "left": 0,
+        "right": 1440,
+        "height": 226.796875,
+        "width": 1440
+      },
+      "pricingCardProfessional": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 132,
+        "right": 707.40625,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingCardPerDeal": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 732.59375,
+        "right": 1308,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingGroup": {
+        "top": 303.375,
+        "bottom": 632.265625,
+        "left": 132,
+        "right": 1308,
+        "height": 328.890625,
+        "width": 1176
+      },
+      "nextCommercialPanel": {
+        "top": 657.453125,
+        "bottom": 683.703125,
+        "left": 132,
+        "right": 1308,
+        "height": 26.25,
+        "width": 1176
+      },
+      "siblingGapPx": 25.1875,
+      "pricingGroupToNextSectionGapPx": 25.1875
+    },
+    {
+      "name": "founder-chrome-1366x640",
+      "width": 1366,
+      "height": 640,
+      "scrollY": 0,
+      "viewportHeight": 640,
+      "professionalPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 109.4375,
+        "right": 456.90625,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startFreeTrial": {
+        "top": 417.90625,
+        "bottom": 467.140625,
+        "left": 112.109375,
+        "right": 448.109375,
+        "height": 49.234375,
+        "width": 336
+      },
+      "startProfessional": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 471.171875,
+        "right": 655.96875,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "perDealPrice": {
+        "top": 574.53125,
+        "bottom": 599.484375,
+        "left": 710.03125,
+        "right": 1057.5,
+        "height": 24.953125,
+        "width": 347.46875
+      },
+      "startOneDeal": {
+        "top": 561.40625,
+        "bottom": 610.640625,
+        "left": 1071.765625,
+        "right": 1256.5625,
+        "height": 49.234375,
+        "width": 184.796875
+      },
+      "hero": {
+        "top": 68.1875,
+        "bottom": 294.984375,
+        "left": 0,
+        "right": 1366,
+        "height": 226.796875,
+        "width": 1366
+      },
+      "pricingCardProfessional": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 95,
+        "right": 670.40625,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingCardPerDeal": {
+        "top": 539.796875,
+        "bottom": 632.265625,
+        "left": 695.59375,
+        "right": 1271,
+        "height": 92.46875,
+        "width": 575.40625
+      },
+      "pricingGroup": {
+        "top": 303.375,
+        "bottom": 632.265625,
+        "left": 95,
+        "right": 1271,
+        "height": 328.890625,
+        "width": 1176
+      },
+      "nextCommercialPanel": {
+        "top": 657.453125,
+        "bottom": 683.703125,
+        "left": 95,
+        "right": 1271,
+        "height": 26.25,
+        "width": 1176
+      },
+      "siblingGapPx": 25.1875,
+      "pricingGroupToNextSectionGapPx": 25.1875
+    },
+    {
+      "name": "mobile-390x844",
+      "width": 390,
+      "height": 844,
+      "scrollY": 0,
+      "viewportHeight": 844,
+      "professionalPrice": {
+        "top": 640.421875,
+        "bottom": 665.375,
+        "left": 69.03125,
+        "right": 320.953125,
+        "height": 24.953125,
+        "width": 251.921875
+      },
+      "startFreeTrial": {
+        "top": 483.796875,
+        "bottom": 533.03125,
+        "left": 71.703125,
+        "right": 318.28125,
+        "height": 49.234375,
+        "width": 246.578125
+      },
+      "startProfessional": {
+        "top": 687.921875,
+        "bottom": 737.15625,
+        "left": 69.03125,
+        "right": 320.953125,
+        "height": 49.234375,
+        "width": 251.921875
+      },
+      "perDealPrice": {
+        "top": 808.984375,
+        "bottom": 833.9375,
+        "left": 69.03125,
+        "right": 320.953125,
+        "height": 24.953125,
+        "width": 251.921875
+      },
+      "startOneDeal": {
+        "top": 856.484375,
+        "bottom": 905.71875,
+        "left": 69.03125,
+        "right": 320.953125,
+        "height": 49.234375,
+        "width": 251.921875
+      },
+      "hero": {
+        "top": 136.5,
+        "bottom": 304.5,
+        "left": 0,
+        "right": 390,
+        "height": 168,
+        "width": 390
+      },
+      "pricingCardProfessional": {
+        "top": 605.6875,
+        "bottom": 749.0625,
+        "left": 54.59375,
+        "right": 335.390625,
+        "height": 143.375,
+        "width": 280.796875
+      },
+      "pricingCardPerDeal": {
+        "top": 774.25,
+        "bottom": 917.625,
+        "left": 54.59375,
+        "right": 335.390625,
+        "height": 143.375,
+        "width": 280.796875
+      },
+      "pricingGroup": {
+        "top": 312.890625,
+        "bottom": 917.625,
+        "left": 54.59375,
+        "right": 335.390625,
+        "height": 604.734375,
+        "width": 280.796875
+      },
+      "nextCommercialPanel": {
+        "top": 942.8125,
+        "bottom": 995.3125,
+        "left": 54.59375,
+        "right": 335.390625,
+        "height": 52.5,
+        "width": 280.796875
+      },
+      "siblingGapPx": 25.1875,
+      "pricingGroupToNextSectionGapPx": 25.1875
+    }
+  ],
+  "qc": {
+    "InitialViewportCommercialActionGate": {
+      "gate": "InitialViewportCommercialActionGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "AboveFoldCommercialDensityGate": {
+      "gate": "AboveFoldCommercialDensityGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialHeroHeightGate": {
+      "gate": "CommercialHeroHeightGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialPanelSpacingGate": {
+      "gate": "CommercialPanelSpacingGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialVisualHierarchyGate": {
+      "gate": "CommercialVisualHierarchyGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialContentDensityGate": {
+      "gate": "CommercialContentDensityGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialInformationHierarchyGate": {
+      "gate": "CommercialInformationHierarchyGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CustomerFacingLanguageGate": {
+      "gate": "CustomerFacingLanguageGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "MaterialCustomerAdvantageGate": {
+      "gate": "MaterialCustomerAdvantageGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "OfferTruthfulnessGate": {
+      "gate": "OfferTruthfulnessGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "PrimaryCommercialActionViewportGate": {
+      "gate": "PrimaryCommercialActionViewportGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "HeroConversionBalanceGate": {
+      "gate": "HeroConversionBalanceGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "HeroTextReadabilityGate": {
+      "gate": "HeroTextReadabilityGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "ResponsiveHeroGate": {
+      "gate": "ResponsiveHeroGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialWhitespaceBalanceGate": {
+      "gate": "CommercialWhitespaceBalanceGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "PricingPageInformationDepthGate": {
+      "gate": "PricingPageInformationDepthGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialContentRedundancyGate": {
+      "gate": "CommercialContentRedundancyGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "CommercialPageNarrativeGate": {
+      "gate": "CommercialPageNarrativeGate",
+      "result": "PASS",
+      "reasons": []
+    }
+  }
+}

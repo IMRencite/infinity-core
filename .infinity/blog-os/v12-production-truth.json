@@ -1,0 +1,629 @@
+{
+  "collected_at": "2026-09-21T07:37:07.188Z",
+  "now_utc": "2026-09-21T07:37:07.188Z",
+  "sep21_due": "2026-09-22T03:59:59.000Z",
+  "sep21_decision_cutoff": "2026-09-21T16:00:00.000Z",
+  "cutoff_passed": false,
+  "hq": {
+    "project": {
+      "id": "prj_AVa1EK79vagoOB8PEtzWAQZTX0xI",
+      "name": "infinity-hq",
+      "framework": "nextjs",
+      "autoAssignCustomDomains": true,
+      "ssoProtection": {
+        "deploymentType": "all_except_custom_domains"
+      },
+      "productionTarget": {
+        "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+        "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+        "alias": [
+          "infinity-hq-infinite-media-resources-imr.vercel.app"
+        ]
+      }
+    },
+    "domain_alias": {
+      "alias": "hq.imros.io",
+      "deploymentId": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty"
+    },
+    "latest_any": {
+      "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+      "name": "infinity-hq",
+      "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+      "state": "ERROR",
+      "target": "production",
+      "created": "2026-09-20T16:01:29.223Z",
+      "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/AgYvu7v8rca3cSht3G7mzKtsCrX5"
+    },
+    "latest_production_attempt": {
+      "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+      "name": "infinity-hq",
+      "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+      "state": "ERROR",
+      "target": "production",
+      "created": "2026-09-20T16:01:29.223Z",
+      "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/AgYvu7v8rca3cSht3G7mzKtsCrX5"
+    },
+    "latest_ready_production": {
+      "id": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty",
+      "name": "infinity-hq",
+      "url": "infinity-rb60kzsfo-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "created": "2026-09-20T09:11:28.902Z",
+      "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/4NJUPRcDm5KdpJoYgnP4Lqbz8Fty"
+    },
+    "failed_production_attempts": [
+      {
+        "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+        "name": "infinity-hq",
+        "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T16:01:29.223Z",
+        "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/AgYvu7v8rca3cSht3G7mzKtsCrX5"
+      },
+      {
+        "id": "dpl_F22D3x4mP5Fuj4kcknhsL6CsDNVo",
+        "name": "infinity-hq",
+        "url": "infinity-44flq71rp-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T09:05:34.923Z",
+        "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/F22D3x4mP5Fuj4kcknhsL6CsDNVo"
+      },
+      {
+        "id": "dpl_J1u2oBdiCwqvfcAs6mABvsCmN4Bk",
+        "name": "infinity-hq",
+        "url": "infinity-couwk8vv4-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T08:13:11.308Z",
+        "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/J1u2oBdiCwqvfcAs6mABvsCmN4Bk"
+      },
+      {
+        "id": "dpl_3XqgANYXHk1pYp2yo8QGWLLADh71",
+        "name": "infinity-hq",
+        "url": "infinity-nd18mjwf3-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T07:58:21.346Z",
+        "source": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-hq/3XqgANYXHk1pYp2yo8QGWLLADh71"
+      }
+    ],
+    "cron_api": {
+      "/v1/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/crons": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v9/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/crons": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v1/integrations/cron-jobs?projectId=prj_AVa1EK79vagoOB8PEtzWAQZTX0xI": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v1/crons?projectId=prj_AVa1EK79vagoOB8PEtzWAQZTX0xI": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      }
+    },
+    "inspected": [
+      {
+        "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+        "state": "ERROR",
+        "target": "production",
+        "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+        "created": "2026-09-20T16:01:29.223Z",
+        "gitSha": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "gitDirty": {
+          "githubCommitAuthorName": "IMRencite",
+          "githubCommitAuthorEmail": "infinitemediaresources@gmail.com",
+          "githubCommitMessage": "Checkpoint venture sales floor foundation",
+          "githubCommitOrg": "IMRencite",
+          "githubCommitRef": "master",
+          "githubCommitRepo": "infinity-core",
+          "githubCommitSha": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+          "githubDeployment": "1",
+          "githubOrg": "IMRencite",
+          "githubRepo": "infinity-core",
+          "gitDirty": "1",
+          "gitRootDirectory": "",
+          "actor": "cursor-cli",
+          "bundler": "turbopack"
+        },
+        "files_status": 200,
+        "organic_tick": "YES",
+        "communication_tick": "YES",
+        "qc_v3": "NO",
+        "durable_blog": "NO"
+      },
+      {
+        "id": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty",
+        "state": "READY",
+        "target": "production",
+        "url": "infinity-rb60kzsfo-infinite-media-resources-imr.vercel.app",
+        "created": "2026-09-20T09:11:28.902Z",
+        "gitSha": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+        "gitDirty": {
+          "githubCommitAuthorName": "IMRencite",
+          "githubCommitAuthorEmail": "infinitemediaresources@gmail.com",
+          "githubCommitMessage": "Checkpoint venture sales floor foundation",
+          "githubCommitOrg": "IMRencite",
+          "githubCommitRef": "master",
+          "githubCommitRepo": "infinity-core",
+          "githubCommitSha": "0eb2cc70adcc98b115088a3ef118715e9bd63b80",
+          "githubDeployment": "1",
+          "githubOrg": "IMRencite",
+          "githubRepo": "infinity-core",
+          "gitDirty": "1",
+          "gitRootDirectory": "",
+          "actor": "cursor-cli",
+          "lambdaRuntimeStats": "{\"nodejs\":7}",
+          "bundler": "turbopack"
+        },
+        "files_status": 200,
+        "organic_tick": "YES",
+        "communication_tick": "YES",
+        "qc_v3": "NO",
+        "durable_blog": "NO"
+      }
+    ],
+    "aliases": [
+      {
+        "alias": "hq.imros.io",
+        "deploymentId": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty"
+      },
+      {
+        "alias": "infinity-hq-one.vercel.app",
+        "deploymentId": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty"
+      },
+      {
+        "alias": "infinity-hq-infinite-media-resources-imr.vercel.app",
+        "deploymentId": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty"
+      }
+    ]
+  },
+  "runtime": {
+    "project": {
+      "id": "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox",
+      "name": "infinity-runtime",
+      "framework": "nextjs",
+      "autoAssignCustomDomains": false,
+      "ssoProtection": null,
+      "productionTarget": {
+        "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+        "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+        "alias": [
+          "infinity-runtime.vercel.app",
+          "infinity-runtime-infinite-media-resources-imr.vercel.app"
+        ]
+      }
+    },
+    "domain_alias": {
+      "alias": "infinity-runtime.vercel.app",
+      "deploymentId": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS"
+    },
+    "latest_any": {
+      "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+      "name": "infinity-runtime",
+      "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "created": "2026-09-21T02:46:48.497Z",
+      "source": null,
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/8sX5jqiu7YUPox4gJoto3td6f5mS"
+    },
+    "latest_production_attempt": {
+      "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+      "name": "infinity-runtime",
+      "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "created": "2026-09-21T02:46:48.497Z",
+      "source": null,
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/8sX5jqiu7YUPox4gJoto3td6f5mS"
+    },
+    "latest_ready_production": {
+      "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+      "name": "infinity-runtime",
+      "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "target": "production",
+      "created": "2026-09-21T02:46:48.497Z",
+      "source": null,
+      "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/8sX5jqiu7YUPox4gJoto3td6f5mS"
+    },
+    "failed_production_attempts": [
+      {
+        "id": "dpl_Ed4pzjtPWuJhGmn7MjpBLWU4ko6n",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-95zcqemf9-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:56:29.652Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/Ed4pzjtPWuJhGmn7MjpBLWU4ko6n"
+      },
+      {
+        "id": "dpl_4aEQd45Wk5CTacBStEKfbTYLAYaK",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-ra8w28t5k-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:54:18.509Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/4aEQd45Wk5CTacBStEKfbTYLAYaK"
+      },
+      {
+        "id": "dpl_BZsJJkJU9PBUTo5GGrMo6uuLTHdM",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-5v28614x3-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:46:09.885Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/BZsJJkJU9PBUTo5GGrMo6uuLTHdM"
+      },
+      {
+        "id": "dpl_4oHmPef3tFq2pWzc2V2jPaf8xaPa",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-9zlmeyjuc-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:19:30.340Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/4oHmPef3tFq2pWzc2V2jPaf8xaPa"
+      },
+      {
+        "id": "dpl_29fTDAEeu5MYhFELA9s5vREqZtGZ",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-5ui6o2etq-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:15:05.017Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/29fTDAEeu5MYhFELA9s5vREqZtGZ"
+      },
+      {
+        "id": "dpl_HUi4gqvjbSospJwdfxXPNJcyZNh3",
+        "name": "infinity-runtime",
+        "url": "infinity-runtime-lvkliffsc-infinite-media-resources-imr.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "created": "2026-09-20T17:11:49.151Z",
+        "source": null,
+        "inspectorUrl": "https://vercel.com/infinite-media-resources-imr/infinity-runtime/HUi4gqvjbSospJwdfxXPNJcyZNh3"
+      }
+    ],
+    "cron_api": {
+      "/v1/projects/prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox/crons": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v9/projects/prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox/crons": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v1/integrations/cron-jobs?projectId=prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      },
+      "/v1/crons?projectId=prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox": {
+        "status": 404,
+        "ok": false,
+        "keys": [
+          "error"
+        ],
+        "count": null,
+        "sample": null
+      }
+    },
+    "inspected": [
+      {
+        "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+        "state": "READY",
+        "target": "production",
+        "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+        "created": "2026-09-21T02:46:48.497Z",
+        "gitSha": null,
+        "gitDirty": {
+          "actor": "cursor-cli",
+          "lambdaRuntimeStats": "{\"nodejs\":3}",
+          "purpose": "COMMUNICATION_CRON_OUTAGE_RESTORE_KNOWN_GOOD",
+          "originalDeploymentId": "dpl_6saLKJDLFKFhPoscmEhTW9QdhHeo"
+        },
+        "files_status": 200,
+        "organic_tick": "NO",
+        "communication_tick": "YES",
+        "qc_v3": "NO",
+        "durable_blog": "NO"
+      }
+    ],
+    "aliases": [
+      {
+        "alias": "infinity-runtime-infinite-media-resources-imr.vercel.app",
+        "deploymentId": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS"
+      },
+      {
+        "alias": "infinity-runtime.vercel.app",
+        "deploymentId": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS"
+      }
+    ]
+  },
+  "source_crons": [
+    {
+      "path": "/api/runtime/communication-tick",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/runtime/communication-observer",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/runtime/organic-tick",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/runtime/tick",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/runtime/venture-operating-cycle",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/runtime/daily-improvement",
+      "schedule": "0 6 * * *"
+    }
+  ],
+  "gmail_production": {
+    "used": "PRODUCTION_VERCEL_ENV",
+    "credential_fingerprint": "2c60da8a2c79",
+    "client_fingerprint": "fc119022f217",
+    "local_token_fingerprint": "ec7f90693f6c",
+    "local_is_revoked_forensic": true,
+    "local_matches_production": false,
+    "token_exchange": "PASS",
+    "token_http_status": 200,
+    "google_error": null,
+    "google_error_description": null,
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.readonly",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "openid",
+      "https://www.googleapis.com/auth/gmail.send",
+      "email"
+    ],
+    "probes": [
+      {
+        "label": "users.getProfile",
+        "ok": true,
+        "status": 200,
+        "error": null,
+        "result_keys": [
+          "emailAddress",
+          "messagesTotal",
+          "threadsTotal",
+          "historyId"
+        ],
+        "messages_count": null,
+        "history_count": null,
+        "emailAddress_present": true,
+        "historyId_present": true,
+        "id_present": false
+      },
+      {
+        "label": "messages.get_known",
+        "ok": true,
+        "status": 200,
+        "error": null,
+        "result_keys": [
+          "id",
+          "threadId",
+          "labelIds",
+          "snippet",
+          "payload",
+          "sizeEstimate",
+          "historyId",
+          "internalDate"
+        ],
+        "messages_count": null,
+        "history_count": null,
+        "emailAddress_present": false,
+        "historyId_present": true,
+        "id_present": true
+      },
+      {
+        "label": "messages.list_max1",
+        "ok": true,
+        "status": 200,
+        "error": null,
+        "result_keys": [
+          "messages",
+          "nextPageToken",
+          "resultSizeEstimate"
+        ],
+        "messages_count": 1,
+        "history_count": null,
+        "emailAddress_present": false,
+        "historyId_present": false,
+        "id_present": false
+      },
+      {
+        "label": "messages.list_label_INBOX",
+        "ok": true,
+        "status": 200,
+        "error": null,
+        "result_keys": [
+          "messages",
+          "nextPageToken",
+          "resultSizeEstimate"
+        ],
+        "messages_count": 1,
+        "history_count": null,
+        "emailAddress_present": false,
+        "historyId_present": false,
+        "id_present": false
+      },
+      {
+        "label": "messages.list_time_query",
+        "ok": true,
+        "status": 200,
+        "error": null,
+        "result_keys": [
+          "messages",
+          "nextPageToken",
+          "resultSizeEstimate"
+        ],
+        "messages_count": 5,
+        "history_count": null,
+        "emailAddress_present": false,
+        "historyId_present": false,
+        "id_present": false
+      },
+      {
+        "label": "history.list",
+        "ok": false,
+        "status": 404,
+        "error": {
+          "error": {
+            "code": 404,
+            "message": "Requested entity was not found.",
+            "errors": [
+              {
+                "message": "Requested entity was not found.",
+                "domain": "global",
+                "reason": "notFound"
+              }
+            ],
+            "status": "NOT_FOUND"
+          },
+          "error_description": null,
+          "status": null
+        },
+        "result_keys": [
+          "error"
+        ],
+        "messages_count": null,
+        "history_count": null,
+        "emailAddress_present": false,
+        "historyId_present": false,
+        "id_present": false
+      }
+    ],
+    "env_presence": {
+      "GMAIL_OAUTH_CLIENT_ID": {
+        "list_status": 200,
+        "present": true,
+        "fingerprint": "fc119022f217",
+        "decrypt_status": 200,
+        "targets": [
+          {
+            "target": [
+              "production",
+              "preview",
+              "development"
+            ],
+            "fingerprint": "fc119022f217",
+            "present": true
+          }
+        ]
+      },
+      "GMAIL_OAUTH_CLIENT_SECRET": {
+        "list_status": 200,
+        "present": true,
+        "fingerprint": "18522534b93e",
+        "decrypt_status": 200,
+        "targets": [
+          {
+            "target": [
+              "production",
+              "preview",
+              "development"
+            ],
+            "fingerprint": "18522534b93e",
+            "present": true
+          }
+        ]
+      },
+      "GMAIL_OAUTH_REFRESH_TOKEN": {
+        "list_status": 200,
+        "present": true,
+        "fingerprint": "2c60da8a2c79",
+        "decrypt_status": 200,
+        "targets": [
+          {
+            "target": [
+              "production",
+              "preview",
+              "development"
+            ],
+            "fingerprint": "2c60da8a2c79",
+            "present": true
+          }
+        ]
+      },
+      "GMAIL_SENDER_EMAIL": {
+        "list_status": 200,
+        "present": true,
+        "fingerprint": "d6deabc7aaa0",
+        "decrypt_status": 200,
+        "targets": [
+          {
+            "target": [
+              "production",
+              "preview",
+              "development"
+            ],
+            "fingerprint": "d6deabc7aaa0",
+            "present": true
+          }
+        ]
+      }
+    }
+  },
+  "note": "Local revoked forensic token is not used as Production Gmail evidence."
+}

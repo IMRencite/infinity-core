@@ -154,7 +154,7 @@ describe("Systems Architect HQ Room V1", () => {
     expect(view?.paymentArchitecture).toMatch(/SUBSCRIPTION|BILLING/);
     expect(view?.ventureName).toBe("AI SEO Website Platform");
     expect(view?.businessModel).toBe("SAAS");
-    expect(view?.monetizationLabel.toLowerCase()).toMatch(/subscription/);
+    expect(view?.monetizationLabel?.toLowerCase()).toMatch(/subscription/);
     expect(view?.architectureStatusShort).toBeTruthy();
     expect(VENTURE_SYSTEMS_WRITE_BOUNDARY.crmWrites).toBe(0);
     expect(VENTURE_SYSTEMS_WRITE_BOUNDARY.paidSubscriptions).toBe(0);

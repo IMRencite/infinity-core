@@ -189,6 +189,7 @@ describe.runIf(RUN)("Prepare live launch approval packet v1", () => {
       repoSlug,
       buildId: assembly.buildId!,
       buildSnapshotId: assembly.buildSnapshotId!,
+      productionArtifactId: assembly.productionArtifactId!,
       artifactHash: chosen.artifactHash!,
       ownerLogin: owner,
     });

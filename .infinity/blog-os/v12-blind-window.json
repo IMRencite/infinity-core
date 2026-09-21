@@ -1,0 +1,23 @@
+{
+  "collected_at": "2026-09-21T07:55:01.152Z",
+  "window_start": "2026-09-20T23:35:31.322Z",
+  "window_end": "2026-09-21T07:55:01.153Z",
+  "credential_fingerprint": "2c60da8a2c79",
+  "mailbox_fingerprint": "d6deabc7aaa0",
+  "profile_ok": true,
+  "history_with_profile_id": {
+    "ok": true,
+    "status": 200,
+    "error": null
+  },
+  "discovered": 5,
+  "counts": {
+    "UNKNOWN_EXTERNAL": 5
+  },
+  "known_inbound_present": false,
+  "real_external_prospect": 0,
+  "unknown_external": 5,
+  "founder_test": 0,
+  "system": 0,
+  "known_probe": 0
+}

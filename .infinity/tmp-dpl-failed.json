@@ -1,0 +1,44 @@
+﻿{
+  "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+  "name": "infinity-hq",
+  "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+  "target": "production",
+  "readyState": "ERROR",
+  "createdAt": 1789920089223,
+  "duration": {
+    "startTime": 1789920090278,
+    "endTime": 1789920222031,
+    "endTimeCapped": 1789920222031,
+    "timeToReady": 124133,
+    "timeToContainerExit": 131753,
+    "timeToContainerExitCapped": 131753,
+    "timeForBilling": 180000,
+    "cpuTimeForBilling": 720000
+  },
+  "buildMachine": {
+    "cores": 4,
+    "memory": 8192,
+    "machine": "standard",
+    "selectionType": "elastic",
+    "selectionSource": "elastic-algorithm"
+  },
+  "aliases": [
+    "infinity-hq-infinite-media-resources-imr.vercel.app"
+  ],
+  "builds": [
+    {
+      "id": "bld_5uajbc8h3",
+      "deploymentId": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+      "entrypoint": ".",
+      "readyState": "READY",
+      "readyStateAt": 1789920088860,
+      "createdAt": 1789920088860,
+      "createdIn": "sfo1",
+      "use": "@vercel/vc-build",
+      "config": {},
+      "output": [],
+      "fingerprint": null
+    }
+  ],
+  "contextName": "infinite-media-resources-imr"
+}

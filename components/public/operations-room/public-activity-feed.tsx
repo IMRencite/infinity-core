@@ -3,7 +3,7 @@ import styles from "./operations-room.module.css";
 
 export function PublicActivityFeed({ departments }: { departments: PublicDepartmentProjection[] }) {
   return (
-    <section className={styles.feed} aria-label="Current public activity">
+    <section className={`${styles.feed} ${styles.commandFeed}`} aria-label="Current public activity">
       <h2 className={styles.roomTitle}>Current Public Activity</h2>
       <ul className={styles.feedList}>
         {departments.map((row) => (

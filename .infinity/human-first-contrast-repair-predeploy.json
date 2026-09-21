@@ -1,0 +1,63 @@
+{
+  "artifactId": "art_e6d2a3a1f46d117d61c9",
+  "digest": "e2e6f4cfa69d931b6ce5aec44fbae923e5db48b933d91006997da2dd4c68c180",
+  "digestParity": "PASS",
+  "identity": "PASS",
+  "routes": 93,
+  "ready": "FOUNDER_VISUAL_REVIEW_READY",
+  "remaining": 0,
+  "rendered": "PASS",
+  "browserRendered": "PASS",
+  "headings": "PASS",
+  "trustedSources": "PASS",
+  "trustedSourcesLinks": "PASS",
+  "trustedSourcesBody": "PASS",
+  "missingMandatorySamples": 0,
+  "camRouteSampled": "YES",
+  "camHeadingSample": {
+    "role": "trusted_sources_title",
+    "surfaceRole": "SUBTLE",
+    "componentRole": "trusted_sources_title",
+    "color": "rgb(21, 32, 51)",
+    "background": "rgb(243, 246, 249)",
+    "contrast": 15.05,
+    "luminance": 0.014
+  },
+  "camLinkSample": {
+    "role": "trusted_sources_link",
+    "surfaceRole": "SUBTLE",
+    "componentRole": "trusted_sources_link",
+    "color": "rgb(29, 78, 137)",
+    "background": "rgb(243, 246, 249)",
+    "contrast": 7.73,
+    "luminance": 0.075
+  },
+  "camBodySample": {
+    "role": "trusted_sources_body",
+    "surfaceRole": "SUBTLE",
+    "componentRole": "trusted_sources_body",
+    "color": "rgb(21, 32, 51)",
+    "background": "rgb(243, 246, 249)",
+    "contrast": 15.05,
+    "luminance": 0.014
+  },
+  "paleTitlesOnLight": 0,
+  "unscopedEmphasisLeaks": 0,
+  "lightModulesOutsideCta": true,
+  "founderTokenOnly": "PASS",
+  "founderRendered": "FAIL",
+  "humanFirstFixtures": "PASS",
+  "readability": "PASS",
+  "activeVoice": "PASS",
+  "fourthGrade": "PASS",
+  "viewportPass": {
+    "390": "PASS",
+    "1024": "PASS",
+    "1280": "PASS",
+    "1440": "PASS"
+  },
+  "overflow": 0,
+  "shots": 140,
+  "newDeterministicFailures": 0,
+  "overall": "PASS"
+}

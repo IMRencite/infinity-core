@@ -13,6 +13,7 @@ export type OperatorOrgContext = {
 
 export type OperatorOrgContextResult =
   | { status: "ok"; context: OperatorOrgContext }
+  | { status: "unauthenticated" }
   | { status: "no_membership" }
   | { status: "error"; code: string | null; message: string };
 
@@ -31,7 +32,7 @@ export async function getOperatorOrgContext(): Promise<OperatorOrgContextResult>
         },
       };
     }
-    return { status: "no_membership" };
+    return { status: "unauthenticated" };
   }
 
   const membership = await lookupOrganizationMembership(supabase, user.id);

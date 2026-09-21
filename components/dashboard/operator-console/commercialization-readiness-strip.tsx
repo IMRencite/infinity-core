@@ -45,7 +45,7 @@ export function CommercializationReadinessStrip({ snapshot, inspectArtifact = nu
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {PROVIDER_ORDER.map((title, index) => {
             const artifact = ordered[index];
-            const status = artifact ? String(artifact.metadata.displayStatus ?? "NOT CONFIGURED") : "NOT CONFIGURED";
+            const status = artifact ? String(artifact.metadata.displayStatus ?? "UNKNOWN") : "UNKNOWN";
             const onInspect =
               artifact && inspector
                 ? () => inspector.openInspector(artifact)
@@ -64,8 +64,11 @@ export function CommercializationReadinessStrip({ snapshot, inspectArtifact = nu
                 className="rounded border border-zinc-800/80 bg-zinc-950/40 px-2 py-1.5 text-left disabled:opacity-70"
               >
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{title}</p>
-                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-200">{status}</p>
-                <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600">Not write enabled</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-200 break-words">{status}</p>
+                <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600 break-words">
+                  {artifact ? String(artifact.metadata.mutationAuthority ?? "GOVERNED") : "UNKNOWN"}
+                  {artifact?.metadata.scope ? ` · ${String(artifact.metadata.scope)}` : ""}
+                </p>
               </button>
             );
           })}

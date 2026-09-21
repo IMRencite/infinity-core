@@ -1,0 +1,10 @@
+{
+  "qcVersion": "GLOBAL_PAYMENT_PATH_ASSURANCE_V1",
+  "occupancynpv": {
+    "founderCheckoutReview": "PASS",
+    "paymentPath": "PASS",
+    "fulfillment": "PASS",
+    "incident": "RESOLVED"
+  },
+  "persistedAt": "2026-09-16T08:31:05.166Z"
+}

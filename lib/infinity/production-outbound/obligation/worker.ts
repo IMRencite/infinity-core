@@ -22,6 +22,8 @@ import { evaluateNoEchoInvariant, resolveAuthorship, systemAuthorshipWins } from
 import { COMMUNICATION_OBLIGATION_AGE_SLO_MS, COMMUNICATION_OBLIGATION_CUTOVER_THREAD_ID, getCommunicationCutoverEpochValue, isCommunicationProviderSendFrozen, STRANDED_FOUNDER_TRIAL_INBOUND_ID } from "./cutover";
 import { casOwnership, ensureOwnershipRow, getOwnershipClaim } from "./ownership-claim";
 import type { CommunicationAttempt, CommunicationObligation } from "./types";
+import { classifyBlackBoxProbeTurn, isBlackBoxProbeMessage } from "./blackbox-probe";
+import { isAbandonedFounderTrial } from "./stakes";
 
 export type ObligationWorkerSendResult = {
   accepted: boolean;
@@ -85,6 +87,7 @@ export function ingestProviderMessage(input: {
   custom_header?: string | null;
   from_self?: boolean;
   same_mailbox_test_mode?: boolean;
+  subject?: string | null;
 }): { obligation: CommunicationObligation | null; inserted: boolean; authorship: ReturnType<typeof resolveAuthorship>; no_echo: ReturnType<typeof evaluateNoEchoInvariant> } {
   const mailbox = input.mailbox_id ?? DEFAULT_MAILBOX;
   const authorship = resolveAuthorship({
@@ -131,6 +134,12 @@ export function ingestProviderMessage(input: {
     ingested.obligation.recovered = true;
     ingested.obligation.clean_eligible = false;
     ingested.obligation.recovery_reason_codes = inherited.reasons;
+  }
+  if (isBlackBoxProbeMessage({ subject: input.subject, custom_header: input.custom_header }) && ingested.obligation) {
+    const probe = classifyBlackBoxProbeTurn();
+    ingested.obligation.recovered = probe.recovered;
+    ingested.obligation.clean_eligible = probe.clean_eligible;
+    ingested.obligation.recovery_reason_codes = [...new Set([...(ingested.obligation.recovery_reason_codes ?? []), "BLACKBOX_PROBE_EXCLUDED"])];
   }
   return { obligation: ingested.obligation, inserted: ingested.status === "INSERTED", authorship, no_echo };
 }
@@ -476,6 +485,9 @@ export async function executeCommunicationObligationWorker(input: {
     if (!claimed.ok) {
       return { obligation: current, attempt, sent: false, recovered: false, plan, body };
     }
+  }
+  if (current.provider_message_id === STRANDED_FOUNDER_TRIAL_INBOUND_ID && isAbandonedFounderTrial(current.provider_message_id) && !process.env.VITEST) {
+    return { obligation: current, attempt, sent: false, recovered: true, plan, body };
   }
   if (current.provider_message_id === STRANDED_FOUNDER_TRIAL_INBOUND_ID && !process.env.VITEST) {
     const inherited = inheritIncidentOntoObligation({

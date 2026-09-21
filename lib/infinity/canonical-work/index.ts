@@ -144,12 +144,26 @@ export {
 export {
   IMPLEMENTATION_SESSION_PATH,
   completeObservedImplementationWork,
+  extractHookCommand,
+  extractHookFile,
   extractHookObjective,
+  extractHookTool,
+  extractLatestUserQuery,
+  firstLiveSentence,
   headlineFromObjective,
+  latestUserObjectiveFromTranscripts,
+  liveImplementationSentence,
   inferImplementationTitle,
   isInfinityMissionHeadline,
+  isShortFollowUp,
   pulseCurrentImplementationWork,
   rememberImplementationObjective,
   resetImplementationSession,
   shouldObserveImplementationFile,
 } from "./implementation-observe";
+export {
+  HQ_CURRENT_IMPLEMENTATION_SCOPE,
+  applyRemoteCurrentImplementationWork,
+  hydrateRemoteCurrentImplementationWork,
+  persistRemoteCurrentImplementationWork,
+} from "./remote-persist";

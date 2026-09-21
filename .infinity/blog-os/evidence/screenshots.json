@@ -1,0 +1,10 @@
+{
+  "collected_at": "2026-09-21T05:29:05.580Z",
+  "canary": "https://occupancynpv.com/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/",
+  "shots": [
+    "known-bad-cta-desktop.png",
+    "canary-live-desktop.png",
+    "canary-live-tablet.png",
+    "canary-live-mobile.png"
+  ]
+}

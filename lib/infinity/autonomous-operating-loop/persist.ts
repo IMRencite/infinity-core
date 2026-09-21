@@ -1,9 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { durableLocalPersistEnabled } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import { AUTONOMOUS_DAILY_OPERATING_LOOP, AUTONOMOUS_LOOP_STATE_PATH } from "./types";
 import type { AutonomousLoopPersistedState } from "./types";
 
 function persistEnabled(): boolean {
+  if (!durableLocalPersistEnabled()) return false;
   if (process.env.VITEST && process.env.INFINITY_AUTONOMOUS_LOOP_PERSIST !== "1") return false;
   return true;
 }

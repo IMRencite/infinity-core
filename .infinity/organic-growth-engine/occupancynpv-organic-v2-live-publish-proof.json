@@ -1,0 +1,137 @@
+{
+  "generated_at": "2026-09-17T04:42:29.914Z",
+  "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+  "venture_key": "occupancynpv",
+  "question": "How is cap rate calculated?",
+  "url": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+  "live_url": "https://occupancynpv.com/commercial-lease-npv/how-is-cap-rate-calculated",
+  "content_type": "EVERGREEN_QUESTION",
+  "score": 68.1,
+  "duplicate": {
+    "outcome": "CREATE_NEW",
+    "existing_url": null,
+    "reason": "No existing intent page"
+  },
+  "match": {
+    "state": "UNANSWERED",
+    "url": null
+  },
+  "gates": {
+    "quality": {
+      "gate": "OrganicContentQualityGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "evidence": {
+      "gate": "OrganicEvidenceGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "url": {
+      "gate": "OrganicURLHierarchyGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "links": {
+      "gate": "OrganicInternalLinkGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "technical": {
+      "gate": "OrganicTechnicalSEOGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "authorization": {
+      "gate": "OrganicPublishingAuthorizationGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "live_publishing": {
+      "gate": "OrganicLivePublishingGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "live_url_truth": {
+      "gate": "OrganicLiveURLTruthGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "persistence": {
+      "gate": "OrganicPublicationPersistenceGate",
+      "result": "PASS",
+      "reasons": [
+        "published_asset_present"
+      ]
+    },
+    "sales": {
+      "gate": "OrganicSalesAssetAvailabilityGate",
+      "result": "PASS",
+      "reasons": [
+        "/commercial-lease-npv/how-is-cap-rate-calculated/"
+      ]
+    }
+  },
+  "deploy": {
+    "adapter": "occupancynpv_vercel_source_bundle",
+    "deployed": true,
+    "aliased": true,
+    "status": 200,
+    "safe_error": null,
+    "deployment_id": "dpl_Hhb62H81xakGDo9uYmBpVJ2jPRea",
+    "file_count": 165
+  },
+  "sales_lookup": {
+    "asset": {
+      "asset_id": "organic-v2-live-cap-rate",
+      "venture_id": "occupancynpv",
+      "url": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+      "title": "How is cap rate calculated? — OccupancyNPV",
+      "content_type": "EVERGREEN_QUESTION",
+      "topic": "Cap Rates",
+      "cluster": "commercial-lease-npv",
+      "question_answered": "How is cap rate calculated?",
+      "intent": "cap rate",
+      "status": "PUBLISHED",
+      "published_at": "2026-09-17T04:42:29.914Z",
+      "updated_at": "2026-09-17T04:42:29.914Z",
+      "quality_score": 90,
+      "evidence_status": "PASS",
+      "internal_links": [
+        "/commercial-lease-npv/",
+        "/commercial-lease-npv/what-is-npv-in-a-commercial-lease/",
+        "/occupancy-costs/what-is-cam-in-a-commercial-lease/",
+        "/compare-commercial-leases"
+      ],
+      "taxonomy": {
+        "categories": [
+          "Valuation"
+        ],
+        "tags": [
+          "cap-rate",
+          "commercial-real-estate"
+        ]
+      },
+      "sales_relevance": 0.9,
+      "objections_addressed": [
+        "cap rate confused with lease NPV"
+      ],
+      "indexation": "published"
+    },
+    "demand": false
+  },
+  "outbound_eligible": true,
+  "performance": {
+    "cluster_priority_boosts": [],
+    "velocity_adjustment": "HOLD",
+    "investigations": [],
+    "refresh_urls": []
+  },
+  "observations": 1,
+  "indexation": "PUBLISHED / DISCOVERY_PENDING / INDEXATION_UNKNOWN",
+  "velocity": {
+    "current": 1,
+    "recommended": 1
+  },
+  "published": true
+}

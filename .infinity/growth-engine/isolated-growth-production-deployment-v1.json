@@ -1,0 +1,22 @@
+{
+  "mission": "OCCUPANCYNPV_ISOLATED_GROWTH_PRODUCTION_DEPLOYMENT_V1",
+  "performed": false,
+  "reason": "GROWTH_PRODUCTION_TARGET_VERIFICATION_REQUIRED",
+  "officialArtifactDigest": "bc4df75949dc80859df92ecec583d258da016d895f7c4d08cec50101e0d2f433",
+  "promptExpectedDigestTypo": "bc4df75949dc80859df92ecec583d258da016d8957c4d08cec50101e0d2f433",
+  "digestDifference": "prior report mistyped one hex nibble (7 vs f); overlay and baseline unchanged",
+  "sourcePath": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\infinity-occupancynpv-growth-artifact-v1",
+  "dirtyTreeDeployed": false,
+  "vercelTeam": "infinite-media-resources-imr",
+  "projectsInspected": 7,
+  "verifiedInfinityRuntimeProject": null,
+  "rejectedTargets": {
+    "occupancynpvCustomer": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+    "askReviewPreview": "prj_O2rAkJ7F0DENcm2sFyhAluK7PiXg",
+    "historicalTest": "prj_188YspuXKKVurXCf2lxnP4ywyggg"
+  },
+  "externalSends": 0,
+  "sourceCycleExecuted": false,
+  "askReviewAdvanced": false,
+  "secretValuesPrinted": false
+}

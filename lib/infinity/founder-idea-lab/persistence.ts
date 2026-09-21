@@ -70,6 +70,8 @@ type ScoresEnvelope = {
   buildReady?: boolean;
   explainability?: FounderIdeaGrade["explainability"];
   comparableEconomics?: FounderIdeaGrade["comparableEconomics"];
+  revenueModel?: FounderIdeaGrade["revenueModel"];
+  benchmarkEconomics?: FounderIdeaGrade["benchmarkEconomics"];
   evaluationHistory?: HistoricalGradeSnapshot[];
   scoringInputs?: FounderIdeaGrade["opportunityScores"] extends infer T
     ? T extends { scoringInputs: infer S }
@@ -134,6 +136,8 @@ export function submissionToRow(
       buildReady: grade?.buildReady ?? false,
       explainability: grade?.explainability ?? null,
       comparableEconomics: grade?.comparableEconomics ?? null,
+      revenueModel: grade?.revenueModel ?? null,
+      benchmarkEconomics: grade?.benchmarkEconomics ?? null,
       evaluationHistory,
     },
     blocking_assumptions: grade?.evaluation?.blockingAssumptions ?? [],
@@ -226,6 +230,8 @@ export function hydrateFounderStore(
         monetizationLayers: envelope?.monetizationLayers ?? emptyMonetizationLayers(),
         explainability: envelope?.explainability ?? null,
         comparableEconomics: envelope?.comparableEconomics ?? null,
+        revenueModel: envelope?.revenueModel ?? null,
+        benchmarkEconomics: envelope?.benchmarkEconomics ?? null,
       });
       if (envelope?.evaluationHistory?.length) {
         store.evaluationHistory.set(submission.id, envelope.evaluationHistory);

@@ -160,6 +160,9 @@ describe("founder intelligence frontend v1", () => {
     const inspector = buildArtifactInspectorModel(founder!, artifacts.opportunity_lab ?? []);
     const detail = buildEntityDetail(inspector);
     expect(detail.availableTabs[0]).toBe("intelligence");
+    expect(detail.availableTabs[1]).toBe("money");
+    expect(detail.intelligence.sections.some((section) => section.id === "intelligence-money-summary")).toBe(true);
+    expect(detail.intelligence.sections.some((section) => section.id === "money-summary")).toBe(false);
     expect(detail.decision).toBe("HOLD");
     expect(detail.decisionWhy).toMatch(/HOLD|52\.94|58/);
 

@@ -10,6 +10,7 @@ import {
 } from "./build-snapshot";
 import { loadRawEngineData, loadVentureContext } from "./load-raw-data";
 import { enrichOperatorSnapshot } from "./enrich-snapshot";
+import { prepareHqMissionActivityProjection } from "@/lib/infinity/mission-activity/hq-live-projection";
 import { sanitizeOperatorSnapshot } from "./sanitize";
 import {
   countCompletedStages,
@@ -25,6 +26,8 @@ import {
 } from "./load-venture-display-names";
 import { classifyVentureForPortfolio } from "./portfolio/venture-classification";
 import { resolveVentureDisplay } from "./resolve-venture-display-name";
+import { mergeCanonicalVenturesIntoHqList } from "@/lib/infinity/venture-operating-scale/hq-venture-registry";
+import { buildCanonicalOperatorSnapshot } from "@/lib/infinity/hq-inspection-identity/canonical-snapshot";
 import type { DepartmentId, OperatorVentureListItem, OperatorVentureSnapshot } from "./types";
 
 export async function loadOperatorVentureSnapshot(
@@ -33,7 +36,9 @@ export async function loadOperatorVentureSnapshot(
   ventureAssemblyId: string,
 ): Promise<OperatorVentureSnapshot | null> {
   const venture = await loadVentureContext(admin, organizationId, ventureAssemblyId);
-  if (!venture) return null;
+  if (!venture) {
+    return buildCanonicalOperatorSnapshot(organizationId, ventureAssemblyId);
+  }
 
   const raw = await loadRawEngineData(admin, venture);
   const nextMissionTargetDept = resolveNextMissionTarget(raw);
@@ -106,6 +111,7 @@ export async function loadOperatorVentureSnapshot(
     },
   };
 
+  await prepareHqMissionActivityProjection(admin, organizationId).catch(() => ({ fromDisk: 0, fromEngine: 0 }));
   return enrichOperatorSnapshot(sanitizeOperatorSnapshot(snapshot));
 }
 
@@ -157,7 +163,7 @@ export async function loadOperatorVentureList(
     };
   }
 
-  return assemblyRows.map((row, index) => {
+  const assemblyItems = assemblyRows.map((row, index) => {
     const identity = row.identity_package;
     const manifest = row.manifest;
     const ventureIdentity = manifest?.ventureIdentity as Record<string, unknown> | undefined;
@@ -194,7 +200,7 @@ export async function loadOperatorVentureList(
       manifest,
       idempotency_key: row.idempotency_key ?? null,
     });
-    return {
+    const item: OperatorVentureListItem = {
       ventureAssemblyId: row.id,
       ventureName: workingName,
       ventureDisplayName: resolved.name,
@@ -214,8 +220,11 @@ export async function loadOperatorVentureList(
       knownSpendUsd: null,
       latestDecision: latestDecision?.decision_type ?? null,
       missionId: row.mission_id,
+      canonicalSource: "venture_assembly",
     };
+    return item;
   });
+  return mergeCanonicalVenturesIntoHqList(assemblyItems);
 }
 
 export { sanitizeOperatorSnapshot } from "./sanitize";

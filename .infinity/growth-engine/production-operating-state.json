@@ -1,0 +1,106 @@
+{
+  "contract": "InfinityProductionOperatingState",
+  "source": "canonical_persisted_production_state",
+  "runtime": {
+    "project": "infinity-runtime",
+    "projectId": "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox",
+    "url": "https://infinity-runtime.vercel.app",
+    "status": "READY",
+    "deploymentId": "dpl_B8vwbf5FGAEevAtHL7sandCN4zQo",
+    "lastVerifiedAt": "2026-09-11T04:50:00.000Z"
+  },
+  "campaign": {
+    "campaignId": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+    "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+    "status": "GROWTH_EXPERIMENT_ACTIVE",
+    "automationCompleteness": "PARTIAL",
+    "tactic": "OUTBOUND_EMAIL",
+    "segment": "US tenant-representation brokers and boutique tenant-side CRE advisors",
+    "initialCap": 5,
+    "healthyCap": 10,
+    "rampAuthorized": false,
+    "target": 200,
+    "minimumQualifiedConversations": 15,
+    "trial": "OFF"
+  },
+  "cycle": {
+    "lastCycleAt": "2026-09-11T04:50:00.000Z",
+    "nextCycleAt": "2026-09-11T05:00:00.000Z",
+    "lastDiscoveryAt": "2026-09-11T04:50:00.000Z"
+  },
+  "funnel": {
+    "rawDiscovered": 12,
+    "deduplicated": 8,
+    "relevant": 6,
+    "contactable": 1,
+    "qualified": 1,
+    "discoveredNotContactable": 5,
+    "queueState": "ELIGIBLE_BUT_NOT_DURABLY_QUEUED",
+    "queuedCycleLocal": 1,
+    "sent": 0,
+    "delivered": 0,
+    "replied": 0,
+    "qualifiedConversations": 0,
+    "converted": 0
+  },
+  "providers": {
+    "gemini_grounded_search": { "status": "ACTIVE", "health": "PASS", "raw": 12, "relevant": 6, "qualifiedContactable": 1, "yield": 1 },
+    "duckduckgo_html": { "status": "FAILED", "health": "DEGRADED", "raw": 0, "relevant": 0, "qualifiedContactable": 0, "yield": 0, "note": "Vercel egress markup/challenge; fallback only" },
+    "google_web_search": { "status": "NOT_CONFIGURED", "health": "NOT_CONFIGURED", "raw": 0, "relevant": 0, "qualifiedContactable": 0, "yield": 0 },
+    "google_places": { "status": "NOT_CONFIGURED", "health": "NOT_CONFIGURED", "raw": 0, "relevant": 0, "qualifiedContactable": 0, "yield": 0 }
+  },
+  "selectedProvider": "gemini_grounded_search",
+  "primaryMetric": "QUALIFIED_CONTACTABLE_PROSPECT_YIELD",
+  "gmail": "PASS",
+  "deliverability": "INSUFFICIENT",
+  "scheduler": "LIVE",
+  "incidents": {
+    "activeSelectedProvider": 0,
+    "duckduckgoHistorical": 1
+  },
+  "performance": {
+    "observations": 1,
+    "events": 1,
+    "discoveryEvents": 1,
+    "qualifiedProspectEvents": 1
+  },
+  "automation": {
+    "sourcing": "MANUAL_TRIGGER",
+    "qualification": "AUTONOMOUS_WHEN_TRIGGERED",
+    "scheduling": "AUTONOMOUS",
+    "sending": "NOT_DURABLE_AUTONOMOUS",
+    "replyRetrieval": "NOT_BUILT",
+    "classification": "NOT_BUILT",
+    "lowRiskReplies": "NOT_BUILT",
+    "followUp": "NOT_BUILT",
+    "optimization": "NOT_BUILT",
+    "overall": "PARTIAL"
+  },
+  "workers": {
+    "cronDefinitions": 2,
+    "executionsRunning": 0,
+    "growthWorker": "WAITING",
+    "prospectSourcingWorker": "NOT_SEPARATE",
+    "activeWorkerCount": 0,
+    "hqCommand": "WAITING",
+    "infinity": "STANDBY"
+  },
+  "prospects": [
+    {
+      "businessName": "CCG Retail",
+      "sourceUrl": "https://www.ccgretail.com/",
+      "qualificationReason": "Public tenant-side / CRE-relevant site with published professional email",
+      "sourceProvenance": "https://www.ccgretail.com/",
+      "contactProvenance": "PUBLISHED_ON_SOURCE",
+      "timezone": "America/New_York",
+      "status": "ELIGIBLE_BUT_NOT_DURABLY_QUEUED",
+      "queuedReason": "outside recipient-local send window",
+      "sendEligible": false,
+      "campaignId": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+      "provider": "gemini_grounded_search"
+    }
+  ],
+  "nextSendWindow": "recipient-local 08:30–10:30 or 13:00–15:00 America/New_York",
+  "nextLearningObjective": "Durable sourcing, later-send mailbox, reply, and follow-up automation",
+  "nextSystemGap": "durable sourcing/queue/reply/follow-up automation"
+}

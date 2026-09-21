@@ -1,0 +1,1457 @@
+{
+  "artifactIdentity": "PASS",
+  "digestLock": "PASS",
+  "actualDigest": "09857789812df6bcba9f18a70ab35e03965373855bb3fa849e22e43d363f4823",
+  "routes": 57,
+  "routeManifest": {
+    "topLevelProduct": [
+      "/",
+      "/how-it-works",
+      "/compare-commercial-leases",
+      "/resources",
+      "/pricing",
+      "/faq",
+      "/early-access",
+      "/for/tenant-rep-brokers"
+    ],
+    "topicHubs": [
+      "/commercial-lease-npv",
+      "/lease-comparison",
+      "/effective-rent",
+      "/occupancy-costs",
+      "/lease-sensitivity-analysis",
+      "/tenant-rep-analysis",
+      "/lease-financial-modeling"
+    ],
+    "questionAuthorityPages": [
+      "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "/commercial-lease-npv/what-discount-rate-should-you-use",
+      "/commercial-lease-npv/when-is-npv-the-wrong-metric",
+      "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+      "/lease-comparison/how-do-you-compare-different-lease-terms",
+      "/effective-rent/effective-rent-vs-npv",
+      "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show",
+      "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics",
+      "/lease-financial-modeling/what-are-common-lease-analysis-mistakes",
+      "/commercial-lease-npv/how-is-lease-npv-calculated",
+      "/commercial-lease-npv/what-costs-belong-in-lease-npv",
+      "/commercial-lease-npv/npv-vs-present-value",
+      "/commercial-lease-npv/how-to-explain-lease-npv-to-clients",
+      "/lease-comparison/how-do-you-normalize-commercial-lease-proposals",
+      "/lease-comparison/how-do-you-compare-gross-and-net-leases",
+      "/lease-comparison/what-belongs-in-a-commercial-lease-comparison",
+      "/lease-comparison/how-do-brokers-compare-lease-offers",
+      "/effective-rent/how-to-calculate-effective-rent",
+      "/effective-rent/effective-rent-vs-face-rent",
+      "/effective-rent/effective-rent-per-square-foot",
+      "/effective-rent/common-effective-rent-mistakes",
+      "/occupancy-costs/what-is-total-occupancy-cost",
+      "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "/occupancy-costs/hidden-occupancy-costs",
+      "/occupancy-costs/occupancy-cost-per-square-foot",
+      "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis",
+      "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking",
+      "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo",
+      "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois",
+      "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo",
+      "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation",
+      "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model",
+      "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model"
+    ],
+    "personaCommercial": [
+      "/for/tenant-rep-brokers",
+      "/compare-commercial-leases",
+      "/pricing",
+      "/early-access"
+    ],
+    "legal": [
+      "/privacy-policy",
+      "/terms-of-service"
+    ],
+    "redirectSupport": [
+      "/tenant-improvement-allowance",
+      "/discount-rate-sensitivity",
+      "/resources/cam-costs",
+      "/resources/free-rent",
+      "/resources/rent-escalations",
+      "/resources/gross-vs-net-lease"
+    ],
+    "sitemapRobots": [
+      "/sitemap.xml",
+      "/robots.txt"
+    ],
+    "pageRoutes": [
+      "/",
+      "/how-it-works",
+      "/compare-commercial-leases",
+      "/resources",
+      "/pricing",
+      "/faq",
+      "/early-access",
+      "/for/tenant-rep-brokers",
+      "/commercial-lease-npv",
+      "/lease-comparison",
+      "/effective-rent",
+      "/occupancy-costs",
+      "/lease-sensitivity-analysis",
+      "/tenant-rep-analysis",
+      "/lease-financial-modeling",
+      "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "/commercial-lease-npv/what-discount-rate-should-you-use",
+      "/commercial-lease-npv/when-is-npv-the-wrong-metric",
+      "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+      "/lease-comparison/how-do-you-compare-different-lease-terms",
+      "/effective-rent/effective-rent-vs-npv",
+      "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show",
+      "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics",
+      "/lease-financial-modeling/what-are-common-lease-analysis-mistakes",
+      "/commercial-lease-npv/how-is-lease-npv-calculated",
+      "/commercial-lease-npv/what-costs-belong-in-lease-npv",
+      "/commercial-lease-npv/npv-vs-present-value",
+      "/commercial-lease-npv/how-to-explain-lease-npv-to-clients",
+      "/lease-comparison/how-do-you-normalize-commercial-lease-proposals",
+      "/lease-comparison/how-do-you-compare-gross-and-net-leases",
+      "/lease-comparison/what-belongs-in-a-commercial-lease-comparison",
+      "/lease-comparison/how-do-brokers-compare-lease-offers",
+      "/effective-rent/how-to-calculate-effective-rent",
+      "/effective-rent/effective-rent-vs-face-rent",
+      "/effective-rent/effective-rent-per-square-foot",
+      "/effective-rent/common-effective-rent-mistakes",
+      "/occupancy-costs/what-is-total-occupancy-cost",
+      "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "/occupancy-costs/hidden-occupancy-costs",
+      "/occupancy-costs/occupancy-cost-per-square-foot",
+      "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis",
+      "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking",
+      "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo",
+      "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois",
+      "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo",
+      "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation",
+      "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model",
+      "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model",
+      "/privacy-policy",
+      "/terms-of-service",
+      "/tenant-improvement-allowance",
+      "/discount-rate-sensitivity",
+      "/resources/cam-costs",
+      "/resources/free-rent",
+      "/resources/rent-escalations",
+      "/resources/gross-vs-net-lease"
+    ],
+    "intendedCount": 57
+  },
+  "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "founderVisualReviewReady": "FOUNDER_VISUAL_REVIEW_READY",
+  "compatibility": {
+    "standardId": "InfinityPublicAuthorityStandard",
+    "standardVersion": "V1",
+    "pageContract": "PASS",
+    "siteProfile": "PASS",
+    "archetypes": "PASS",
+    "reference": "PASS",
+    "expanded": "PASS",
+    "global": "PASS",
+    "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+    "publishability": {
+      "model": "PublicAuthorityPublishabilityGate",
+      "overall": "PASS",
+      "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+      "semanticQuestionCoverage": "PASS",
+      "depth": "PASS",
+      "humanReadability": "PASS",
+      "directAnswerQuality": "PASS",
+      "citationReadiness": "PASS",
+      "internalLinkGraph": "PASS",
+      "authorityReferences": "PASS",
+      "metadata": "PASS",
+      "schema": "PASS",
+      "ctaRelevance": "PASS",
+      "sectionVariety": "PASS",
+      "visualUsefulness": "PASS",
+      "truthfulClaims": "PASS",
+      "failures": [],
+      "aboveFoldVisualCoverage": "PASS",
+      "semanticInternalLinkDensity": "PASS",
+      "topicGraphConnectivity": "PASS",
+      "answerSurfaceCoverage": "PASS",
+      "searchIntentConversionPath": "PASS",
+      "topicalCompleteness": "PASS",
+      "graph": {
+        "authorityNodes": 41,
+        "contextualInternalEdges": 362,
+        "hubToSpoke": 34,
+        "spokeToHub": 54,
+        "sameTopicLateral": 154,
+        "crossTopic": 88,
+        "commercialPath": 120,
+        "orphans": 0,
+        "deadEnds": 0
+      },
+      "expansionDepth": "PASS",
+      "expansionReadability": "PASS"
+    }
+  },
+  "research": {
+    "topicsResearched": 7,
+    "rawValidatedQuestionCandidates": 154,
+    "byTopic": [
+      {
+        "topic": "commercial-lease-npv",
+        "raw": 22
+      },
+      {
+        "topic": "lease-comparison",
+        "raw": 22
+      },
+      {
+        "topic": "effective-rent",
+        "raw": 22
+      },
+      {
+        "topic": "occupancy-costs",
+        "raw": 22
+      },
+      {
+        "topic": "lease-sensitivity-analysis",
+        "raw": 22
+      },
+      {
+        "topic": "tenant-rep-analysis",
+        "raw": 22
+      },
+      {
+        "topic": "lease-financial-modeling",
+        "raw": 22
+      }
+    ],
+    "minimumTwentyPerTopic": true,
+    "fabricatedSearchVolume": false,
+    "evidence": {
+      "SERP_OBSERVED": 58,
+      "QUESTION_PATTERN_OBSERVED": 20,
+      "AUTOCOMPLETE_OBSERVED": 0,
+      "COMMUNITY_DEMAND_OBSERVED": 3,
+      "PROFESSIONAL_QUERY_PATTERN": 47,
+      "AUTHORITY_TERMINOLOGY": 7,
+      "MULTI_SOURCE_CONFIRMED": 19
+    },
+    "canonicalUnique": 109,
+    "duplicatesMerged": 45,
+    "crossTopicRelationships": 73,
+    "coverage": [
+      {
+        "topic": "commercial-lease-npv",
+        "rawValidated": 22,
+        "uniqueCanonical": 21,
+        "standalonePages": 8,
+        "hubContainedAnswers": 12,
+        "answerChunks": 21,
+        "remainingGaps": 0,
+        "meaningfulRelationships": 22
+      },
+      {
+        "topic": "lease-comparison",
+        "rawValidated": 22,
+        "uniqueCanonical": 17,
+        "standalonePages": 5,
+        "hubContainedAnswers": 5,
+        "answerChunks": 16,
+        "remainingGaps": 1,
+        "meaningfulRelationships": 21
+      },
+      {
+        "topic": "effective-rent",
+        "rawValidated": 22,
+        "uniqueCanonical": 10,
+        "standalonePages": 3,
+        "hubContainedAnswers": 4,
+        "answerChunks": 10,
+        "remainingGaps": 0,
+        "meaningfulRelationships": 22
+      },
+      {
+        "topic": "occupancy-costs",
+        "rawValidated": 22,
+        "uniqueCanonical": 15,
+        "standalonePages": 3,
+        "hubContainedAnswers": 9,
+        "answerChunks": 15,
+        "remainingGaps": 0,
+        "meaningfulRelationships": 20
+      },
+      {
+        "topic": "lease-sensitivity-analysis",
+        "rawValidated": 22,
+        "uniqueCanonical": 17,
+        "standalonePages": 3,
+        "hubContainedAnswers": 8,
+        "answerChunks": 17,
+        "remainingGaps": 0,
+        "meaningfulRelationships": 22
+      },
+      {
+        "topic": "tenant-rep-analysis",
+        "rawValidated": 22,
+        "uniqueCanonical": 15,
+        "standalonePages": 3,
+        "hubContainedAnswers": 7,
+        "answerChunks": 14,
+        "remainingGaps": 1,
+        "meaningfulRelationships": 21
+      },
+      {
+        "topic": "lease-financial-modeling",
+        "rawValidated": 22,
+        "uniqueCanonical": 16,
+        "standalonePages": 3,
+        "hubContainedAnswers": 11,
+        "answerChunks": 15,
+        "remainingGaps": 1,
+        "meaningfulRelationships": 21
+      }
+    ],
+    "decisions": {
+      "BUILD_STANDALONE": 18,
+      "EXPAND_EXISTING_PAGE": 11,
+      "ADD_TO_HUB": 43,
+      "ADD_ANSWER_CHUNK": 24,
+      "MERGE_WITH_EXISTING": 10,
+      "DEFER_LOW_VALUE": 3
+    },
+    "newStandalone": [
+      "/commercial-lease-npv/how-is-lease-npv-calculated",
+      "/commercial-lease-npv/what-costs-belong-in-lease-npv",
+      "/commercial-lease-npv/npv-vs-present-value",
+      "/commercial-lease-npv/how-to-explain-lease-npv-to-clients",
+      "/lease-comparison/how-do-you-normalize-commercial-lease-proposals",
+      "/lease-comparison/how-do-you-compare-gross-and-net-leases",
+      "/lease-comparison/what-belongs-in-a-commercial-lease-comparison",
+      "/lease-comparison/how-do-brokers-compare-lease-offers",
+      "/effective-rent/how-to-calculate-effective-rent",
+      "/effective-rent/effective-rent-vs-face-rent",
+      "/effective-rent/effective-rent-per-square-foot",
+      "/effective-rent/common-effective-rent-mistakes",
+      "/occupancy-costs/what-is-total-occupancy-cost",
+      "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "/occupancy-costs/hidden-occupancy-costs",
+      "/occupancy-costs/occupancy-cost-per-square-foot",
+      "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis",
+      "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking",
+      "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo",
+      "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois",
+      "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo",
+      "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation",
+      "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model",
+      "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model"
+    ],
+    "gaps": [
+      {
+        "model": "AuthorityContentGap",
+        "question": "How is lease NPV calculated?",
+        "topic": "commercial-lease-npv",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Why use NPV when comparing commercial leases?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does free rent affect lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does a TI allowance affect lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do rent escalations affect lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Should CAM be included in lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare leases using NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "When should you not use NPV for a lease choice?",
+        "topic": "commercial-lease-npv",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "NPV vs total lease cost: why do they differ?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between NPV and present value in a lease?",
+        "topic": "commercial-lease-npv",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do renewal options change lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do different commencement dates change lease NPV?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does sensitivity analysis change a lease NPV ranking?",
+        "topic": "commercial-lease-npv",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do rent escalations change a lease comparison?",
+        "topic": "lease-comparison",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do CAM charges change a lease comparison?",
+        "topic": "lease-comparison",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do renewal options change a lease comparison?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do termination options change a lease comparison?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare leases with different commencement dates?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare multiple office or industrial locations?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do CFOs review commercial lease comparisons?",
+        "topic": "lease-comparison",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Is there a commercial lease comparison spreadsheet?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare a renewal proposal to a new space?",
+        "topic": "lease-comparison",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What questions should a business ask before signing a commercial lease?",
+        "topic": "lease-comparison",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do parking costs change a lease comparison?",
+        "topic": "lease-comparison",
+        "decision": "DEFER_LOW_VALUE",
+        "reason": "Low commercial depth or thin unique math for a 2000-word page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare office versus industrial lease economics?",
+        "topic": "lease-comparison",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is effective rent in a commercial lease?",
+        "topic": "effective-rent",
+        "decision": "EXPAND_EXISTING_PAGE",
+        "reason": "Better answered by deepening an existing page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is net effective rent?",
+        "topic": "effective-rent",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between effective rent and asking rent?",
+        "topic": "effective-rent",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Does effective rent work the same on gross and net leases?",
+        "topic": "effective-rent",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is blended rent versus effective rent?",
+        "topic": "effective-rent",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between average rent and effective rent?",
+        "topic": "effective-rent",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Should you use a simple average or an NPV-adjusted effective rent?",
+        "topic": "effective-rent",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Is occupancy cost just the rent line?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do TI offsets change occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What operating expenses belong beside face rent?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare occupancy cost across locations?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should a company budget occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Why can the lowest rent option have a higher occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do management fees change occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Should capital expenditures be in occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do CAM caps change occupancy-cost risk?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between base rent and occupancy cost?",
+        "topic": "occupancy-costs",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does rent-escalation sensitivity change a lease ranking?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does CAM sensitivity change a lease ranking?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does term-length sensitivity change a lease ranking?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does free-rent sensitivity change a lease ranking?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does TI sensitivity change a lease ranking?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do renewal assumptions change a sensitivity result?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does occupancy-cost sensitivity change a location choice?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between sensitivity analysis and scenario analysis?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is a break-even point in a lease comparison?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare multiple lease scenarios?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should you present lease scenarios to a client?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you run lease sensitivity in a spreadsheet?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What decision risks does lease sensitivity reveal?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Which lease assumptions flip a ranking first?",
+        "topic": "lease-sensitivity-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is the difference between a lease abstract and a financial analysis?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What belongs in a client-facing lease summary?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you present a scenario comparison to a client?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare a renewal versus a relocation?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What are common broker lease-analysis mistakes?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare multiple spaces for one client?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "When should finance get involved in a lease decision?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "When should legal get involved in a lease decision?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does analysis support lease negotiation?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does analysis change negotiation strategy?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What software do tenant-rep brokers use to model total cost?",
+        "topic": "tenant-rep-analysis",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does a lease comparison tool differ from a brokerage CRM?",
+        "topic": "tenant-rep-analysis",
+        "decision": "DEFER_LOW_VALUE",
+        "reason": "Low commercial depth or thin unique math for a 2000-word page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What is a commercial lease financial model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should rent escalations sit in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should free rent sit in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should a TI allowance sit in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should CAM sit in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should renewal assumptions sit in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How does NPV come out of a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you run sensitivity analysis in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you compare a lease versus a buy in a model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_ANSWER_CHUNK",
+        "reason": "Distinct enough for a GEO chunk, not a new URL."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How do you audit a commercial lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "How should a lease model be presented to a client?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "What are common lease-analysis mistakes?",
+        "topic": "lease-financial-modeling",
+        "decision": "ADD_TO_HUB",
+        "reason": "Hub section covers the decision without a thin clone page."
+      },
+      {
+        "model": "AuthorityContentGap",
+        "question": "Should Excel NPV or XNPV be used in a lease model?",
+        "topic": "lease-financial-modeling",
+        "decision": "DEFER_LOW_VALUE",
+        "reason": "Low commercial depth or thin unique math for a 2000-word page."
+      }
+    ]
+  },
+  "graph": {
+    "authorityNodes": 41,
+    "contextualInternalEdges": 362,
+    "hubToSpoke": 34,
+    "spokeToHub": 54,
+    "sameTopicLateral": 154,
+    "crossTopic": 88,
+    "commercialPath": 120,
+    "orphans": 0,
+    "deadEnds": 0
+  },
+  "executed": true,
+  "attempted": true,
+  "authorizationConsumed": true,
+  "project": "infinity-validation-cre-lease-npv-e72beb7b",
+  "deploymentId": "dpl_EppQ8GVJfZ6uQpyXxWiukXP52kKz",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-onjerun3q.vercel.app",
+  "providerFinalState": "READY",
+  "providerError": null,
+  "live": {
+    "routes": {
+      "intendedCount": 57,
+      "passingRoutes": 57,
+      "failingRoutes": 0,
+      "failing": [],
+      "notFound": 0,
+      "runtimeErrors": 0,
+      "http": "PASS",
+      "titles": "PASS",
+      "h1s": "PASS",
+      "breadcrumbs": "PASS",
+      "schema": "PASS",
+      "sitemap": "PASS",
+      "robots": "PASS",
+      "indexability": "PASS",
+      "directAnswer": "PASS",
+      "authorityLinks": "PASS",
+      "cta": "PASS",
+      "footer": "PASS",
+      "legal": "PASS",
+      "visualizations": "PASS",
+      "experiment": "PASS",
+      "pages": {
+        "/": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 61953
+        },
+        "/how-it-works": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 51209
+        },
+        "/compare-commercial-leases": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 53417
+        },
+        "/resources": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 58411
+        },
+        "/pricing": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 29806
+        },
+        "/faq": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 25251
+        },
+        "/early-access": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 15895
+        },
+        "/for/tenant-rep-brokers": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 47842
+        },
+        "/commercial-lease-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71534
+        },
+        "/lease-comparison": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 69065
+        },
+        "/effective-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66863
+        },
+        "/occupancy-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66524
+        },
+        "/lease-sensitivity-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67179
+        },
+        "/tenant-rep-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67973
+        },
+        "/lease-financial-modeling": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66751
+        },
+        "/commercial-lease-npv/what-is-npv-in-a-commercial-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 69805
+        },
+        "/commercial-lease-npv/what-discount-rate-should-you-use": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 68735
+        },
+        "/commercial-lease-npv/when-is-npv-the-wrong-metric": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67963
+        },
+        "/lease-comparison/how-do-you-compare-two-commercial-lease-options": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67939
+        },
+        "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67594
+        },
+        "/lease-comparison/how-do-you-compare-different-lease-terms": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 68060
+        },
+        "/effective-rent/effective-rent-vs-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66076
+        },
+        "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66904
+        },
+        "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 68052
+        },
+        "/lease-financial-modeling/what-are-common-lease-analysis-mistakes": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67065
+        },
+        "/commercial-lease-npv/how-is-lease-npv-calculated": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76777
+        },
+        "/commercial-lease-npv/what-costs-belong-in-lease-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 73228
+        },
+        "/commercial-lease-npv/npv-vs-present-value": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70693
+        },
+        "/commercial-lease-npv/how-to-explain-lease-npv-to-clients": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 72404
+        },
+        "/lease-comparison/how-do-you-normalize-commercial-lease-proposals": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 72847
+        },
+        "/lease-comparison/how-do-you-compare-gross-and-net-leases": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71608
+        },
+        "/lease-comparison/what-belongs-in-a-commercial-lease-comparison": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71733
+        },
+        "/lease-comparison/how-do-brokers-compare-lease-offers": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 72007
+        },
+        "/effective-rent/how-to-calculate-effective-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71516
+        },
+        "/effective-rent/effective-rent-vs-face-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71294
+        },
+        "/effective-rent/effective-rent-per-square-foot": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70579
+        },
+        "/effective-rent/common-effective-rent-mistakes": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71059
+        },
+        "/occupancy-costs/what-is-total-occupancy-cost": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71170
+        },
+        "/occupancy-costs/what-is-cam-in-a-commercial-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70765
+        },
+        "/occupancy-costs/hidden-occupancy-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70927
+        },
+        "/occupancy-costs/occupancy-cost-per-square-foot": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70143
+        },
+        "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71069
+        },
+        "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71093
+        },
+        "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71145
+        },
+        "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70571
+        },
+        "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70547
+        },
+        "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71311
+        },
+        "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 71458
+        },
+        "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 70821
+        },
+        "/privacy-policy": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 17013
+        },
+        "/terms-of-service": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 15953
+        },
+        "/tenant-improvement-allowance": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67594
+        },
+        "/discount-rate-sensitivity": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 68735
+        },
+        "/resources/cam-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66524
+        },
+        "/resources/free-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 67594
+        },
+        "/resources/rent-escalations": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 69065
+        },
+        "/resources/gross-vs-net-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66524
+        }
+      }
+    },
+    "visual": {
+      "footer1280": 32,
+      "footer1440": 32,
+      "footer390": 20,
+      "footerTouches": 0,
+      "overflowX": 0,
+      "overflowByViewport": {
+        "390": 0,
+        "1280": 0,
+        "1440": 0
+      },
+      "utilizationMin": 0.9934640522875817,
+      "imageFailures": 3,
+      "screenshots": 42,
+      "measurements": 42,
+      "familiesRepresented": true,
+      "table": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "top": 0,
+        "height": 0
+      },
+      "hero": {
+        "left": 0,
+        "right": 1280,
+        "width": 1280,
+        "top": 108.109375,
+        "height": 826.28125
+      },
+      "footer": {
+        "left": 32,
+        "right": 1248,
+        "width": 1216,
+        "top": 9418.515625,
+        "height": 90.390625
+      },
+      "screenshotDir": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-authority-expansion-live-1788416391327",
+      "footerDefect": "PASS",
+      "homepageFooter": "PASS",
+      "tableDefect": "PASS",
+      "imageryDefect": "FAIL",
+      "textWallDefect": "PASS",
+      "relatedDefect": "PASS",
+      "sources": "PASS",
+      "ctaHierarchy": "PASS",
+      "viewport1280": "PASS",
+      "viewport1440": "PASS",
+      "viewport390": "PASS"
+    },
+    "liveGraph": {
+      "hubToSpoke": "PASS",
+      "spokeToHub": "PASS",
+      "sameTopic": "PASS",
+      "crossTopic": "PASS",
+      "commercialPath": "PASS",
+      "overall": "PASS"
+    },
+    "intendedCount": 57,
+    "passingRoutes": 51,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "sitemap": "PASS",
+    "robots": "PASS",
+    "footerContract": "PASS",
+    "seoGeoPassed": true,
+    "visualPassed": false,
+    "resourcesPresent": true,
+    "redirectHops": [
+      {
+        "from": "/tenant-improvement-allowance",
+        "to": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv/",
+        "status": 307,
+        "location": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+        "redirecting": true
+      },
+      {
+        "from": "/discount-rate-sensitivity",
+        "to": "/commercial-lease-npv/what-discount-rate-should-you-use/",
+        "status": 307,
+        "location": "/commercial-lease-npv/what-discount-rate-should-you-use",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/cam-costs",
+        "to": "/occupancy-costs/",
+        "status": 307,
+        "location": "/occupancy-costs",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/free-rent",
+        "to": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv/",
+        "status": 307,
+        "location": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/rent-escalations",
+        "to": "/lease-comparison/",
+        "status": 307,
+        "location": "/lease-comparison",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/gross-vs-net-lease",
+        "to": "/occupancy-costs/",
+        "status": 307,
+        "location": "/occupancy-costs",
+        "redirecting": true
+      }
+    ],
+    "screenshotDir": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-authority-expansion-live-1788416391327"
+  },
+  "activated": false,
+  "activationCount": 0,
+  "activeArtifact": "art_025be3f61b292cd3c0ef",
+  "activeDeployment": "dpl_5TCnCweZNfTp3ZDAQoEcoyZv6Npg",
+  "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-ekunq3zvj.vercel.app",
+  "canonicalReadback": {
+    "activeArtifactId": "art_025be3f61b292cd3c0ef",
+    "activeDigest": "3c1840108487827233e48c2f12011f0fa7b3922a606f1e5191119cff28a1275c",
+    "activeDeploymentId": "dpl_5TCnCweZNfTp3ZDAQoEcoyZv6Npg",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-ekunq3zvj.vercel.app"
+  },
+  "predecessorArtifact": "art_025be3f61b292cd3c0ef",
+  "predecessorDeployment": "dpl_5TCnCweZNfTp3ZDAQoEcoyZv6Npg",
+  "experimentState": "COLLECTING",
+  "evidenceStart": "2026-08-29T15:18:52.131Z",
+  "deadline": "2026-09-12T15:18:52.131Z",
+  "counts": {
+    "qualifiedVisitors": 0,
+    "strongIntent": 0,
+    "qualifiedSubmissions": 0,
+    "pricingSelections": 0,
+    "pageViews": 0
+  },
+  "providerCost": "UNKNOWN",
+  "deployments": 1,
+  "activations": 0,
+  "stopReason": "NOT_ACTIVATED",
+  "commandDuring": "ACTIVE_WORK",
+  "deploymentDepotDuring": "ACTIVE_WORK",
+  "validationStationDuring": "ACTIVE_WORK",
+  "systemsArchitectDuring": "PRESENT_IDLE",
+  "growthNexusDuring": "PRESENT_IDLE",
+  "latestCompleted": "GOVERNED_CRE_SEARCH_VALIDATED_AUTHORITY_DEPLOYMENT_V1",
+  "publiclyLaunched": false,
+  "missionId": "msn_cre_search_validated_authority_governed_deploy_v1"
+}

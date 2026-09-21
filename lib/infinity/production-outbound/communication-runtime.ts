@@ -1218,6 +1218,17 @@ export async function executeCommunicationRuntimeTick(input: {
     success: true,
     invoked_by: invokedBy,
   });
+  for (const runtime of ["discovery", "worker", "watchdog"] as const) {
+    recordCommunicationHeartbeat({
+      runtime,
+      now,
+      deployment: identity.deployment_id,
+      git_sha: identity.git_sha,
+      success: true,
+      invoked_by: invokedBy,
+      work_seen: 0,
+    });
+  }
   markRecoveredTurn({
     provider_message_id: STRANDED_FOUNDER_TRIAL_INBOUND_ID,
     now,

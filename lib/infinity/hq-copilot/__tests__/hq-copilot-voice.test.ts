@@ -62,7 +62,11 @@ describe("HQ Copilot Voice Interface V1", () => {
     expect(shouldAutoStopRecording(idleVoiceState(), Date.now())).toBe(false);
     expect(formatVoiceElapsed(1_500)).toBe("0:01");
     expect(transcribingVoiceState().status).toBe("transcribing");
-    expect(errorVoiceState("permission_denied").code).toBe("permission_denied");
+    const voiceError = errorVoiceState("permission_denied");
+    expect(voiceError.status).toBe("error");
+    if (voiceError.status === "error") {
+      expect(voiceError.code).toBe("permission_denied");
+    }
   });
 
   it("rejects empty, oversized, too-long, and unsupported audio", () => {

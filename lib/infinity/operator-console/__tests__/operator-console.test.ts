@@ -73,6 +73,7 @@ describe("Operator Console V1", () => {
         "quality_control",
         "launch_operations",
         "intelligence_center",
+        "prospect_intelligence",
         "executive_office",
       ]);
     });

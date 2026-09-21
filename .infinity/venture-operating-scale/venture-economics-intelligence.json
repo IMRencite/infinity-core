@@ -1,0 +1,1404 @@
+{
+  "qcVersion": "GLOBAL_VENTURE_ECONOMICS_ASSURANCE_V1",
+  "current": [
+    {
+      "contract": "VentureEconomicsIntelligenceContract",
+      "competitor_contract": "VentureCompetitorIntelligenceContract",
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "venture_name": "OccupancyNPV",
+      "opportunity_id": "7e7e924e-0741-4155-a729-8d529da77ea9",
+      "research_run_id": "econ_research_occupancynpv_v1",
+      "economics_version": 1,
+      "generated_at": "2026-09-10T06:50:00.000Z",
+      "last_verified_at": "2026-09-10T06:50:00.000Z",
+      "stage": "ECONOMICS_COMMERCIALIZATION_READY",
+      "market_category": "Commercial lease occupancy / NPV comparison for tenant-representation brokers",
+      "customer_segment": "US tenant-representation and boutique CRE brokers",
+      "primary_job_to_be_done": "Compare lease occupancy scenarios and communicate deal NPV without a one-off spreadsheet",
+      "competitors": [
+        {
+          "name": "ARGUS Enterprise / ARGUS Intelligence (Altus Group)",
+          "type": "INDIRECT_COMPETITOR",
+          "website": "https://www.altusgroup.com/solutions/argus-intelligence/",
+          "customer_segment": "Institutional CRE investors, owners, lenders, and valuation teams",
+          "primary_offer": "Property valuation, cash-flow forecasting, and portfolio performance management",
+          "observed_pricing": {
+            "display": "UNKNOWN — official price is contact-sales; no public rate card",
+            "numeric": null,
+            "unit": null,
+            "classification": "UNKNOWN",
+            "note": "Altus states ARGUS Enterprise is no longer sold standalone and does not publish a public price."
+          },
+          "pricing_model": "ENTERPRISE_CONTRACT / CONTACT_SALES",
+          "free_tier_or_trial": "UNKNOWN — not published as a self-serve free tier",
+          "key_features": [
+            "cash-flow forecasting",
+            "property valuation",
+            "lease and market-leasing assumptions",
+            "portfolio dashboards"
+          ],
+          "positioning": "Industry-standard institutional CRE valuation platform, not a tenant-rep deal NPV tool",
+          "strengths": [
+            "category standard",
+            "deep cash-flow engine"
+          ],
+          "weaknesses": [
+            "opaque pricing",
+            "enterprise implementation burden for boutique tenant-rep desks"
+          ],
+          "differentiation_opportunity": "OccupancyNPV targets per-deal tenant-rep NPV comparison at published $290/$149 prices versus institutional software.",
+          "evidence_source": "https://www.altusgroup.com/solutions/argus-intelligence/",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "Prophia",
+          "type": "INDIRECT_COMPETITOR",
+          "website": "https://www.prophia.com/pricing",
+          "customer_segment": "Owners, REITs, and institutional portfolio teams",
+          "primary_offer": "Lease abstraction and portfolio lease-data platform",
+          "observed_pricing": {
+            "display": "UNKNOWN — official page is custom/contact-us; no public dollar amount",
+            "numeric": null,
+            "unit": null,
+            "classification": "UNKNOWN",
+            "note": "Prophia pricing page lists Essentials as per-tenant annual subscription without a published dollar price."
+          },
+          "pricing_model": "ANNUAL_SUBSCRIPTION / CONTACT_SALES",
+          "free_tier_or_trial": "UNKNOWN",
+          "key_features": [
+            "AI + expert lease review",
+            "portfolio health add-on",
+            "Yardi/MRI integrations"
+          ],
+          "positioning": "Owner-side lease data and portfolio analytics, not tenant-rep NPV comparison",
+          "strengths": [
+            "lease data operations",
+            "portfolio reporting"
+          ],
+          "weaknesses": [
+            "not a broker deal-NPV product",
+            "no public comparable price"
+          ],
+          "differentiation_opportunity": "OccupancyNPV models tenant occupancy economics for a single deal rather than abstracting owner portfolios.",
+          "evidence_source": "https://www.prophia.com/pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "Occupier",
+          "type": "INDIRECT_COMPETITOR",
+          "website": "https://www.occupier.com/",
+          "customer_segment": "Corporate tenants and occupier real-estate teams",
+          "primary_offer": "Tenant lease administration, deal tracking, and ASC 842 accounting",
+          "observed_pricing": {
+            "display": "UNKNOWN — quote-based; no official public rate card found",
+            "numeric": null,
+            "unit": null,
+            "classification": "UNKNOWN",
+            "note": "Vendor does not publish a self-serve price. Secondary writeups describe per-lease modules; those amounts are not treated as official."
+          },
+          "pricing_model": "QUOTE / PER_LEASE_MODULE",
+          "free_tier_or_trial": "Demo / sales-led",
+          "key_features": [
+            "lease administration",
+            "critical dates",
+            "ASC 842"
+          ],
+          "positioning": "Corporate occupier operating system, not a broker occupancy-NPV calculator",
+          "strengths": [
+            "tenant lifecycle coverage"
+          ],
+          "weaknesses": [
+            "enterprise sales motion",
+            "unpublished price"
+          ],
+          "differentiation_opportunity": "OccupancyNPV is a priced, self-serve occupancy NPV comparison for brokers, not lease accounting.",
+          "evidence_source": "https://www.occupier.com/",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "substitutes": [
+        {
+          "name": "Microsoft Excel / Google Sheets manual lease models",
+          "type": "STATUS_QUO",
+          "website": null,
+          "customer_segment": "Tenant-representation brokers and analysts",
+          "primary_offer": "Ad-hoc spreadsheet NPV / occupancy comparison",
+          "observed_pricing": {
+            "display": "UNKNOWN — spreadsheet software is general-purpose; lease-model cost is labor, not a product SKU",
+            "numeric": null,
+            "unit": null,
+            "classification": "UNKNOWN",
+            "note": "Status-quo workflow confirmed as the incumbent process. No lease-NPV product price exists to observe."
+          },
+          "pricing_model": "MANUAL_LABOR",
+          "free_tier_or_trial": "Spreadsheets are already on desks",
+          "key_features": [
+            "custom formulas",
+            "one-off deal files",
+            "no shared productization"
+          ],
+          "positioning": "Default broker workflow OccupancyNPV is built to replace",
+          "strengths": [
+            "familiar",
+            "flexible"
+          ],
+          "weaknesses": [
+            "error-prone",
+            "not productized",
+            "no governed offer"
+          ],
+          "differentiation_opportunity": "Productized occupancy NPV with published Professional and Per-Deal offers.",
+          "evidence_source": "OccupancyNPV primary offer: lease-scenario NPV comparison for tenant-representation brokers",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "Lextract",
+          "type": "SUBSTITUTE",
+          "website": "https://lextract.io/resources/comparisons/prophia",
+          "customer_segment": "Brokers and analysts needing structured lease data",
+          "primary_offer": "Per-lease AI abstraction",
+          "observed_pricing": {
+            "display": "$15 per lease",
+            "numeric": 15,
+            "unit": "USD_PER_LEASE",
+            "classification": "OBSERVED",
+            "note": "Vendor comparison page publishes $15 per lease with no subscription. Abstraction is not occupancy NPV."
+          },
+          "pricing_model": "PER_USE",
+          "free_tier_or_trial": "Self-serve, no contract claimed on vendor page",
+          "key_features": [
+            "lease abstraction",
+            "structured export"
+          ],
+          "positioning": "Data extraction substitute, not economic comparison",
+          "strengths": [
+            "published per-use price",
+            "broker-accessible"
+          ],
+          "weaknesses": [
+            "does not compute occupancy NPV or deal economics"
+          ],
+          "differentiation_opportunity": "OccupancyNPV prices the decision model, not the PDF extraction.",
+          "evidence_source": "https://lextract.io/resources/comparisons/prophia",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "competitor_research_status": "PASS",
+      "pricing_benchmarks": [
+        {
+          "name": "OccupancyNPV Professional",
+          "amount_display": "$290/year",
+          "amount_usd": 290,
+          "interval": "year",
+          "pricing_model": "subscription",
+          "classification": "OBSERVED",
+          "source": "OccupancyNPV live Stripe price_1UCs7hLdvXKx7R7GF2TPmwGL",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "OccupancyNPV Per-Deal",
+          "amount_display": "$149 one-time",
+          "amount_usd": 149,
+          "interval": "one_time",
+          "pricing_model": "one-time",
+          "classification": "OBSERVED",
+          "source": "OccupancyNPV live Stripe price_1UCs7iLdvXKx7R7GmikBTGx4",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "ARGUS official",
+          "amount_display": "UNKNOWN — contact sales",
+          "amount_usd": null,
+          "interval": "unknown",
+          "pricing_model": "enterprise_contract",
+          "classification": "UNKNOWN",
+          "source": "https://www.altusgroup.com/solutions/argus-intelligence/",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        },
+        {
+          "name": "ARGUS secondary market estimate",
+          "amount_display": "ESTIMATED ~$3,000–$5,000/user/year (not official)",
+          "amount_usd": null,
+          "interval": "year",
+          "pricing_model": "per_seat_estimate",
+          "classification": "ESTIMATED",
+          "source": "https://softwarefinder.com/property-management-software/argus-enterprise",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "LOW"
+        },
+        {
+          "name": "Lextract abstraction",
+          "amount_display": "$15/lease",
+          "amount_usd": 15,
+          "interval": "per_use",
+          "pricing_model": "per_use",
+          "classification": "OBSERVED",
+          "source": "https://lextract.io/resources/comparisons/prophia",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "monetization_models": [
+        {
+          "model": "subscription",
+          "fit": "PLAUSIBLE",
+          "rationale": "Professional is a live $290/year offer.",
+          "classification": "OBSERVED"
+        },
+        {
+          "model": "one-time",
+          "fit": "PLAUSIBLE",
+          "rationale": "Per-Deal is a live $149 one-time offer.",
+          "classification": "OBSERVED"
+        },
+        {
+          "model": "per-use",
+          "fit": "WEAK",
+          "rationale": "Lextract-style per-lease abstraction is adjacent, not OccupancyNPV's live model.",
+          "classification": "OBSERVED"
+        },
+        {
+          "model": "enterprise contract",
+          "fit": "WEAK",
+          "rationale": "ARGUS/Prophia enterprise motion is the expensive incumbent, not OccupancyNPV's published path.",
+          "classification": "ESTIMATED"
+        }
+      ],
+      "recommended_monetization_model": "Dual offer: annual Professional subscription + one-time Per-Deal",
+      "recommended_pricing_hypothesis": "Keep live $290/year and $149 one-time. Do not change prices. Competitive institutional tools are contact-sales / far higher secondary estimates; that does not prove WTP or CAC.",
+      "revenue_model": "subscription + one-time",
+      "estimated_variable_costs": {
+        "display": "$8.71 per $290 charge",
+        "numeric": 8.71,
+        "unit": "USD",
+        "classification": "DERIVED",
+        "note": "US card-not-present published Stripe schedule 2.9% + $0.30 applied to $290. Source: https://stripe.com/pricing"
+      },
+      "estimated_fixed_costs": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (fixed costs)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Infrastructure allocation is not measured. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "gross_margin_model": {
+        "display": "$281.29 after published payment fee only",
+        "numeric": 281.29,
+        "unit": "USD",
+        "classification": "DERIVED",
+        "note": "Payment-fee-only residual. Delivery, support, infrastructure, and CAC remain UNKNOWN and are not treated as zero."
+      },
+      "contribution_margin_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (contribution)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Delivery and support costs are unknown, so contribution cannot be computed. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "customer_acquisition_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "No observed OccupancyNPV acquisition cost exists. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "lifetime_value_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (LTV)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Annual subscription retention is unobserved; unknown retention must not invent LTV. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "ltv_cac_ratio": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (LTV:CAC)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Both LTV and CAC are unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "payback_period": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (payback)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "CAC is unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "break_even_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Contribution per customer is unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "unit_economics": {
+        "price": {
+          "display": "$290/year Professional; $149 Per-Deal",
+          "numeric": 290,
+          "unit": "USD_YEAR",
+          "classification": "OBSERVED",
+          "note": "Live OccupancyNPV Stripe offers. Prices were not changed."
+        },
+        "revenue_per_customer": {
+          "display": "$290/year if Professional; $149 if Per-Deal first purchase",
+          "numeric": 290,
+          "unit": "USD",
+          "classification": "OBSERVED",
+          "note": "Offer prices are live. Repeat purchase frequency is UNKNOWN."
+        },
+        "revenue_frequency": {
+          "display": "Annual for Professional; one-time for Per-Deal",
+          "numeric": null,
+          "unit": null,
+          "classification": "OBSERVED",
+          "note": "Billing cadence is configured. Renewal/repeat is unobserved."
+        },
+        "variable_delivery_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (variable delivery)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "No measured fulfillment delivery cost. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "provider_api_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (provider/API)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "No measured per-customer model/API cost. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "infrastructure_allocation": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (infrastructure)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "No measured per-customer infra allocation. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "support_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (support)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "No measured support burden. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "payment_processing_cost": {
+          "display": "Professional $8.71; Per-Deal $4.62",
+          "numeric": 8.71,
+          "unit": "USD",
+          "classification": "DERIVED",
+          "note": "Published Stripe US card fee 2.9% + $0.30. https://stripe.com/pricing"
+        },
+        "gross_profit": {
+          "display": "$281.29 after published payment fee only",
+          "numeric": 281.29,
+          "unit": "USD",
+          "classification": "DERIVED",
+          "note": "Payment-fee-only residual. Delivery, support, infrastructure, and CAC remain UNKNOWN and are not treated as zero."
+        },
+        "gross_margin": {
+          "display": "Payment-fee-only; full gross margin UNKNOWN until delivery cost is known",
+          "numeric": null,
+          "unit": null,
+          "classification": "DERIVED",
+          "note": "Do not treat residual after Stripe fees as operating margin."
+        },
+        "contribution_profit": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (contribution)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Delivery and support costs are unknown, so contribution cannot be computed. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (contribution)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Delivery and support costs are unknown, so contribution cannot be computed. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "low_case": {
+        "name": "LOW",
+        "price": {
+          "display": "$290/year Professional; $149 Per-Deal",
+          "numeric": 290,
+          "unit": "USD_YEAR",
+          "classification": "OBSERVED",
+          "note": "Live OccupancyNPV Stripe offers. Prices were not changed."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "Payment-fee-only residual exists; full margin UNKNOWN",
+          "numeric": null,
+          "unit": null,
+          "classification": "DERIVED",
+          "note": "Cannot convert payment-fee residual into a scenario margin without delivery cost."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "base_case": {
+        "name": "BASE",
+        "price": {
+          "display": "$290/year Professional; $149 Per-Deal",
+          "numeric": 290,
+          "unit": "USD_YEAR",
+          "classification": "OBSERVED",
+          "note": "Live OccupancyNPV Stripe offers. Prices were not changed."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "high_case": {
+        "name": "HIGH",
+        "price": {
+          "display": "$290/year Professional; $149 Per-Deal",
+          "numeric": 290,
+          "unit": "USD_YEAR",
+          "classification": "OBSERVED",
+          "note": "Live OccupancyNPV Stripe offers. Prices were not changed."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "economic_risks": [
+        "Unknown CAC may make even published prices unprofitable.",
+        "Institutional incumbents may remain the comparison set for sophisticated desks.",
+        "Spreadsheet status quo has near-zero license cost and high switching friction."
+      ],
+      "economic_unknowns": [
+        "CAC",
+        "retention / Professional LTV",
+        "Per-Deal repeat purchase rate",
+        "delivery cost",
+        "support cost",
+        "infrastructure allocation",
+        "conversion"
+      ],
+      "evidence": [
+        {
+          "id": "occ_price_pro",
+          "label": "OccupancyNPV Professional $290/year live Stripe price",
+          "url": null,
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "occ_price_deal",
+          "label": "OccupancyNPV Per-Deal $149 live Stripe price",
+          "url": null,
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "stripe_fee",
+          "label": "Stripe published US card pricing 2.9% + $0.30",
+          "url": "https://stripe.com/pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "argus_official",
+          "label": "Altus ARGUS Intelligence product page; no public price",
+          "url": "https://www.altusgroup.com/solutions/argus-intelligence/",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "argus_estimate",
+          "label": "Software Finder secondary ARGUS license estimate",
+          "url": "https://softwarefinder.com/property-management-software/argus-enterprise",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "ESTIMATED"
+        },
+        {
+          "id": "prophia",
+          "label": "Prophia official pricing page is contact/custom",
+          "url": "https://www.prophia.com/pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "lextract",
+          "label": "Lextract vendor page $15/lease abstraction",
+          "url": "https://lextract.io/resources/comparisons/prophia",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        },
+        {
+          "id": "occupier",
+          "label": "Occupier tenant lease platform; quote-based",
+          "url": "https://www.occupier.com/",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        }
+      ],
+      "confidence": {
+        "contract": "VentureEconomicsConfidenceContract",
+        "overall": "MEDIUM",
+        "dimensions": {
+          "competitor_evidence": "HIGH",
+          "pricing_evidence": "HIGH",
+          "demand_evidence": "LOW",
+          "cost_evidence": "LOW",
+          "cac_evidence": "INSUFFICIENT",
+          "retention_evidence": "INSUFFICIENT",
+          "margin_confidence": "LOW"
+        }
+      },
+      "status": "COMMERCIALIZATION_READY",
+      "research_ran": true,
+      "fabricated_competitors": 0,
+      "production_advancement": "UNCHANGED"
+    },
+    {
+      "contract": "VentureEconomicsIntelligenceContract",
+      "competitor_contract": "VentureCompetitorIntelligenceContract",
+      "venture_id": "candidate:f1336945-3350-4d08-921e-4dcb5bc77b8e",
+      "venture_name": "AskReview",
+      "opportunity_id": "f1336945-3350-4d08-921e-4dcb5bc77b8e",
+      "research_run_id": "econ_research_askreview_v1",
+      "economics_version": 1,
+      "generated_at": "2026-09-10T06:50:00.000Z",
+      "last_verified_at": "2026-09-10T06:50:00.000Z",
+      "stage": "ECONOMICS_PRELIMINARY",
+      "market_category": "Local-business review request kits / reputation-adjacent utility",
+      "customer_segment": "Owners of local shops, salons, restaurants, and service offices",
+      "primary_job_to_be_done": "Generate reusable Google review links, QR, and request copy without buying an enterprise reputation suite",
+      "competitors": [
+        {
+          "name": "Birdeye",
+          "type": "INDIRECT_COMPETITOR",
+          "website": "https://www.birdeye.com/",
+          "customer_segment": "Multi-location and local businesses buying reputation suites",
+          "primary_offer": "Review monitoring, listings, and reputation automation",
+          "observed_pricing": {
+            "display": "UNKNOWN official rate card; secondary reports ~$299/month starting points",
+            "numeric": 299,
+            "unit": "USD_MONTH_SECONDARY",
+            "classification": "ESTIMATED",
+            "note": "Birdeye does not publish a complete official rate card. Secondary 2026 writeups cite advertised starting points near $299/month. That is category context, not AskReview WTP."
+          },
+          "pricing_model": "QUOTE / ANNUAL_CONTRACT",
+          "free_tier_or_trial": "UNKNOWN official",
+          "key_features": [
+            "review generation",
+            "listing sync",
+            "surveys"
+          ],
+          "positioning": "Enterprise/mid-market reputation suite",
+          "strengths": [
+            "breadth",
+            "multi-location"
+          ],
+          "weaknesses": [
+            "opaque official pricing",
+            "overbuilt vs a review-kit utility"
+          ],
+          "differentiation_opportunity": "AskReview hypothesizes a cheaper kit utility; $29/month remains HYPOTHESIS.",
+          "evidence_source": "https://reviewsgauge.com/blog/birdeye-and-podium-pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "MEDIUM"
+        },
+        {
+          "name": "Podium",
+          "type": "INDIRECT_COMPETITOR",
+          "website": "https://www.podium.com/",
+          "customer_segment": "Local service businesses buying messaging + reviews",
+          "primary_offer": "SMS-first inbox, payments, and review requests",
+          "observed_pricing": {
+            "display": "UNKNOWN official rate card; secondary reports ~$399/month starting points",
+            "numeric": 399,
+            "unit": "USD_MONTH_SECONDARY",
+            "classification": "ESTIMATED",
+            "note": "Podium pricing is quote-based. Secondary 2026 writeups cite advertised starting points near $399/month. Not AskReview willingness-to-pay."
+          },
+          "pricing_model": "QUOTE / ANNUAL_CONTRACT",
+          "free_tier_or_trial": "UNKNOWN official",
+          "key_features": [
+            "SMS inbox",
+            "review requests",
+            "payments"
+          ],
+          "positioning": "Messaging platform that includes reviews",
+          "strengths": [
+            "workflow bundle"
+          ],
+          "weaknesses": [
+            "not a cheap QR/review-kit product",
+            "unpublished official price"
+          ],
+          "differentiation_opportunity": "AskReview does not send SMS/email; hypothesized kit-only price is unproven.",
+          "evidence_source": "https://reviewsgauge.com/blog/birdeye-and-podium-pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "MEDIUM"
+        }
+      ],
+      "substitutes": [
+        {
+          "name": "Manual Google review requests (status quo)",
+          "type": "STATUS_QUO",
+          "website": "https://support.google.com/business/answer/7035772",
+          "customer_segment": "Local shops already asking for Google reviews by hand",
+          "primary_offer": "Owner texts or prints a Google review link",
+          "observed_pricing": {
+            "display": "$0 product license; labor cost UNKNOWN",
+            "numeric": null,
+            "unit": null,
+            "classification": "OBSERVED",
+            "note": "Google Business Profile review links are free. Labor/time cost of asking is unmeasured and not treated as zero operating cost for AskReview."
+          },
+          "pricing_model": "MANUAL_PROCESS",
+          "free_tier_or_trial": "Native Google tools",
+          "key_features": [
+            "review link",
+            "QR printed by owner"
+          ],
+          "positioning": "Default workflow AskReview would replace",
+          "strengths": [
+            "free software",
+            "already understood"
+          ],
+          "weaknesses": [
+            "no reusable kit product",
+            "inconsistent follow-through"
+          ],
+          "differentiation_opportunity": "Reusable authenticated kits — only if operators will pay, which is unproven.",
+          "evidence_source": "https://support.google.com/business/answer/7035772",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "HIGH"
+        }
+      ],
+      "competitor_research_status": "PASS",
+      "pricing_benchmarks": [
+        {
+          "name": "AskReview hypothesized monthly",
+          "amount_display": "$29/month HYPOTHESIS",
+          "amount_usd": 29,
+          "interval": "month",
+          "pricing_model": "subscription",
+          "classification": "HYPOTHESIS",
+          "source": "ASKREVIEW_HYPOTHESIZED_MONTHLY_USD — unresolved",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "INSUFFICIENT"
+        },
+        {
+          "name": "AskReview hypothesized one-time kit",
+          "amount_display": "$49 one-time HYPOTHESIS",
+          "amount_usd": 49,
+          "interval": "one_time",
+          "pricing_model": "one-time",
+          "classification": "HYPOTHESIS",
+          "source": "AskReview price-model validation experiment alternative",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "INSUFFICIENT"
+        },
+        {
+          "name": "Birdeye secondary starting point",
+          "amount_display": "~$299/month ESTIMATED (not official)",
+          "amount_usd": 299,
+          "interval": "month",
+          "pricing_model": "quote",
+          "classification": "ESTIMATED",
+          "source": "https://reviewsgauge.com/blog/birdeye-and-podium-pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "LOW"
+        },
+        {
+          "name": "Podium secondary starting point",
+          "amount_display": "~$399/month ESTIMATED (not official)",
+          "amount_usd": 399,
+          "interval": "month",
+          "pricing_model": "quote",
+          "classification": "ESTIMATED",
+          "source": "https://reviewsgauge.com/blog/birdeye-and-podium-pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "confidence": "LOW"
+        }
+      ],
+      "monetization_models": [
+        {
+          "model": "subscription",
+          "fit": "PLAUSIBLE",
+          "rationale": "$29/month is a hypothesis to test, not a canonical price.",
+          "classification": "HYPOTHESIS"
+        },
+        {
+          "model": "one-time",
+          "fit": "PLAUSIBLE",
+          "rationale": "$49 one-time location kit is an untested alternative.",
+          "classification": "HYPOTHESIS"
+        },
+        {
+          "model": "freemium",
+          "fit": "UNKNOWN",
+          "rationale": "No experiment has compared free vs paid kits.",
+          "classification": "UNKNOWN"
+        },
+        {
+          "model": "per-location",
+          "fit": "UNKNOWN",
+          "rationale": "Location-based pricing is unevaluated.",
+          "classification": "UNKNOWN"
+        }
+      ],
+      "recommended_monetization_model": "HYPOTHESIS — monthly subscription vs one-time kit; unresolved",
+      "recommended_pricing_hypothesis": "$29/month HYPOTHESIS; $49 one-time HYPOTHESIS. Do not resolve. Do not create Stripe prices.",
+      "revenue_model": "unresolved_hypothesis",
+      "estimated_variable_costs": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (variable costs)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "No AskReview delivery-cost observation. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "estimated_fixed_costs": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (fixed costs)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "No AskReview infra allocation. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "gross_margin_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (gross margin)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Price is hypothesized and costs are unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "contribution_margin_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (contribution margin)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Unknown costs must not become zero. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "customer_acquisition_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "No AskReview CAC observation. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "lifetime_value_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (LTV)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "No retention observation; hypothesized subscription must not invent LTV. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "ltv_cac_ratio": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (LTV:CAC)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Both sides unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "payback_period": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (payback)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "CAC unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "break_even_model": {
+        "display": "UNKNOWN — RESEARCH REQUIRED (break-even)",
+        "numeric": null,
+        "unit": null,
+        "classification": "UNKNOWN",
+        "note": "Contribution unknown. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+      },
+      "unit_economics": {
+        "price": {
+          "display": "$29/month HYPOTHESIS",
+          "numeric": 29,
+          "unit": "USD_MONTH",
+          "classification": "HYPOTHESIS",
+          "note": "Do not resolve AskReview pricing. Monetization recommendation is not willingness-to-pay evidence."
+        },
+        "revenue_per_customer": {
+          "display": "$29/month HYPOTHESIS — not canonical",
+          "numeric": 29,
+          "unit": "USD_MONTH",
+          "classification": "HYPOTHESIS",
+          "note": "Canonical price remains UNRESOLVED."
+        },
+        "revenue_frequency": {
+          "display": "month HYPOTHESIS",
+          "numeric": null,
+          "unit": null,
+          "classification": "HYPOTHESIS",
+          "note": "Recurring model evidence is INSUFFICIENT."
+        },
+        "variable_delivery_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (variable delivery)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Kit generation cost unmeasured. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "provider_api_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (provider/API)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "No measured API cost. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "infrastructure_allocation": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (infrastructure)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Unmeasured. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "support_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (support)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Unmeasured. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "payment_processing_cost": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (payment processing)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Payment is not activated; no live charge to fee. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_profit": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (gross profit)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Hypothesis price is not revenue. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Cannot compute from a hypothesis. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_profit": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (contribution profit)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Unknown costs. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Unknown costs. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "low_case": {
+        "name": "LOW",
+        "price": {
+          "display": "$29/month HYPOTHESIS",
+          "numeric": 29,
+          "unit": "USD_MONTH",
+          "classification": "HYPOTHESIS",
+          "note": "Do not resolve AskReview pricing. Monetization recommendation is not willingness-to-pay evidence."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "base_case": {
+        "name": "BASE",
+        "price": {
+          "display": "$29/month HYPOTHESIS",
+          "numeric": 29,
+          "unit": "USD_MONTH",
+          "classification": "HYPOTHESIS",
+          "note": "Do not resolve AskReview pricing. Monetization recommendation is not willingness-to-pay evidence."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "high_case": {
+        "name": "HIGH",
+        "price": {
+          "display": "$29/month HYPOTHESIS",
+          "numeric": 29,
+          "unit": "USD_MONTH",
+          "classification": "HYPOTHESIS",
+          "note": "Do not resolve AskReview pricing. Monetization recommendation is not willingness-to-pay evidence."
+        },
+        "conversion": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (conversion)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "retention": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (retention)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "revenue": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario revenue)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "gross_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario gross margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "contribution_margin": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario contribution margin)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "cac_payback": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (CAC payback)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "ltv_cac": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (scenario LTV:CAC)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        },
+        "break_even_customers": {
+          "display": "UNKNOWN — RESEARCH REQUIRED (break-even customers)",
+          "numeric": null,
+          "unit": null,
+          "classification": "UNKNOWN",
+          "note": "Research ran; this input still lacks evidence and is not defaulted. UNKNOWN COST != ZERO COST. UNKNOWN CAC != ZERO CAC."
+        }
+      },
+      "economic_risks": [
+        "Operators may keep the free Google status quo.",
+        "Enterprise suite prices do not prove $29 conversion.",
+        "A one-time kit may fit usage better than a subscription."
+      ],
+      "economic_unknowns": [
+        "canonical price",
+        "WTP",
+        "CAC",
+        "LTV / retention",
+        "conversion",
+        "delivery cost",
+        "preferred monetization model"
+      ],
+      "evidence": [
+        {
+          "id": "ask_hyp_29",
+          "label": "$29/month hypothesized, unresolved",
+          "url": null,
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "HYPOTHESIS"
+        },
+        {
+          "id": "ask_hyp_49",
+          "label": "$49 one-time hypothesized alternative",
+          "url": null,
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "HYPOTHESIS"
+        },
+        {
+          "id": "birdeye_podium_secondary",
+          "label": "Secondary Birdeye/Podium starting-price writeup",
+          "url": "https://reviewsgauge.com/blog/birdeye-and-podium-pricing",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "ESTIMATED"
+        },
+        {
+          "id": "google_review_link",
+          "label": "Google Business Profile review-link documentation",
+          "url": "https://support.google.com/business/answer/7035772",
+          "retrieved_at": "2026-09-10T06:50:00.000Z",
+          "classification": "OBSERVED"
+        }
+      ],
+      "confidence": {
+        "contract": "VentureEconomicsConfidenceContract",
+        "overall": "LOW",
+        "dimensions": {
+          "competitor_evidence": "MEDIUM",
+          "pricing_evidence": "INSUFFICIENT",
+          "demand_evidence": "INSUFFICIENT",
+          "cost_evidence": "INSUFFICIENT",
+          "cac_evidence": "INSUFFICIENT",
+          "retention_evidence": "INSUFFICIENT",
+          "margin_confidence": "INSUFFICIENT"
+        }
+      },
+      "status": "PRELIMINARY",
+      "research_ran": true,
+      "fabricated_competitors": 0,
+      "production_advancement": "PAUSED"
+    }
+  ],
+  "history": []
+}

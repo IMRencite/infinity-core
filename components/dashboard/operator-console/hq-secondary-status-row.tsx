@@ -4,6 +4,7 @@ import type { HqHomeOperatingSummary } from "@/lib/infinity/hq-information-archi
 import type { OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
 import { HqOperatingSummaryStrip } from "@/components/dashboard/hq-operating-summary-strip";
 import { HqMailboxObserverPanel } from "./hq-mailbox-observer-panel";
+import { TodaysReportCard } from "./todays-report-card";
 
 type MailboxObserver = NonNullable<
   NonNullable<OperatorVentureSnapshot["communicationIntelligence"]>["mailboxObserver"]
@@ -29,6 +30,7 @@ export function HqSecondaryStatusRow({
           <p className="hq-secondary-status-panel__empty">UNAVAILABLE</p>
         </section>
       )}
+      <TodaysReportCard />
       <HqMailboxObserverPanel observer={mailbox} />
     </div>
   );

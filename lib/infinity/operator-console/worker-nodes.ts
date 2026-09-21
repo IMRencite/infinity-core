@@ -1,3 +1,4 @@
+import { assignedWorkerRolesForRoom } from "@/lib/infinity/hq-room-workers/assigned-roles";
 import { humanizeRole, humanizeTask } from "./humanize";
 import { deriveUiStateFromEngineStatus } from "./status-derivation";
 import type {
@@ -7,21 +8,7 @@ import type {
   OperatorProviderSession,
   OperatorWorkerNode,
 } from "./types";
-
-const DEPARTMENT_DEFAULT_ROLES: Partial<Record<DepartmentId, string[]>> = {
-  opportunity_lab: ["Scanner"],
-  research_department: ["Research", "Synthesis"],
-  strategy_finance: ["Economics"],
-  company_operations: ["Blueprint"],
-  systems_architect: ["Architect"],
-  growth_department: ["Planning"],
-  creative_studio: ["Generator", "Quality"],
-  product_lab: ["Implementer", "Reviewer"],
-  quality_control: ["Inspection"],
-  launch_operations: ["Dispatch"],
-  intelligence_center: ["Analysis"],
-  executive_office: ["Decision"],
-};
+import { OPERATIONS_ROOM_ID, SALES_FLOOR_ROOM_ID } from "./room-naming";
 
 const HQ_WORKER_COLLECT_LIMIT = 12;
 
@@ -53,7 +40,7 @@ function genericNode(
 ): OperatorWorkerNode {
   const isActive = state === "RUNNING" && !dormant;
   return {
-    nodeId: `${departmentId}-${role.toLowerCase()}-${dormant ? "dormant" : "active"}`,
+    nodeId: `${departmentId}-${role.toLowerCase().replace(/\s+/g, "-")}-${dormant ? "dormant" : "active"}`,
     departmentId,
     role,
     displayRole: humanizeRole(role),
@@ -68,35 +55,68 @@ function genericNode(
   };
 }
 
+function roleCovered(covered: Set<string>, role: string): boolean {
+  const keys = [role, humanizeRole(role)].map((value) => value.toLowerCase().replace(/[\s_]+/g, ""));
+  for (const key of keys) {
+    if (covered.has(key)) return true;
+  }
+  return false;
+}
+
+function coverRole(covered: Set<string>, role: string, displayRole: string): void {
+  covered.add(role.toLowerCase().replace(/[\s_]+/g, ""));
+  covered.add(displayRole.toLowerCase().replace(/[\s_]+/g, ""));
+}
+
+function assignedPresenceState(dept: OperatorDepartmentSnapshot, makeActive: boolean): DepartmentUiState {
+  if (makeActive) return dept.state === "RUNNING" ? "RUNNING" : dept.state;
+  if (dept.state === "BLOCKED") return "BLOCKED";
+  if (dept.state === "FAILED" && dept.failureSemantics === "CURRENT_BLOCKING_FAILURE") return "FAILED";
+  if (dept.state === "WAITING" || dept.state === "PAUSED") return "WAITING";
+  if (dept.state === "RUNNING") return "WAITING";
+  if (dept.state === "FAILED" && dept.failureSemantics === "HISTORICAL_FAILURE") return "COMPLETE";
+  return dept.state;
+}
+
+/**
+ * Assigned first-class roles always materialize.
+ * Live sessions overlay matching roles. Only canonical execution glows.
+ * Operations workers come from projectOperationsRoom.
+ */
 export function buildWorkerNodes(
   providers: OperatorProviderSession[],
   departments: OperatorDepartmentSnapshot[],
 ): OperatorWorkerNode[] {
   const nodes: OperatorWorkerNode[] = [];
-  const departmentsWithSessions = new Set<DepartmentId>();
 
   for (const dept of departments) {
+    if (dept.id === OPERATIONS_ROOM_ID || dept.id === SALES_FLOOR_ROOM_ID) continue;
+
+    const assigned = assignedWorkerRolesForRoom(dept.id);
     const deptProviders = providers.filter((p) => p.departmentId === dept.id);
-    if (deptProviders.length === 0) continue;
-    const mapped = deptProviders.slice(0, HQ_WORKER_COLLECT_LIMIT).map(sessionToNode);
-    nodes.push(...mapped);
-    departmentsWithSessions.add(dept.id);
-  }
+    const sessionNodes = deptProviders.slice(0, HQ_WORKER_COLLECT_LIMIT).map(sessionToNode);
+    nodes.push(...sessionNodes);
 
-  for (const dept of departments) {
-    if (departmentsWithSessions.has(dept.id)) continue;
-
-    if (dept.isActive) {
-      const showWorkers = dept.detail?.showWorkers !== false;
-      if (!showWorkers) continue;
-      const roles = DEPARTMENT_DEFAULT_ROLES[dept.id] ?? ["WORK"];
-      nodes.push(genericNode(dept.id, roles[0]!, dept.state, dept.currentTask, false));
-      continue;
+    const covered = new Set<string>();
+    for (const node of sessionNodes) {
+      coverRole(covered, node.role, node.displayRole);
     }
 
-    if (dept.state === "BLOCKED" || (dept.state === "FAILED" && dept.failureSemantics === "CURRENT_BLOCKING_FAILURE")) {
-      const roles = DEPARTMENT_DEFAULT_ROLES[dept.id] ?? ["WORK"];
-      nodes.push(genericNode(dept.id, roles[0]!, dept.state, dept.currentTask, true));
+    const blocked =
+      dept.state === "BLOCKED"
+      || (dept.state === "FAILED" && dept.failureSemantics === "CURRENT_BLOCKING_FAILURE");
+    const allowGenericActive =
+      dept.isActive
+      && dept.detail?.showWorkers !== false
+      && sessionNodes.every((node) => !node.isActive);
+    const roomExecuting = dept.state === "RUNNING" && dept.isActive && dept.detail?.showWorkers !== false;
+
+    for (const [index, role] of assigned.entries()) {
+      if (roleCovered(covered, role)) continue;
+      const makeActive = roomExecuting || (allowGenericActive && sessionNodes.length === 0 && index === 0);
+      const state = assignedPresenceState(dept, makeActive);
+      nodes.push(genericNode(dept.id, role, state, makeActive || blocked ? dept.currentTask : null, !makeActive));
+      coverRole(covered, role, humanizeRole(role));
     }
   }
 
@@ -109,3 +129,5 @@ export function workerNodesForDepartment(
 ): OperatorWorkerNode[] {
   return nodes.filter((n) => n.departmentId === departmentId);
 }
+
+export { assignedWorkerRolesForRoom };

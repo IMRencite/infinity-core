@@ -8,6 +8,7 @@ import type {
   MonetizationCandidateAnalysis,
   MonetizationCostSummary,
   MonetizationEngineReport,
+  MonetizationHandoffSummary,
   MonetizationPlan,
   NormalizedMonetizationScores,
   ValidationExperimentDraft,
@@ -79,7 +80,10 @@ export async function loadOpportunityCandidatesForMonetization(
   organizationId: string,
   candidateIds?: string[],
   maxCandidates = 5,
-): Promise<LoadedOpportunityCandidate[]> {
+): Promise<{
+  candidates: LoadedOpportunityCandidate[];
+  truncatedCandidateIds: string[];
+}> {
   let query = admin
     .from("opportunity_candidates")
     .select("*")
@@ -95,40 +99,52 @@ export async function loadOpportunityCandidatesForMonetization(
   const { data, error } = await query;
   if (error) throw error;
 
-  return (data ?? []).slice(0, maxCandidates).map((row) => ({
-    id: row.id,
-    organizationId: row.organization_id,
-    discoveryRunId: row.discovery_run_id,
-    title: row.title,
-    summary: row.summary,
-    problem: row.problem,
-    targetCustomer: row.target_customer,
-    market: row.market,
-    businessModelCandidates: Array.isArray(row.business_model_candidates)
-      ? (row.business_model_candidates as string[])
-      : [],
-    revenueMechanismCandidates: Array.isArray(row.revenue_mechanism_candidates)
-      ? (row.revenue_mechanism_candidates as string[])
-      : [],
-    monetizationEvidence: (row.monetization_evidence ?? []) as unknown[],
-    demandEvidence: (row.demand_evidence ?? []) as unknown[],
-    competitionEvidence: (row.competition_evidence ?? []) as unknown[],
-    distributionEvidence: (row.distribution_evidence ?? []) as unknown[],
-    buildabilityEvidence: (row.buildability_evidence ?? []) as unknown[],
-    marketEvidence: (row.market_evidence ?? []) as unknown[],
-    risks: (row.risks ?? []) as unknown[],
-    unknowns: (row.unknowns ?? []) as unknown[],
-    researchSources: (row.research_sources ?? []) as unknown[],
-    researchRunIds: Array.isArray(row.research_run_ids) ? (row.research_run_ids as string[]) : [],
-    opportunityScore: row.opportunity_score,
-  }));
+  const rows = data ?? [];
+  const selectedRows = rows.slice(0, maxCandidates);
+  const selectedIds = new Set(selectedRows.map((row) => row.id));
+  const truncatedCandidateIds =
+    candidateIds && candidateIds.length > 0
+      ? candidateIds.filter((candidateId) => !selectedIds.has(candidateId))
+      : [];
+
+  return {
+    candidates: selectedRows.map((row) => ({
+      id: row.id,
+      organizationId: row.organization_id,
+      discoveryRunId: row.discovery_run_id,
+      title: row.title,
+      summary: row.summary,
+      problem: row.problem,
+      targetCustomer: row.target_customer,
+      market: row.market,
+      businessModelCandidates: Array.isArray(row.business_model_candidates)
+        ? (row.business_model_candidates as string[])
+        : [],
+      revenueMechanismCandidates: Array.isArray(row.revenue_mechanism_candidates)
+        ? (row.revenue_mechanism_candidates as string[])
+        : [],
+      monetizationEvidence: (row.monetization_evidence ?? []) as unknown[],
+      demandEvidence: (row.demand_evidence ?? []) as unknown[],
+      competitionEvidence: (row.competition_evidence ?? []) as unknown[],
+      distributionEvidence: (row.distribution_evidence ?? []) as unknown[],
+      buildabilityEvidence: (row.buildability_evidence ?? []) as unknown[],
+      marketEvidence: (row.market_evidence ?? []) as unknown[],
+      risks: (row.risks ?? []) as unknown[],
+      unknowns: (row.unknowns ?? []) as unknown[],
+      researchSources: (row.research_sources ?? []) as unknown[],
+      researchRunIds: Array.isArray(row.research_run_ids) ? (row.research_run_ids as string[]) : [],
+      opportunityScore: row.opportunity_score,
+    })),
+    truncatedCandidateIds,
+  };
 }
 
 export async function selectDiverseCandidatesForTest(
   admin: AdminSupabaseClient,
   organizationId: string,
 ): Promise<LoadedOpportunityCandidate[]> {
-  const all = await loadOpportunityCandidatesForMonetization(admin, organizationId, undefined, 20);
+  const loaded = await loadOpportunityCandidatesForMonetization(admin, organizationId, undefined, 20);
+  const all = loaded.candidates;
   if (all.length === 0) return [];
 
   const selected: LoadedOpportunityCandidate[] = [];
@@ -438,6 +454,7 @@ export function buildMonetizationEngineReport(input: {
   plansGenerated: number;
   revenueStreamsGenerated: number;
   costSummary: MonetizationCostSummary;
+  handoff?: MonetizationHandoffSummary;
 }): MonetizationEngineReport {
   return {
     engineVersion: "monetization_engine_v1",
@@ -446,6 +463,7 @@ export function buildMonetizationEngineReport(input: {
     plansGenerated: input.plansGenerated,
     revenueStreamsGenerated: input.revenueStreamsGenerated,
     researchRunIds: input.researchRunIds,
+    handoff: input.handoff,
     analyses: input.analyses.map((analysis) => ({
       candidateId: analysis.opportunityCandidateId,
       candidateTitle: analysis.candidateTitle,

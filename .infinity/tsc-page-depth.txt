@@ -1,0 +1,30 @@
+﻿components/dashboard/operator-console/department-detail-panel.tsx(175,139): error TS2339: Property 'current_experiment' does not exist on type 'ProfitLabOfferProjection'.
+lib/infinity/customer-page-depth/__tests__/global-page-depth-qc-occupancynpv-layout-repair-v1.test.ts(53,16): error TS2339: Property 'parseDiagnostics' does not exist on type 'SourceFile'.
+lib/infinity/customer-page-depth/__tests__/global-page-depth-qc-occupancynpv-layout-repair-v1.test.ts(53,45): error TS7006: Parameter 'row' implicitly has an 'any' type.
+lib/infinity/customer-page-depth/gates.ts(72,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(80,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(88,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(116,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(123,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(133,38): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/customer-page-depth/gates.ts(142,36): error TS2339: Property 'test' does not exist on type 'string | RegExp'.
+  Property 'test' does not exist on type 'string'.
+lib/infinity/offer-architecture/__tests__/occupancynpv-pricing-page-quality-v3.test.ts(16,16): error TS2339: Property 'parseDiagnostics' does not exist on type 'SourceFile'.
+lib/infinity/offer-architecture/__tests__/occupancynpv-pricing-page-quality-v3.test.ts(16,45): error TS7006: Parameter 'row' implicitly has an 'any' type.
+lib/infinity/offer-architecture/founder-viewport-commercial-qc.ts(365,5): error TS2322: Type '"PASS" | "FAIL" | "N/A"' is not assignable to type '"PASS" | "FAIL"'.
+  Type '"N/A"' is not assignable to type '"PASS" | "FAIL"'.
+lib/infinity/offer-architecture/founder-viewport-commercial-qc.ts(366,5): error TS2322: Type '"PASS" | "FAIL" | "N/A"' is not assignable to type '"PASS" | "FAIL"'.
+  Type '"N/A"' is not assignable to type '"PASS" | "FAIL"'.
+lib/infinity/offer-architecture/hq.ts(51,63): error TS2367: This comparison appears to be unintentional because the types '"3-Day Free Trial"' and '"NONE"' have no overlap.
+lib/infinity/offer-architecture/hq.ts(70,51): error TS2367: This comparison appears to be unintentional because the types '"3-Day Free Trial"' and '"NONE"' have no overlap.
+lib/infinity/offer-architecture/pricing-page-quality.ts(187,5): error TS2322: Type '"PASS" | "FAIL" | "N/A"' is not assignable to type '"PASS" | "FAIL"'.
+  Type '"N/A"' is not assignable to type '"PASS" | "FAIL"'.
+lib/infinity/offer-architecture/pricing-page-quality.ts(188,5): error TS2322: Type '"PASS" | "FAIL" | "N/A"' is not assignable to type '"PASS" | "FAIL"'.
+  Type '"N/A"' is not assignable to type '"PASS" | "FAIL"'.
+lib/infinity/venture-operating-scale/occupancynpv-pricing-ux-repair-deployment.ts(152,9): error TS2322: Type '"Isolated OccupancyNPV pricing UX repair. Base price is not an offer. Fake paid-first offer block removed."' is not assignable to type '"premiumAuthorityArtifactIdFor hashes planId+packageId+version+contract, not file contents. The same package-derived artifact ID can therefore label multiple digests. Immutable production identity is digest + deployment_id."'.

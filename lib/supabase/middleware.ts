@@ -3,26 +3,12 @@ import type { SupabaseClientOptions } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
 import type { PublicSupabaseSchemaName } from "./admin";
+import { getPublicSupabaseEnv } from "./public-env";
 
-function getSupabaseConfig() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-  if (!url) {
-    throw new Error("Missing environment variable: NEXT_PUBLIC_SUPABASE_URL");
-  }
-
-  if (!publishableKey) {
-    throw new Error(
-      "Missing environment variable: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-    );
-  }
-
-  return { url, publishableKey };
-}
+const authDebug = process.env.AUTH_DEBUG === "true";
 
 export async function updateSession(request: NextRequest) {
-  const { url, publishableKey } = getSupabaseConfig();
+  const { url, publishableKey } = getPublicSupabaseEnv();
 
   let supabaseResponse = NextResponse.next({
     request,
@@ -37,7 +23,6 @@ export async function updateSession(request: NextRequest) {
           value: string;
           options?: Parameters<typeof supabaseResponse.cookies.set>[2];
         }[],
-        headers: Record<string, string>,
       ): void;
     };
   } = {
@@ -48,7 +33,7 @@ export async function updateSession(request: NextRequest) {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet, headers) {
+      setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => {
           request.cookies.set(name, value);
         });
@@ -58,12 +43,22 @@ export async function updateSession(request: NextRequest) {
         });
 
         cookiesToSet.forEach(({ name, value, options }) => {
-          supabaseResponse.cookies.set(name, value, options);
+          const host = request.nextUrl.hostname;
+          const https = request.nextUrl.protocol === "https:" || host === "hq.imros.io" || process.env.VERCEL === "1";
+          supabaseResponse.cookies.set(name, value, {
+            ...options,
+            httpOnly: true,
+            secure: https ? true : Boolean(options?.secure),
+            sameSite: options?.sameSite ?? "lax",
+            path: options?.path ?? "/",
+          });
         });
 
-        Object.entries(headers).forEach(([key, value]) => {
-          supabaseResponse.headers.set(key, value);
-        });
+        if (authDebug) {
+          console.info(
+            `[auth] middleware setAll wrote ${cookiesToSet.length} cookie(s) for ${request.nextUrl.pathname}`,
+          );
+        }
       },
     },
   };
@@ -74,7 +69,18 @@ export async function updateSession(request: NextRequest) {
     clientOptions,
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (authDebug) {
+    const authCookies = request.cookies
+      .getAll()
+      .filter((cookie) => cookie.name.includes("-auth-token"));
+    console.info(
+      `[auth] middleware path=${request.nextUrl.pathname} user=${Boolean(user)} authCookies=${authCookies.length}`,
+    );
+  }
 
   return supabaseResponse;
 }

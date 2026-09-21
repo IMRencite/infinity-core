@@ -1,0 +1,12 @@
+{
+  "source_id": "source:duckduckgo_html:public-web-cre",
+  "provider": "duckduckgo_html",
+  "capability": "web.search",
+  "query": "tenant representation commercial real estate team",
+  "observed_at": "2026-09-10T23:58:00.000Z",
+  "http_status": 200,
+  "result_count": 10,
+  "has_result_markup": true,
+  "fabricated": false,
+  "live_verification_state": "LIVE_VERIFIED"
+}

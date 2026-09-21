@@ -1,0 +1,24 @@
+{
+  "PaymentWebhookBinding": {
+    "venture": "occupancynpv",
+    "provider": "stripe",
+    "account": "acct_18h5CjLdvXKx7R7G",
+    "endpointId": "we_canonical1",
+    "url": "https://occupancynpv.com/api/webhooks/stripe",
+    "mode": "LIVE",
+    "events": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "payment_intent.payment_failed"
+    ],
+    "secret": "SERVER_SIDE_SECRET_REFERENCE_ONLY",
+    "secretEnv": "STRIPE_WEBHOOK_SECRET",
+    "readback": "VERIFIED"
+  },
+  "durableProviderMutationAuthority": "MISSING",
+  "followUp": "DURABLE_COMMERCIAL_PROVIDER_MUTATION_AUTHORITY_REQUIRED",
+  "readbackAt": "2026-09-07T05:55:11.881Z"
+}

@@ -1,0 +1,1190 @@
+{
+  "origin": "https://occupancynpv.com",
+  "capturedAt": "2026-09-08T05:20:48.588Z",
+  "samples": [
+    {
+      "id": "home",
+      "path": "/",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Compare commercial lease economics without rebuilding the spreadsheet.",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container pv-close-well",
+        "text": "Who is this not forwho is this not for: this wor",
+        "left": 21,
+        "right": 21,
+        "width": 333,
+        "top": 12818.1
+      },
+      "headingGutter": {
+        "left": 42,
+        "right": 47.1
+      },
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "home",
+      "path": "/",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Compare commercial lease economics without rebuilding the spreadsheet.",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container pv-close-well",
+        "text": "Who is this not forwho is this not for: this wor",
+        "left": 21,
+        "right": 21,
+        "width": 348,
+        "top": 12419.3
+      },
+      "headingGutter": {
+        "left": 42,
+        "right": 62.1
+      },
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "home",
+      "path": "/",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Compare commercial lease economics without rebuilding the spreadsheet.",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container pv-close-well",
+        "text": "Who is this not forwho is this not for: this wor",
+        "left": 33.6,
+        "right": 33.6,
+        "width": 700.8,
+        "top": 7976
+      },
+      "headingGutter": {
+        "left": 48,
+        "right": 434.1
+      },
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "home",
+      "path": "/",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Compare commercial lease economics without rebuilding the spreadsheet.",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "The new mechanismCapture each option’s rent sche",
+        "left": 50.4,
+        "right": 50.4,
+        "width": 1179.2,
+        "top": 1724.4
+      },
+      "headingGutter": {
+        "left": 304,
+        "right": 581.8
+      },
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/pricing",
+      "title": "Early validation pricing hypotheses",
+      "heading": "Early validation pricing hypotheses",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 294.7,
+        "top": 7106.5
+      },
+      "headingGutter": {
+        "left": 42,
+        "right": 70.2
+      },
+      "formGutter": {
+        "left": 54.6,
+        "right": 54.6
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/pricing",
+      "title": "Early validation pricing hypotheses",
+      "heading": "Early validation pricing hypotheses",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 309.7,
+        "top": 7011.8
+      },
+      "headingGutter": {
+        "left": 42,
+        "right": 85.2
+      },
+      "formGutter": {
+        "left": 54.6,
+        "right": 54.6
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/pricing",
+      "title": "Early validation pricing hypotheses",
+      "heading": "Early validation pricing hypotheses",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "Interest only — not a purchaseEarly validation p",
+        "left": 42,
+        "right": 42,
+        "width": 684,
+        "top": 501
+      },
+      "headingGutter": {
+        "left": 42,
+        "right": 463.2
+      },
+      "formGutter": {
+        "left": 54.6,
+        "right": 54.6
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/pricing",
+      "title": "Early validation pricing hypotheses",
+      "heading": "Early validation pricing hypotheses",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "Interest only — not a purchaseEarly validation p",
+        "left": 50.4,
+        "right": 50.4,
+        "width": 1179.2,
+        "top": 477.7
+      },
+      "headingGutter": {
+        "left": 50.4,
+        "right": 866.3
+      },
+      "formGutter": {
+        "left": 58.8,
+        "right": 58.8
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot",
+      "path": "/early-access",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 216.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot",
+      "path": "/early-access",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 0,
+        "width": 390,
+        "top": 216.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot",
+      "path": "/early-access",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 62.4,
+        "width": 705.6,
+        "top": 171.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 62.4
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot",
+      "path": "/early-access",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 574.4,
+        "width": 705.6,
+        "top": 148
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 574.4
+      },
+      "formGutter": {
+        "left": 50.4,
+        "right": 50.4
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot_success",
+      "path": "/early-access?checkout=success",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access?checkout=success",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 216.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot_success",
+      "path": "/early-access?checkout=success",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access?checkout=success",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 0,
+        "width": 390,
+        "top": 216.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot_success",
+      "path": "/early-access?checkout=success",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access?checkout=success",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 62.4,
+        "width": 705.6,
+        "top": 171.3
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 62.4
+      },
+      "formGutter": {
+        "left": 42,
+        "right": 42
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "pilot_success",
+      "path": "/early-access?checkout=success",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/early-access?checkout=success",
+      "title": "Request Pilot Access",
+      "heading": "Request pilot access",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "h1",
+        "className": "",
+        "text": "Request pilot access",
+        "left": 0,
+        "right": 574.4,
+        "width": 705.6,
+        "top": 148
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 574.4
+      },
+      "formGutter": {
+        "left": 50.4,
+        "right": 50.4
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "login",
+      "path": "/occupancynpv/app/login",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 160.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "signup",
+      "path": "/occupancynpv/app/login",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "state": "signup",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Create account",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Create accountOccupancyNPV comparison workspace.",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 160.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "login",
+      "path": "/occupancynpv/app/login",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 390,
+        "top": 160.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "login",
+      "path": "/occupancynpv/app/login",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 768,
+        "top": 115.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "login",
+      "path": "/occupancynpv/app/login",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 1280,
+        "top": 91.8
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "signup",
+      "path": "/occupancynpv/app/login",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "state": "signup",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Create account",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Create accountOccupancyNPV comparison workspace.",
+        "left": 0,
+        "right": 0,
+        "width": 1280,
+        "top": 91.8
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "dashboard",
+      "path": "/occupancynpv/app",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": null,
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "main",
+        "className": "px-4 py-10",
+        "text": "Loading…",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 136.5
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "dashboard",
+      "path": "/occupancynpv/app",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": null,
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "main",
+        "className": "px-4 py-10",
+        "text": "Loading…",
+        "left": 0,
+        "right": 0,
+        "width": 390,
+        "top": 136.5
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "dashboard",
+      "path": "/occupancynpv/app",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 768,
+        "top": 115.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "dashboard",
+      "path": "/occupancynpv/app",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 1280,
+        "top": 91.8
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "checkout_complete",
+      "path": "/occupancynpv/app/checkout/complete",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 375,
+        "top": 160.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "checkout_complete",
+      "path": "/occupancynpv/app/checkout/complete",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 390,
+        "top": 160.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "checkout_complete",
+      "path": "/occupancynpv/app/checkout/complete",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 768,
+        "top": 115.1
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "checkout_complete",
+      "path": "/occupancynpv/app/checkout/complete",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/occupancynpv/app/login",
+      "title": "Compare commercial lease economics — early validation",
+      "heading": "Sign in",
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "main",
+        "className": "mx-auto max-w-md px-4 py-10",
+        "text": "Sign inOccupancyNPV comparison workspace. Suppor",
+        "left": 0,
+        "right": 0,
+        "width": 1280,
+        "top": 91.8
+      },
+      "headingGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "formGutter": {
+        "left": 0,
+        "right": 0
+      },
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "privacy",
+      "path": "/privacy-policy",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/privacy-policy",
+      "title": "Privacy Policy",
+      "heading": null,
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 294.7,
+        "top": 2928.1
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "privacy",
+      "path": "/privacy-policy",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/privacy-policy",
+      "title": "Privacy Policy",
+      "heading": null,
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 309.7,
+        "top": 2871.7
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "privacy",
+      "path": "/privacy-policy",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/privacy-policy",
+      "title": "Privacy Policy",
+      "heading": null,
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "LegalPrivacy PolicyThis Privacy Policy describes",
+        "left": 42,
+        "right": 42,
+        "width": 684,
+        "top": 175.5
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "privacy",
+      "path": "/privacy-policy",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/privacy-policy",
+      "title": "Privacy Policy",
+      "heading": null,
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "LegalPrivacy PolicyThis Privacy Policy describes",
+        "left": 50.4,
+        "right": 50.4,
+        "width": 1179.2,
+        "top": 152.2
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "terms",
+      "path": "/terms-of-service",
+      "width": 375,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/terms-of-service",
+      "title": "Terms of Service",
+      "heading": null,
+      "viewportWidth": 375,
+      "overflow": 0,
+      "bodyScrollWidth": 375,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 294.7,
+        "top": 4399.4
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "terms",
+      "path": "/terms-of-service",
+      "width": 390,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/terms-of-service",
+      "title": "Terms of Service",
+      "heading": null,
+      "viewportWidth": 390,
+      "overflow": 0,
+      "bodyScrollWidth": 390,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container vg-legal-footer-inner",
+        "text": "Privacy Policy|Terms of Service|Sitemap|An Infin",
+        "left": 40.2,
+        "right": 40.2,
+        "width": 309.7,
+        "top": 4201.9
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "terms",
+      "path": "/terms-of-service",
+      "width": 768,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/terms-of-service",
+      "title": "Terms of Service",
+      "heading": null,
+      "viewportWidth": 768,
+      "overflow": 0,
+      "bodyScrollWidth": 768,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "LegalTerms of ServiceThese terms apply to Occupa",
+        "left": 42,
+        "right": 42,
+        "width": 684,
+        "top": 175.5
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    },
+    {
+      "id": "terms",
+      "path": "/terms-of-service",
+      "width": 1280,
+      "status": 200,
+      "finalUrl": "https://occupancynpv.com/terms-of-service",
+      "title": "Terms of Service",
+      "heading": null,
+      "viewportWidth": 1280,
+      "overflow": 0,
+      "bodyScrollWidth": 1280,
+      "closest": {
+        "tag": "div",
+        "className": "vg-container",
+        "text": "LegalTerms of ServiceThese terms apply to Occupa",
+        "left": 50.4,
+        "right": 50.4,
+        "width": 1179.2,
+        "top": 152.2
+      },
+      "headingGutter": null,
+      "formGutter": null,
+      "mainGutter": {
+        "left": 0,
+        "right": 0
+      }
+    }
+  ]
+}

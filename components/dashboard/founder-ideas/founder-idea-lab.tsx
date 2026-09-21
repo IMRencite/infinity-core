@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import type { HQEntityDetail } from "@/lib/infinity/operator-console/details/entity-detail-types";
 import type { HqWorkArtifact } from "@/lib/infinity/operator-console/artifacts/types";
 import { HQOutputDetail } from "@/components/dashboard/operator-console/artifacts/hq-output-detail";
+import { InfinityOsHero } from "@/components/dashboard/operator-console/infinity-os-hero";
 import { analyzeFounderIdeaAction, decideFounderIdeaAction, reanalyzeFounderIdeaAction, type FounderIdeaActionState } from "@/app/dashboard/founder-ideas/actions";
 import type { FounderIdeaListRow } from "@/lib/infinity/founder-idea-lab/hq/artifacts";
 import type { FounderAction } from "@/lib/infinity/founder-idea-lab/constants";
@@ -52,6 +53,7 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
 
   return (
     <div className="space-y-6">
+      <InfinityOsHero />
       <section className="relative overflow-hidden border border-zinc-700/35 bg-gradient-to-b from-zinc-950/80 to-[#080808] px-5 py-5">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.08),transparent_60%)]" aria-hidden />
         <div className="relative">
@@ -256,7 +258,7 @@ export function FounderIdeaLab({ rows, decisions, details }: Props) {
 
       {selectedDetail ? (
         <section className="border border-zinc-800/70 bg-zinc-950/60" aria-label="Founder idea intelligence">
-          <HQOutputDetail detail={selectedDetail.detail} artifact={selectedDetail.artifact} />
+          <HQOutputDetail detail={selectedDetail.detail} artifact={selectedDetail.artifact} embedded />
         </section>
       ) : null}
     </div>

@@ -2,6 +2,7 @@
 
 import type { OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
 import type { RoomPresenceModel } from "@/lib/infinity/operator-console/room-presence";
+import { projectWorkerVisualState } from "@/lib/infinity/hq-live-activity";
 import { WorkerNode } from "../worker-node";
 
 type Props = {
@@ -14,28 +15,31 @@ function agentTitle(node: OperatorWorkerNode, stateLabel: string): string {
 }
 
 function idleStateLabel(node: OperatorWorkerNode, presenceState: RoomPresenceModel["state"]): string {
+  const visual = projectWorkerVisualState(node);
+  if (visual.visualState !== "IDLE") return visual.visualState;
   if (presenceState === "BLOCKED" || node.status === "BLOCKED" || node.status === "FAILED") return "BLOCKED";
   return "PRESENT_IDLE";
 }
 
 function countLabel(presence: RoomPresenceModel): string {
-  if (presence.state === "EMPTY" || presence.agentsPresent === 0) return "NO AGENTS PRESENT";
-  if (presence.state === "BLOCKED" || presence.agentsBlocked > 0 && presence.agentsActive === 0) {
-    return `${presence.agentsPresent} PRESENT`;
-  }
+  if (presence.agentsPresent === 0) return "NO AGENTS PRESENT";
   if (presence.agentsActive > 0 && presence.agentsIdle > 0) {
     return `${presence.agentsActive} ACTIVE · ${presence.agentsIdle} IDLE`;
   }
   if (presence.agentsActive > 0) return `${presence.agentsActive} ACTIVE`;
-  return `${presence.agentsPresent} PRESENT`;
+  if (presence.state === "BLOCKED" || (presence.agentsBlocked > 0 && presence.agentsActive === 0)) {
+    return "AGENTS BLOCKED";
+  }
+  const waiting = presence.presenceNodes.filter((node) => projectWorkerVisualState(node).visualState === "WAITING").length;
+  if (waiting > 0) return "AGENTS WAITING";
+  return "AGENTS IDLE";
 }
 
 export function RoomPresenceTrack({ presence, showEmptyLabel = true }: Props) {
-  const empty = presence.state === "EMPTY" || presence.agentsPresent === 0;
+  const empty = presence.agentsPresent === 0;
   if (empty && !showEmptyLabel) return null;
 
-  const blocked = presence.state === "BLOCKED";
-  const orbs = presence.presenceNodes;
+  const orbs = [...presence.activeNodes, ...presence.presenceNodes.filter((node) => !presence.activeNodes.some((active) => active.nodeId === node.nodeId))];
 
   return (
     <div
@@ -53,15 +57,27 @@ export function RoomPresenceTrack({ presence, showEmptyLabel = true }: Props) {
       ) : (
         <div className="flex flex-wrap items-end gap-2">
           {orbs.map((node) => {
-            const stateLabel = idleStateLabel(node, presence.state);
+            const visual = projectWorkerVisualState(node);
+            const stateLabel = visual.visualState === "ACTIVE" ? "ACTIVE_WORK" : idleStateLabel(node, presence.state);
             return (
-              <div key={node.nodeId} className="relative z-10" title={agentTitle(node, stateLabel)}>
+              <div
+                key={node.nodeId}
+                className="relative z-10"
+                title={agentTitle(node, visual.accessibleState)}
+                data-hq-worker-role={node.displayRole}
+                data-hq-worker-task={node.displayTask ?? ""}
+                data-hq-worker-status={stateLabel}
+                data-hq-worker-visual-state={visual.visualState}
+                data-hq-worker-glow={visual.glow ? "true" : "false"}
+              >
                 <WorkerNode
                   node={node}
                   compact
-                  idle={!blocked && !node.motionActive}
-                  blocked={blocked || node.status === "BLOCKED" || node.status === "FAILED"}
+                  prominent={visual.glow}
                 />
+                {node.displayTask ? (
+                  <p className="mt-0.5 max-w-[120px] truncate text-[8px] leading-tight text-zinc-400">{node.displayTask}</p>
+                ) : null}
               </div>
             );
           })}

@@ -191,6 +191,8 @@ function portfolio(): PortfolioSummary {
     generatedAt: "2026-08-20T00:00:00.000Z",
     totalVenturesBuilt: 2,
     activeVentures: 2,
+    operatingVentures: 2,
+    validatingVentures: 0,
     totalRevenueUsd: 2100,
     knownCostsUsd: 800,
     totalProfitUsd: 1000,

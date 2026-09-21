@@ -1,0 +1,51 @@
+{
+  "mission": "CRE_CLOUDFLARE_DNS_LIVE_WRITE_VERIFICATION_V2",
+  "environment": {
+    "generalDnsTokenLoaded": "YES",
+    "accountIdLoaded": "YES"
+  },
+  "zone": {
+    "name": "occupancynpv.com",
+    "found": "YES",
+    "status": "active",
+    "dnsRead": "READ_ONLY_VERIFIED",
+    "zoneManagement": "READ_ONLY_VERIFIED"
+  },
+  "liveWrite": {
+    "create": "FAIL",
+    "readback": "FAIL",
+    "deleted": "FAIL",
+    "remaining": "NO",
+    "providerStatus": 403,
+    "providerError": 10000,
+    "probeName": "_infinity-dns-write-verification.occupancynpv.com"
+  },
+  "capability": {
+    "dnsWrite": "UNVERIFIED",
+    "currentZoneWritable": "NO",
+    "tokenZoneScope": "UNKNOWN",
+    "zoneLifecycleAuthority": "UNKNOWN",
+    "futureZoneDnsManagement": "UNKNOWN"
+  },
+  "actions": {
+    "productionDnsWrites": 0,
+    "vercelMutations": 0,
+    "domainPurchases": 0,
+    "stripeWrites": 0,
+    "deployments": 0,
+    "temporaryRecordsRemaining": 0,
+    "publiclyLaunched": "NO"
+  },
+  "usedRegistrarToken": false,
+  "nextState": "CLOUDFLARE_DNS_WRITE_FAILED",
+  "hqMission": {
+    "mission": "CRE_CLOUDFLARE_DNS_LIVE_WRITE_VERIFICATION_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "founderReview": "PASS",
+  "acceptanceType": "PHYSICAL_BROWSER_VISUAL_REVIEW",
+  "artifactId": "art_11bd5b74a925257a7319",
+  "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+  "deploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+  "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+  "founderEvidencePrecedence": "APPLY",
+  "visualBlocker": "CLEARED",
+  "closedBlocker": "FOUNDER_PHYSICAL_FULL_SITE_VISUAL_REVIEW_REQUIRED",
+  "nextState": "FOUNDER_FULL_SITE_VISUAL_REVIEW_ACCEPTED",
+  "nextUnlockedMilestone": "CONTEXT_RICH_CONSULTATIVE_OUTREACH_OPTIMIZATION_V1",
+  "nextMilestoneStarted": false,
+  "wave2Started": false,
+  "domainCommercializationStarted": false,
+  "publiclyLaunched": false,
+  "closedVisualRepairClasses": [
+    "Trusted Sources contrast",
+    "human-first machine-language leakage",
+    "full-page render/validate/repair",
+    "/pricing prerender hook boundary",
+    "hub question-board geometry",
+    "site-chrome color(srgb) parsing",
+    "homepage hero-link contrast",
+    "semantic-nav width utilization",
+    "dark-surface muted-text contrast",
+    "HQ room activity projection",
+    "HQ Infinity Decision Core"
+  ],
+  "howItWorks": {
+    "learnNext": "wide authority-shell breakout",
+    "fiveCards": "3 + 2",
+    "scrunched": "ABSENT",
+    "workflowKickerContrast": "11.62:1",
+    "bottomCaptionContrast": "11.62:1",
+    "whiteTableCaptionFloor": ">= 4.5:1"
+  },
+  "hqDecisionCore": {
+    "component": "InfinityDecisionCore",
+    "primaryShape": "INFINITY_SYMBOL",
+    "coreFrame": "13.75 × 12.25rem",
+    "symbol": "11.75 × 7.65rem",
+    "missionRuntimeSoleSource": true,
+    "circularCore": false
+  },
+  "historicalFirstTouch": {
+    "variant": "MINIMAL_DISCOVERY",
+    "sent": 2,
+    "overwritten": false
+  },
+  "consultativeStructure": [
+    "CONTEXT",
+    "REASON FOR CONTACT",
+    "LIGHT SOLUTION FRAME",
+    "CURRENT-PROCESS QUESTION"
+  ],
+  "experimentId": "exp_e72beb7b6d35e7b20acf",
+  "acceptedAt": "2026-09-05T05:34:03.053Z"
+}

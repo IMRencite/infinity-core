@@ -10,6 +10,7 @@ import {
 import {
   assertMonetizationResearchBudget,
   emptyCostSummary,
+  finalizeMonetizationCostSummary,
   mergeCostSummaries,
 } from "./cost-governance";
 import { mapExtractionToMonetizationPlans } from "./extraction/map-plans";
@@ -30,6 +31,9 @@ import { runMonetizationExtractionResearch } from "./research/monetization-extra
 import { selectBestPlanScore } from "./scoring/calculate";
 import type {
   MonetizationCandidateAnalysis,
+  MonetizationEngineReport,
+  MonetizationHandoffExclusion,
+  MonetizationHandoffSummary,
   RunMonetizationEngineInput,
   RunMonetizationEngineOutput,
 } from "./types";
@@ -71,27 +75,48 @@ export async function runMonetizationEngineCycle(
     input.idempotencyKey,
   );
   if (existing?.status === "completed" && existing.engine_report) {
+    const report = existing.engine_report as MonetizationEngineReport;
     return {
       ok: true,
       monetizationRunId: existing.id,
-      report: existing.engine_report as never,
+      report,
       analyses: [],
+      handoff:
+        report.handoff ??
+        ({
+          requestedCandidateIds: (existing.opportunity_candidate_ids as string[] | null) ?? [],
+          processedCandidateIds: (existing.opportunity_candidate_ids as string[] | null) ?? [],
+          monetizedCandidateIds:
+            report.analyses?.map((analysis) => analysis.candidateId) ?? [],
+          excludedCandidates: [],
+        } satisfies MonetizationHandoffSummary),
     };
   }
 
-  const candidates = input.opportunityCandidateIds?.length
+  const requestedCandidateIds = input.opportunityCandidateIds ?? [];
+  const maxCandidates = input.maxCandidates ?? config.maxCandidatesPerRun;
+  const loaded = input.opportunityCandidateIds?.length
     ? await loadOpportunityCandidatesForMonetization(
         admin,
         input.organizationId,
         input.opportunityCandidateIds,
-        input.maxCandidates ?? config.maxCandidatesPerRun,
+        maxCandidates,
       )
     : await loadOpportunityCandidatesForMonetization(
         admin,
         input.organizationId,
         undefined,
-        input.maxCandidates ?? config.maxCandidatesPerRun,
+        maxCandidates,
       );
+  const candidates = loaded.candidates;
+  const excludedCandidates: MonetizationHandoffExclusion[] = loaded.truncatedCandidateIds.map(
+    (candidateId) => ({
+      candidateId,
+      stage: "monetization" as const,
+      reason: `Excluded by monetization maxCandidates limit (${maxCandidates})`,
+      classification: "monetization_input_truncated" as const,
+    }),
+  );
 
   if (candidates.length === 0) {
     throw new Error("No opportunity candidates available for monetization analysis.");
@@ -128,7 +153,15 @@ export async function runMonetizationEngineCycle(
     });
 
     for (const candidate of candidates) {
-      if (researchRunIds.length >= maxResearchCalls) break;
+      if (researchRunIds.length >= maxResearchCalls) {
+        excludedCandidates.push({
+          candidateId: candidate.id,
+          stage: "monetization",
+          reason: `Excluded because monetization research budget exhausted (${maxResearchCalls} calls)`,
+          classification: "monetization_research_budget_exhausted",
+        });
+        continue;
+      }
 
       try {
         const researchObjective = buildMonetizationResearchObjective(candidate);
@@ -162,7 +195,14 @@ export async function runMonetizationEngineCycle(
             candidate.researchRunIds,
           );
           if (!researchResult) {
-            candidateFailures.push(`${candidate.id}: ${researchOutput.failure.message}`);
+            const failureMessage = `${candidate.id}: ${researchOutput.failure.message}`;
+            candidateFailures.push(failureMessage);
+            excludedCandidates.push({
+              candidateId: candidate.id,
+              stage: "monetization",
+              reason: researchOutput.failure.message,
+              classification: "monetization_analysis_failed",
+            });
             continue;
           }
           if (!researchRunIds.includes(researchResult.researchRunId)) {
@@ -237,11 +277,25 @@ export async function runMonetizationEngineCycle(
 
         analyses.push(analysis);
       } catch (error) {
-        candidateFailures.push(
-          `${candidate.id}: ${error instanceof Error ? error.message : "candidate analysis failed"}`,
-        );
+        const message = error instanceof Error ? error.message : "candidate analysis failed";
+        candidateFailures.push(`${candidate.id}: ${message}`);
+        excludedCandidates.push({
+          candidateId: candidate.id,
+          stage: "monetization",
+          reason: message,
+          classification: "monetization_analysis_failed",
+        });
       }
     }
+
+    const handoff: MonetizationHandoffSummary = {
+      requestedCandidateIds: requestedCandidateIds.length
+        ? requestedCandidateIds
+        : candidates.map((candidate) => candidate.id),
+      processedCandidateIds: candidates.map((candidate) => candidate.id),
+      monetizedCandidateIds: analyses.map((analysis) => analysis.opportunityCandidateId),
+      excludedCandidates,
+    };
 
     if (analyses.length === 0) {
       throw new Error(
@@ -263,7 +317,8 @@ export async function runMonetizationEngineCycle(
       researchRunIds,
       plansGenerated,
       revenueStreamsGenerated,
-      costSummary,
+      costSummary: finalizeMonetizationCostSummary(costSummary),
+      handoff,
     });
 
     const serialized = JSON.stringify(report);
@@ -276,8 +331,8 @@ export async function runMonetizationEngineCycle(
       completed_at: report.completedAt,
       token_usage: costSummary.tokenUsage as never,
       grounding_usage: costSummary.groundingUsage as never,
-      estimated_cost_usd: costSummary.estimatedCostUsd,
-      cost_uncertainty: costSummary.costUncertainty,
+      estimated_cost_usd: report.costSummary.estimatedCostUsd,
+      cost_uncertainty: report.costSummary.costUncertainty,
       engine_report: { ...report, candidateFailures } as never,
       failure_classification: null,
       error_message: null,
@@ -288,6 +343,7 @@ export async function runMonetizationEngineCycle(
       monetizationRunId: runRow.id,
       report,
       analyses,
+      handoff,
     };
   } catch (error) {
     const classified = classifyMonetizationFailure(error);

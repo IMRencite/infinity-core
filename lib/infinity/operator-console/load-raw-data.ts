@@ -1,4 +1,5 @@
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
+import { stripCandidatePrefix } from "@/lib/infinity/hq-inspection-identity/aliases";
 import type { OperatorVentureContext } from "./types";
 
 function readJsonString(obj: Record<string, unknown> | null, ...keys: string[]): string | null {
@@ -15,12 +16,24 @@ export async function loadVentureContext(
   organizationId: string,
   ventureAssemblyId: string,
 ): Promise<OperatorVentureContext | null> {
-  const { data } = await admin
+  const { data: byId } = await admin
     .from("venture_assemblies")
     .select("*")
     .eq("organization_id", organizationId)
     .eq("id", ventureAssemblyId)
     .maybeSingle();
+
+  let data = byId;
+  if (!data) {
+    const candidateId = stripCandidatePrefix(ventureAssemblyId);
+    const { data: byOpportunity } = await admin
+      .from("venture_assemblies")
+      .select("*")
+      .eq("organization_id", organizationId)
+      .eq("opportunity_id", candidateId)
+      .maybeSingle();
+    data = byOpportunity;
+  }
 
   if (!data) return null;
 

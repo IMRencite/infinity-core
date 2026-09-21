@@ -220,6 +220,11 @@ export type SalesFloorEvidence = {
   paid_acquisition: 0;
   money_movement: "DISABLED";
   mercury: "READ_ONLY";
+  affiliate_program?: {
+    present: boolean;
+    building: boolean;
+    state: string;
+  };
 };
 
 export type SalesMotionResolution = {
@@ -243,7 +248,7 @@ export type AutonomousSalesRecommendation = {
   reason: string;
   evidence: string[];
   expected_value: UnknownOrNumber;
-  execution_authorized: false;
+  execution_authorized: boolean;
 };
 
 export type SalesIntelligenceProjection = {
@@ -265,6 +270,7 @@ export type SalesFloorHqView = {
   deals_in_progress: number;
   wins: number;
   losses: number;
+  performance: import("@/lib/infinity/autonomous-sales-execution/hq").SalesPerformanceView;
   rooms: SalesRoomProjection[];
   intelligence: SalesIntelligenceProjection;
   priorities: Array<{ room: SalesRoomId; priority: SalesPriority }>;
@@ -272,10 +278,12 @@ export type SalesFloorHqView = {
   next_actions: string[];
   recognized_campaign_id: string | null;
   duplicate_campaign_created: false;
-  autonomous_execution_enabled: false;
+  autonomous_execution_enabled: boolean;
   current_motion: SalesMotion;
   highest_priority_room: SalesRoomId;
   highest_priority_reason: string;
+  current_work?: import("@/lib/infinity/current-work-narrative").CurrentWorkNarrative;
+  live?: import("./live-state").SalesFloorLiveState;
 };
 
 export type PublicSalesFloorProjection = {

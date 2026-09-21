@@ -7,17 +7,20 @@ import { CONTENT_MARKERS, WEBSITE_V1_PROJECT_TYPES } from "@/lib/infinity/websit
 import { scanContentHonesty, validateWebsiteSecurity } from "@/lib/infinity/website-builder/validation";
 import { createLocalSandboxAdapter } from "@/lib/infinity/build-factory/sandbox";
 import type { PersistedVentureBlueprint } from "@/lib/infinity/venture-factory/types/blueprint";
+import type { VentureTemplateType } from "@/lib/infinity/venture-factory/constants";
 import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
-function blueprint(ventureType: string): PersistedVentureBlueprint {
+function blueprint(ventureType: VentureTemplateType): PersistedVentureBlueprint {
   return {
     id: "bp-1",
     organizationId: "org",
     opportunityId: "opp",
     ventureType,
     templateKey: "content_website",
+    templateVersion: "1.0.0",
+    schemaVersion: "1.0.0",
     status: "validated",
     blueprint: {
       id: "bp-1",
@@ -43,7 +46,9 @@ function blueprint(ventureType: string): PersistedVentureBlueprint {
       status: "validated",
       createdAt: new Date().toISOString(),
     },
-  } as PersistedVentureBlueprint;
+    idempotencyKey: "bp-1",
+    createdAt: new Date().toISOString(),
+  };
 }
 
 describe("Website Build Worker Foundation v1", () => {

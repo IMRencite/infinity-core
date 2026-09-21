@@ -1,0 +1,68 @@
+{
+  "live_intake": {
+    "status": 200,
+    "keys": [
+      "ok",
+      "acknowledgement",
+      "source"
+    ],
+    "ok": true,
+    "has_source": true,
+    "has_contract": false,
+    "acknowledgement": true
+  },
+  "invalid": {
+    "status": 400,
+    "json": {
+      "ok": false,
+      "reason": "MESSAGE_REQUIRED"
+    }
+  },
+  "forced_failure": {
+    "status": 503,
+    "json": {
+      "ok": false,
+      "reason": "CANONICAL_INTAKE_UNAVAILABLE"
+    }
+  },
+  "hydrate": {
+    "hydrated": 1,
+    "reason": "HYDRATED"
+  },
+  "record_synthetic": true,
+  "record_present": true,
+  "classification": [
+    "OTHER"
+  ],
+  "real_before": 0,
+  "real_after": 0,
+  "synthetic_counted_real": false,
+  "hq_real_feedback": 0,
+  "auth_users": {
+    "alpha": true,
+    "beta": true,
+    "alpha_reason": null
+  },
+  "auth": {
+    "login": true,
+    "session": true,
+    "persistence": true,
+    "protectedRoute": true,
+    "identity": true,
+    "isolation": true,
+    "logout": true,
+    "postLogout": true,
+    "invalid": true,
+    "unauth": true,
+    "errorUx": true,
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "Failed to load resource: the server responded with a status of 401 ()",
+      "Failed to load resource: the server responded with a status of 401 ()"
+    ],
+    "networkFails": [
+      "401 https://occupancynpv.com/api/occupancynpv/me",
+      "401 https://occupancynpv.com/api/occupancynpv/me"
+    ]
+  }
+}

@@ -10,7 +10,7 @@ export function PublicOperationsFooter() {
         <span aria-hidden="true">|</span>
         <a href="/public/sitemap.xml">Sitemap</a>
         <span aria-hidden="true">|</span>
-        <span>An Infinity OS Venture</span>
+        <a href="https://imros.io">An Infinity OS Venture</a>
         <span aria-hidden="true">|</span>
         <a href="https://infinitemediaresources.com" rel="noreferrer" target="_blank">
           By IMR

@@ -1,0 +1,49 @@
+{
+  "mission": "CRE_PROVIDER_EQUIVALENT_PRICING_BUILD_REPAIR_V1",
+  "artifactId": "art_e9e0356a261866b6d534",
+  "digest": "d3d72fedf9593050911d0d7c261fc000c66f0184015f3cc7cb85c27041ecf94f",
+  "predecessor": "art_e6d2a3a1f46d117d61c9",
+  "predecessorDigest": "6f6393a8a9a9cb7b1c713fe396017b0da58903b70c842856a5cfd2bf2e55113f",
+  "routes": 93,
+  "hookBoundary": "PASS",
+  "pageLoop": "PASS",
+  "ready": "FOUNDER_VISUAL_REVIEW_READY",
+  "premiumReady": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "gateStatus": "PASS",
+  "nextBuild": "PASS",
+  "issues": [],
+  "install": "PASS",
+  "build": "PASS",
+  "command": "ACTIVE_WORK",
+  "creationLab": "ACTIVE_WORK",
+  "systemsArchitect": "ACTIVE_WORK",
+  "validationStation": "READY_BLOCKED",
+  "deploymentDepot": "PRESENT_IDLE",
+  "hq": {
+    "currentMission": "CRE_PROVIDER_EQUIVALENT_PRICING_BUILD_REPAIR_V1",
+    "status": "READY_BLOCKED",
+    "currentTask": "Pricing prerender repair is frozen. Provider deployment still requires GOVERNED_CRE_FULL_PAGE_AUTOREPAIR_DEPLOYMENT_REQUIRED.",
+    "blocker": "GOVERNED_CRE_FULL_PAGE_AUTOREPAIR_DEPLOYMENT_REQUIRED",
+    "authorizationRequired": "GOVERNED_CRE_FULL_PAGE_AUTOREPAIR_DEPLOYMENT_REQUIRED",
+    "counts": {
+      "activeMissions": 0,
+      "blockedMissions": 2,
+      "waitingMissions": 0,
+      "authorizationRequired": 2
+    }
+  },
+  "experiment": "COLLECTING",
+  "observer": {
+    "status": "RUNNING",
+    "provider": "gmail.com_v1",
+    "lastCheckpoint": "14925044",
+    "lastSuccessfulObservation": "2026-09-04T08:17:13.091Z",
+    "trackedConversations": 2,
+    "lastInboundProcessed": null,
+    "lastProviderError": null,
+    "cadenceMs": 300000,
+    "runtimeDurability": "LOCAL_RUNTIME_ONLY",
+    "mode": "GMAIL_HISTORY_BOUNDED_POLL"
+  },
+  "providerWrites": 0
+}

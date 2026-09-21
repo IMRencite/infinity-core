@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 import type { HqCopilotSource } from "@/lib/infinity/hq-copilot/types";
 import { HQ_VOICE_MAX_BYTES, HQ_VOICE_MAX_DURATION_MS } from "@/lib/infinity/hq-copilot/voice/constants";
@@ -63,7 +63,7 @@ export function HqCopilotDock({
   const [elapsedLabel, setElapsedLabel] = useState("0:00");
   const [speakEnabled, setSpeakEnabled] = useState(false);
   const [speaking, setSpeaking] = useState(false);
-  const conversationId = useMemo(() => `hq-copilot-${Date.now()}`, []);
+  const conversationId = `hq-copilot-${useId()}`;
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -263,8 +263,8 @@ export function HqCopilotDock({
   const voiceBusy = recording || transcribing;
 
   return (
-    <div className="relative mx-auto w-full min-w-0 max-w-2xl overflow-x-hidden px-1">
-      <form onSubmit={submit} className="flex min-w-0 items-center gap-1.5 rounded-full border border-cyan-500/20 bg-zinc-950/80 px-2 py-1 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
+    <div className="hq-os-ask-field relative w-full min-w-0 overflow-x-hidden">
+      <form onSubmit={submit} className="hq-os-ask-form flex min-w-0 items-center gap-1.5 px-2.5 py-1.5">
         <label className="sr-only" htmlFor="hq-copilot-input">
           Ask Infinity
         </label>

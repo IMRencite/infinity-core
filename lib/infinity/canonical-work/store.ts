@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { durableLocalPersistEnabled } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import { publishCanonicalWorkTransitions, statusRequiresCompletedAt } from "./events";
 import { compactCanonicalWorkRows, pickCurrentCanonicalWork } from "./rows";
 import type { CanonicalWorkExecutionContract, CanonicalWorkStatus } from "./types";
@@ -13,6 +14,7 @@ let diskMtimeMs = 0;
 let diskSize = -1;
 
 function persistEnabled(): boolean {
+  if (!durableLocalPersistEnabled()) return false;
   if (process.env.INFINITY_CANONICAL_WORK_PERSIST === "0") return false;
   if (process.env.VITEST && process.env.INFINITY_CANONICAL_WORK_PERSIST !== "1") return false;
   return true;

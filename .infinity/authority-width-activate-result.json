@@ -1,0 +1,51 @@
+{
+  "attempted": true,
+  "activated": true,
+  "activationCount": 1,
+  "deployments": 1,
+  "deploymentId": "dpl_2qx97rjBqkHMnFEiwyRWM9EA4ohe",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-nnkal6y65.vercel.app",
+  "providerFinalState": "READY",
+  "scored": {
+    "widthGate": "PASS",
+    "shell": "PASS",
+    "breakout": "PASS",
+    "sources": "PASS",
+    "rhythm": "PASS",
+    "four": "2x2",
+    "five": "3+2",
+    "six": "3x2",
+    "fourPass": "PASS",
+    "fivePass": "PASS",
+    "sixPass": "PASS",
+    "avoidableThreePlusOne": 0,
+    "narrowCards": 0,
+    "proseReadable": true,
+    "wideBreakout": true,
+    "shellUtilization": 0.8166666666666667,
+    "live1440": {
+      "viewportWidth": 1440,
+      "authorityShellWidth": 1176,
+      "proseWidth": 873.59375,
+      "semanticNavWidth": 1078.59375,
+      "trustedSourcesWidth": 1176,
+      "tableWidth": 1176,
+      "ctaWidth": 1176,
+      "archetype": "QUESTION_AUTHORITY"
+    },
+    "founderSkinnyFails": true,
+    "founderGridFails": true,
+    "founderWrapFails": true
+  },
+  "canonicalReadback": {
+    "activeArtifactId": "art_b0b778956b7d29327dab",
+    "activeDigest": "15c8dd5bd24e7af20eb694edde9e3c45a5d414847310fa680ab2072543a030db",
+    "activeDeploymentId": "dpl_2qx97rjBqkHMnFEiwyRWM9EA4ohe",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-nnkal6y65.vercel.app"
+  },
+  "experimentState": "COLLECTING",
+  "evidenceStart": "2026-08-29T15:18:52.131Z",
+  "clockRestarted": false,
+  "publiclyLaunched": false,
+  "stopReason": "NONE"
+}

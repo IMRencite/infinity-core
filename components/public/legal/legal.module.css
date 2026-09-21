@@ -1,0 +1,63 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  color: #e8f1ff;
+  background:
+    radial-gradient(1000px 520px at 50% -12%, rgba(56, 189, 248, 0.12), transparent 55%),
+    linear-gradient(180deg, #050814 0%, #07111f 48%, #050810 100%);
+}
+
+.shell {
+  width: min(820px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 3rem 7.4rem 4rem 0;
+}
+
+.kicker {
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: #7dd3fc;
+}
+
+.title {
+  margin: 0.4rem 0 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.03em;
+  color: #f8fbff;
+}
+
+.updated {
+  margin: 0.7rem 0 1.6rem;
+  color: #93a4bb;
+  font-size: 0.92rem;
+}
+
+.section {
+  margin: 1.7rem 0 0;
+}
+
+.section h2 {
+  margin: 0 0 0.55rem;
+  font-size: 1.15rem;
+  color: #dbeafe;
+}
+
+.section p,
+.section li {
+  color: #c5d4ea;
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+.section ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.notice {
+  margin-top: 1.4rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  background: rgba(8, 16, 32, 0.72);
+}

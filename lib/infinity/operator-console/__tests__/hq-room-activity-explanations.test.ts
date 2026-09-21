@@ -174,7 +174,7 @@ describe("HQ room activity explanations v1", () => {
     expect(activity.grounded).toBe(true);
     expect(activity.label).toBe(ROOM_ACTIVITY_LABEL);
     expect(activity.sentence).toContain(VENTURE);
-    expect(activity.sentence).toMatch(/^Comparing market demand/);
+    expect(activity.sentence).toMatch(/Studying the market and validating demand/i);
     expect(activity.sentence).not.toContain(UUID);
     expect(activity.sentence).not.toMatch(/RUNNING|RESEARCH_DEPARTMENT|Grounded research/i);
   });
@@ -253,7 +253,7 @@ describe("HQ room activity explanations v1", () => {
     expect(activity.presence).toBe("ACTIVE_WORK");
     expect(activity.ventureName).toBeNull();
     expect(activity.sentence).not.toMatch(/verification|fixture|FAVC1/i);
-    expect(activity.sentence).toBe("Comparing market demand, competitors, and customer evidence.");
+    expect(activity.sentence).toBe("Studying the market and validating demand.");
   });
 
   it("strips UUIDs and raw internal enums from activity copy", () => {
@@ -329,7 +329,7 @@ describe("HQ room activity explanations v1", () => {
     expect(room).toContain("{supportingLabel}");
     expect(room).toContain("RoomCurrentActivity");
     expect(room).toContain("RoomStatusChip");
-    expect(room).toContain("presence={activity.presence}");
+    expect(room).toContain("presence={chipPresence}");
     expect(room).toContain("RoomPresenceTrack");
     expect(readComponent("infinity-room/room-presence-track.tsx")).toContain("Agents in room");
     expect(readComponent("command-chamber.tsx")).toContain("RoomCurrentActivity");
@@ -350,6 +350,7 @@ describe("HQ room activity explanations v1", () => {
       "quality_control",
       "launch_operations",
       "intelligence_center",
+      "prospect_intelligence",
     ]);
     expect(COMMAND_ROOM_ID).toBe("executive_office");
     expect(LIFECYCLE_ROOM_SEQUENCE.includes(COMMAND_ROOM_ID)).toBe(false);
@@ -407,6 +408,52 @@ describe("HQ room activity explanations v1", () => {
     expect(explanation?.presence).toBe("ACTIVE_WORK");
     expect(explanation?.sentence).toContain(VENTURE);
     expect(enriched.workerNodes?.length).toBeGreaterThan(0);
+  });
+
+  it("uses the exact current task instead of a room title or vague job description", () => {
+    const activity = explain("creative_studio", {
+      department: {
+        state: "RUNNING",
+        isActive: true,
+        currentTask: "Adding the IMR logo to the top right of imros.io",
+      },
+      workerNodes: [worker("creative_studio")],
+    });
+    expect(activity.presence).toBe("ACTIVE_WORK");
+    expect(activity.sentence).toMatch(/Adding the IMR logo to the top right of imros\.io/i);
+    expect(activity.sentence).not.toBe(getRoomDisplayNames("creative_studio").displayName);
+    expect(activity.sentence).not.toBe(getRoomDisplayNames("creative_studio").shortDescription);
+    expect(activity.sentence).not.toMatch(/^Creating the visual direction/);
+  });
+
+  it("shows live Command work even when the inspected FAVC1 room looks empty", () => {
+    const activity = buildRoomActivityExplanation({
+      departmentId: "executive_office",
+      department: department("executive_office", { state: "NOT_STARTED" }),
+      workerNodes: [],
+      currentActivity: inactiveActivity(),
+      commandRoomStatus: "ACTIVE_WORK",
+      commandRoomSummary: "Coordinating Validation Station and Deployment Depot for the frozen successor",
+      nowInspectingTask: "Preparing the immutable source bundle for a single staging deploy",
+    });
+    expect(activity.presence).toBe("ACTIVE_WORK");
+    expect(activity.sentence).toMatch(/Validation Station|source bundle/i);
+    expect(activity.sentence).not.toBe(ROOM_ACTIVITY_EMPTY);
+    expect(activity.sentence).not.toBe(ROOM_ACTIVITY_IDLE);
+  });
+
+  it("shows a blocked live mission instead of empty Command copy", () => {
+    const activity = buildRoomActivityExplanation({
+      departmentId: "executive_office",
+      department: department("executive_office", { state: "NOT_STARTED" }),
+      workerNodes: [],
+      currentActivity: inactiveActivity(),
+      commandRoomStatus: "READY_BLOCKED",
+      commandRoomSummary: "Holding deployment until a separate governed prompt authorizes it",
+    });
+    expect(activity.presence).toBe("BLOCKED");
+    expect(activity.sentence).toMatch(/Holding deployment/);
+    expect(activity.sentence).not.toBe(ROOM_ACTIVITY_EMPTY);
   });
 
   it("keeps current activity wrapping on desktop, tablet, and mobile", () => {

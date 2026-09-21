@@ -1,0 +1,113 @@
+{
+  "experimentId": "exp_e72beb7b6d35e7b20acf",
+  "cohortId": "chrt_cre_context_rich_challenger_v1",
+  "cohortLabel": "CRE_CONTEXT_RICH_CHALLENGER_V1",
+  "strategy": "CONTEXT_RICH_CONSULTATIVE",
+  "version": "V1",
+  "authorization": "GOVERNED_CRE_CONTEXT_RICH_OUTREACH_EXECUTION_REQUIRED",
+  "authorizationConsumed": true,
+  "nextState": "CRE_CONTEXT_RICH_CHALLENGER_OBSERVING",
+  "startedAt": "2026-09-05T07:43:09.929Z",
+  "updatedAt": "2026-09-05T08:42:59.557Z",
+  "sends": [
+    {
+      "prospectId": "prs_430e03049f84389d",
+      "name": "Brooks Murphy",
+      "email": "brooks.murphy@jll.com",
+      "personaSlot": "PRIMARY",
+      "variantId": "crc_v1_workflow_context",
+      "subject": "Tenant-rep lease comparison workflow",
+      "question": "When you take two competing proposals for a client, how does that comparison typically get done today?",
+      "wordCount": 83,
+      "attemptId": "att_1202dd62a5ead5d4",
+      "conversationId": "cnv_13b5bd0edb3f5ba8",
+      "providerMessageId": "1a0708bf27f455c5",
+      "providerThreadId": "1a0708bf27f455c5",
+      "providerResult": "PROVIDER_ACCEPTED",
+      "deliveryState": "DELIVERY_UNKNOWN",
+      "strategy": "CONTEXT_RICH_CONSULTATIVE",
+      "version": "V1"
+    },
+    {
+      "prospectId": "prs_f500b3c99bc96ed7",
+      "name": "Annie Nicolau",
+      "email": "annie.nicolau@jll.com",
+      "personaSlot": "PRIMARY",
+      "variantId": "crc_v1_lease_economics",
+      "subject": "Rent steps, free rent, and NPV comparison",
+      "question": "When those terms differ across proposals, how are you handling the occupancy-cost or NPV math today?",
+      "wordCount": 77,
+      "attemptId": "att_f595709a86ab471d",
+      "conversationId": "cnv_d47861e4f5c9fb3a",
+      "providerMessageId": "1a0708bf5f29fb09",
+      "providerThreadId": "1a0708bf5f29fb09",
+      "providerResult": "PROVIDER_ACCEPTED",
+      "deliveryState": "DELIVERY_UNKNOWN",
+      "strategy": "CONTEXT_RICH_CONSULTATIVE",
+      "version": "V1"
+    }
+  ],
+  "tracked": [
+    {
+      "prospectId": "prs_430e03049f84389d",
+      "name": "Brooks Murphy",
+      "email": "brooks.murphy@jll.com",
+      "conversationId": "cnv_13b5bd0edb3f5ba8",
+      "threadId": "1a0708bf27f455c5"
+    },
+    {
+      "prospectId": "prs_f500b3c99bc96ed7",
+      "name": "Annie Nicolau",
+      "email": "annie.nicolau@jll.com",
+      "conversationId": "cnv_d47861e4f5c9fb3a",
+      "threadId": "1a0708bf5f29fb09"
+    }
+  ],
+  "providerWrites": 2,
+  "rejected": [
+    {
+      "name": "Caleb Struewing",
+      "reason": "HISTORICAL_WAVE_1_RECIPIENT"
+    },
+    {
+      "name": "Michael Vizzone",
+      "reason": "HISTORICAL_WAVE_1_RECIPIENT"
+    },
+    {
+      "name": "Ben Kuhn",
+      "reason": "IDENTITY_UNCERTAINTY_ON_PRIOR_REVERIFICATION"
+    },
+    {
+      "name": "Stephanie Severson",
+      "reason": "EMAIL_NOT_EXPLICIT_ON_SOURCE"
+    },
+    {
+      "name": "Travis Sawvell",
+      "reason": "TENANT_AND_LANDLORD_MIX"
+    },
+    {
+      "name": "Tom Koelzer",
+      "reason": "NO_PUBLIC_EMAIL"
+    },
+    {
+      "name": "Jason Herbrich",
+      "reason": "EMAIL_NOT_EXPLICIT_ON_FIRST_PARTY_HTML"
+    },
+    {
+      "name": "Bryan Witkow",
+      "reason": "IDENTITY_UNCERTAINTY_ON_COMPRESSED_PDF"
+    },
+    {
+      "name": "Matt Perrigue",
+      "reason": "IDENTITY_UNCERTAINTY_ON_COMPRESSED_PDF"
+    },
+    {
+      "name": "Anthony Fritsche",
+      "reason": "IDENTITY_UNCERTAINTY"
+    },
+    {
+      "name": "Rick Morris",
+      "reason": "EMAIL_NOT_EXPLICIT_ON_SOURCE"
+    }
+  ]
+}

@@ -14,20 +14,20 @@ import { RoomArtifactSurface } from "./artifacts/room-artifact-surface";
 import { InfinityRoomShell } from "./infinity-room/infinity-room-shell";
 import { RoomStatusChip } from "./infinity-room/room-status-chip";
 import { RoomOutputStrip } from "./infinity-room/room-output-strip";
-import { deriveRoomPresence } from "@/lib/infinity/operator-console/room-presence";
+import { deriveRoomPresence, type RoomPresenceState } from "@/lib/infinity/operator-console/room-presence";
 import { buildRoomActivityExplanation } from "@/lib/infinity/operator-console/room-activity";
 import { RoomPresenceTrack } from "./infinity-room/room-presence-track";
 import { RoomCurrentActivity } from "./room-current-activity";
 import { SystemsArchitectBlueprint } from "./systems-architect-blueprint";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
 import { useOptionalHqInspection } from "./hq-inspection-provider";
+import { EMPTY_INSPECTION_CONTEXT } from "@/lib/infinity/operator-console/inspection-model";
 import {
-  EMPTY_INSPECTION_CONTEXT,
   filterArtifactsForInspection,
   isRoomCompatibleWithInspection,
   LEGACY_RESEARCH_LINEAGE_NOTICE,
   shouldShowLegacyResearchLineageNotice,
-} from "@/lib/infinity/operator-console/inspection-context";
+} from "@/lib/infinity/operator-console/inspection-filter";
 
 type Props = {
   departmentId: DepartmentId;
@@ -48,6 +48,10 @@ type Props = {
   partition?: "top" | "right" | "bottom" | "left" | "none";
   wide?: boolean;
   span?: "standard" | "full";
+  livePresence?: RoomPresenceState | null;
+  liveStatus?: string | null;
+  liveSummary?: string | null;
+  nowInspectingTask?: string | null;
 };
 
 export function DepartmentRoom({
@@ -69,6 +73,10 @@ export function DepartmentRoom({
   partition = "none",
   wide = false,
   span = "standard",
+  livePresence = null,
+  liveStatus = null,
+  liveSummary = null,
+  nowInspectingTask = null,
 }: Props) {
   const rawState: DepartmentUiState = snapshot?.state ?? "NOT_STARTED";
   const failureSemantics = snapshot?.failureSemantics;
@@ -88,7 +96,13 @@ export function DepartmentRoom({
   const artifacts = snapshot?.artifacts ?? [];
   const primaryArtifact = artifacts[0];
   const roomCompatible = inspection ? isRoomCompatibleWithInspection(departmentId, inspection.context) : true;
-  const presence = deriveRoomPresence(workerNodes, state, isTerminal);
+  const derivedPresence = deriveRoomPresence(workerNodes, state, isTerminal, {
+    outputCount: workArtifacts.length,
+    currentWorkCount: snapshot?.currentTask ? 1 : 0,
+  });
+  const reconciledLive =
+    livePresence === "EMPTY" && workArtifacts.length > 0 ? "PRESENT_IDLE" : livePresence;
+  const presence = reconciledLive ? { ...derivedPresence, state: reconciledLive } : derivedPresence;
   const workflowNodes = presence.state === "ACTIVE_WORK" ? presence.activeNodes : [];
   const activity = buildRoomActivityExplanation({
     departmentId,
@@ -97,7 +111,14 @@ export function DepartmentRoom({
     currentActivity,
     closedLoopRoute,
     ventureName,
+    commandRoomStatus: liveStatus,
+    commandRoomSummary: liveSummary,
+    nowInspectingTask,
   });
+  const chipPresence =
+    (reconciledLive ?? activity.presence) === "EMPTY" && workArtifacts.length > 0
+      ? "PRESENT_IDLE"
+      : (reconciledLive ?? activity.presence);
   const systemsView =
     departmentId === "systems_architect"
       ? (inspection?.systemsArchitectView ??
@@ -116,7 +137,7 @@ export function DepartmentRoom({
       partition={partition}
       size={wide || span === "full" ? "wide" : "standard"}
       span={span}
-      ariaLabel={`${displayName}. ${supportingLabel} ${activity.sentence} ${activity.presence}`}
+      ariaLabel={`${displayName}. ${supportingLabel} ${activity.sentence} ${chipPresence}`}
       onActivate={onSelect}
       header={
         <div className="flex items-start justify-between gap-2">
@@ -128,7 +149,7 @@ export function DepartmentRoom({
             state={state}
             failureSemantics={failureSemantics}
             isActive={isActive}
-            presence={activity.presence}
+            presence={chipPresence}
           />
         </div>
       }
@@ -145,11 +166,25 @@ export function DepartmentRoom({
         />
       }
     >
-      <RoomCurrentActivity explanation={activity} className="mt-1.5" />
+      <div data-hq-now-work="true">
+        <p className="px-1 text-[8px] font-semibold uppercase tracking-[0.18em] text-zinc-500">Now / current work</p>
+        <RoomCurrentActivity explanation={activity} className="mt-1.5" />
+        {presence.activeNodes.length > 0 ? (
+          <ul className="mt-1 space-y-0.5 px-1" data-hq-now-workers>
+            {presence.activeNodes.map((node) => (
+              <li key={node.nodeId} className="text-[10px] text-zinc-300">
+                <span className="font-semibold uppercase tracking-wide text-sky-200">{node.displayRole}</span>
+                {node.displayTask ? <span className="text-zinc-400"> — {node.displayTask}</span> : null}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
 
       {systemsView ? <SystemsArchitectBlueprint view={systemsView} compact /> : null}
 
-      <div className="relative mt-2">
+      <div className="relative mt-2" data-hq-output-history="true">
+        <p className="px-1 text-[8px] font-semibold uppercase tracking-[0.18em] text-zinc-600">Output history</p>
         {!roomCompatible ? (
           <p className="hq-room-incompatible px-1 py-1 text-[11px] leading-snug text-zinc-400" data-hq-room-incompatible="true">
             This room requires a promoted venture.
@@ -189,8 +224,8 @@ export function DepartmentRoom({
             showZoneLabels={isActive}
           />
         ) : null}
-        <RoomPresenceTrack presence={presence} showEmptyLabel />
       </div>
+      <RoomPresenceTrack presence={presence} showEmptyLabel={presence.state === "EMPTY"} />
     </InfinityRoomShell>
   );
 }

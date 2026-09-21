@@ -12,8 +12,8 @@ import { enrichOperatorSnapshot } from "../enrich-snapshot";
 import type { OperatorDepartmentSnapshot, OperatorVentureSnapshot } from "../types";
 
 describe("HQ Dashboard V1.4 — welcome and room names", () => {
-  it("1. Welcome to Infinity OS exists as primary title", () => {
-    expect(HQ_WELCOME_TITLE).toBe("Welcome to Infinity OS");
+  it("1. Infinity OS exists as primary title", () => {
+    expect(HQ_WELCOME_TITLE).toBe("Infinity OS");
   });
 
   it("2. final locked room-name mapping", () => {
@@ -29,16 +29,17 @@ describe("HQ Dashboard V1.4 — welcome and room names", () => {
       "Validation Station",
       "Deployment Depot",
       "Signal Intelligence",
+      "Prospect Intelligence",
       "Command",
     ]);
   });
 
   it("3. Command is separate from lifecycle sequence", () => {
     expect(COMMAND_ROOM_ID).toBe("executive_office");
-    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(11);
+    expect(LIFECYCLE_ROOM_SEQUENCE).toHaveLength(12);
     expect(LIFECYCLE_ROOM_SEQUENCE.includes("executive_office")).toBe(false);
     expect(LIFECYCLE_ROOM_SEQUENCE[0]).toBe("opportunity_lab");
-    expect(LIFECYCLE_ROOM_SEQUENCE.at(-1)).toBe("intelligence_center");
+    expect(LIFECYCLE_ROOM_SEQUENCE.at(-1)).toBe("prospect_intelligence");
   });
 
   it("4. supporting labels are concise", () => {

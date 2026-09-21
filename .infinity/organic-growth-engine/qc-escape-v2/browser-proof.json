@@ -1,0 +1,317 @@
+{
+  "url": "https://occupancynpv.com/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/",
+  "inspected_at": "2026-09-20T07:47:33.227Z",
+  "viewports": {
+    "desktop": {
+      "status": 200,
+      "title": "What numbers do you need to compare two commercial leases? — OccupancyNPV · OccupancyNPV",
+      "h1": "What numbers do you need to compare two commercial leases?",
+      "contrast": "PASS",
+      "contrast_reasons": [
+        "CONTRAST_AA"
+      ],
+      "pairs": [
+        {
+          "name": "pv-eyebrow",
+          "color": "rgb(247, 244, 238)",
+          "background": "rgb(16, 35, 44)",
+          "opacity": "1",
+          "height": "29.5156px"
+        },
+        {
+          "name": "pv-display",
+          "color": "rgb(18, 32, 51)",
+          "background": "rgb(244, 246, 248)",
+          "opacity": "1",
+          "height": "88.4375px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "46.5781px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "47.0781px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "47.0781px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "47.0781px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "47.0781px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "47.0781px"
+        }
+      ],
+      "table_width": 1176,
+      "overflow": false,
+      "leaked": false,
+      "checklist": true,
+      "example": true,
+      "screenshot": ".infinity/organic-growth-engine/qc-escape-v2/desktop.png"
+    },
+    "tablet": {
+      "status": 200,
+      "title": "What numbers do you need to compare two commercial leases? — OccupancyNPV · OccupancyNPV",
+      "h1": "What numbers do you need to compare two commercial leases?",
+      "contrast": "PASS",
+      "contrast_reasons": [
+        "CONTRAST_AA"
+      ],
+      "pairs": [
+        {
+          "name": "pv-eyebrow",
+          "color": "rgb(247, 244, 238)",
+          "background": "rgb(16, 35, 44)",
+          "opacity": "1",
+          "height": "29.5156px"
+        },
+        {
+          "name": "pv-display",
+          "color": "rgb(18, 32, 51)",
+          "background": "rgb(244, 246, 248)",
+          "opacity": "1",
+          "height": "63.9688px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.4062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        }
+      ],
+      "table_width": 675.625,
+      "overflow": false,
+      "leaked": false,
+      "checklist": true,
+      "example": true,
+      "screenshot": ".infinity/organic-growth-engine/qc-escape-v2/tablet.png"
+    },
+    "mobile": {
+      "status": 200,
+      "title": "What numbers do you need to compare two commercial leases? — OccupancyNPV · OccupancyNPV",
+      "h1": "What numbers do you need to compare two commercial leases?",
+      "contrast": "PASS",
+      "contrast_reasons": [
+        "CONTRAST_AA"
+      ],
+      "pairs": [
+        {
+          "name": "pv-eyebrow",
+          "color": "rgb(247, 244, 238)",
+          "background": "rgb(16, 35, 44)",
+          "opacity": "1",
+          "height": "29.5156px"
+        },
+        {
+          "name": "pv-display",
+          "color": "rgb(18, 32, 51)",
+          "background": "rgb(244, 246, 248)",
+          "opacity": "1",
+          "height": "95.9531px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(244, 247, 251)",
+          "background": "rgb(20, 37, 58)",
+          "opacity": "1",
+          "height": "44.5312px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.4062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        },
+        {
+          "name": "TH",
+          "color": "rgb(16, 32, 51)",
+          "background": "rgb(247, 249, 252)",
+          "opacity": "1",
+          "height": "40.9062px"
+        }
+      ],
+      "table_width": 306,
+      "overflow": false,
+      "leaked": false,
+      "checklist": true,
+      "example": true,
+      "screenshot": ".infinity/organic-growth-engine/qc-escape-v2/mobile.png"
+    }
+  },
+  "RenderedTextVisibilityGate": {
+    "gate": "RenderedTextVisibilityGate",
+    "result": "PASS",
+    "reasons": [
+      "VISIBLE"
+    ]
+  },
+  "pass": true
+}

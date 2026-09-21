@@ -19,6 +19,8 @@ export function attachFounderIntelligence(
   });
   grade.explainability = explainability;
   grade.comparableEconomics = explainability.comparables;
+  grade.revenueModel = explainability.revenueModel;
+  grade.benchmarkEconomics = explainability.benchmarkEconomics;
   store.grades.set(submission.id, grade);
   return grade;
 }

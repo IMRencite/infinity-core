@@ -1,0 +1,183 @@
+{
+  "runtime": {
+    "origin": "http://localhost:3000",
+    "port": 3000,
+    "pid": "66556",
+    "command": "\"node\"   \"C:\\Users\\Antivist\\Desktop\\Infinity\\infinity-core\\node_modules\\.bin\\\\..\\next\\dist\\bin\\next\" start",
+    "cwd": "C:\\Users\\Antivist\\Desktop\\Infinity\\infinity-core",
+    "next_start": true,
+    "build_id": "RxLB80EuDqRW-vvQPS6O9",
+    "build_at": "2026-09-15T00:06:21.321Z"
+  },
+  "identity": {
+    "sourceContains": true,
+    "servedContains": true,
+    "loopInSource": true,
+    "loopInServed": true,
+    "gate": {
+      "gate": "ServedArtifactIdentityGate",
+      "result": "PASS",
+      "reasons": [
+        "PORT_3000_SERVES_CURRENT_SOURCE_ARTIFACT"
+      ]
+    },
+    "founderHq": {
+      "gate": "FounderHqRuntimeSourceGate",
+      "result": "PASS",
+      "reasons": [
+        "PORT_3000_AUTHORITATIVE"
+      ]
+    }
+  },
+  "decision": {
+    "contract": "AutonomousNextMissionResolver",
+    "outcome": "CONTINUE_EXISTING_ACTION",
+    "selected_mission": null,
+    "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+    "priority": "EXISTING_GROWTH_CONTINUATION",
+    "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+    "evidence": [
+      "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+      "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+      "SEND_NOT_FORCED"
+    ],
+    "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+    "capability_required": "GROWTH_RUNTIME",
+    "financial_exposure": 0,
+    "spend_required": 0,
+    "commitment_required": 0,
+    "authorization_class": "NONE",
+    "review_condition": "GROWTH_TICK_OR_REPLY",
+    "fallback": "IDLE_NO_ACTION",
+    "alternatives_considered": [
+      "PAID_ACQUISITION",
+      "AUTONOMOUS_FINANCIAL_COMMITMENT",
+      "MONEY_MOVEMENT",
+      "NEW_OUTREACH_BURST",
+      "CREATE_OUTREACH_MISSION",
+      "USE_SPEND_AUTHORITY"
+    ],
+    "founder_approval_required": false,
+    "recommended_commitment": {
+      "amount": 0,
+      "category": "OPERATIONS",
+      "reason": "Authority exists but campaign continuation is zero-cost",
+      "evidence": [
+        "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+      ],
+      "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+      "risk": "HIGH",
+      "authority_available": 5,
+      "created": false
+    },
+    "learning_applied": []
+  },
+  "portfolio_state": "IDLE_NO_ACTION",
+  "mission_created": false,
+  "action_executed": false,
+  "occupancy": {
+    "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+    "display_name": "OccupancyNPV",
+    "eligible": true,
+    "paused": false,
+    "operating_mode": "VALIDATING",
+    "capital_status": "UNCONFIGURED",
+    "checkout_ready": true,
+    "checkout_unhealthy": false,
+    "fulfillment_health": "HEALTHY",
+    "provider_health": "HEALTHY",
+    "provider_failure_class": "NONE",
+    "growth_active": true,
+    "campaign_id": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+    "campaign_state": "GROWTH_EXPERIMENT_ACTIVE",
+    "send_executed": false,
+    "sends_attempted": 0,
+    "replies": 0,
+    "replies_pending": false,
+    "reply_class": null,
+    "unsubscribe": false,
+    "remaining_spend_authority": 5,
+    "remaining_allocation": 20,
+    "committed": 0,
+    "actual_spend": 0,
+    "paid_acquisition_blocked": true,
+    "money_movement_disabled": true,
+    "active_mission_id": null,
+    "active_mission_title": null,
+    "qc_blocked": false
+  },
+  "askreview": {
+    "venture_id": "candidate:f1336945-3350-4d08-921e-4dcb5bc77b8e",
+    "display_name": "AskReview",
+    "eligible": false,
+    "paused": true,
+    "operating_mode": "PAUSED",
+    "capital_status": "RESERVE_ONLY",
+    "checkout_ready": false,
+    "checkout_unhealthy": false,
+    "fulfillment_health": "PAUSED",
+    "provider_health": "HEALTHY",
+    "provider_failure_class": "NONE",
+    "growth_active": false,
+    "campaign_id": null,
+    "campaign_state": "PAUSED",
+    "send_executed": false,
+    "sends_attempted": 0,
+    "replies": 0,
+    "replies_pending": false,
+    "reply_class": null,
+    "unsubscribe": false,
+    "remaining_spend_authority": 0,
+    "remaining_allocation": 0,
+    "committed": 0,
+    "actual_spend": 0,
+    "paid_acquisition_blocked": true,
+    "money_movement_disabled": true,
+    "active_mission_id": null,
+    "active_mission_title": null,
+    "qc_blocked": false
+  },
+  "campaign": {
+    "campaign_id": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+    "status": "GROWTH_EXPERIMENT_ACTIVE",
+    "authorized_to_execute": true,
+    "daily_new_contact_target": 10,
+    "conservative_daily_ramp": 5,
+    "last_cycle_at": "2026-09-10T17:45:00.000Z",
+    "next_learning_objective": "Source and qualify tenant-rep prospects, then send inside recipient-local windows",
+    "ledger": {
+      "prospectsSourced": 0,
+      "prospectsQualified": 0,
+      "attempted": 0,
+      "delivered": 0,
+      "bounced": 0,
+      "replied": 0,
+      "qualifiedReplies": 0,
+      "qualifiedConversations": 0,
+      "problemConfirmation": 0,
+      "pricingFeedback": 0,
+      "trialInterest": 0,
+      "purchaseIntent": 0,
+      "actualPurchase": 0
+    },
+    "incidents": []
+  },
+  "finance": {
+    "remaining_spend_authority": 5,
+    "unused_allocation": 20,
+    "allocation_amount": 25,
+    "committed": 0,
+    "actual_spend": 0,
+    "paid_acquisition": 0,
+    "money_moved": false,
+    "autonomous_commitment_enabled": false
+  },
+  "money_gate": {
+    "gate": "NoMoneyMovementGate",
+    "result": "PASS",
+    "reasons": [
+      "EXECUTION_PATHS_DISABLED"
+    ]
+  },
+  "next_review": "2026-09-15T16:00:00.000Z"
+}

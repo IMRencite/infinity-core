@@ -1,0 +1,70 @@
+{
+  "schema": {
+    "askreview_customers": "PASS",
+    "askreview_locations": "PASS",
+    "askreview_kits": "PASS",
+    "askreview_events": "PASS"
+  },
+  "occupancyNpvStillReadable": true,
+  "authA": {
+    "ok": true,
+    "session": true,
+    "qa": true
+  },
+  "authB": {
+    "ok": true,
+    "session": true,
+    "qa": true
+  },
+  "logout": {
+    "ok": true
+  },
+  "location": {
+    "ok": true,
+    "create": "PASS",
+    "read": "PASS",
+    "update": "PASS"
+  },
+  "archive": {
+    "ok": true,
+    "archive": "ARCHIVED",
+    "restore": "ACTIVE"
+  },
+  "kit": {
+    "ok": true,
+    "create": "PASS",
+    "reload": "PASS",
+    "urlMatch": true,
+    "qrEquivalence": true
+  },
+  "isolation": {
+    "read": "BLOCKED",
+    "write": "BLOCKED",
+    "rlsRead": "BLOCKED",
+    "rlsWrite": "BLOCKED",
+    "rlsList": "BLOCKED",
+    "rlsKit": "BLOCKED",
+    "note": "user JWT clients; service_role bypasses RLS by design"
+  },
+  "enumeration": {
+    "ok": true,
+    "guessed": 0
+  },
+  "concurrency": {
+    "result": "PASS",
+    "errors": [
+      null,
+      null
+    ]
+  },
+  "recovery": {
+    "invalidLocation": "PASS"
+  },
+  "plaintextPassword": "NO",
+  "stripeWrites": 0,
+  "jsonProductionFallback": "DISABLED",
+  "qaEmails": [
+    "askreview-qa-a-1788940450342@infinity.local",
+    "askreview-qa-b-1788940450342@infinity.local"
+  ]
+}

@@ -109,7 +109,7 @@ describe("HQ candidate lineage", () => {
     const promoted = applyLineageFields(
       artifact({
         id: "company:1",
-        roomId: "growth_nexus",
+        roomId: "growth_department",
         artifactType: "company_blueprint",
         title: "Venture blueprint",
         metadata: { candidateId: CANDIDATE_A },

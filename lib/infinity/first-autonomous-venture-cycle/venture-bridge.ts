@@ -166,6 +166,7 @@ export async function bridgeFirstAutonomousVenture(
     organizationId: input.organizationId,
     missionId: mission.id,
     opportunityId: opportunity.id,
+    opportunityCandidateId: input.opportunityCandidateId,
     executiveDecisionId,
     planId: plan.id,
     planVersion: 1,
@@ -190,9 +191,13 @@ export async function bridgeFirstAutonomousVenture(
   await admin
     .from("venture_assemblies")
     .update({
+      opportunity_candidate_id: input.opportunityCandidateId,
       identity_package: {
         ...persisted.identityPackage,
         source: identity.origin,
+        canonicalLineage: {
+          opportunityCandidateId: input.opportunityCandidateId,
+        },
       } as never,
       manifest: {
         schemaVersion: VENTURE_ASSEMBLY_MANIFEST_SCHEMA_VERSION,

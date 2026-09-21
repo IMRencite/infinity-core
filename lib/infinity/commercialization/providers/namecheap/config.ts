@@ -20,6 +20,7 @@ export const NAMECHEAP_READ_COMMANDS = [
   "namecheap.domains.getInfo",
   "namecheap.domains.check",
   "namecheap.domains.dns.getList",
+  "namecheap.users.getPricing",
 ] as const;
 
 export const NAMECHEAP_WRITE_COMMANDS = [
@@ -45,6 +46,8 @@ export type NamecheapPublicConfig = {
   credentialPresence: "YES" | "NO";
   clientIpConfigured: boolean;
   usernameConfigured: boolean;
+  apiUserConfigured: boolean;
+  apiKeyConfigured: boolean;
   timeoutMs: number;
   clientIpWhitelistRequired: true;
 };
@@ -124,6 +127,8 @@ export function loadNamecheapConfig(env: NodeJS.Dict<string> = process.env): Nam
       credentialPresence: credentialsReady ? "YES" : "NO",
       clientIpConfigured: clientIp.length >= 7,
       usernameConfigured: userName.length > 0,
+      apiUserConfigured: apiUser.length >= 8,
+      apiKeyConfigured: apiKey.length >= 8,
       timeoutMs: NAMECHEAP_DEFAULT_TIMEOUT_MS,
       clientIpWhitelistRequired: true,
     },

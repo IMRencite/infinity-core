@@ -51,7 +51,12 @@ export function mapPlanRow(row: Record<string, unknown>): LoadedMonetizationPlan
 export async function loadCandidateBundlesForSelection(
   admin: AdminSupabaseClient,
   organizationId: string,
-  input?: { candidateIds?: string[]; monetizationRunId?: string; maxCandidates?: number },
+  input?: {
+    candidateIds?: string[];
+    discoveryRunId?: string;
+    monetizationRunId?: string;
+    maxCandidates?: number;
+  },
 ): Promise<LoadedCandidateBundle[]> {
   let candidateQuery = admin
     .from("opportunity_candidates")
@@ -63,6 +68,10 @@ export async function loadCandidateBundlesForSelection(
     candidateQuery = candidateQuery.in("id", input.candidateIds);
   } else {
     candidateQuery = candidateQuery.limit(input?.maxCandidates ?? 10);
+  }
+
+  if (input?.discoveryRunId) {
+    candidateQuery = candidateQuery.eq("discovery_run_id", input.discoveryRunId);
   }
 
   const { data: candidates, error: candidateError } = await candidateQuery;

@@ -1,0 +1,277 @@
+{
+  "mission": "CRE_CLOUDFLARE_REGISTRAR_LIVE_VERIFICATION_V2",
+  "env": {
+    "accountIdLoaded": "YES",
+    "generalTokenLoaded": "YES",
+    "registrarTokenLoaded": "YES",
+    "registrarTokenSelected": "PASS",
+    "generalTokenPreserved": "FAIL",
+    "duplicateAccountIdRequired": "NO",
+    "confirmed": true
+  },
+  "account": {
+    "verified": "NO",
+    "accountId": "b4a58559541d440ddfacc2fc933e52ba",
+    "name": "UNKNOWN",
+    "tokenAccepted": "NO",
+    "registrarPermissionAccepted": "NO",
+    "matchesRuntime": "FAIL"
+  },
+  "registrar": {
+    "reachable": "NO",
+    "providerState": "UNVERIFIED",
+    "providerError": "Unauthorized to access requested resource"
+  },
+  "capabilities": {
+    "domain.search": "UNVERIFIED",
+    "domain.availability": "UNVERIFIED",
+    "domain.pricing": "UNVERIFIED",
+    "domain.registration": "UNVERIFIED",
+    "domain.readback": "UNVERIFIED",
+    "domain.ownership": "UNVERIFIED"
+  },
+  "prerequisites": {
+    "billing": "UNKNOWN",
+    "registrantContact": "UNKNOWN",
+    "agreement": "UNKNOWN"
+  },
+  "checked": [
+    {
+      "domain": "leasenpv.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "leasecomp.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "leasebasis.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "occupancynpv.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "leasedelta.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "dealnpv.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "tenantnpv.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "complease.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "holdcost.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    },
+    {
+      "domain": "npvlease.com",
+      "available": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": null,
+      "evidence": "NOT_CHECKED",
+      "timestamp": "2026-09-06T00:21:21.520Z"
+    }
+  ],
+  "preferred": {
+    "domain": "NO_PURCHASE_READY_DOMAIN",
+    "provider": "cloudflare.registrar_v1",
+    "availability": "UNKNOWN",
+    "premium": "UNKNOWN",
+    "firstYear": "UNKNOWN",
+    "renewal": "UNKNOWN",
+    "strategicScore": 0,
+    "reason": "Unauthorized to access requested resource",
+    "conflict": {
+      "obviousConflictFound": "NO",
+      "conflictUncertainty": "HIGH — no trademark register search was executed; CRE generic-term collision remains possible.",
+      "trademarkReviewRequired": "YES"
+    }
+  },
+  "economics": {
+    "knownFirstYear": "UNKNOWN",
+    "knownRenewal": "UNKNOWN",
+    "unknownCosts": [
+      "provider_charge",
+      "transaction_fees",
+      "premium_amount",
+      "tax"
+    ]
+  },
+  "treasury": "AUTHORIZATION_REQUIRED",
+  "eag": "AUTHORIZATION_REQUIRED",
+  "purchaseReadiness": "DOMAIN_PROVIDER_VERIFICATION_REQUIRED",
+  "routing": {
+    "preferred": "namecheap.com_v1",
+    "fallback": "namecheap.com_v1"
+  },
+  "namecheap": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+  "record": {
+    "domain": "UNCONFIGURED",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:26:40.975Z",
+        "evidence": "Selected candidate preserved; not purchased."
+      }
+    ],
+    "provider": "namecheap.com_v1",
+    "registration": "NAMECHEAP_API_USER_BLOCKED",
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "launch": "NO",
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4",
+    "blocked": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "daily": {
+    "result": "ORCHESTRATE_EXISTING_ENGINES",
+    "next": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ],
+    "signals": [
+      "foundation_ready",
+      "experiment_waiting_externally",
+      "domain_acquisition_status",
+      "payment_verification_status",
+      "commercialization_blockers_present",
+      "provider_access_blocker"
+    ]
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "newInbound": 0,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "purchases": 0,
+  "dnsWrites": 0,
+  "registrationPosts": 0,
+  "nextState": "CRE_CLOUDFLARE_REGISTRAR_VERIFICATION_REQUIRED",
+  "nextAuthorizations": {
+    "DOMAIN_PURCHASE": "BLOCKED:DOMAIN_PROVIDER_VERIFICATION_REQUIRED",
+    "DNS_CONFIGURATION": "BLOCKED:DOMAIN_NOT_PURCHASED",
+    "PRODUCTION_DOMAIN_BINDING": "BLOCKED:DNS_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "LEGAL_CONFIGURATION": "FOUNDER_LEGAL_CONFIGURATION_REQUIRED",
+    "CHECKOUT_CONFIGURATION": "BLOCKED:GOVERNED_CRE_CHECKOUT_CONFIGURATION_REQUIRED",
+    "WEBHOOK_CONFIGURATION": "WEBHOOK_DOMAIN_DEPENDENCY",
+    "PAYMENT_ACTIVATION": "BLOCKED:PAYMENT_ACTIVATION_NOT_AUTHORIZED",
+    "ANALYTICS_CONFIGURATION": "BLOCKED:PRODUCTION_DOMAIN_BINDING_REQUIRED",
+    "PUBLIC_LAUNCH": "BLOCKED:PUBLIC_LAUNCH_AUTHORIZATION_REQUIRED"
+  },
+  "hq": {
+    "mission": "CRE_CLOUDFLARE_REGISTRAR_LIVE_VERIFICATION_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "PRESENT_IDLE",
+    "researchGrid": "ACTIVE_WORK",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "href": "http://localhost:3000/public/operations-room",
+  "usedPublic": true,
+  "requests": [
+    "/public/operations-room",
+    "/_next/static/chunks/1vqybphxw-va5.css",
+    "/_next/static/chunks/1_muv6im30zyu.css",
+    "/_next/static/chunks/2_ko465099s53.js",
+    "/_next/static/chunks/2pzafz57-h46r.js",
+    "/_next/static/chunks/3nc6x0_y5iwnk.js",
+    "/_next/static/chunks/1lodnllbeffjg.js",
+    "/_next/static/chunks/1vwck27fw9kru.js",
+    "/_next/static/chunks/turbopack-0qrbl_tmxicn5.js",
+    "/_next/static/chunks/2yl1jv4w6po1z.js",
+    "/_next/static/chunks/1ntn7efqc-iiw.js",
+    "/_next/static/chunks/2v2s8xfr79qtt.js",
+    "/api/public/operations",
+    "/icon"
+  ],
+  "privateRequests": [],
+  "consoleErrors": [],
+  "desktop": {
+    "overflow": false,
+    "scrollWidth": 1440,
+    "clientWidth": 1440
+  },
+  "tablet": {
+    "overflow": false,
+    "scrollWidth": 820,
+    "clientWidth": 820
+  },
+  "mobile": {
+    "overflow": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "reduced": true,
+  "layoutsAtMobile": {
+    "desktop": "none",
+    "tablet": "none",
+    "mobile": "grid"
+  },
+  "agents": [
+    {
+      "id": "public-ops",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-growth",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-validation",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-ops",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-growth",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-validation",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-ops",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-growth",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "public-validation",
+      "status": "IDLE",
+      "motion": "idle"
+    }
+  ],
+  "departments": [
+    {
+      "id": "OPERATIONS",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "RESEARCH",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "GROWTH",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "VALIDATION",
+      "status": "REVIEWING",
+      "motion": "reviewing"
+    },
+    {
+      "id": "SYSTEMS",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "FINANCE",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "PRODUCT",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "CREATIVE",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "OPERATIONS",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "RESEARCH",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "GROWTH",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "VALIDATION",
+      "status": "REVIEWING",
+      "motion": "reviewing"
+    },
+    {
+      "id": "SYSTEMS",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "FINANCE",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "PRODUCT",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "CREATIVE",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "OPERATIONS",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "RESEARCH",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "GROWTH",
+      "status": "MONITORING",
+      "motion": "scanning"
+    },
+    {
+      "id": "VALIDATION",
+      "status": "REVIEWING",
+      "motion": "reviewing"
+    },
+    {
+      "id": "SYSTEMS",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "FINANCE",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "PRODUCT",
+      "status": "IDLE",
+      "motion": "idle"
+    },
+    {
+      "id": "CREATIVE",
+      "status": "IDLE",
+      "motion": "idle"
+    }
+  ],
+  "stats": [
+    {
+      "key": "active_public_agents",
+      "value": "0",
+      "text": "0"
+    },
+    {
+      "key": "idle_public_agents",
+      "value": "3",
+      "text": "3"
+    },
+    {
+      "key": "ventures_started_count",
+      "value": "2",
+      "text": "2"
+    },
+    {
+      "key": "ventures_operating_count",
+      "value": "1",
+      "text": "1"
+    },
+    {
+      "key": "missions_completed_count",
+      "value": "22",
+      "text": "22"
+    },
+    {
+      "key": "autonomous_operating_hours",
+      "value": "0",
+      "text": "0"
+    },
+    {
+      "key": "deployments_completed_count",
+      "value": "1",
+      "text": "1"
+    },
+    {
+      "key": "public_assets_created_count",
+      "value": "0",
+      "text": "0"
+    },
+    {
+      "key": "research_cycles_completed_count",
+      "value": "0",
+      "text": "0"
+    }
+  ],
+  "askReview": false,
+  "occupancy": true,
+  "cash": false,
+  "mercury": false,
+  "candidateIds": false,
+  "idleWorking": false,
+  "gate": {
+    "gate": "PublicOperationsBrowserRuntimeGate",
+    "result": "PASS",
+    "reasons": [
+      "BROWSER_SAFE"
+    ]
+  }
+}

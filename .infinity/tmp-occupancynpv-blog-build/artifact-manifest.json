@@ -1,0 +1,23 @@
+{
+  "artifactType": "nextjs_web_product",
+  "role": "validation_landing",
+  "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+  "planId": "vplan_12dcae6568b4c31377fc",
+  "packageId": "pkg_d5db4c9678373fa3459d",
+  "artifactId": "art_11bd5b74a925257a7319",
+  "generationContract": "nextjs_ts_semantic_nav_width_and_muted_text_repair_v1",
+  "footerRequired": true,
+  "fullProduct": false,
+  "lineage": {
+    "predecessorArtifactId": "art_dbf624e41599420891e2",
+    "predecessorDigest": "a8ca8bfa544da21a96c11bab4d0abb0e3926271ab989d2f1924c68c7deba1f97",
+    "repairReason": "FOUNDER_LEARN_NEXT_WIDTH_AND_DARK_SURFACE_MUTED_TEXT_REPAIR",
+    "generationContract": "nextjs_ts_semantic_nav_width_and_muted_text_repair_v1",
+    "siteArchitectureVersion": "venture_site_architecture_v1",
+    "contentArchitectureVersion": "geo_seo_content_architecture_v1",
+    "designSystemVersion": "public_venture_design_intelligence_v1",
+    "candidateId": "7e7e924e-0741-4155-a729-8d529da77ea9",
+    "experimentId": "exp_e72beb7b6d35e7b20acf"
+  },
+  "qualityTarget": "PREMIUM_AUTHORITY_VALIDATION_READY"
+}

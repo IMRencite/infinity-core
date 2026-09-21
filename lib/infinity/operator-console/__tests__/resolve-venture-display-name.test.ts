@@ -93,12 +93,11 @@ describe("Treasury UI uses the same numbered display resolver", () => {
     "utf8",
   );
 
-  it("19. Allocate Capital, Budget Controls, allocations, and inspector share resolveTreasuryVentureLabel", () => {
-    expect(center).toContain("resolveTreasuryVentureLabel");
-    expect(center).toContain("function VentureSelect");
-    expect(center.match(/<VentureSelect/g)?.length).toBe(2);
-    expect(center).toContain("displayNameForVenture(row.ventureId)");
+  it("19. Allocate Capital and Budget Controls use canonical catalog names; transactions share resolveTreasuryVentureLabel", () => {
+    expect(center).toContain("projection?.ventures");
+    expect(center).toContain("hq-treasury-venture-select");
     expect(center).not.toMatch(/\{venture\.ventureName\}/);
+    expect(center).not.toContain("Unnamed Venture");
     expect(strip).toContain("resolveTreasuryVentureLabel");
   });
 
@@ -116,6 +115,8 @@ describe("Treasury UI uses the same numbered display resolver", () => {
     ];
     const expected = `#1 — ${TITLE}`;
     expect(resolveTreasuryVentureLabel(options, VENTURE_A)).toBe(expected);
+    expect(resolveTreasuryVentureLabel(options, "UNKNOWN")).toBe("UNATTRIBUTED");
+    expect(resolveTreasuryVentureLabel(options, "UNATTRIBUTED")).toBe("UNATTRIBUTED");
     const artifacts = buildTreasuryHqArtifacts(model, {
       displayNameForVenture: (id) => resolveTreasuryVentureLabel(options, id),
     });

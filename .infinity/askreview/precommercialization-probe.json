@@ -1,0 +1,44 @@
+{
+  "persistence": {
+    "reachable": true,
+    "schemaExists": true,
+    "readWriteVerified": true,
+    "reason": null,
+    "tables": [
+      "askreview_customers"
+    ]
+  },
+  "domain": {
+    "provider": "cloudflare.registrar_v1",
+    "ok": true,
+    "status": 200,
+    "safeError": null,
+    "rows": [
+      {
+        "domain": "askreview.com",
+        "available": "NO",
+        "premium": "NO",
+        "registration": "UNKNOWN",
+        "renewal": "UNKNOWN"
+      },
+      {
+        "domain": "getaskreview.com",
+        "available": "YES",
+        "premium": "NO",
+        "registration": "10.46",
+        "renewal": "10.46"
+      },
+      {
+        "domain": "askreview.app",
+        "available": "YES",
+        "premium": "NO",
+        "registration": "14.20",
+        "renewal": "14.20"
+      }
+    ]
+  },
+  "stripeWrites": 0,
+  "domainPurchases": 0,
+  "publicLaunch": "NO",
+  "paymentActivation": "NO"
+}

@@ -4,6 +4,11 @@ import {
   type ProviderEnvironment,
   type ProviderHealth,
 } from "../../constants";
+import {
+  resolveMercuryApiToken,
+  type MercuryTokenFingerprint,
+  type MercuryTokenSource,
+} from "./token-source";
 
 export const MERCURY_DEFAULT_TIMEOUT_MS = 15_000;
 export const MERCURY_MAX_TRANSACTION_PAGES = 20;
@@ -11,6 +16,7 @@ export const MERCURY_TRANSACTION_PAGE_LIMIT = 100;
 export const MERCURY_MAX_TRANSACTIONS = 2_000;
 
 export type MercuryProviderMode = ProviderEnvironment;
+export type MercuryAuthMode = "bearer" | "basic";
 
 export type MercuryPublicConfig = {
   enabled: boolean;
@@ -19,16 +25,25 @@ export type MercuryPublicConfig = {
   tokenConfigured: boolean;
   health: Extract<ProviderHealth, "NOT_CONFIGURED" | "CONFIGURED">;
   timeoutMs: number;
+  tokenSource: MercuryTokenSource;
+  tokenFingerprint: Omit<MercuryTokenFingerprint, "present"> | null;
+  tokenConflict: boolean;
+  lastVerifiedAt: string | null;
 };
 
 export class MercuryCredentials {
   readonly #token: string;
+  readonly fingerprint: Omit<MercuryTokenFingerprint, "present"> | null;
 
-  constructor(token: string) {
+  constructor(token: string, fingerprint: Omit<MercuryTokenFingerprint, "present"> | null = null) {
     this.#token = token;
+    this.fingerprint = fingerprint;
   }
 
-  authorizationHeader(): string {
+  authorizationHeader(mode: MercuryAuthMode = "bearer"): string {
+    if (mode === "basic") {
+      return `Basic ${Buffer.from(`${this.#token}:`, "utf8").toString("base64")}`;
+    }
     return `Bearer ${this.#token}`;
   }
 
@@ -41,8 +56,8 @@ export class MercuryCredentials {
     return value.split(this.#token).join("[REDACTED_MERCURY_TOKEN]");
   }
 
-  toJSON(): { configured: true } {
-    return { configured: true };
+  toJSON(): { configured: true; fingerprint: Omit<MercuryTokenFingerprint, "present"> | null } {
+    return { configured: true, fingerprint: this.fingerprint };
   }
 }
 
@@ -105,7 +120,8 @@ export function loadMercuryPublicConfig(env: NodeJS.Dict<string> = process.env):
 export function loadMercuryConfig(env: NodeJS.Dict<string> = process.env): MercuryResolvedConfig {
   const enabled = parseBoolean(env.MERCURY_ENABLED, false);
   const mode = parseMode(env.MERCURY_ENV, enabled);
-  const token = typeof env.MERCURY_API_TOKEN === "string" ? env.MERCURY_API_TOKEN.trim() : "";
+  const resolvedToken = resolveMercuryApiToken(env);
+  const token = resolvedToken.token;
   const tokenConfigured = token.length > 0;
   const baseUrl = mode === "DISABLED" ? MERCURY_SANDBOX_BASE_URL : resolveMercuryBaseUrl(mode, env.MERCURY_BASE_URL);
   const configured = enabled && mode !== "DISABLED" && tokenConfigured;
@@ -116,10 +132,16 @@ export function loadMercuryConfig(env: NodeJS.Dict<string> = process.env): Mercu
     tokenConfigured: configured,
     health: configured ? "CONFIGURED" : "NOT_CONFIGURED",
     timeoutMs: MERCURY_DEFAULT_TIMEOUT_MS,
+    tokenSource: resolvedToken.source,
+    tokenFingerprint: resolvedToken.fingerprint
+      ? (({ present: _present, ...safe }) => safe)(resolvedToken.fingerprint)
+      : null,
+    tokenConflict: resolvedToken.conflict,
+    lastVerifiedAt: null,
   };
   return {
     public: publicConfig,
-    credentials: configured ? new MercuryCredentials(token) : null,
+    credentials: configured ? new MercuryCredentials(token, publicConfig.tokenFingerprint) : null,
   };
 }
 
@@ -131,5 +153,17 @@ export function serializeMercuryPublicConfig(config: MercuryPublicConfig): Mercu
     tokenConfigured: config.tokenConfigured,
     health: config.health,
     timeoutMs: config.timeoutMs,
+    tokenSource: config.tokenSource,
+    tokenFingerprint: config.tokenFingerprint,
+    tokenConflict: config.tokenConflict,
+    lastVerifiedAt: config.lastVerifiedAt,
   };
+}
+
+export function mercuryProductionHostCorrect(baseUrl: string): boolean {
+  try {
+    return new URL(baseUrl).host.toLowerCase() === "api.mercury.com";
+  } catch {
+    return false;
+  }
 }

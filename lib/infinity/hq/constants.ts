@@ -8,6 +8,7 @@ export const HQ_ROUTES = {
   validation: "/dashboard/validation",
   executive: "/dashboard/executive",
   runtime: "/dashboard/runtime",
+  operations: "/dashboard/operations",
   reasoning: "/dashboard/reasoning",
   allocations: "/dashboard/allocations",
   assets: "/dashboard/assets",
@@ -17,7 +18,10 @@ export const HQ_ROUTES = {
   portfolio: "/dashboard/portfolio",
   ventureDetail: (ventureId: string) => `/dashboard/ventures/${ventureId}`,
   launch: "/dashboard/launch",
+  missionList: "/dashboard/missions",
   missions: (missionId: string) => `/dashboard/missions/${missionId}`,
+  activity: "/dashboard/activity",
+  governance: "/dashboard/governance",
 } as const;
 
 export const OPPORTUNITY_PIPELINE_STAGES = [

@@ -221,6 +221,24 @@ export type MonetizationCostSummary = {
   costUncertainty: string | null;
 };
 
+export type MonetizationHandoffExclusion = {
+  candidateId: string;
+  stage: "monetization";
+  reason: string;
+  classification:
+    | "monetization_input_truncated"
+    | "monetization_analysis_failed"
+    | "monetization_research_budget_exhausted"
+    | "monetization_not_requested";
+};
+
+export type MonetizationHandoffSummary = {
+  requestedCandidateIds: string[];
+  processedCandidateIds: string[];
+  monetizedCandidateIds: string[];
+  excludedCandidates: MonetizationHandoffExclusion[];
+};
+
 export type MonetizationEngineReport = {
   engineVersion: string;
   scoringVersion: string;
@@ -241,6 +259,8 @@ export type MonetizationEngineReport = {
   }>;
   costSummary: MonetizationCostSummary;
   completedAt: string;
+  handoff?: MonetizationHandoffSummary;
+  candidateFailures?: string[];
 };
 
 export type RunMonetizationEngineInput = {
@@ -257,6 +277,7 @@ export type RunMonetizationEngineSuccess = {
   monetizationRunId: string;
   report: MonetizationEngineReport;
   analyses: MonetizationCandidateAnalysis[];
+  handoff: MonetizationHandoffSummary;
 };
 
 export type RunMonetizationEngineFailure = {

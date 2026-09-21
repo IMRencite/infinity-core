@@ -1,7 +1,14 @@
 import type { HqArtifactInspectorModel } from "../artifacts/inspector-types";
 import type { HQDetailTab, HQEntityDetail } from "./entity-detail-types";
 import { collectInsightMetrics } from "./insight-metrics";
-import { FOUNDER_INTELLIGENCE_SECTION_IDS } from "@/lib/infinity/founder-idea-lab/hq/intelligence-sections";
+import {
+  FOUNDER_INTELLIGENCE_SECTION_IDS,
+  FOUNDER_MONEY_SECTION_IDS,
+} from "@/lib/infinity/founder-idea-lab/hq/intelligence-sections";
+import {
+  VENTURE_INTELLIGENCE_MONEY_SECTION_IDS,
+  VENTURE_INTELLIGENCE_SECTION_IDS,
+} from "@/lib/infinity/venture-intelligence/types";
 
 const EVIDENCE_SECTION_IDS = new Set([
   "why-work",
@@ -19,17 +26,23 @@ const EVIDENCE_SECTION_IDS = new Set([
 ]);
 
 const SYSTEM_SECTION_IDS = new Set(["system", "lineage"]);
-const INTELLIGENCE_SECTION_IDS = new Set<string>(FOUNDER_INTELLIGENCE_SECTION_IDS);
+const INTELLIGENCE_SECTION_IDS = new Set<string>([
+  ...FOUNDER_INTELLIGENCE_SECTION_IDS,
+  ...VENTURE_INTELLIGENCE_SECTION_IDS,
+]);
+const MONEY_SECTION_IDS = new Set<string>([...FOUNDER_MONEY_SECTION_IDS, ...VENTURE_INTELLIGENCE_MONEY_SECTION_IDS]);
 
 export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDetail {
   const { artifact } = model;
-  const metrics = collectInsightMetrics(model.sections);
+  const metrics = collectInsightMetrics(model.sections.filter((s) => !MONEY_SECTION_IDS.has(s.id)));
   const intelligenceSections = model.sections.filter((s) => INTELLIGENCE_SECTION_IDS.has(s.id));
+  const moneySections = model.sections.filter((s) => MONEY_SECTION_IDS.has(s.id));
   const overviewSections = model.sections.filter(
     (s) =>
       !EVIDENCE_SECTION_IDS.has(s.id) &&
       !SYSTEM_SECTION_IDS.has(s.id) &&
-      !INTELLIGENCE_SECTION_IDS.has(s.id),
+      !INTELLIGENCE_SECTION_IDS.has(s.id) &&
+      !MONEY_SECTION_IDS.has(s.id),
   );
   const evidenceSections = model.sections.filter((s) => EVIDENCE_SECTION_IDS.has(s.id));
   const systemSections = model.sections.filter((s) => SYSTEM_SECTION_IDS.has(s.id));
@@ -47,6 +60,7 @@ export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDeta
 
   const tabs: HQDetailTab[] = [];
   if (intelligenceSections.length > 0) tabs.push("intelligence");
+  if (moneySections.length > 0) tabs.push("money");
   tabs.push("overview");
   if (model.hotTakes.length > 0 || metrics.length > 0) tabs.push("insights");
   if (evidenceSections.length > 0) tabs.push("evidence");
@@ -64,6 +78,7 @@ export function buildEntityDetail(model: HqArtifactInspectorModel): HQEntityDeta
     decisionWhy: model.decisionWhy ?? null,
     overview: { sections: overviewSections.length > 0 ? overviewSections : model.sections.slice(0, 2) },
     intelligence: { sections: intelligenceSections },
+    money: { sections: moneySections },
     insights: {
       hotTakes: model.hotTakes,
       metrics,

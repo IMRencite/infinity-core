@@ -1,0 +1,16 @@
+{
+  "gate": "HQProductionServerErrorTruthGate",
+  "result": "PASS",
+  "observed_browser_error": "1400196868",
+  "correlated_server_digest": "4062965126",
+  "evidence_source": "vercel logs --project infinity-hq --environment production --level error --since 24h",
+  "deployment_id": "dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ",
+  "route": "/dashboard",
+  "exception": "ENOENT",
+  "syscall": "mkdir",
+  "path": ".infinity/opportunity-universe",
+  "loader": "loadCanonicalOpportunityUniverse → persist.writeOpportunityShortlists → loadHqCanonicalOperatingProjection → InfinityHqExperienceEnriched",
+  "classification": "PRODUCTION_SERVER_RENDER_FAIL",
+  "deterministic": true,
+  "note": "Browser digest 1400196868 was not present in the retained 24h error sample; the same authenticated GET /dashboard ENOENT mkdir failure was captured with digest 4062965126. Root cause is identical: local .infinity write during authenticated SSR on Vercel."
+}

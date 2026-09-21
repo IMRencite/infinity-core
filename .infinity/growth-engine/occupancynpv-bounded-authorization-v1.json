@@ -1,0 +1,14 @@
+{
+  "grant_id": "FOUNDER_BOUNDED_OCCUPANCYNPV_GROWTH_AUTHORIZATION_V1",
+  "campaign_id": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+  "prospect_source": "FOUNDER_BOUNDED_OCCUPANCYNPV_GROWTH_PROSPECT_SOURCE_V1",
+  "per_prospect_send": "FOUNDER_BOUNDED_OCCUPANCYNPV_GROWTH_PER_PROSPECT_SEND_V1",
+  "isolated_deploy": "FOUNDER_BOUNDED_OCCUPANCYNPV_GROWTH_ISOLATED_DEPLOY_V1",
+  "blanket_outreach": false,
+  "blanket_deployment": false,
+  "dirty_tree_deployment": false,
+  "askreview": false,
+  "daily_new_qualified_cap": 5,
+  "potential_healthy_cap": 10,
+  "recorded_at": "2026-09-10T23:58:00.000Z"
+}

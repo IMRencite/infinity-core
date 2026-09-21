@@ -1,5 +1,5 @@
 import { humanizeTask } from "./humanize";
-import { deriveRoomPresence, type RoomPresenceState } from "./room-presence";
+import { deriveRoomPresence, roomPresenceFromActivityStatus, type RoomPresenceState } from "./room-presence";
 import { ALL_HQ_ROOM_IDS, getRoomDisplayNames } from "./room-naming";
 import { isInternalVentureLabel, resolveVentureDisplay } from "./resolve-venture-display-name";
 import { deriveUiStateFromEngineStatus } from "./status-derivation";
@@ -13,6 +13,9 @@ import type {
   OperatorWorkerNode,
 } from "./types";
 import type { HqWorkArtifact } from "./artifacts/types";
+import type { CurrentWorkNarrative } from "@/lib/infinity/current-work-narrative";
+import { isGenericWorkerOnlyNow } from "@/lib/infinity/current-work-narrative";
+import { isGenericImplementationText } from "@/lib/infinity/room-work/resolver";
 
 /**
  * Deterministic HQ room activity translator.
@@ -37,6 +40,10 @@ export const ROOM_ACTIVITY_IDLE =
 export const ROOM_ACTIVITY_EMPTY = "No active work is assigned to this room.";
 export const ROOM_ACTIVITY_BLOCKED_UNKNOWN =
   "Work is blocked, but no detailed blocker has been recorded.";
+export const ROOM_ACTIVITY_WAITING =
+  "Work is waiting. No autonomous execution is running in this room.";
+export const ROOM_ACTIVITY_AUTHORIZATION =
+  "Work is waiting on authorization. This room is not autonomously executing.";
 
 export type RoomActivitySource =
   | "currentTask"
@@ -75,6 +82,9 @@ export type RoomActivityInput = {
   closedLoopRoute?: RoomActivityClosedLoop;
   ventureName?: string | null;
   ventureId?: string | null;
+  commandRoomStatus?: string | null;
+  commandRoomSummary?: string | null;
+  nowInspectingTask?: string | null;
 };
 
 const UUID_IN_TEXT_RE =
@@ -213,6 +223,17 @@ const ROOM_ACTIVE_COPY: Record<DepartmentId, { default: RoomCopyVariant; alt?: R
       withoutVenture: "Comparing expected results with actual performance.",
     },
   },
+  prospect_intelligence: {
+    default: {
+      withVenture: () => "Refreshing shared prospect intelligence and venture match inventory.",
+      withoutVenture: "Refreshing shared prospect intelligence and venture match inventory.",
+    },
+    altWhen: /match|enrich|refresh/i,
+    alt: {
+      withVenture: () => "Resolving commercial entities and publishing ready sales inventory.",
+      withoutVenture: "Resolving commercial entities and publishing ready sales inventory.",
+    },
+  },
   executive_office: {
     default: {
       withVenture: () => "Coordinating the next venture stage based on evidence, economics, and readiness.",
@@ -229,10 +250,21 @@ const ROOM_ACTIVE_COPY: Record<DepartmentId, { default: RoomCopyVariant; alt?: R
       withVenture: (v) => `Monitoring the sales floor and room priorities for ${v}.`,
       withoutVenture: "Monitoring the sales floor without forcing outreach.",
     },
-    altWhen: /pipeline|outbound|inbound|close/i,
+    altWhen: /pipeline|outbound|inbound|close|train|coach|simulat/i,
     alt: {
       withVenture: () => "Advancing the highest-evidence sales room without fabricating activity.",
       withoutVenture: "Advancing the highest-evidence sales room without fabricating activity.",
+    },
+  },
+  operations: {
+    default: {
+      withVenture: (v) => `Reporting current operating state for ${v} and the rest of the portfolio.`,
+      withoutVenture: "Reporting what Infinity and its ventures are doing operationally.",
+    },
+    altWhen: /observ|runtime|cycle/i,
+    alt: {
+      withVenture: () => "Watching scheduled runtime, blockers, and the next operating cycle.",
+      withoutVenture: "Watching scheduled runtime, blockers, and the next operating cycle.",
     },
   },
 };
@@ -317,6 +349,51 @@ function departmentIsInProgress(state: DepartmentUiState | undefined): boolean {
   return Boolean(state && IN_PROGRESS_DEPT.has(state));
 }
 
+function normalizeCopy(value: string): string {
+  return value.trim().replace(/\s+/g, " ").replace(/[.!?]+$/g, "").toLowerCase();
+}
+
+function isRoomIdentityCopy(departmentId: DepartmentId, text: string): boolean {
+  const names = getRoomDisplayNames(departmentId);
+  const normalized = normalizeCopy(text);
+  return [names.displayName, names.shortDescription, names.expandedDescription, names.supportingLabel].some(
+    (value) => normalizeCopy(value) === normalized,
+  );
+}
+
+function punctuateSentence(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) return trimmed;
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function exactWorkSentence(input: {
+  departmentId: DepartmentId;
+  hint: string | null;
+  liveSentence: string | null;
+  venture: string | null;
+}): string | null {
+  for (const raw of [input.liveSentence, input.hint]) {
+    const value = readTrimmed(raw);
+    if (!value || looksLikeOpaqueIdentifier(value)) continue;
+    if (isGenericWorkerOnlyNow(value) || isGenericImplementationText(value)) continue;
+    if (isRoomIdentityCopy(input.departmentId, value)) continue;
+    if (value.split(/\s+/).length < 3 && value.length < 18) continue;
+    let sentence = stripInternalTokens(value.replace(/^Continue\s+/i, ""));
+    if (!sentence || looksLikeOpaqueIdentifier(sentence) || isRoomIdentityCopy(input.departmentId, sentence)) continue;
+    if (
+      input.venture &&
+      sentence.length < 70 &&
+      !sentence.toLowerCase().includes(input.venture.toLowerCase()) &&
+      !/\bfor\b/i.test(sentence)
+    ) {
+      sentence = `${sentence.replace(/[.!?]+$/g, "")} for ${input.venture}`;
+    }
+    return punctuateSentence(sentence);
+  }
+  return null;
+}
+
 function applyRoomCopy(departmentId: DepartmentId, venture: string | null, hint: string | null): string {
   const pack = ROOM_ACTIVE_COPY[departmentId];
   const variant = hint && pack.altWhen?.test(hint) && pack.alt ? pack.alt : pack.default;
@@ -358,8 +435,14 @@ function commandCoordinationSentence(input: {
   return null;
 }
 
-function blockerSentence(department: OperatorDepartmentSnapshot | null | undefined): string {
+function blockerSentence(
+  department: OperatorDepartmentSnapshot | null | undefined,
+  commandRoomSummary?: string | null,
+  nowInspectingTask?: string | null,
+): string {
   const candidates = [
+    commandRoomSummary,
+    nowInspectingTask,
     department?.displaySummary,
     department?.summary,
     department?.currentTask,
@@ -383,6 +466,21 @@ type Grounding = {
   artifactTitle: string | null;
 };
 
+function liveCommandSentence(input: RoomActivityInput): string | null {
+  if (!input.commandRoomStatus || input.commandRoomStatus === "EMPTY" || input.commandRoomStatus === "PRESENT_IDLE") {
+    return null;
+  }
+  const candidates = [input.commandRoomSummary, input.nowInspectingTask];
+  for (const candidate of candidates) {
+    const raw = readTrimmed(candidate);
+    if (!raw || looksLikeOpaqueIdentifier(raw)) continue;
+    const cleaned = stripInternalTokens(humanizeTask(raw) ?? raw);
+    if (!cleaned || looksLikeOpaqueIdentifier(cleaned)) continue;
+    return cleaned.endsWith(".") ? cleaned : `${cleaned}.`;
+  }
+  return null;
+}
+
 function pickActiveGrounding(input: RoomActivityInput): Grounding | null {
   const dept = input.department ?? null;
   const hintFrom = (raw: string | null | undefined) => {
@@ -390,6 +488,14 @@ function pickActiveGrounding(input: RoomActivityInput): Grounding | null {
     if (!value || looksLikeOpaqueIdentifier(value)) return null;
     return stripInternalTokens(humanizeTask(value) ?? value);
   };
+
+  if (input.commandRoomStatus === "ACTIVE_WORK") {
+    return {
+      source: "mission",
+      hint: hintFrom(input.commandRoomSummary ?? input.nowInspectingTask),
+      artifactTitle: null,
+    };
+  }
 
   if (dept && departmentIsInProgress(dept.state) && !TERMINAL_DEPT.has(dept.state)) {
     const taskHint = hintFrom(dept.currentTask);
@@ -447,6 +553,7 @@ function pickActiveGrounding(input: RoomActivityInput): Grounding | null {
 }
 
 function hasProvenActiveWork(input: RoomActivityInput, grounding: Grounding | null, workerPresence: RoomPresenceState): boolean {
+  if (input.commandRoomStatus === "ACTIVE_WORK") return true;
   if (workerPresence === "BLOCKED") return false;
   if (grounding) return true;
   if (workerPresence === "ACTIVE_WORK") return true;
@@ -463,18 +570,50 @@ function hasProvenActiveWork(input: RoomActivityInput, grounding: Grounding | nu
 function resolvePresence(
   workerPresence: RoomPresenceState,
   provenActive: boolean,
+  outputCount = 0,
 ): RoomPresenceState {
   if (workerPresence === "BLOCKED") return "BLOCKED";
   if (provenActive) return "ACTIVE_WORK";
+  if (workerPresence === "EMPTY" && outputCount > 0) return "PRESENT_IDLE";
   return workerPresence;
 }
 
 export function buildRoomActivityExplanation(input: RoomActivityInput): RoomActivityExplanation {
-  const workerPresence = deriveRoomPresence(input.workerNodes, input.department?.state ?? "NOT_STARTED").state;
+  const narrative = input.department?.detail?.currentWorkNarrative as CurrentWorkNarrative | undefined;
+  if (
+    narrative?.displayText &&
+    !isGenericWorkerOnlyNow(narrative.displayText) &&
+    !isRoomIdentityCopy(input.departmentId, narrative.displayText) &&
+    !isGenericImplementationText(narrative.displayText)
+  ) {
+    const presence: RoomPresenceState = narrative.state === "ACTIVE"
+      ? "ACTIVE_WORK"
+      : narrative.state === "BLOCKED"
+        ? "BLOCKED"
+        : "PRESENT_IDLE";
+    return {
+      presence,
+      label: ROOM_ACTIVITY_LABEL,
+      sentence: narrative.displayText,
+      grounded: true,
+      source: "currentTask",
+      ventureName: publicVentureNameForActivity(input.ventureName, input.ventureId),
+      why: narrative.purpose,
+      activeArtifactTitle: null,
+    };
+  }
+  const commandPresence = roomPresenceFromActivityStatus(input.commandRoomStatus);
+  const outputCount = input.department?.workArtifacts?.length ?? 0;
+  const workerPresence =
+    commandPresence ??
+    deriveRoomPresence(input.workerNodes, input.department?.state ?? "NOT_STARTED", false, {
+      outputCount,
+      currentWorkCount: input.department?.currentTask ? 1 : 0,
+    }).state;
   const ventureName = publicVentureNameForActivity(input.ventureName, input.ventureId);
   const grounding = pickActiveGrounding(input);
   const provenActive = hasProvenActiveWork(input, grounding, workerPresence);
-  const presence = resolvePresence(workerPresence, provenActive);
+  const presence = resolvePresence(workerPresence, provenActive, outputCount);
 
   if (presence === "EMPTY") {
     return {
@@ -489,8 +628,27 @@ export function buildRoomActivityExplanation(input: RoomActivityInput): RoomActi
     };
   }
 
+  if (input.commandRoomStatus === "WAITING_EXTERNAL" || input.commandRoomStatus === "WAITING_INTERNAL") {
+    const waitingTask = input.nowInspectingTask ?? input.commandRoomSummary;
+    const authorization = input.commandRoomStatus === "WAITING_EXTERNAL";
+    return {
+      presence: "PRESENT_IDLE",
+      label: ROOM_ACTIVITY_LABEL,
+      sentence: waitingTask
+        ? `${authorization ? "Authorization required: " : "Waiting: "}${waitingTask}`
+        : authorization
+          ? ROOM_ACTIVITY_AUTHORIZATION
+          : ROOM_ACTIVITY_WAITING,
+      grounded: true,
+      source: "mission",
+      ventureName,
+      why: authorization ? ROOM_ACTIVITY_AUTHORIZATION : ROOM_ACTIVITY_WAITING,
+      activeArtifactTitle: null,
+    };
+  }
+
   if (presence === "BLOCKED") {
-    const sentence = blockerSentence(input.department);
+    const sentence = blockerSentence(input.department, input.commandRoomSummary, input.nowInspectingTask);
     return {
       presence,
       label: ROOM_ACTIVITY_LABEL,
@@ -517,8 +675,17 @@ export function buildRoomActivityExplanation(input: RoomActivityInput): RoomActi
   }
 
   const hint = grounding?.hint ?? null;
+  const liveSentence = liveCommandSentence(input);
+  const exact = exactWorkSentence({
+    departmentId: input.departmentId,
+    hint,
+    liveSentence,
+    venture: ventureName,
+  });
   let sentence: string;
-  if (input.departmentId === "executive_office") {
+  if (exact) {
+    sentence = exact;
+  } else if (input.departmentId === "executive_office") {
     sentence =
       commandCoordinationSentence({
         closedLoopRoute: input.closedLoopRoute,
@@ -532,8 +699,8 @@ export function buildRoomActivityExplanation(input: RoomActivityInput): RoomActi
   }
 
   sentence = stripInternalTokens(sentence);
-  if (!sentence) {
-    sentence = applyRoomCopy(input.departmentId, null, null);
+  if (!sentence || isRoomIdentityCopy(input.departmentId, sentence)) {
+    sentence = applyRoomCopy(input.departmentId, null, hint);
   }
 
   const source = grounding?.source ?? "worker";

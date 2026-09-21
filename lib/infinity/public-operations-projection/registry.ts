@@ -13,6 +13,7 @@ export const PUBLIC_OPERATIONS_FIELD_REGISTRY: PublicProjectionFieldSpec[] = [
   { field: "active_public_agents", source_class: "LOOP_STATE", sanitization_rule: "ACTIVE_ONLY", aggregation_rule: "COUNT_ACTIVE_ROLES", public_sensitivity: "PUBLIC_AGGREGATED", fallback: "UNKNOWN" },
   { field: "idle_public_agents", source_class: "LOOP_STATE", sanitization_rule: "IDLE_ONLY", aggregation_rule: "COUNT_IDLE_ROLES", public_sensitivity: "PUBLIC_AGGREGATED", fallback: "UNKNOWN" },
   { field: "public_departments", source_class: "LOOP_STATE", sanitization_rule: "DEPARTMENT_ALLOWLIST", aggregation_rule: "FIXED_SET", public_sensitivity: "PUBLIC_SAFE", fallback: "IDLE_SET" },
+  { field: "public_sales_rooms", source_class: "SALES_FLOOR", sanitization_rule: "PUBLIC_SAFE_ROOM_STATES", aggregation_rule: "FIXED_SET", public_sensitivity: "PUBLIC_SAFE", fallback: "IDLE_SET" },
   { field: "public_agents", source_class: "LOOP_STATE", sanitization_rule: "AGENT_ALLOWLIST", aggregation_rule: "FIXED_ROLES", public_sensitivity: "PUBLIC_SAFE", fallback: "IDLE_ROLES" },
   { field: "ventures_started_count", source_class: "VENTURE_RECORDS", sanitization_rule: "STARTED_RULE", aggregation_rule: "COUNT_STARTED", public_sensitivity: "PUBLIC_AGGREGATED", fallback: "UNKNOWN" },
   { field: "ventures_operating_count", source_class: "VENTURE_RECORDS", sanitization_rule: "OPERATING_RULE", aggregation_rule: "COUNT_OPERATING", public_sensitivity: "PUBLIC_AGGREGATED", fallback: "UNKNOWN" },

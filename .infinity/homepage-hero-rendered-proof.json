@@ -1,0 +1,86 @@
+{
+  "artifactId": "art_dbf624e41599420891e2",
+  "digest": "a8ca8bfa544da21a96c11bab4d0abb0e3926271ab989d2f1924c68c7deba1f97",
+  "immutable": true,
+  "routes": 93,
+  "hero": [
+    {
+      "text": "Compare two leases",
+      "href": "/lease-comparison",
+      "state": "default",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    },
+    {
+      "text": "Compare two leases",
+      "href": "/lease-comparison",
+      "state": "hover",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    },
+    {
+      "text": "Compare two leases",
+      "href": "/lease-comparison",
+      "state": "focus",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    },
+    {
+      "text": "See the workflow",
+      "href": "/how-it-works",
+      "state": "default",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    },
+    {
+      "text": "See the workflow",
+      "href": "/how-it-works",
+      "state": "hover",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    },
+    {
+      "text": "See the workflow",
+      "href": "/how-it-works",
+      "state": "focus",
+      "foreground": "rgb(244, 247, 251)",
+      "effectiveBackground": "rgb(21, 32, 51)",
+      "contrastRatio": 15.19,
+      "visibility": "VISIBLE",
+      "surfaceRole": "DEFAULT",
+      "result": "PASS"
+    }
+  ],
+  "heroPassing": 6,
+  "heroRequired": 6,
+  "heroOverall": "PASS",
+  "routesChecked": 93,
+  "visible": 1886,
+  "sameColor": 0,
+  "nearInvisible": 0,
+  "hoverFocus": 0,
+  "missing": 0,
+  "wcag": 0,
+  "renderedLinkContrast": "PASS",
+  "linkSamples": 1888
+}

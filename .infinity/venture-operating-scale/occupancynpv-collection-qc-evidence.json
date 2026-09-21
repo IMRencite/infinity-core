@@ -1,0 +1,40 @@
+{
+  "validatedAt": "2026-09-16T08:32:22.013Z",
+  "samples": [
+    {
+      "fixtureCount": 0,
+      "renderedItemCount": 0,
+      "pageSize": 10,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "fixtureCount": 1,
+      "renderedItemCount": 1,
+      "pageSize": 10,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "fixtureCount": 10,
+      "renderedItemCount": 10,
+      "pageSize": 10,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "fixtureCount": 25,
+      "renderedItemCount": 10,
+      "pageSize": 10,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "fixtureCount": 100,
+      "renderedItemCount": 10,
+      "pageSize": 10,
+      "overflowPx": 0,
+      "result": "PASS"
+    }
+  ]
+}

@@ -1,5 +1,14 @@
-import type { PublicActivityLevel, PublicCount, PublicSystemStatus } from "@/lib/infinity/public-operations-projection/types";
+import type {
+  PublicActivityLevel,
+  PublicCount,
+  PublicSystemStatus,
+  PublicVentureProjection,
+} from "@/lib/infinity/public-operations-projection/types";
 import { PUBLIC_COUNT_UNKNOWN } from "@/lib/infinity/public-operations-projection/types";
+
+export function recentPublicVentures(ventures: PublicVentureProjection[], limit = 10): PublicVentureProjection[] {
+  return ventures.slice(0, Math.max(0, limit));
+}
 
 export function formatPublicCount(value: PublicCount): string {
   if (value === PUBLIC_COUNT_UNKNOWN) return PUBLIC_COUNT_UNKNOWN;
@@ -23,6 +32,13 @@ export function systemStatusLabel(status: PublicSystemStatus): string {
   return "Temporarily unavailable";
 }
 
+export function salesRoomMotion(status: "ACTIVE" | "MONITORING" | "PRESENT_IDLE" | "WAITING"): "working" | "scanning" | "waiting" | "idle" {
+  if (status === "ACTIVE") return "working";
+  if (status === "MONITORING") return "scanning";
+  if (status === "WAITING") return "waiting";
+  return "idle";
+}
+
 export function departmentMotion(status: PublicActivityLevel): "working" | "scanning" | "reviewing" | "building" | "waiting" | "idle" | "degraded" {
   if (status === "ACTIVE") return "working";
   if (status === "MONITORING") return "scanning";
@@ -33,6 +49,20 @@ export function departmentMotion(status: PublicActivityLevel): "working" | "scan
   return "idle";
 }
 
-export function agentMotion(status: "ACTIVE" | "IDLE"): "working" | "idle" {
-  return status === "ACTIVE" ? "working" : "idle";
+export function agentMotion(status: "ACTIVE" | "MONITORING" | "IDLE"): "working" | "scanning" | "idle" {
+  if (status === "ACTIVE") return "working";
+  if (status === "MONITORING") return "scanning";
+  return "idle";
+}
+
+export function agentPresence(status: "ACTIVE" | "IDLE" | "MONITORING" | "PRESENT_IDLE" | "WAITING"): "executing" | "watching" | "ready" {
+  if (status === "ACTIVE") return "executing";
+  if (status === "MONITORING") return "watching";
+  return "ready";
+}
+
+export function roomPresence(motion: string): "executing" | "watching" | "ready" {
+  if (motion === "working") return "executing";
+  if (motion === "scanning" || motion === "reviewing") return "watching";
+  return "ready";
 }

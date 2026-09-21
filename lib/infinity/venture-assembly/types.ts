@@ -54,6 +54,7 @@ export type VentureAssemblyRecord = {
   organizationId: string;
   missionId: string;
   opportunityId: string;
+  opportunityCandidateId: string | null;
   executiveDecisionId: string;
   planId: string;
   planVersion: number;

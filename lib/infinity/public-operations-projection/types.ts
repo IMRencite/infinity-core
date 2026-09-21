@@ -50,6 +50,7 @@ export const PUBLIC_DEPARTMENT_IDS = [
   "FINANCE",
   "PRODUCT",
   "CREATIVE",
+  "PROSPECT_INTELLIGENCE",
 ] as const;
 export type PublicDepartmentId = (typeof PUBLIC_DEPARTMENT_IDS)[number];
 
@@ -76,9 +77,25 @@ export type PublicAgentProjection = {
   public_agent_id: string;
   role: string;
   department: PublicDepartmentId;
-  public_status: "ACTIVE" | "IDLE";
+  public_status: "ACTIVE" | "MONITORING" | "IDLE";
   generic_activity: string;
   last_activity_at: string | null;
+};
+
+export const PUBLIC_SALES_ROOM_IDS = [
+  "OUTBOUND_ACQUISITION",
+  "INBOUND_CONVERSION",
+  "EXPANSION_RETENTION",
+  "PARTNERSHIPS_CHANNEL",
+  "OFFER_CLOSING",
+] as const;
+export type PublicSalesRoomId = (typeof PUBLIC_SALES_ROOM_IDS)[number];
+
+export type PublicSalesRoomProjection = {
+  room_id: PublicSalesRoomId;
+  public_name: string;
+  public_status: "ACTIVE" | "MONITORING" | "PRESENT_IDLE" | "WAITING";
+  generic_activity_label: string;
 };
 
 export type PublicVentureProjection = {
@@ -110,6 +127,7 @@ export type PublicOperationsProjection = {
   active_public_agents: number;
   idle_public_agents: number;
   public_departments: PublicDepartmentProjection[];
+  public_sales_rooms: PublicSalesRoomProjection[];
   public_agents: PublicAgentProjection[];
   ventures_started_count: PublicCount;
   ventures_operating_count: PublicCount;
@@ -176,4 +194,5 @@ export type InternalPublicObservation = {
   ventures: InternalVentureObservation[];
   work: InternalWorkObservation[];
   loop: InternalLoopObservation | null;
+  occupancy?: import("./occupancy").CanonicalPublicOccupancy | null;
 };

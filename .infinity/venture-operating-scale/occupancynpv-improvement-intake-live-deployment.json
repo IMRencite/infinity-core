@@ -1,0 +1,22 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "0d050ae0f4bee3ac6d054efe6658982c8e5f080f282ea3476ae2bb05852944f4",
+  "previous_deployment_id": "dpl_FdtMbHohr6KxSUogvycc6Zb4E5ST",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "0d050ae0f4bee3ac6d054efe6658982c8e5f080f282ea3476ae2bb05852944f4",
+  "expected_digest": "0d050ae0f4bee3ac6d054efe6658982c8e5f080f282ea3476ae2bb05852944f4",
+  "digest_matches": true,
+  "deployment_id": "dpl_H2t9jNDBnN5ZpoPhHyb1qSGtkvaD",
+  "preview_url": "https://infinity-validation-cre-lease-npv-e72beb7b-9uxjcdgpz.vercel.app",
+  "deployed": true,
+  "aliased": true,
+  "predeploy_visible": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "supabase_migrations": 0,
+  "public_launch": 0,
+  "founder_dirty_tree_deployed": "NO",
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+  "safe_error": null
+}

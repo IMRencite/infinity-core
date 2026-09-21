@@ -1,19 +1,25 @@
 /**
- * Independent Communication observer. Read-only against operational tables.
- * Must not live inside infinity-runtime or infinity-hq build fate.
+ * Independent Communication observer. SELECT-only against operational views.
+ * Fail closed. No Gmail credentials. No mutation.
  */
 import { createClient } from "@supabase/supabase-js";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const key = process.env.COMMUNICATION_OBSERVER_READONLY_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
-  console.log(JSON.stringify({ ok: false, reason: "SUPABASE_UNAVAILABLE", observer: "github-actions-communication-observer" }));
-  process.exit(1);
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "OBSERVER_QUERY_FAILED",
+    observer: "github-actions-communication-observer",
+    first_failure: "CREDENTIALS_MISSING",
+  }));
+  process.exit(2);
 }
 
 const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 const now = new Date().toISOString();
 const nowMs = Date.parse(now);
+const STALE_MS = 11 * 60 * 1000;
 
 async function payload(scope) {
   const { data, error } = await client.from("cloud_runtime_state").select("payload, updated_at").eq("scope", scope).maybeSingle();
@@ -22,17 +28,36 @@ async function payload(scope) {
 
 const heartbeat = await payload("communication-runtime-heartbeats-v1");
 const intended = await payload("communication-intended-release-v1");
-const canary = await payload("communication-no-send-canary-v4");
+const outage = await payload("communication-cron-outage-v9");
 const probe = await payload("communication-provider-probe-v4");
+const epoch = await payload("communication-cutover-epoch-v1");
+const jobs = await payload("communication-runtime-scheduler-v1");
+const queryFailed = Boolean(heartbeat.error || intended.error);
+
 const scheduler = heartbeat.payload?.runtimes?.scheduler ?? {};
+const provider = heartbeat.payload?.runtimes?.provider ?? {};
 const age = scheduler.last_success_at ? nowMs - Date.parse(scheduler.last_success_at) : null;
-const fresh = age != null && age <= 11 * 60 * 1000;
+const staleHeartbeat = queryFailed || age == null || age > STALE_MS;
+const providerFail = provider.last_error || probe.payload?.users_get_profile === false || (!provider.last_success_at && !probe.payload);
 const intendedSha = intended.payload?.intended_git_sha ?? intended.payload?.release_sha ?? null;
 const observedSha = scheduler.release_sha ?? scheduler.git_sha ?? null;
-const schemaSeen = scheduler.schema_version_seen ?? null;
-const schemaRequired = "communication-recovery-release-v8";
-const staleRuntime = age == null || age > 11 * 60 * 1000;
-const missingCronClass = !scheduler.last_success_at || String(scheduler.deployment_id || scheduler.active_deployment_id || "") === "";
+const releaseMismatch = Boolean(intendedSha) && Boolean(observedSha) && intendedSha !== observedSha;
+const job = jobs.payload?.jobs?.[0] ?? null;
+const legacyBlocked = job?.state === "BLOCKED" && !job?.consumer;
+const recordedOutage = outage.payload?.status === "ACTIVE" || outage.payload?.code === "COMMUNICATION_CRON_OUTAGE_AFTER_BAD_PROMOTION";
+const detectedStale = staleHeartbeat || recordedOutage;
+
+const firstFailure = queryFailed
+  ? "OBSERVER_QUERY_FAILED"
+  : staleHeartbeat
+    ? "STALE_HEARTBEAT"
+    : providerFail
+      ? "PROVIDER_READ_FAIL"
+      : releaseMismatch
+        ? "RELEASE_MISMATCH"
+        : legacyBlocked
+          ? "LEGACY_SINK_UNCONSUMED"
+          : null;
 
 const snapshot = {
   observer: "github-actions-communication-observer",
@@ -40,26 +65,19 @@ const snapshot = {
   shares_hq_build: false,
   independent_trigger: process.env.GITHUB_ACTIONS === "true",
   observed_at: now,
-  heartbeat_fresh: fresh,
+  mutation: false,
   heartbeat_age_ms: age,
-  release_match: Boolean(intendedSha) && intendedSha === observedSha,
-  schema_match: schemaSeen === schemaRequired,
-  provider_coverage: probe.payload?.users_get_profile === true ? "PASS" : "FAIL",
-  oldest_open_obligation: "ABSENT",
-  canary_first_failure: canary.payload?.first_failure_stage ?? "ABSENT",
-  cutover_epoch: scheduler.cutover_epoch_seen ?? "ABSENT",
-  stale_runtime: staleRuntime,
-  detects_bad_promotion_class: staleRuntime || missingCronClass,
+  stale_heartbeat: staleHeartbeat,
+  detected_stale_heartbeat: detectedStale,
+  recorded_outage: recordedOutage,
+  provider_read_fail: Boolean(providerFail),
+  release_mismatch: releaseMismatch,
+  legacy_blocked: Boolean(legacyBlocked),
+  epoch: epoch.payload?.epoch ?? null,
+  first_failure: firstFailure,
+  positive_control_expected: "STALE_HEARTBEAT_OR_RECORDED_OUTAGE",
 };
 
-await client.from("cloud_runtime_state").upsert({
-  scope: "communication-external-observer-v4",
-  version: 1,
-  instance_id: "github-actions-communication-observer",
-  payload: snapshot,
-  updated_at: now,
-});
-
-const pass = fresh && !staleRuntime && !missingCronClass && snapshot.release_match && snapshot.schema_match && snapshot.provider_coverage === "PASS";
+const pass = !queryFailed && !staleHeartbeat && !providerFail && !releaseMismatch && !legacyBlocked && !recordedOutage;
 console.log(JSON.stringify({ ok: pass, snapshot }, null, 2));
 process.exit(pass ? 0 : 2);

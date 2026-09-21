@@ -1,0 +1,213 @@
+{
+  "artifactIdentity": "PASS",
+  "digestLock": "PASS",
+  "actualDigest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+  "routes": 93,
+  "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "founderVisualReviewReady": "FOUNDER_VISUAL_REVIEW_READY",
+  "publicBundleHqFiles": 0,
+  "predeployOverall": "PASS",
+  "executed": true,
+  "attempted": true,
+  "authorizationConsumed": true,
+  "deploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+  "providerFinalState": "READY",
+  "providerError": null,
+  "activated": true,
+  "activationCount": 1,
+  "activeArtifact": "art_11bd5b74a925257a7319",
+  "activeDeployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+  "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+  "canonicalReadback": {
+    "activeArtifactId": "art_11bd5b74a925257a7319",
+    "activeDigest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "activeDeploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app"
+  },
+  "experimentState": "COLLECTING",
+  "clockRestarted": false,
+  "counts": {
+    "qualifiedVisitors": 0,
+    "strongIntent": 0,
+    "qualifiedSubmissions": 0,
+    "pricingSelections": 0,
+    "pageViews": 0
+  },
+  "deployments": 1,
+  "activations": 1,
+  "stopReason": "NONE",
+  "commandDuring": "ACTIVE_WORK",
+  "deploymentDepotDuring": "ACTIVE_WORK",
+  "validationStationDuring": "ACTIVE_WORK",
+  "creationLabDuring": "PRESENT_IDLE",
+  "systemsArchitectDuring": "PRESENT_IDLE",
+  "growthNexusDuring": "PRESENT_IDLE",
+  "missionRoomActivityProjection": "PASS",
+  "latestCompleted": "GOVERNED_CRE_SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOYMENT_V1",
+  "publiclyLaunched": false,
+  "hqAfter": {
+    "active": 0,
+    "currentMission": null,
+    "currentExecution": "PRESENT_IDLE",
+    "latestCompleted": "GOVERNED_CRE_SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOYMENT_V1",
+    "rooms": {
+      "opportunity_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "research_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "strategy_finance": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "company_operations": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "systems_architect": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "growth_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "creative_studio": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "product_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "quality_control": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "launch_operations": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "intelligence_center": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "executive_office": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      }
+    },
+    "infinityDecisionCore": "PRESENT_IDLE"
+  },
+  "observer": {
+    "status": "RUNNING",
+    "provider": "gmail.com_v1",
+    "lastCheckpoint": "14933613",
+    "lastSuccessfulObservation": "2026-09-05T04:51:23.845Z",
+    "trackedConversations": 2,
+    "lastInboundProcessed": null,
+    "lastProviderError": null,
+    "cadenceMs": 300000,
+    "runtimeDurability": "LOCAL_RUNTIME_ONLY",
+    "mode": "GMAIL_HISTORY_BOUNDED_POLL"
+  },
+  "live": {
+    "passingRoutes": 87,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "missingLiveEvidence": 0,
+    "renderedTextContrast": "PASS",
+    "renderedMutedTextContrast": "PASS",
+    "darkMutedFailures": 0,
+    "lightMutedFailures": 0,
+    "mutedFailures": 0,
+    "mutedMissing": 0,
+    "founderScrunchedPattern": "ABSENT",
+    "visualDeadSpace": "PASS",
+    "howItWorksWidth": {
+      "authorityShell": 1162.4,
+      "moduleWidth": 1176,
+      "utilization": 1.012,
+      "cardCount": 5,
+      "cardWidths": [
+        380.8,
+        380.8,
+        380.8,
+        579.6,
+        579.6
+      ],
+      "columns": 3,
+      "rows": "3+2",
+      "rightUnused": 0,
+      "scrunched": "ABSENT"
+    },
+    "howItWorksMuted": {
+      "workflowKicker": {
+        "role": "workflow_kicker",
+        "selector": "figcaption.pv-caption",
+        "text": "Proposed workflow sequence",
+        "foreground": "rgb(201, 214, 230)",
+        "effectiveBackground": "rgb(15, 28, 46)",
+        "contrastRatio": 11.62,
+        "fontSize": "12.096px",
+        "fontWeight": "400",
+        "opacity": 1,
+        "result": "PASS"
+      },
+      "sampleCaption": {
+        "role": "sample_caption",
+        "selector": "caption.pv-caption",
+        "text": "ILLUSTRATIVE EXAMPLE — Lease A versus Lease B, not customer data",
+        "foreground": "rgb(90, 101, 115)",
+        "effectiveBackground": "rgb(247, 249, 252)",
+        "contrastRatio": 5.62,
+        "fontSize": "12.096px",
+        "fontWeight": "400",
+        "opacity": 1,
+        "result": "PASS"
+      },
+      "bottomCaption": {
+        "role": "bottom_caption",
+        "selector": "p.pv-caption",
+        "text": "Illustrative sample — not a production screenshot.",
+        "foreground": "rgb(201, 214, 230)",
+        "effectiveBackground": "rgb(15, 28, 46)",
+        "contrastRatio": 11.62,
+        "fontSize": "12.096px",
+        "fontWeight": "400",
+        "opacity": 1,
+        "result": "PASS"
+      }
+    },
+    "sameColorFailures": 0,
+    "nearInvisibleFailures": 0,
+    "hoverFocusFailures": 0,
+    "heroOverall": "PASS",
+    "navSevenPassing": 7,
+    "hubFailures": 0,
+    "strayLeftovers": 0,
+    "founder": {
+      "route": "/commercial-lease-npv",
+      "containerWidth": 1179.21875,
+      "gridWidth": 1179.21875,
+      "columnCount": 3,
+      "row1": 3,
+      "row2": 2,
+      "roleBandWidth": 1179.21875,
+      "roleBandPlacement": "FULL_WIDTH_BAND",
+      "leftover": "ABSENT",
+      "overall": "PASS"
+    },
+    "humanFirst": "PASS",
+    "trustedSources": "PASS",
+    "trustedSourcesLinks": "PASS",
+    "liveMachinePhrases": 0,
+    "livePlaceholders": 0
+  }
+}

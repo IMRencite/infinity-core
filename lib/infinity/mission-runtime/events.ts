@@ -1,3 +1,4 @@
+import { ingestMissionRuntimeEvent } from "@/lib/infinity/mission-activity";
 import type { MissionRuntimeEventPayload } from "./types";
 
 export type MissionRuntimeEventType =
@@ -41,6 +42,15 @@ export function recordMissionRuntimeEvent(input: {
   };
 
   events.push(record);
+  ingestMissionRuntimeEvent({
+    eventType: record.eventType,
+    message: record.message,
+    organizationId: record.payload.organizationId,
+    missionId: record.payload.missionId,
+    runtimeInstanceId: record.payload.runtimeInstanceId,
+    correlationId: record.payload.correlationId,
+    occurredAt: record.occurredAt,
+  });
   return record;
 }
 

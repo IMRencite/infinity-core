@@ -7,11 +7,23 @@ export {
   isMercurySandboxConfigured,
   loadMercuryConfig,
   loadMercuryPublicConfig,
+  mercuryProductionHostCorrect,
   resolveMercuryBaseUrl,
   serializeMercuryPublicConfig,
 } from "./config";
-export type { MercuryProviderMode, MercuryPublicConfig, MercuryResolvedConfig } from "./config";
+export type { MercuryAuthMode, MercuryProviderMode, MercuryPublicConfig, MercuryResolvedConfig } from "./config";
 export { MercuryHttpClient } from "./client";
+export {
+  MERCURY_READ_ONLY_VERIFICATION_GATE,
+  evaluateMercuryReadOnlyVerificationGate,
+  runMercuryReadOnlyHealthCheck,
+} from "./gates";
+export {
+  inspectMercuryToken,
+  isMercuryReadOnlyTokenClass,
+  mercuryTokenFingerprint,
+  resolveMercuryApiToken,
+} from "./token-source";
 export { MercuryFinancialProvider, createMercuryFinancialProvider, mercuryWriteCallCount } from "./provider";
 export { mercuryHealthFromError, mercuryStatusLabel, resolveMercuryHealth } from "./health";
 export {

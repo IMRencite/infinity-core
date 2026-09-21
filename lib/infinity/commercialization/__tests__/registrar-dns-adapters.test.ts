@@ -249,6 +249,62 @@ describe("Registrar + DNS read-only adapters", () => {
     }).verifyReadOnly();
     expect(whitelist.failureReason).toBe("NAMECHEAP_CLIENT_IP_WHITELIST_REQUIRED");
     expect(whitelist.clientIpWhitelistRequired).toBe(true);
+
+    const blocked = await new NamecheapReadAdapter({
+      env,
+      fetchImpl: (async () =>
+        xmlResponse(`<ApiResponse Status="ERROR"><Errors><Error Number="1017101">ApiUser has been blocked by administrator</Error></Errors></ApiResponse>`)) as typeof fetch,
+    }).verifyReadOnly();
+    expect(blocked.failureReason).toBe("NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR");
+    expect(blocked.failureCode).toBe("PERMISSION_DENIED");
+    expect(blocked.writeHttpCalls).toBe(0);
+  });
+
+  it("checks Namecheap availability as a read-only command", async () => {
+    const adapter = new NamecheapReadAdapter({
+      env: {
+        NAMECHEAP_ENABLED: "true",
+        NAMECHEAP_ENV: "sandbox",
+        NAMECHEAP_API_USER: "apiuser01",
+        NAMECHEAP_API_KEY: "namecheap-test-key-fixture",
+        NAMECHEAP_CLIENT_IP: "203.0.113.10",
+      },
+      fetchImpl: (async (url) => {
+        expect(String(url)).toContain("namecheap.domains.check");
+        expect(String(url)).not.toMatch(/domains\.(create|renew)/i);
+        return xmlResponse(
+          `<ApiResponse Status="OK"><CommandResponse><DomainCheckResult Domain="leasenpv.com" Available="true" IsPremiumName="false" Price="13.98" RenewalPrice="15.98"/></CommandResponse></ApiResponse>`,
+        );
+      }) as typeof fetch,
+    });
+    const checked = await adapter.checkAvailability(["leasenpv.com"]);
+    expect(checked.mutationOccurred).toBe(false);
+    expect(checked.writeHttpCalls).toBe(0);
+    expect(checked.rows[0]?.available).toBe(true);
+    expect(checked.rows[0]?.registrationPriceUsd).toBe(13.98);
+    expect(checked.status).toBe("READ_ONLY_VERIFIED");
+  });
+
+  it("reads Namecheap standard TLD pricing as a read-only command", async () => {
+    const adapter = new NamecheapReadAdapter({
+      env: {
+        NAMECHEAP_ENABLED: "true",
+        NAMECHEAP_ENV: "sandbox",
+        NAMECHEAP_API_USER: "apiuser01",
+        NAMECHEAP_API_KEY: "namecheap-test-key-fixture",
+        NAMECHEAP_CLIENT_IP: "203.0.113.10",
+      },
+      fetchImpl: (async (url) => {
+        expect(String(url)).toContain("namecheap.users.getPricing");
+        expect(String(url)).not.toMatch(/domains\.(create|renew)/i);
+        return xmlResponse(
+          `<ApiResponse Status="OK"><CommandResponse><UserGetPricingResult><ProductType Name="DOMAIN"><ProductCategory Name="REGISTER"><Product Name="COM"><Price YourPrice="12.98" Duration="1"/></Product></ProductCategory></ProductType></UserGetPricingResult></CommandResponse></ApiResponse>`,
+        );
+      }) as typeof fetch,
+    });
+    const priced = await adapter.getStandardTldPricing("com");
+    expect(priced.mutationOccurred).toBe(false);
+    expect(priced.registrationPriceUsd).toBe(12.98);
   });
 
   it("verifies Cloudflare read-only zone and record inventory without writes", async () => {

@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import {
   completeCurrentImplementationWork,
   keepStandingImplementationTitle,
@@ -38,9 +38,13 @@ export function shouldObserveImplementationFile(filePath: string | null | undefi
   return !IGNORE_PATH_PARTS.some((part) => normalized.includes(part.toLowerCase()));
 }
 
+function cleanLiveText(value: string): string {
+  return value.replace(/\\n/g, "\n").replace(/\s+/g, " ").trim();
+}
+
 export function headlineFromObjective(objective: string | null | undefined): string | null {
   if (!objective) return null;
-  const line = objective
+  const line = cleanLiveText(objective)
     .split(/\r?\n/)
     .map((row) => row.replace(/^#+\s*/, "").trim())
     .find((row) => row.length > 0 && !/^priority:|^do not |^stop\.$/i.test(row));
@@ -65,7 +69,7 @@ export function inferImplementationTitle(input: {
   const standing =
     keepStandingImplementationTitle(input.sessionMissionTitle) ??
     keepStandingImplementationTitle(input.existingTitle);
-  if (standing && isInfinityMissionHeadline(standing)) return standing;
+  if (standing && isInfinityMissionHeadline(standing) && isShortFollowUp(fromObjective)) return standing;
   if (fromObjective) return fromObjective;
   if (standing) return standing;
   const path = (input.file ?? "").replace(/\\/g, "/").toLowerCase();
@@ -74,6 +78,7 @@ export function inferImplementationTitle(input: {
     return "HQ live current-work wiring";
   }
   if (/occupancynpv/.test(path)) return "OccupancyNPV";
+  if (/imr-brand|imr-mark|\/brand\/imr|imros-public/.test(path)) return "Adding the IMR logo to imros.io";
   if (/operator-console|hq-/.test(path)) return "HQ operator console";
   return "Infinity implementation work";
 }
@@ -98,13 +103,195 @@ function walkHookStrings(value: unknown, found: string[], depth = 0): void {
   }
 }
 
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function parseToolInput(payload: Record<string, unknown>): Record<string, unknown> | null {
+  const raw = payload.tool_input ?? payload.toolInput ?? payload.input ?? payload.arguments;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      return asRecord(parsed);
+    } catch {
+      return null;
+    }
+  }
+  return asRecord(raw);
+}
+
+function looksLikeSourcePath(value: string): boolean {
+  const normalized = value.replace(/\\/g, "/");
+  return /\.(ts|tsx|js|jsx|mjs|cjs|json|md|css|svg)(\b|$)/i.test(normalized) && !normalized.includes("\n");
+}
+
+export function extractHookFile(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+  const root = payload as Record<string, unknown>;
+  const input = parseToolInput(root);
+  const candidates = [
+    root.file_path,
+    root.filePath,
+    root.path,
+    input?.file_path,
+    input?.filePath,
+    input?.path,
+    input?.target_notebook,
+    (root.edits as Array<Record<string, unknown>> | undefined)?.[0]?.file_path,
+  ];
+  for (const value of candidates) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  const found: string[] = [];
+  walkHookStrings(payload, found);
+  return found.find((row) => looksLikeSourcePath(row)) ?? null;
+}
+
+export function extractHookTool(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+  const root = payload as Record<string, unknown>;
+  const candidates = [root.tool_name, root.toolName, root.tool, root.hook_event_name, root.event];
+  return candidates.find((value): value is string => typeof value === "string" && value.trim().length > 0) ?? null;
+}
+
+export function extractHookCommand(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+  const root = payload as Record<string, unknown>;
+  const input = parseToolInput(root);
+  const candidates = [root.command, input?.command, input?.search_term, input?.pattern];
+  return candidates.find((value): value is string => typeof value === "string" && value.trim().length > 0) ?? null;
+}
+
+export function firstLiveSentence(text: string | null | undefined, max = 110): string | null {
+  if (!text) return null;
+  const line = cleanLiveText(text)
+    .replace(/^[#>*\-\d.]+\s*/, "")
+    .trim();
+  if (line.length < 8) return null;
+  const sentence = line.split(/(?<=[.!?])\s+/)[0] ?? line;
+  return sentence.length > max ? `${sentence.slice(0, max - 3).trim()}...` : sentence;
+}
+
+export function liveImplementationSentence(input: {
+  file?: string | null;
+  tool?: string | null;
+  command?: string | null;
+  prompt?: string | null;
+  thought?: string | null;
+  previous?: string | null;
+}): string | null {
+  const file = (input.file ?? "").replace(/\\/g, "/");
+  const name = file.split("/").filter(Boolean).pop() ?? "";
+  const tool = input.tool ?? "";
+  if (input.thought) return firstLiveSentence(input.thought);
+  if (name) {
+    if (/Read|Grep|Glob|beforeReadFile/i.test(tool)) return `Reading ${name}`;
+    if (/Shell|beforeShellExecution|afterShellExecution/i.test(tool)) {
+      return input.command ? `Running ${firstLiveSentence(input.command, 72)}` : `Running a command in ${name}`;
+    }
+    if (/Delete/i.test(tool)) return `Removing ${name}`;
+    return `Editing ${name}`;
+  }
+  if (input.command) {
+    const command = firstLiveSentence(input.command, 80);
+    return command ? (/Shell|beforeShellExecution/i.test(tool) ? `Running ${command}` : command) : null;
+  }
+  if (tool && !/pulse|prompt|complete|stop|afterAgentThought|AgentThought/i.test(tool)) return `Using ${tool}`;
+  const previous = input.previous?.trim() ?? "";
+  if (/^(Editing|Reading|Running|Removing|Using) /.test(previous)) return previous;
+  if (input.prompt) return firstLiveSentence(input.prompt);
+  if (previous && previous !== "TASK DETAIL UNAVAILABLE") return previous;
+  return null;
+}
+
+export function isShortFollowUp(text: string | null | undefined): boolean {
+  if (!text) return true;
+  const line = headlineFromObjective(text) ?? text.replace(/\s+/g, " ").trim();
+  if (isInfinityMissionHeadline(line)) return false;
+  return line.length < 96 && !/\b(ensure|deploy|push live|qc gate|pill hover)\b/i.test(line);
+}
+
+export function extractLatestUserQuery(contents: string): string | null {
+  const tagged = [...contents.matchAll(/<user_query>\s*([\s\S]*?)\s*<\/user_query>/g)];
+  const last = tagged.at(-1)?.[1]?.trim();
+  if (last) return cleanLiveText(last);
+  const lines = contents.split(/\r?\n/).filter(Boolean);
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    try {
+      const row = JSON.parse(lines[index]!) as { role?: string; message?: { content?: unknown } };
+      if (row.role !== "user") continue;
+      const content = row.message?.content;
+      const text = Array.isArray(content)
+        ? content.map((item) => (item && typeof item === "object" && "text" in item ? String((item as { text?: unknown }).text ?? "") : "")).join("\n")
+        : typeof content === "string"
+          ? content
+          : "";
+      const query = text.match(/<user_query>\s*([\s\S]*?)\s*<\/user_query>/)?.[1]?.trim();
+      if (query) return query;
+      if (text.trim().length >= 16) return text.trim();
+    } catch {
+      /* next line */
+    }
+  }
+  return null;
+}
+
+function listTranscriptFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
+  const found: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...listTranscriptFiles(full));
+    else if (entry.name.endsWith(".jsonl")) found.push(full);
+  }
+  return found;
+}
+
+export function defaultImplementationTranscriptRoots(): string[] {
+  const home = process.env.USERPROFILE || process.env.HOME || "";
+  return [
+    process.env.CURSOR_TRANSCRIPT_DIR,
+    join(home, ".cursor", "projects", "c-Users-Antivist-Desktop-Infinity", "agent-transcripts"),
+  ].filter((row): row is string => Boolean(row));
+}
+
+export function latestUserObjectiveFromTranscripts(roots: string[] = defaultImplementationTranscriptRoots()): {
+  text: string;
+  mtime: number;
+} | null {
+  const files = roots.flatMap((root) => listTranscriptFiles(root));
+  const newest = files
+    .map((path) => ({ path, mtime: existsSync(path) ? statSync(path).mtimeMs : 0 }))
+    .sort((left, right) => right.mtime - left.mtime)[0];
+  if (!newest) return null;
+  try {
+    const text = extractLatestUserQuery(readFileSync(newest.path, "utf8"));
+    return text ? { text, mtime: newest.mtime } : null;
+  } catch {
+    return null;
+  }
+}
+
 export function extractHookObjective(payload: unknown): string | null {
   if (!payload || typeof payload !== "object") return null;
+  const root = payload as Record<string, unknown>;
+  const direct = [
+    root.prompt,
+    root.user_query,
+    root.userQuery,
+    root.composer,
+    asRecord(root.prompt)?.text,
+    asRecord(root.message)?.text,
+  ];
+  for (const value of direct) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
   const found: string[] = [];
   walkHookStrings(payload, found);
   const mission = found.find((row) => isInfinityMissionHeadline(headlineFromObjective(row)));
   if (mission) return mission;
-  return found.sort((left, right) => right.length - left.length)[0] ?? null;
+  const useful = found.filter((row) => !looksLikeSourcePath(row) && row.length >= 16 && row.length <= 4000);
+  return useful.sort((left, right) => right.length - left.length)[0] ?? null;
 }
 
 function persistSessionEnabled(): boolean {
@@ -168,11 +355,20 @@ export function pulseCurrentImplementationWork(input: {
   description?: string;
   file?: string | null;
   objective?: string | null;
+  tool?: string | null;
+  command?: string | null;
+  thought?: string | null;
+  transcriptRoots?: string[];
   now?: string;
 }): CanonicalWorkExecutionContract | null {
   if (input.file != null && !shouldObserveImplementationFile(input.file)) return null;
   const session = loadImplementationSession();
-  const objective = input.objective ?? session.objective;
+  const transcript = input.objective || !persistSessionEnabled()
+    ? null
+    : latestUserObjectiveFromTranscripts(input.transcriptRoots);
+  const sessionUpdated = Date.parse(session.updated_at);
+  const sessionIsNewer = Number.isFinite(sessionUpdated) && transcript != null && sessionUpdated > transcript.mtime;
+  const objective = input.objective ?? (sessionIsNewer ? session.objective : transcript?.text) ?? session.objective;
   const title =
     input.title ??
     inferImplementationTitle({
@@ -180,24 +376,33 @@ export function pulseCurrentImplementationWork(input: {
       file: input.file,
       sessionMissionTitle: session.mission_title,
     });
-  const inferredTitle = inferImplementationTitle({
-    objective,
-    file: input.file,
-    sessionMissionTitle: session.mission_title,
-  });
   const description =
-    input.description ??
-    (input.file
-      ? `Editing ${input.file.replace(/\\/g, "/")}`
-      : objective
-        ? `Continue ${inferredTitle}`
-        : inferredTitle && inferredTitle !== "Infinity implementation work"
-          ? inferredTitle
-          : "TASK DETAIL UNAVAILABLE");
+    liveImplementationSentence({
+      file: input.file,
+      tool: input.tool,
+      command: input.command,
+      prompt: objective,
+      thought: input.thought,
+      previous: input.description,
+    })
+    ?? input.description
+    ?? (input.file ? `Editing ${input.file.replace(/\\/g, "/")}` : null)
+    ?? "TASK DETAIL UNAVAILABLE";
   const now = input.now ?? new Date().toISOString();
+  const assignedHay = `${title} ${description} ${input.file ?? ""}`.toLowerCase();
+  const assigned_rooms = /imr|imros\.io|brand.mark|brand\/imr/.test(assignedHay)
+    ? ([
+        "creative_studio",
+        "product_lab",
+        "quality_control",
+        "launch_operations",
+        "systems_architect",
+        "operations",
+      ] as const)
+    : undefined;
   saveImplementationSession({
     objective,
-    mission_title: isInfinityMissionHeadline(title) ? title : session.mission_title ?? title,
+    mission_title: title,
     last_file: input.file ?? session.last_file,
     last_event: "pulse",
     updated_at: now,
@@ -206,6 +411,7 @@ export function pulseCurrentImplementationWork(input: {
     title,
     description,
     output: description,
+    assigned_rooms: assigned_rooms ? [...assigned_rooms] : undefined,
     now,
   });
 }

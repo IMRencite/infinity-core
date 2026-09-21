@@ -7,6 +7,7 @@ import { InfinityOsHero } from "./infinity-os-hero";
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
 import type { HqConnectionStatus } from "@/lib/infinity/operator-console/hq-live-policy";
 import type { HqLiveDiagnostics } from "./use-hq-live-projection";
+import { formatHydrationSafeTime } from "@/lib/infinity/hq-production-deployment/hydration";
 
 type Props = {
   snapshot: OperatorVentureSnapshot;
@@ -38,7 +39,7 @@ function formatLastUpdated(value: string | null | undefined): string | null {
   if (!value) return null;
   const parsed = Date.parse(value);
   if (!Number.isFinite(parsed)) return null;
-  return new Date(parsed).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return formatHydrationSafeTime(parsed, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
 export function VentureCommandBar({

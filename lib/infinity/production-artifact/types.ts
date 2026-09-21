@@ -78,7 +78,7 @@ export function assertNoSecretsInContent(content: string, relativePath: string):
   if (/ghp_[a-zA-Z0-9]{20,}/.test(content)) {
     throw new Error(`secret_pattern_in_file:${relativePath}`);
   }
-  if (/sk-[a-zA-Z0-9]{20,}/.test(content)) {
+  if (/(?:^|[^A-Za-z])sk-[a-zA-Z0-9]{20,}/.test(content)) {
     throw new Error(`secret_pattern_in_file:${relativePath}`);
   }
   if (/SUPABASE_SERVICE_ROLE|VERCEL_TOKEN|GITHUB_TOKEN/i.test(content)) {

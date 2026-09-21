@@ -1,0 +1,19 @@
+{
+  "last_run_at": "2026-09-09T06:05:00.000Z",
+  "last_cycle_id": "cycle_occupancynpv_post_launch_20260909T060500",
+  "last_outcome": "INSUFFICIENT_POST_LAUNCH_EVIDENCE",
+  "last_error": null,
+  "consecutive_failures": 0,
+  "next_run_at": "2026-09-09T18:05:00.000Z",
+  "trigger": {
+    "type": "A",
+    "scheduler": "vercel_cron",
+    "path": "/api/runtime/tick",
+    "additionalPath": "/api/runtime/venture-operating-cycle",
+    "cadence": "0 * * * *",
+    "dailyCadence": "0 12 * * *",
+    "runtime": "infinity_production_mission_runtime",
+    "retry": "next_scheduled_tick",
+    "idempotency": "last_run_cycle_id"
+  }
+}

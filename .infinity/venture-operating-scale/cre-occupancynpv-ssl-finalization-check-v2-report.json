@@ -1,0 +1,87 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_SSL_FINALIZATION_CHECK_V2",
+  "dns": {
+    "apex": "PASS",
+    "www": "PASS",
+    "targetMatch": "PASS",
+    "writes": 0
+  },
+  "vercel": {
+    "apex": "VALID",
+    "www": "VALID",
+    "primary": "occupancynpv.com",
+    "wwwRedirectConfiguration": "occupancynpv.com"
+  },
+  "ssl": {
+    "apexCertificate": "PENDING",
+    "apexHttps": "PENDING",
+    "tls": "PENDING",
+    "httpToHttps": "PENDING",
+    "wwwCertificate": "PENDING",
+    "wwwHttps": "PENDING",
+    "wwwToApex": "PENDING",
+    "wwwRedirectDestination": "NONE"
+  },
+  "productionHost": {
+    "canonical": "NOT_EVALUATED",
+    "sitemap": "NOT_EVALUATED",
+    "leakage": "NOT_EVALUATED",
+    "internalLinks": "NOT_EVALUATED",
+    "configuration": "NOT_EVALUATED"
+  },
+  "routes": {
+    "expected": 93,
+    "notFound": "NOT_EVALUATED",
+    "runtimeFailures": "NOT_EVALUATED",
+    "unexpectedRedirects": "NOT_EVALUATED",
+    "missingRoutes": "NOT_EVALUATED"
+  },
+  "footer": {
+    "privacy": "NOT_EVALUATED",
+    "terms": "NOT_EVALUATED",
+    "sitemap": "NOT_EVALUATED",
+    "infinityOs": "NOT_EVALUATED",
+    "imr": "NOT_EVALUATED"
+  },
+  "artifact": {
+    "id": "art_11bd5b74a925257a7319",
+    "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "contentChanged": "NO",
+    "rebuilt": "NO",
+    "redeployed": "NO",
+    "founderReviewPreserved": "YES"
+  },
+  "record": {
+    "dnsConfigured": "YES",
+    "productionDomainBound": "YES",
+    "sslConfigured": "NO",
+    "productionUrl": "https://occupancynpv.com",
+    "publiclyLaunched": "NO",
+    "remainingBlockers": []
+  },
+  "nextState": "CRE_SSL_PENDING",
+  "nextGovernedAction": "WAIT_FOR_PROVIDER_SSL_AND_REVERIFY",
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "vercelPurchases": 0,
+    "vercelUpgrades": 0,
+    "vercelMutations": 0,
+    "deployments": 0,
+    "stripeWrites": 0,
+    "customerCharges": 0,
+    "searchSubmissions": 0,
+    "coldOutreach": 0,
+    "publiclyLaunched": "NO"
+  },
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_SSL_FINALIZATION_CHECK_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

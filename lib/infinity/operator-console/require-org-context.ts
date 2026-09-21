@@ -13,6 +13,10 @@ export async function requireOperatorOrgContext() {
     redirect(workspaceUnavailablePath(result.code));
   }
 
+  if (result.status === "unauthenticated") {
+    redirect("/login");
+  }
+
   if (result.status === "no_membership") {
     redirect("/dashboard/onboarding");
   }

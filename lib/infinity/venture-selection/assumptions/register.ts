@@ -20,6 +20,8 @@ export type ValidationEvidenceItem = {
   assumptionImpact: number;
   uncertaintyReduction: number;
   experimentType: string;
+  relevanceClass?: import("@/lib/infinity/first-autonomous-venture-cycle/bounded-validation/evidence-relevance").EvidenceRelevanceClass;
+  validationResult?: import("@/lib/infinity/first-autonomous-venture-cycle/bounded-validation/evidence-relevance").ValidationEvidentiaryResult;
   newEvidenceFound?: boolean;
   newSourceCount?: number;
   reusedSourceCount?: number;

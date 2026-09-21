@@ -76,6 +76,23 @@ export type { VercelLiveVerificationConfig } from "./vercel-live-config";
 export type { VercelLiveVerificationPreflight } from "./vercel-live-preflight";
 export type { VercelLivePayload } from "./types";
 export {
+  loadVercelLiveVerificationGovernance,
+  loadVercelLiveVerificationGovernanceRefs,
+  emptyVercelLiveVerificationGovernanceRefs,
+  derivedGovernedReadinessId,
+  governedExecutionActionIdempotencyKey,
+  governanceInputToPreflightArgs,
+  VERCEL_LIVE_GOVERNANCE_REF_ENV,
+} from "./vercel-live-governance";
+export type {
+  VercelLiveVerificationGovernanceInput,
+  VercelLiveVerificationGovernanceRefs,
+  VercelLiveGovernanceRecordCatalog,
+  CanonicalDeploymentAuthorityRecord,
+  CanonicalEagRecord,
+  CanonicalTreasuryRecord,
+} from "./vercel-live-governance";
+export {
   buildVercelGovernedVerificationSession,
   buildVerificationProductionArtifactHandoff,
   createVerificationDeploymentAuthority,

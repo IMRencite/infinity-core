@@ -1,9 +1,36 @@
 import {
   DEFAULT_PUBLIC_VENTURE_VISIBILITY,
+  OCCUPANCYNPV_PUBLIC_ALLOWLIST,
   PUBLIC_VENTURE_VISIBILITY_POLICY,
   isAskReviewIdentity,
 } from "./registry";
 import type { InternalVentureObservation, PublicVentureProjection, PublicVentureVisibility } from "./types";
+
+export function occupancyNpvAllowlistObservation(): InternalVentureObservation {
+  return {
+    private_venture_id: "occupancynpv",
+    private_name: OCCUPANCYNPV_PUBLIC_ALLOWLIST.public_name,
+    venture_status: "ACTIVE",
+    operating_stage: "PUBLICLY_LAUNCHED",
+    public_launch_state: "YES",
+    is_operating: true,
+    is_started: true,
+    is_fixture: false,
+    has_active_artifact: true,
+  };
+}
+
+export function ensureAllowlistedPublicVentures(
+  ventures: InternalVentureObservation[],
+  env: NodeJS.Dict<string> = process.env,
+): InternalVentureObservation[] {
+  const occupancyPresent = ventures.some((row) =>
+    OCCUPANCYNPV_PUBLIC_ALLOWLIST.match(row.private_venture_id, row.private_name),
+  );
+  if (occupancyPresent) return ventures;
+  if (env.IMROS_PUBLIC_SURFACE !== "1" && env.VERCEL !== "1") return ventures;
+  return [...ventures, occupancyNpvAllowlistObservation()];
+}
 
 export function resolvePublicVentureVisibility(
   venture: Pick<InternalVentureObservation, "private_venture_id" | "private_name">,

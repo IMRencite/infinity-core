@@ -1,0 +1,163 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_LEGAL_CONFIGURATION_V1",
+  "legalFacts": {
+    "legalEntity": "Infinite Media Resources LLC",
+    "companyAddress": "1896 Coventry Dr, Brunswick, OH 44212, United States",
+    "jurisdiction": "Ohio, United States",
+    "supportEmail": "infinitemediaresources@gmail.com",
+    "privacyOperator": "Infinite Media Resources LLC",
+    "termsOperator": "Infinite Media Resources LLC",
+    "founderConfirmed": "YES"
+  },
+  "legalConfiguration": {
+    "canonicalPersistence": "PASS",
+    "gate": "PASS",
+    "fields": {
+      "legal_entity": "PASS",
+      "company_address": "PASS",
+      "jurisdiction": "PASS",
+      "support_email": "PASS",
+      "privacy_operator": "PASS",
+      "terms_operator": "PASS"
+    },
+    "requiredRemoved": "YES",
+    "blockerCleared": "YES"
+  },
+  "privacy": {
+    "http": 200,
+    "operator": "Infinite Media Resources LLC",
+    "address": "1896 Coventry Dr, Brunswick, OH 44212, United States",
+    "email": "infinitemediaresources@gmail.com",
+    "placeholderLeakage": "NO",
+    "result": "PASS"
+  },
+  "terms": {
+    "http": 200,
+    "operator": "Infinite Media Resources LLC",
+    "address": "1896 Coventry Dr, Brunswick, OH 44212, United States",
+    "email": "infinitemediaresources@gmail.com",
+    "governingLaw": "State of Ohio, United States",
+    "placeholderLeakage": "NO",
+    "result": "PASS"
+  },
+  "footer": {
+    "privacy": "PASS",
+    "terms": "PASS",
+    "sitemap": "PASS",
+    "infinityOs": "PASS",
+    "imr": "PASS",
+    "contract": "PASS"
+  },
+  "artifact": {
+    "changeRequired": "YES",
+    "previousArtifact": "art_11bd5b74a925257a7319",
+    "currentArtifact": "art_ece7047b3a1e771ca187",
+    "previousDigest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "currentDigest": "6ac20d20d7fd461ed7969ccc591115e1f074a0aa49c48dccdebb77f0e202b38f",
+    "contentChanged": "YES",
+    "changedRoutes": [
+      "/privacy-policy/",
+      "/terms-of-service/"
+    ],
+    "founderReviewPreserved": "YES",
+    "lockedExact": "PASS"
+  },
+  "deployment": {
+    "required": "NO",
+    "attempted": "NO",
+    "ok": true,
+    "productionDeployment": "dpl_Smp15a3wpoW4AQCCXWoSJNbWkZx8",
+    "https": "PASS",
+    "wwwRedirect": "PASS",
+    "sitemap": "PASS",
+    "safeError": null
+  },
+  "routes": {
+    "expected": 93,
+    "notFound": 0,
+    "runtimeFailures": 0,
+    "unexpectedRedirects": 0,
+    "missingRoutes": 0,
+    "summary": "93 / 93 PASS"
+  },
+  "paymentReadiness": {
+    "stripeAccountIdentity": "VERIFIED",
+    "legalConfiguration": "COMPLETE",
+    "canonicalProducts": "MISSING",
+    "canonicalPrices": "MISSING",
+    "checkout": "BLOCKED",
+    "webhook": "READY_TO_CONFIGURE",
+    "analytics": "PARTIAL",
+    "gate": "BLOCKED",
+    "blockingReasons": [
+      "canonical_products_or_prices_missing",
+      "checkout_unconfigured",
+      "webhook_unconfigured",
+      "analytics_unconfigured",
+      "payment_activation_not_authorized"
+    ]
+  },
+  "record": {
+    "canonical": "PASS",
+    "legalConfiguration": "COMPLETE",
+    "domain": "occupancynpv.com",
+    "productionUrl": "https://occupancynpv.com",
+    "publiclyLaunched": "NO"
+  },
+  "commercialization": {
+    "cleared": [
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION",
+      "LEGAL_CONFIGURATION"
+    ],
+    "remaining": [
+      "PAYMENT_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "stripeProductsCreated": 0,
+    "stripePricesCreated": 0,
+    "checkoutSessions": 0,
+    "webhookMutations": 0,
+    "charges": 0,
+    "searchSubmissions": 0,
+    "deployments": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "CRE_LEGAL_CONFIGURATION_COMPLETE",
+  "nextGovernedAction": "GOVERNED_CANONICAL_STRIPE_PRODUCT_PRICE_AUTHORIZATION",
+  "vercelWrites": {
+    "sourceUploads": 0,
+    "deploymentCreates": 0,
+    "aliasAssigns": 0,
+    "projectId": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+  },
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_LEGAL_CONFIGURATION_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

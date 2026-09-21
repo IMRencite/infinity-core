@@ -40,6 +40,12 @@ export function startCurrentImplementationWork(input: {
 }): CanonicalWorkExecutionContract {
   const now = input.now ?? new Date().toISOString();
   const existing = listCanonicalWork().find((row) => row.work_id === HQ_CURRENT_IMPLEMENTATION_WORK_ID);
+  const nextDescription =
+    input.description && input.description !== "TASK DETAIL UNAVAILABLE"
+      ? input.description
+      : existing?.description && existing.description !== "TASK DETAIL UNAVAILABLE"
+        ? existing.description
+        : input.description;
   return upsertCanonicalWork({
     contract: CANONICAL_WORK_EXECUTION_CONTRACT,
     work_id: HQ_CURRENT_IMPLEMENTATION_WORK_ID,
@@ -47,10 +53,21 @@ export function startCurrentImplementationWork(input: {
     venture_id: null,
     work_type: "SYSTEM_ARCHITECTURE",
     title: input.title ?? keepStandingImplementationTitle(existing?.title) ?? HQ_CURRENT_IMPLEMENTATION_WORK_TITLE,
-    description: input.description,
+    description: nextDescription,
     stage: "SYSTEM_ARCHITECTURE / QC",
     status: "ACTIVE",
-    assigned_rooms: input.assigned_rooms ?? DEFAULT_ROOMS,
+    assigned_rooms:
+      input.assigned_rooms
+      ?? (/imr|imros\.io/i.test(`${input.title ?? existing?.title ?? ""} ${nextDescription}`)
+        ? ([
+            "creative_studio",
+            "product_lab",
+            "quality_control",
+            "launch_operations",
+            "systems_architect",
+            "operations",
+          ] as CanonicalWorkExecutionContract["assigned_rooms"])
+        : existing?.assigned_rooms ?? DEFAULT_ROOMS),
     assigned_workers: input.assigned_workers ?? [
       "Venture Operator",
       "Systems Architect",
@@ -62,8 +79,8 @@ export function startCurrentImplementationWork(input: {
     completed_at: null,
     blocked_reason: null,
     authorization_state: null,
-    progress: input.description,
-    latest_output: input.output ?? input.description,
+    progress: nextDescription,
+    latest_output: input.output && input.output !== "TASK DETAIL UNAVAILABLE" ? input.output : nextDescription,
     artifact_refs: [],
     evidence_refs: [],
     parent_work_id: existing?.parent_work_id ?? null,

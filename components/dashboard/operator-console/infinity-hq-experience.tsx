@@ -90,15 +90,34 @@ function LiveHqConsole({
 }
 
 export async function InfinityHqExperience({ ventureId, showPortfolioLink = true }: Props) {
+  const started = Date.now();
   const result = await getOperatorOrgContext();
   if (result.status !== "ok") return null;
+  const { logHqDashboardStage } = await import("@/lib/infinity/hq-production-deployment/dashboard-stages");
+  logHqDashboardStage({
+    stage: result.status === "ok" ? "authorization" : "session",
+    status: "PASS",
+    duration_ms: Date.now() - started,
+  });
 
   const orgContext = result.context;
   const admin = createAdminClient();
+  const ventureStarted = Date.now();
   const ctx = await loadHqDashboardContext(admin, orgContext.organizationId, ventureId ?? null);
+  logHqDashboardStage({
+    stage: "venture_selection",
+    status: ctx.selectionError ? "FAIL" : ctx.snapshot ? "PASS" : "DEGRADED",
+    duration_ms: Date.now() - ventureStarted,
+    safe_error_class: ctx.selectionError,
+  });
 
   if (ctx.selectionError) {
-    const projection = await loadHqCanonicalOperatingProjection(admin, orgContext.organizationId);
+    let operatingSummary = undefined;
+    try {
+      operatingSummary = toHqHomeOperatingSummary(await loadHqCanonicalOperatingProjection(admin, orgContext.organizationId));
+    } catch {
+      console.error("[hq-dashboard] operating_projection_unavailable", { code: "THROW", route: "/dashboard" });
+    }
     return (
       <div className="space-y-4">
         <div
@@ -114,19 +133,24 @@ export async function InfinityHqExperience({ ventureId, showPortfolioLink = true
         <HqIdleShell
           ventures={ctx.ventureList}
           showPortfolioLink={showPortfolioLink}
-          operatingSummary={toHqHomeOperatingSummary(projection)}
+          operatingSummary={operatingSummary}
         />
       </div>
     );
   }
 
   if (!ctx.defaultVentureId || !ctx.snapshot) {
-    const projection = await loadHqCanonicalOperatingProjection(admin, orgContext.organizationId);
+    let operatingSummary = undefined;
+    try {
+      operatingSummary = toHqHomeOperatingSummary(await loadHqCanonicalOperatingProjection(admin, orgContext.organizationId));
+    } catch {
+      console.error("[hq-dashboard] operating_projection_unavailable", { code: "THROW", route: "/dashboard" });
+    }
     return (
       <HqIdleShell
         ventures={ctx.ventureList}
         showPortfolioLink={showPortfolioLink}
-        operatingSummary={toHqHomeOperatingSummary(projection)}
+        operatingSummary={operatingSummary}
       />
     );
   }
@@ -148,16 +172,62 @@ async function InfinityHqExperienceEnriched({
   organizationId: string;
 }) {
   const admin = createAdminClient();
-  const [portfolioSummary, founderArtifacts, loadedTreasury, operatingProjection] = await Promise.all([
+  const settled = await Promise.allSettled([
     loadPortfolioSummary(admin, organizationId),
     loadFounderIdeaHqArtifacts(admin as never, organizationId),
     loadTreasuryHqForOrg(admin, organizationId),
     loadHqCanonicalOperatingProjection(admin, organizationId),
   ]);
+  const [portfolioResult, founderResult, treasuryResult, projectionResult] = settled;
+  if (portfolioResult.status === "rejected") {
+    console.error("[hq-dashboard] portfolio_unavailable", { code: "THROW", route: "/dashboard" });
+  }
+  if (founderResult.status === "rejected") {
+    console.error("[hq-dashboard] founder_ideas_unavailable", { code: "THROW", route: "/dashboard" });
+  }
+  if (treasuryResult.status === "rejected") {
+    console.error("[hq-dashboard] treasury_unavailable", { code: "THROW", route: "/dashboard" });
+  }
+  if (projectionResult.status === "rejected") {
+    console.error("[hq-dashboard] operating_projection_unavailable", { code: "THROW", route: "/dashboard" });
+  }
+  const { logHqDashboardStage } = await import("@/lib/infinity/hq-production-deployment/dashboard-stages");
+  logHqDashboardStage({
+    stage: "hq_canonical_projection",
+    status: projectionResult.status === "fulfilled" ? "PASS" : "DEGRADED",
+    duration_ms: 0,
+    safe_error_class: projectionResult.status === "rejected" ? "THROW" : null,
+  });
+  logHqDashboardStage({
+    stage: "treasury",
+    status: treasuryResult.status === "fulfilled" ? "PASS" : "DEGRADED",
+    duration_ms: 0,
+    safe_error_class: treasuryResult.status === "rejected" ? "THROW" : null,
+  });
+  logHqDashboardStage({
+    stage: "portfolio",
+    status: portfolioResult.status === "fulfilled" ? "PASS" : "DEGRADED",
+    duration_ms: 0,
+    safe_error_class: portfolioResult.status === "rejected" ? "THROW" : null,
+  });
+  const portfolioSummary = portfolioResult.status === "fulfilled" ? portfolioResult.value : pendingPortfolioSummary();
+  const founderArtifacts = founderResult.status === "fulfilled" ? founderResult.value : {};
+  const loadedTreasury = treasuryResult.status === "fulfilled" ? treasuryResult.value : null;
+  const operatingProjection = projectionResult.status === "fulfilled" ? projectionResult.value : null;
 
-  const intelligence = ctx.snapshot
-    ? await presentCanonicalVentureIntelligence(admin, ctx.snapshot)
-    : { detail: null, artifact: null, error: null };
+  let intelligence: { detail: null | Awaited<ReturnType<typeof presentCanonicalVentureIntelligence>>["detail"]; artifact: null | Awaited<ReturnType<typeof presentCanonicalVentureIntelligence>>["artifact"]; error: string | null } = {
+    detail: null,
+    artifact: null,
+    error: null,
+  };
+  if (ctx.snapshot) {
+    try {
+      intelligence = await presentCanonicalVentureIntelligence(admin, ctx.snapshot);
+    } catch {
+      console.error("[hq-dashboard] intelligence_unavailable", { code: "THROW", route: "/dashboard" });
+      intelligence = { detail: null, artifact: null, error: "UNAVAILABLE" };
+    }
+  }
 
   const treasurySummary = loadedTreasury ?? emptyTreasuryHqReadModel(organizationId);
   const treasuryArtifacts = buildTreasuryHqArtifacts(treasurySummary);
@@ -218,7 +288,7 @@ async function InfinityHqExperienceEnriched({
       intelligenceDetail={intelligence.detail}
       intelligenceArtifact={intelligence.artifact}
       intelligenceError={intelligence.error}
-      operatingSummary={toHqHomeOperatingSummary(operatingProjection)}
+      operatingSummary={operatingProjection ? toHqHomeOperatingSummary(operatingProjection) : undefined}
     />
   );
 }

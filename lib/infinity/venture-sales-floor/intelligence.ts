@@ -19,6 +19,10 @@ export function projectSalesIntelligence(input: {
   };
 }
 
+export function ingestAffiliateSalesLearning(observations: SalesIntelligenceObservation[]): SalesLearningDecision {
+  return learnFromSalesEvidence(observations);
+}
+
 export function learnFromSalesEvidence(observations: SalesIntelligenceObservation[]): SalesLearningDecision {
   const converting = observations.filter((row) => row.converts).sort((a, b) => b.weight - a.weight)[0];
   if (!converting) {

@@ -1,0 +1,241 @@
+{
+  "artifactId": "art_dbf624e41599420891e2",
+  "digest": "a8ca8bfa544da21a96c11bab4d0abb0e3926271ab989d2f1924c68c7deba1f97",
+  "hqInArtifact": false,
+  "deploymentId": "dpl_Ehsc274qjUrZTfyCkQ4n3NCBXZV8",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-ofqh1savv.vercel.app",
+  "providerFinalState": "READY",
+  "livePassed": true,
+  "activated": true,
+  "activationCount": 1,
+  "deployments": 1,
+  "during": {
+    "currentMission": null,
+    "status": "PRESENT_IDLE",
+    "command": "FAILED",
+    "deploymentDepot": "FAILED",
+    "validationStation": "FAILED",
+    "infinityDecisionCore": "FAILED"
+  },
+  "after": {
+    "active": 0,
+    "currentMission": null,
+    "currentExecution": "PRESENT_IDLE",
+    "latestCompleted": "GOVERNED_CRE_HOMEPAGE_LINK_CONTRAST_DEPLOYMENT_V1",
+    "authorizationRequired": null,
+    "blocker": null,
+    "infinityDecisionCore": "PRESENT_IDLE",
+    "rooms": {
+      "opportunity_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "research_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "strategy_finance": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "company_operations": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "systems_architect": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "growth_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "creative_studio": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "product_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "quality_control": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "launch_operations": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "intelligence_center": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "executive_office": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      }
+    }
+  },
+  "experiment": "COLLECTING",
+  "clockRestarted": false,
+  "observer": {
+    "status": "RUNNING",
+    "provider": "gmail.com_v1",
+    "lastCheckpoint": "14931325",
+    "lastSuccessfulObservation": "2026-09-05T01:47:18.981Z",
+    "trackedConversations": 2,
+    "lastInboundProcessed": null,
+    "lastProviderError": null,
+    "cadenceMs": 300000,
+    "runtimeDurability": "LOCAL_RUNTIME_ONLY",
+    "mode": "GMAIL_HISTORY_BOUNDED_POLL"
+  },
+  "live": {
+    "passingRoutes": 87,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "missingLiveEvidence": 0,
+    "pageRoutesChecked": 87,
+    "fullTextContrast": "PASS",
+    "fullLinkContrast": "PASS",
+    "sameColorFailures": 0,
+    "nearInvisibleFailures": 0,
+    "hoverFocusFailures": 0,
+    "humanFirst": "PASS",
+    "renderedTextContrast": "PASS",
+    "trustedSources": "PASS",
+    "hubRoutesChecked": 7,
+    "hubFailures": 0,
+    "strayLeftovers": 0,
+    "founder": {
+      "route": "/commercial-lease-npv",
+      "containerWidth": 1179.21875,
+      "gridWidth": 1179.21875,
+      "columnCount": 3,
+      "row1": 3,
+      "row2": 2,
+      "roleBandWidth": 1179.21875,
+      "roleBandPlacement": "FULL_WIDTH_BAND",
+      "leftover": "ABSENT",
+      "overall": "PASS"
+    },
+    "navSevenChecked": 7,
+    "navSevenPassing": 7,
+    "navNearInvisible": 0,
+    "navWcagFailures": 0,
+    "colorParser": {
+      "parsing": "PASS",
+      "normalizedChannelConversion": "PASS",
+      "alphaCompositing": "PASS",
+      "effectiveBackground": "PASS",
+      "proof": {
+        "rawProof": "color(srgb 1 1 1 / 0.92)",
+        "parsed": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 0.92,
+          "space": "srgb"
+        },
+        "treatedAsEightBitRgb": false,
+        "normalized": true,
+        "composited": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "srgbContrast": 16.33,
+        "physicallyPlausible": true,
+        "liveNavBackground": "rgb(255, 255, 255)",
+        "liveNavParsed": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1,
+          "space": "rgb"
+        }
+      }
+    },
+    "hero": [
+      {
+        "text": "Compare two leases",
+        "href": "/lease-comparison",
+        "state": "default",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      },
+      {
+        "text": "Compare two leases",
+        "href": "/lease-comparison",
+        "state": "hover",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      },
+      {
+        "text": "Compare two leases",
+        "href": "/lease-comparison",
+        "state": "focus",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      },
+      {
+        "text": "See the workflow",
+        "href": "/how-it-works",
+        "state": "default",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      },
+      {
+        "text": "See the workflow",
+        "href": "/how-it-works",
+        "state": "hover",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      },
+      {
+        "text": "See the workflow",
+        "href": "/how-it-works",
+        "state": "focus",
+        "foreground": "rgb(244, 247, 251)",
+        "effectiveBackground": "rgb(21, 32, 51)",
+        "contrastRatio": 15.19,
+        "visibility": "VISIBLE",
+        "surfaceRole": "DEFAULT",
+        "result": "PASS"
+      }
+    ],
+    "heroOverall": "PASS",
+    "heroPassing": 6,
+    "heroRequired": 6,
+    "heroDefaultFailures": 0,
+    "heroHoverFailures": 0,
+    "heroFocusFailures": 0,
+    "contrastSamples": 1117,
+    "linkSamples": 3876,
+    "liveMachinePhrases": 0,
+    "livePlaceholders": 0
+  }
+}

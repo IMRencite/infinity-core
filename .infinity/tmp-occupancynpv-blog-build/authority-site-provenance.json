@@ -1,0 +1,2265 @@
+{
+  "designDirection": {
+    "designArchetype": "FINANCIAL_B2B_ANALYTICAL",
+    "visualTone": "modern, premium, analytical, institutional, restrained, software-forward",
+    "surfaceStyle": "subtle bordered + data-panel, limited elevation",
+    "density": "BALANCED",
+    "typographyDirection": "display / section / body / caption / eyebrow with tight display tracking",
+    "spacingRhythm": "intentional section rhythm, content-width discipline",
+    "radiusProfile": "small-to-medium, not playful pills everywhere",
+    "borderProfile": "hairline graphite/navy borders",
+    "shadowProfile": "subtle; one elevated product frame",
+    "depthProfile": "layered product frame over tonal panel, no glass overload",
+    "accentBehavior": "controlled blue or brand accent, never neon or AI-purple wash",
+    "imageDirection": "product-first; atmosphere only if it explains",
+    "illustrationDirection": "brand-aligned",
+    "visualizationDirection": "live/deterministic UI for charts, dashboards, comparisons",
+    "motionDirection": "restrained entrance and hover; prefers-reduced-motion honored",
+    "interactionDirection": "comparison toggle, pricing selection, CTA hover — no decorative motion",
+    "contentDensity": "enough explanation for a sophisticated buyer, not a brochure wall",
+    "trustTreatment": "validation disclosure and method transparency only; no fake logos or testimonials",
+    "conversionTreatment": "repeated pilot CTA near pricing and form; interest, not purchase"
+  },
+  "tokens": {
+    "color": {
+      "bg": "#f4f6f8",
+      "surface": "#ffffff",
+      "text": "#152033",
+      "muted": "#4b5568",
+      "border": "#d5dbe3",
+      "accent": "#1d4e78",
+      "accentContrast": "#ffffff",
+      "accentHover": "#14385a",
+      "focus": "#0f3d6b",
+      "panel": "#0f1c2e"
+    },
+    "fontScale": {
+      "display": "clamp(2.1rem, 4.4vw, 3.15rem)",
+      "section": "clamp(1.45rem, 2.4vw, 1.85rem)",
+      "body": "1.05rem",
+      "caption": "0.82rem",
+      "eyebrow": "0.75rem"
+    },
+    "spacing": {
+      "section": "5rem",
+      "stack": "1.25rem",
+      "gutter": "1.5rem"
+    },
+    "radius": {
+      "sm": "6px",
+      "md": "10px",
+      "lg": "16px"
+    },
+    "shadow": {
+      "subtle": "0 1px 2px rgba(21,32,51,0.06)",
+      "elevated": "0 18px 40px rgba(15,28,46,0.12)"
+    },
+    "border": {
+      "width": "1px",
+      "color": "#d5dbe3"
+    },
+    "container": {
+      "max": "72rem",
+      "content": "40rem"
+    },
+    "motion": {
+      "duration": "220ms",
+      "easing": "cubic-bezier(0.22, 1, 0.36, 1)"
+    },
+    "breakpoints": {
+      "mobile": "640px",
+      "tablet": "960px",
+      "desktop": "1200px"
+    }
+  },
+  "composition": {
+    "planner": "PublicVentureCompositionPlanner",
+    "qualityTarget": "PREMIUM_AUTHORITY_VALIDATION_READY",
+    "heroVariant": "PRODUCT_SPLIT_HERO",
+    "sections": [
+      {
+        "sectionType": "HERO",
+        "variant": "PRODUCT_SPLIT_HERO",
+        "purpose": "Name the product, audience, and action while showing the OccupancyNPV workflow.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "A focused commercial lease comparison and NPV workflow for smaller CRE professionals.",
+        "supportingCopy": "premium analytical financial B2B software, not Infinity HQ neon",
+        "contentItems": [
+          "value",
+          "audience",
+          "primary CTA",
+          "product visualization"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [
+          "PRODUCT_UI_FRAME",
+          "COMPARISON_METRIC"
+        ],
+        "cta": "Request Pilot Access",
+        "backgroundTreatment": "tonal",
+        "layout": "split",
+        "density": "BALANCED",
+        "motion": "hero-entrance",
+        "accessibility": "h1 + labeled CTA + labeled illustrative viz",
+        "proofRequirements": [],
+        "patternId": "FOCUSED_HERO"
+      },
+      {
+        "sectionType": "WORKFLOW",
+        "variant": "WORKFLOW_TRANSFORMATION",
+        "purpose": "Show spreadsheet rebuild versus focused comparison.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "From rebuilt spreadsheet to a focused comparison.",
+        "supportingCopy": "A focused commercial lease comparison and NPV workflow for smaller CRE professionals.",
+        "contentItems": [
+          "before",
+          "after"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [
+          "WORKFLOW_DIAGRAM"
+        ],
+        "cta": null,
+        "backgroundTreatment": "flat",
+        "layout": "before-after",
+        "density": "BALANCED",
+        "motion": "scroll-reveal",
+        "accessibility": "semantic ol",
+        "proofRequirements": [],
+        "patternId": "PRODUCT_FIRST_VISUALIZATION"
+      },
+      {
+        "sectionType": "PRODUCT_PREVIEW",
+        "variant": "PRODUCT_UI_PREVIEW",
+        "purpose": "Illustrative UI of lease comparison — OccupancyNPV workflow, a working OccupancyNPV product.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "See the OccupancyNPV workflow",
+        "supportingCopy": "Illustrative sample numbers. Not customer data. Not a production screenshot.",
+        "contentItems": [
+          "lease A/B",
+          "NPV",
+          "sensitivity"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [
+          "PRODUCT_UI_FRAME",
+          "BAR_COMPARISON",
+          "SENSITIVITY_MATRIX"
+        ],
+        "cta": null,
+        "backgroundTreatment": "data-panel",
+        "layout": "layered-frame",
+        "density": "BALANCED",
+        "motion": "none",
+        "accessibility": "tables and text equivalents",
+        "proofRequirements": [],
+        "patternId": "DATA_DENSITY_WITH_CLARITY"
+      },
+      {
+        "sectionType": "FEATURES",
+        "variant": "PRODUCT_DETAIL_SPLIT",
+        "purpose": "Capabilities as a split list, not a third card row.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Built for lease economics, not a brokerage suite",
+        "supportingCopy": "",
+        "contentItems": [
+          "A focused commercial lease comparison and NPV workflow for smaller CRE professionals."
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [
+          "METRIC_STRIP"
+        ],
+        "cta": null,
+        "backgroundTreatment": "flat",
+        "layout": "split",
+        "density": "BALANCED",
+        "motion": "none",
+        "accessibility": "h2 + list",
+        "proofRequirements": [],
+        "patternId": "MODULAR_COMMERCE_STRUCTURE"
+      },
+      {
+        "sectionType": "COMPARISON",
+        "variant": "DATA_VISUALIZATION",
+        "purpose": "Lease option comparison with labeled sample economics.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Lease A versus Lease B",
+        "supportingCopy": "Illustrative sample.",
+        "contentItems": [
+          "NPV",
+          "TI",
+          "free rent",
+          "CAM",
+          "step-ups"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [
+          "COMPARISON_METRIC",
+          "BAR_COMPARISON"
+        ],
+        "cta": null,
+        "backgroundTreatment": "subtle bordered",
+        "layout": "comparison-band",
+        "density": "COMPACT",
+        "motion": "chart-highlight",
+        "accessibility": "table first",
+        "proofRequirements": [],
+        "patternId": "DATA_DENSITY_WITH_CLARITY"
+      },
+      {
+        "sectionType": "PRICING",
+        "variant": "PRICING_HYPOTHESIS",
+        "purpose": "Two honest pricing. No fabricated savings.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Pricing",
+        "supportingCopy": "$290/year or $149/deal hypotheses",
+        "contentItems": [
+          "$290/year",
+          "$149/deal"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [],
+        "cta": "Request Pilot Access",
+        "backgroundTreatment": "elevated",
+        "layout": "pricing-split",
+        "density": "BALANCED",
+        "motion": "none",
+        "accessibility": "h2 + labeled options",
+        "proofRequirements": [],
+        "patternId": "TRUST_NEAR_DECISION"
+      },
+      {
+        "sectionType": "CTA",
+        "variant": "CTA_BAND",
+        "purpose": "Repeat the pilot action after pricing.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Request Pilot Access",
+        "supportingCopy": "Pilot / early access. In validation. Public rollout remains controlled. Live checkout is available on the pricing page.",
+        "contentItems": [],
+        "visualAssetRefs": [],
+        "visualizationRefs": [],
+        "cta": "Request Pilot Access",
+        "backgroundTreatment": "tonal",
+        "layout": "band",
+        "density": "AIRY",
+        "motion": "none",
+        "accessibility": "same accessible name as hero CTA",
+        "proofRequirements": [],
+        "patternId": "REPEATED_CONVERSION_ANCHORS"
+      },
+      {
+        "sectionType": "FORM",
+        "variant": "PILOT_FORM",
+        "purpose": "Qualified pilot request.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Request Pilot Access",
+        "supportingCopy": "Same form semantics as the live experiment.",
+        "contentItems": [],
+        "visualAssetRefs": [],
+        "visualizationRefs": [],
+        "cta": "Request Pilot Access",
+        "backgroundTreatment": "subtle bordered",
+        "layout": "form",
+        "density": "BALANCED",
+        "motion": "none",
+        "accessibility": "labeled fields",
+        "proofRequirements": [],
+        "patternId": "REPEATED_CONVERSION_ANCHORS"
+      },
+      {
+        "sectionType": "DISCLOSURE",
+        "variant": "VALIDATION_DISCLOSURE",
+        "purpose": "What this is and is not.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "Important context",
+        "supportingCopy": "",
+        "contentItems": [
+          "customers",
+          "testimonials",
+          "adoption metrics",
+          "certifications",
+          "case studies"
+        ],
+        "visualAssetRefs": [],
+        "visualizationRefs": [],
+        "cta": null,
+        "backgroundTreatment": "flat",
+        "layout": "editorial",
+        "density": "AIRY",
+        "motion": "none",
+        "accessibility": "aside",
+        "proofRequirements": [
+          "customers",
+          "testimonials",
+          "adoption metrics",
+          "certifications",
+          "case studies"
+        ],
+        "patternId": "TRUST_NEAR_DECISION"
+      },
+      {
+        "sectionType": "FOOTER",
+        "variant": "CANONICAL_FOOTER",
+        "purpose": "Canonical legal footer.",
+        "targetPersona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "headline": "",
+        "supportingCopy": "",
+        "contentItems": [],
+        "visualAssetRefs": [],
+        "visualizationRefs": [],
+        "cta": null,
+        "backgroundTreatment": "flat",
+        "layout": "footer",
+        "density": "AIRY",
+        "motion": "none",
+        "accessibility": "nav links",
+        "proofRequirements": [],
+        "patternId": "MOBILE_FIRST_COMPOSITION"
+      }
+    ],
+    "visualizations": [
+      "PRODUCT_UI_FRAME",
+      "COMPARISON_METRIC",
+      "BAR_COMPARISON",
+      "SENSITIVITY_MATRIX",
+      "WORKFLOW_DIAGRAM",
+      "METRIC_STRIP"
+    ],
+    "interactions": [
+      "CTA_HOVER",
+      "PRICING_SELECTION",
+      "COMPARISON_TOGGLE",
+      "SCROLL_REVEAL"
+    ],
+    "why": {
+      "HERO": "Sophisticated buyers need the product visible before they scroll.",
+      "WORKFLOW": "The pain is rebuilt spreadsheet math; show the transformation.",
+      "PRODUCT_PREVIEW": "Code-generated UI has more explanatory value than stock buildings.",
+      "FEATURES": "Avoid a second card grid; use a split capability band.",
+      "COMPARISON": "Lease economics are the offer; visualize them.",
+      "PRICING": "The experiment tests $290/year vs $149/deal.",
+      "CTA": "Repeat the action after the pricing decision.",
+      "FORM": "Preserve live ingest semantics.",
+      "DISCLOSURE": "Unavailable proof must stay unavailable.",
+      "FOOTER": "Legal contract is locked."
+    },
+    "aboveFold": [
+      "what this is",
+      "who it is for",
+      "why it matters",
+      "what action to take",
+      "product visualization"
+    ],
+    "random": false
+  },
+  "creativeAssetPlan": {
+    "visualNecessity": "USEFUL",
+    "reason": "Software/data ventures benefit from product UI and information visualization more than lifestyle imagery. External raster images are not required when deterministic UI visualization is available.",
+    "items": [
+      {
+        "assetType": "product_ui_visualization",
+        "purpose": "Explain the proposed lease-comparison workflow",
+        "section": "PRODUCT_PREVIEW",
+        "generationMethod": "DETERMINISTIC_UI",
+        "providerCapability": null,
+        "aspectRatio": "16:10",
+        "styleDirection": "institutional software frame",
+        "brandProfile": "USED",
+        "reuseCandidate": true,
+        "required": true
+      },
+      {
+        "assetType": "atmosphere_image",
+        "purpose": "Optional commercial architecture atmosphere",
+        "section": "HERO",
+        "generationMethod": "NO_EXTERNAL_IMAGE_REQUIRED",
+        "providerCapability": "creative.image.generate",
+        "aspectRatio": "3:2",
+        "styleDirection": "subtle architecture only if it explains; product viz preferred",
+        "brandProfile": "USED",
+        "reuseCandidate": true,
+        "required": false
+      }
+    ],
+    "creativeMediaInvoked": true,
+    "assetsGenerated": 0,
+    "assetIds": [],
+    "providers": [],
+    "costState": "NOT_APPLICABLE",
+    "provenance": "PASS",
+    "blocker": "CREATIVE_MEDIA_CAPABILITY_REQUIRED"
+  },
+  "architecture": {
+    "planner": "VentureSiteArchitecturePlanner",
+    "version": "venture_site_architecture_v1",
+    "qualityTarget": "PREMIUM_AUTHORITY_VALIDATION_READY",
+    "rationale": "Smallest useful authority cluster: offer, workflow, pricing, resources hub, and the lease-economics concepts that change comparison outcomes (NPV, comparison method, TI, discount rate). City permutations, duplicate NPV phrasings, and extra incentive pages stay in expansion.",
+    "hierarchy": [
+      {
+        "hub": "/",
+        "spokes": [
+          "/how-it-works",
+          "/pricing",
+          "/resources",
+          "/faq",
+          "/early-access",
+          "/for/tenant-rep-brokers"
+        ]
+      },
+      {
+        "hub": "/resources",
+        "spokes": [
+          "/commercial-lease-npv",
+          "/compare-commercial-leases",
+          "/tenant-improvement-allowance",
+          "/discount-rate-sensitivity",
+          "/resources/cam-costs",
+          "/resources/free-rent",
+          "/resources/rent-escalations",
+          "/resources/gross-vs-net-lease"
+        ]
+      }
+    ],
+    "pages": [
+      {
+        "route": "/",
+        "role": "HOMEPAGE",
+        "primaryIntent": "COMMERCIAL",
+        "parentHub": null,
+        "title": "Compare commercial lease economics",
+        "metaDescription": "A focused OccupancyNPV workflow for comparing commercial lease economics, NPV, and discount-rate sensitivity. Pilot access only. Live checkout is available on the pricing page.",
+        "canonical": "/",
+        "indexable": true,
+        "schemaTypes": [
+          "WebSite",
+          "WebPage",
+          "Organization",
+          "BreadcrumbList"
+        ],
+        "patternId": "COMMERCIAL_HOMEPAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_4c151e477d2e50a8"
+      },
+      {
+        "route": "/compare-commercial-leases",
+        "role": "COMPARISON",
+        "primaryIntent": "COMPARISON",
+        "parentHub": "/",
+        "title": "How to compare commercial lease options",
+        "metaDescription": "A practical way to compare two commercial leases when rent schedules, TI, free rent, and CAM differ.",
+        "canonical": "/compare-commercial-leases",
+        "indexable": true,
+        "schemaTypes": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "COMMERCIAL_PRODUCT_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Comparison workflow",
+        "pageOpportunityId": "pop_31d551f9ff91b808"
+      },
+      {
+        "route": "/how-it-works",
+        "role": "HOW_IT_WORKS",
+        "primaryIntent": "PROCEDURAL",
+        "parentHub": "/",
+        "title": "How the proposed lease comparison workflow works",
+        "metaDescription": "The proposed steps for moving a commercial lease comparison from a rebuilt spreadsheet to a shareable NPV and client summary.",
+        "canonical": "/how-it-works",
+        "indexable": true,
+        "schemaTypes": [
+          "HowTo",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "COMMERCIAL_PRODUCT_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_672934e413a2e398"
+      },
+      {
+        "route": "/commercial-lease-npv",
+        "role": "QUESTION_PAGE",
+        "primaryIntent": "DEFINITIONAL",
+        "parentHub": "/resources",
+        "title": "What is NPV in a commercial lease?",
+        "metaDescription": "A commercial lease NPV converts future occupancy costs into today’s dollars so options with different timing and incentives can be compared more consistently.",
+        "canonical": "/commercial-lease-npv",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_ccae07d6d7e88661"
+      },
+      {
+        "route": "/pricing",
+        "role": "PRICING",
+        "primaryIntent": "TRANSACTIONAL",
+        "parentHub": "/",
+        "title": "OccupancyNPV pricing",
+        "metaDescription": "OccupancyNPV pricing: $290 per year or $149 per deal. Live checkout is available for Professional and Per-Deal.",
+        "canonical": "/pricing",
+        "indexable": true,
+        "schemaTypes": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "PRICING_HYPOTHESIS_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_2dc7840d4c898117"
+      },
+      {
+        "route": "/for/tenant-rep-brokers",
+        "role": "PERSONA",
+        "primaryIntent": "COMMERCIAL",
+        "parentHub": "/",
+        "title": "For tenant-rep brokers comparing commercial leases",
+        "metaDescription": "A tenant-representation workflow for comparing commercial leases with NPV, sensitivity, and a in-workspace client summary. Pilot only.",
+        "canonical": "/for/tenant-rep-brokers",
+        "indexable": true,
+        "schemaTypes": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "COMMERCIAL_PRODUCT_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_4baef8685be5c220"
+      },
+      {
+        "route": "/resources",
+        "role": "EDUCATIONAL_HUB",
+        "primaryIntent": "EDUCATIONAL",
+        "parentHub": "/",
+        "title": "Commercial lease economics resources",
+        "metaDescription": "A bounded guide to commercial lease economics topics used when comparing occupancy cost and NPV.",
+        "canonical": "/resources",
+        "indexable": true,
+        "schemaTypes": [
+          "CollectionPage",
+          "ItemList",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_HUB",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_a3a2fb7ec5d55712"
+      },
+      {
+        "route": "/discount-rate-sensitivity",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "EDUCATIONAL",
+        "parentHub": "/resources",
+        "title": "Discount-rate sensitivity in lease NPV",
+        "metaDescription": "Why the discount rate moves commercial lease NPV and how to keep the assumption visible beside the terms.",
+        "canonical": "/discount-rate-sensitivity",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_c9e4d9ed6bad9179"
+      },
+      {
+        "route": "/tenant-improvement-allowance",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "DEFINITIONAL",
+        "parentHub": "/resources",
+        "title": "Tenant improvement allowance and occupancy cost",
+        "metaDescription": "How a tenant improvement allowance changes effective occupancy cost, and why it belongs in a lease comparison.",
+        "canonical": "/tenant-improvement-allowance",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_506c4334a59a291b"
+      },
+      {
+        "route": "/resources/cam-costs",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "DEFINITIONAL",
+        "parentHub": "/resources",
+        "title": "What is CAM in a commercial lease?",
+        "metaDescription": "What CAM includes in a commercial lease, how it changes occupancy cost, and whether it belongs in lease NPV.",
+        "canonical": "/resources/cam-costs",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_65f131c875cba763"
+      },
+      {
+        "route": "/resources/free-rent",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "PROCEDURAL",
+        "parentHub": "/resources",
+        "title": "How free rent changes occupancy cost",
+        "metaDescription": "How free rent is structured, why timing matters, and how abatements change occupancy cost and NPV.",
+        "canonical": "/resources/free-rent",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_bbbe2e90864a5a77"
+      },
+      {
+        "route": "/resources/rent-escalations",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "COMPARISON",
+        "parentHub": "/resources",
+        "title": "How rent escalations change a lease comparison",
+        "metaDescription": "How fixed and percentage rent escalations change occupancy cost, NPV, and lease rankings.",
+        "canonical": "/resources/rent-escalations",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_4cc4189c178ee7eb"
+      },
+      {
+        "route": "/early-access",
+        "role": "CONVERSION",
+        "primaryIntent": "TRANSACTIONAL",
+        "parentHub": "/",
+        "title": "Request Pilot Access",
+        "metaDescription": "Request controlled / pilot access for the proposed commercial lease comparison workflow. Live checkout is available on the pricing page.",
+        "canonical": "/early-access",
+        "indexable": true,
+        "schemaTypes": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "COMMERCIAL_PRODUCT_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_47309d1a6887e002"
+      },
+      {
+        "route": "/resources/gross-vs-net-lease",
+        "role": "EDUCATIONAL_ARTICLE",
+        "primaryIntent": "COMPARISON",
+        "parentHub": "/resources",
+        "title": "Gross lease vs net lease",
+        "metaDescription": "The difference between gross, modified gross, and net leases, and why face rent alone can mislead.",
+        "canonical": "/resources/gross-vs-net-lease",
+        "indexable": true,
+        "schemaTypes": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "EDUCATIONAL_QUESTION_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Lease economics",
+        "pageOpportunityId": "pop_e436ec5b07e5d497"
+      },
+      {
+        "route": "/faq",
+        "role": "FAQ",
+        "primaryIntent": "EDUCATIONAL",
+        "parentHub": "/resources",
+        "title": "Questions about OccupancyNPV",
+        "metaDescription": "Direct answers about this early-validation lease comparison concept, pricing, and what is not claimed.",
+        "canonical": "/faq",
+        "indexable": true,
+        "schemaTypes": [
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "patternId": "FAQ_PAGE",
+        "ctaStrength": "SOFT",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_fa61bfcfeb5ea0b2"
+      },
+      {
+        "route": "/privacy-policy",
+        "role": "LEGAL",
+        "primaryIntent": "NAVIGATIONAL",
+        "parentHub": null,
+        "title": "Privacy Policy",
+        "metaDescription": "What this OccupancyNPV site collects and what it does not collect.",
+        "canonical": "/privacy-policy",
+        "indexable": true,
+        "schemaTypes": [
+          "WebPage"
+        ],
+        "patternId": "LEGAL_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_b5c10a2335beb3fa"
+      },
+      {
+        "route": "/terms-of-service",
+        "role": "LEGAL",
+        "primaryIntent": "NAVIGATIONAL",
+        "parentHub": null,
+        "title": "Terms of Service",
+        "metaDescription": "Terms for this OccupancyNPV lease comparison product.",
+        "canonical": "/terms-of-service",
+        "indexable": true,
+        "schemaTypes": [
+          "WebPage"
+        ],
+        "patternId": "LEGAL_PAGE",
+        "ctaStrength": "STRONG",
+        "topicCluster": "Product",
+        "pageOpportunityId": "pop_159d0832c03c7f52"
+      }
+    ],
+    "conversionPaths": [
+      {
+        "from": "/commercial-lease-npv",
+        "to": "/compare-commercial-leases",
+        "reason": "Definition to comparison workflow"
+      },
+      {
+        "from": "/compare-commercial-leases",
+        "to": "/pricing",
+        "reason": "High-intent comparison to offer"
+      },
+      {
+        "from": "/pricing",
+        "to": "/early-access",
+        "reason": "Pricing interest to pilot form"
+      },
+      {
+        "from": "/resources",
+        "to": "/how-it-works",
+        "reason": "Education to product process"
+      }
+    ],
+    "schemaPlan": [
+      {
+        "route": "/",
+        "types": [
+          "WebSite",
+          "WebPage",
+          "Organization",
+          "BreadcrumbList"
+        ],
+        "reason": "Page-specific truthful schema for HOMEPAGE"
+      },
+      {
+        "route": "/compare-commercial-leases",
+        "types": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for COMPARISON"
+      },
+      {
+        "route": "/how-it-works",
+        "types": [
+          "HowTo",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for HOW_IT_WORKS"
+      },
+      {
+        "route": "/commercial-lease-npv",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for QUESTION_PAGE"
+      },
+      {
+        "route": "/pricing",
+        "types": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for PRICING"
+      },
+      {
+        "route": "/for/tenant-rep-brokers",
+        "types": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for PERSONA"
+      },
+      {
+        "route": "/resources",
+        "types": [
+          "CollectionPage",
+          "ItemList",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_HUB"
+      },
+      {
+        "route": "/discount-rate-sensitivity",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/tenant-improvement-allowance",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/resources/cam-costs",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/resources/free-rent",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/resources/rent-escalations",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/early-access",
+        "types": [
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for CONVERSION"
+      },
+      {
+        "route": "/resources/gross-vs-net-lease",
+        "types": [
+          "Article",
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for EDUCATIONAL_ARTICLE"
+      },
+      {
+        "route": "/faq",
+        "types": [
+          "FAQPage",
+          "BreadcrumbList",
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for FAQ"
+      },
+      {
+        "route": "/privacy-policy",
+        "types": [
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for LEGAL"
+      },
+      {
+        "route": "/terms-of-service",
+        "types": [
+          "WebPage"
+        ],
+        "reason": "Page-specific truthful schema for LEGAL"
+      }
+    ],
+    "creativeRequirements": [
+      {
+        "route": "/",
+        "necessity": "REQUIRED",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/compare-commercial-leases",
+        "necessity": "REQUIRED",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/how-it-works",
+        "necessity": "REQUIRED",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/commercial-lease-npv",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/pricing",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/for/tenant-rep-brokers",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/resources",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/discount-rate-sensitivity",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/tenant-improvement-allowance",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/resources/cam-costs",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/resources/free-rent",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/resources/rent-escalations",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/early-access",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/resources/gross-vs-net-lease",
+        "necessity": "USEFUL",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/faq",
+        "necessity": "NOT_REQUIRED",
+        "reason": "Visuals only when they explain economics or the product"
+      },
+      {
+        "route": "/privacy-policy",
+        "necessity": "NOT_REQUIRED",
+        "reason": "Legal pages do not need product visuals"
+      },
+      {
+        "route": "/terms-of-service",
+        "necessity": "NOT_REQUIRED",
+        "reason": "Legal pages do not need product visuals"
+      }
+    ],
+    "rejectedOpportunities": [
+      {
+        "topic": "Free rent in every US city",
+        "primaryIntent": "EDUCATIONAL",
+        "secondaryIntent": null,
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "AWARENESS",
+        "parentTopic": "Lease economics",
+        "recommendedPageType": "EDUCATIONAL_ARTICLE",
+        "searchOpportunity": {
+          "query": "free rent commercial lease + city permutations",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "LOW",
+          "evidence": "City/service doorway without unique local value"
+        },
+        "geoOpportunity": {
+          "question": "What is free rent in a commercial lease in each city?",
+          "answerability": "HIGH",
+          "entityFocus": "free_rent",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "LOW",
+        "informationValue": "LOW",
+        "contentDepthRequirement": "BRIEF",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "REQUIRED",
+        "priority": 10,
+        "status": "REJECTED_LOW_VALUE",
+        "route": "/free-rent-in-every-city",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_72680a5b1d02acb2"
+      },
+      {
+        "topic": "NPV keyword permutation explainer",
+        "primaryIntent": "DEFINITIONAL",
+        "secondaryIntent": "EDUCATIONAL",
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "AWARENESS",
+        "parentTopic": "Lease economics",
+        "recommendedPageType": "QUESTION_PAGE",
+        "searchOpportunity": {
+          "query": "what is net present value commercial lease",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "MEDIUM",
+          "evidence": "Same intent as /commercial-lease-npv"
+        },
+        "geoOpportunity": {
+          "question": "What is NPV in a commercial lease?",
+          "answerability": "HIGH",
+          "entityFocus": "npv",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "MEDIUM",
+        "informationValue": "HIGH",
+        "contentDepthRequirement": "DEEP",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "REQUIRED",
+        "priority": 40,
+        "status": "REJECTED_CANNIBALIZATION",
+        "route": "/what-is-net-present-value-commercial-lease",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_e0c2161db9303ea7"
+      },
+      {
+        "topic": "CAM costs",
+        "primaryIntent": "DEFINITIONAL",
+        "secondaryIntent": "EDUCATIONAL",
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "AWARENESS",
+        "parentTopic": "Lease economics",
+        "recommendedPageType": "EDUCATIONAL_ARTICLE",
+        "searchOpportunity": {
+          "query": "CAM costs commercial lease",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "MEDIUM",
+          "evidence": "Useful later; not required for the first cluster"
+        },
+        "geoOpportunity": {
+          "question": "How do CAM costs affect occupancy cost?",
+          "answerability": "HIGH",
+          "entityFocus": "cam",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "MEDIUM",
+        "informationValue": "HIGH",
+        "contentDepthRequirement": "DEEP",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "REQUIRED",
+        "priority": 55,
+        "status": "FUTURE_EXPANSION",
+        "route": "/cam-costs",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_e1b82370d3951112"
+      },
+      {
+        "topic": "Rent escalations",
+        "primaryIntent": "DEFINITIONAL",
+        "secondaryIntent": "EDUCATIONAL",
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "AWARENESS",
+        "parentTopic": "Lease economics",
+        "recommendedPageType": "EDUCATIONAL_ARTICLE",
+        "searchOpportunity": {
+          "query": "commercial lease rent escalations",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "MEDIUM",
+          "evidence": "Covered inside comparison examples for V1"
+        },
+        "geoOpportunity": {
+          "question": "How do rent escalations change lease NPV?",
+          "answerability": "HIGH",
+          "entityFocus": "rent_escalation",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "MEDIUM",
+        "informationValue": "HIGH",
+        "contentDepthRequirement": "DEEP",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "REQUIRED",
+        "priority": 54,
+        "status": "FUTURE_EXPANSION",
+        "route": "/rent-escalations",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_de5ff6ddb0f3eb0e"
+      },
+      {
+        "topic": "Free rent",
+        "primaryIntent": "DEFINITIONAL",
+        "secondaryIntent": "EDUCATIONAL",
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "AWARENESS",
+        "parentTopic": "Lease economics",
+        "recommendedPageType": "EDUCATIONAL_ARTICLE",
+        "searchOpportunity": {
+          "query": "free rent commercial lease",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "MEDIUM",
+          "evidence": "Related to TI/incentives; expansion candidate"
+        },
+        "geoOpportunity": {
+          "question": "How does free rent change effective occupancy cost?",
+          "answerability": "HIGH",
+          "entityFocus": "free_rent",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "MEDIUM",
+        "informationValue": "HIGH",
+        "contentDepthRequirement": "DEEP",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "REQUIRED",
+        "priority": 53,
+        "status": "FUTURE_EXPANSION",
+        "route": "/free-rent",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_23483db326819bcd"
+      },
+      {
+        "topic": "Tenant representation persona",
+        "primaryIntent": "COMMERCIAL",
+        "secondaryIntent": "EDUCATIONAL",
+        "persona": "tenant-representation brokers, independent CRE brokers, boutique CRE advisory",
+        "funnelStage": "CONSIDERATION",
+        "parentTopic": "Comparison workflow",
+        "recommendedPageType": "PERSONA",
+        "searchOpportunity": {
+          "query": "tenant representation lease comparison",
+          "volumeState": "UNKNOWN",
+          "volume": null,
+          "relevance": "MEDIUM",
+          "evidence": "Homepage already addresses this persona"
+        },
+        "geoOpportunity": {
+          "question": "How should tenant-rep brokers compare leases?",
+          "answerability": "HIGH",
+          "entityFocus": "tenant_representation",
+          "volumeState": "UNKNOWN"
+        },
+        "commercialValue": "MEDIUM",
+        "informationValue": "MEDIUM",
+        "contentDepthRequirement": "STANDARD",
+        "internalLinkRole": "SPOKE",
+        "evidenceRequirement": "USEFUL",
+        "priority": 45,
+        "status": "FUTURE_EXPANSION",
+        "route": "/tenant-representation",
+        "indexable": false,
+        "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "pageOpportunityId": "pop_b736862c5293f072"
+      }
+    ],
+    "massLowValueGenerationPermitted": false
+  },
+  "graph": {
+    "nodes": [
+      {
+        "nodeId": "page:/",
+        "kind": "page",
+        "label": "Compare commercial lease economics",
+        "route": "/"
+      },
+      {
+        "nodeId": "page:/compare-commercial-leases",
+        "kind": "page",
+        "label": "How to compare commercial lease options",
+        "route": "/compare-commercial-leases"
+      },
+      {
+        "nodeId": "page:/how-it-works",
+        "kind": "page",
+        "label": "How the proposed lease comparison workflow works",
+        "route": "/how-it-works"
+      },
+      {
+        "nodeId": "page:/commercial-lease-npv",
+        "kind": "page",
+        "label": "What is NPV in a commercial lease?",
+        "route": "/commercial-lease-npv"
+      },
+      {
+        "nodeId": "page:/pricing",
+        "kind": "page",
+        "label": "OccupancyNPV pricing",
+        "route": "/pricing"
+      },
+      {
+        "nodeId": "page:/for/tenant-rep-brokers",
+        "kind": "page",
+        "label": "For tenant-rep brokers comparing commercial leases",
+        "route": "/for/tenant-rep-brokers"
+      },
+      {
+        "nodeId": "page:/resources",
+        "kind": "page",
+        "label": "Commercial lease economics resources",
+        "route": "/resources"
+      },
+      {
+        "nodeId": "page:/discount-rate-sensitivity",
+        "kind": "page",
+        "label": "Discount-rate sensitivity in lease NPV",
+        "route": "/discount-rate-sensitivity"
+      },
+      {
+        "nodeId": "page:/tenant-improvement-allowance",
+        "kind": "page",
+        "label": "Tenant improvement allowance and occupancy cost",
+        "route": "/tenant-improvement-allowance"
+      },
+      {
+        "nodeId": "page:/resources/cam-costs",
+        "kind": "page",
+        "label": "What is CAM in a commercial lease?",
+        "route": "/resources/cam-costs"
+      },
+      {
+        "nodeId": "page:/resources/free-rent",
+        "kind": "page",
+        "label": "How free rent changes occupancy cost",
+        "route": "/resources/free-rent"
+      },
+      {
+        "nodeId": "page:/resources/rent-escalations",
+        "kind": "page",
+        "label": "How rent escalations change a lease comparison",
+        "route": "/resources/rent-escalations"
+      },
+      {
+        "nodeId": "page:/early-access",
+        "kind": "page",
+        "label": "Request Pilot Access",
+        "route": "/early-access"
+      },
+      {
+        "nodeId": "page:/resources/gross-vs-net-lease",
+        "kind": "page",
+        "label": "Gross lease vs net lease",
+        "route": "/resources/gross-vs-net-lease"
+      },
+      {
+        "nodeId": "page:/faq",
+        "kind": "page",
+        "label": "Questions about OccupancyNPV",
+        "route": "/faq"
+      },
+      {
+        "nodeId": "page:/privacy-policy",
+        "kind": "page",
+        "label": "Privacy Policy",
+        "route": "/privacy-policy"
+      },
+      {
+        "nodeId": "page:/terms-of-service",
+        "kind": "page",
+        "label": "Terms of Service",
+        "route": "/terms-of-service"
+      },
+      {
+        "nodeId": "entity:commercial_lease",
+        "kind": "entity",
+        "label": "Commercial lease",
+        "entityId": "commercial_lease"
+      },
+      {
+        "nodeId": "entity:npv",
+        "kind": "entity",
+        "label": "NPV",
+        "entityId": "npv"
+      },
+      {
+        "nodeId": "entity:discount_rate",
+        "kind": "entity",
+        "label": "Discount rate",
+        "entityId": "discount_rate"
+      },
+      {
+        "nodeId": "entity:tenant_improvement_allowance",
+        "kind": "entity",
+        "label": "Tenant improvement allowance",
+        "entityId": "tenant_improvement_allowance"
+      },
+      {
+        "nodeId": "entity:cam",
+        "kind": "entity",
+        "label": "CAM",
+        "entityId": "cam"
+      },
+      {
+        "nodeId": "entity:free_rent",
+        "kind": "entity",
+        "label": "Free rent",
+        "entityId": "free_rent"
+      },
+      {
+        "nodeId": "entity:rent_escalation",
+        "kind": "entity",
+        "label": "Rent escalation",
+        "entityId": "rent_escalation"
+      },
+      {
+        "nodeId": "entity:tenant_representation",
+        "kind": "entity",
+        "label": "Tenant representation",
+        "entityId": "tenant_representation"
+      },
+      {
+        "nodeId": "entity:lease_cash_flow",
+        "kind": "entity",
+        "label": "Lease cash flow",
+        "entityId": "lease_cash_flow"
+      },
+      {
+        "nodeId": "entity:occupancy_cost",
+        "kind": "entity",
+        "label": "Occupancy cost",
+        "entityId": "occupancy_cost"
+      },
+      {
+        "nodeId": "entity:client_summary",
+        "kind": "entity",
+        "label": "Client summary",
+        "entityId": "client_summary"
+      }
+    ],
+    "edges": [
+      {
+        "edgeId": "parent:page:/compare-commercial-leases->page:/",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/compare-commercial-leases",
+        "from": "page:/",
+        "to": "page:/compare-commercial-leases",
+        "type": "child",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "commercial-path:page:/compare-commercial-leases->page:/",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/how-it-works->page:/",
+        "from": "page:/how-it-works",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/how-it-works",
+        "from": "page:/",
+        "to": "page:/how-it-works",
+        "type": "child",
+        "anchor": "how the OccupancyNPV workflow works"
+      },
+      {
+        "edgeId": "commercial-path:page:/how-it-works->page:/",
+        "from": "page:/how-it-works",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/commercial-lease-npv->page:/resources",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/commercial-lease-npv",
+        "from": "page:/resources",
+        "to": "page:/commercial-lease-npv",
+        "type": "child",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "commercial-path:page:/commercial-lease-npv->page:/",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/pricing->page:/",
+        "from": "page:/pricing",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/pricing",
+        "from": "page:/",
+        "to": "page:/pricing",
+        "type": "child",
+        "anchor": "OccupancyNPV pricing"
+      },
+      {
+        "edgeId": "commercial-path:page:/pricing->page:/",
+        "from": "page:/pricing",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/for/tenant-rep-brokers->page:/",
+        "from": "page:/for/tenant-rep-brokers",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/for/tenant-rep-brokers",
+        "from": "page:/",
+        "to": "page:/for/tenant-rep-brokers",
+        "type": "child",
+        "anchor": "tenant-rep broker workflow"
+      },
+      {
+        "edgeId": "commercial-path:page:/for/tenant-rep-brokers->page:/",
+        "from": "page:/for/tenant-rep-brokers",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/resources->page:/",
+        "from": "page:/resources",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/resources",
+        "from": "page:/",
+        "to": "page:/resources",
+        "type": "child",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "commercial-path:page:/resources->page:/",
+        "from": "page:/resources",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/discount-rate-sensitivity->page:/resources",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/discount-rate-sensitivity",
+        "from": "page:/resources",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "child",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "commercial-path:page:/discount-rate-sensitivity->page:/",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/tenant-improvement-allowance->page:/resources",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/tenant-improvement-allowance",
+        "from": "page:/resources",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "child",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "commercial-path:page:/tenant-improvement-allowance->page:/",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/resources/cam-costs->page:/resources",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/resources/cam-costs",
+        "from": "page:/resources",
+        "to": "page:/resources/cam-costs",
+        "type": "child",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "commercial-path:page:/resources/cam-costs->page:/",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/resources/free-rent->page:/resources",
+        "from": "page:/resources/free-rent",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/resources/free-rent",
+        "from": "page:/resources",
+        "to": "page:/resources/free-rent",
+        "type": "child",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "commercial-path:page:/resources/free-rent->page:/",
+        "from": "page:/resources/free-rent",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/resources/rent-escalations->page:/resources",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/resources/rent-escalations",
+        "from": "page:/resources",
+        "to": "page:/resources/rent-escalations",
+        "type": "child",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "commercial-path:page:/resources/rent-escalations->page:/",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/early-access->page:/",
+        "from": "page:/early-access",
+        "to": "page:/",
+        "type": "parent",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "child:page:/->page:/early-access",
+        "from": "page:/",
+        "to": "page:/early-access",
+        "type": "child",
+        "anchor": "request pilot access"
+      },
+      {
+        "edgeId": "commercial-path:page:/early-access->page:/",
+        "from": "page:/early-access",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/resources/gross-vs-net-lease->page:/resources",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/resources/gross-vs-net-lease",
+        "from": "page:/resources",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "child",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "commercial-path:page:/resources/gross-vs-net-lease->page:/",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "parent:page:/faq->page:/resources",
+        "from": "page:/faq",
+        "to": "page:/resources",
+        "type": "parent",
+        "anchor": "lease economics resources"
+      },
+      {
+        "edgeId": "child:page:/resources->page:/faq",
+        "from": "page:/resources",
+        "to": "page:/faq",
+        "type": "child",
+        "anchor": "pilot questions"
+      },
+      {
+        "edgeId": "commercial-path:page:/faq->page:/",
+        "from": "page:/faq",
+        "to": "page:/",
+        "type": "commercial-path",
+        "anchor": "commercial lease comparison offer"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/compare-commercial-leases",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/tenant-improvement-allowance",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/discount-rate-sensitivity",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/resources/cam-costs",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/resources/free-rent",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/resources/rent-escalations",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/commercial-lease-npv->page:/resources/gross-vs-net-lease",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/commercial-lease-npv",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/tenant-improvement-allowance",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/discount-rate-sensitivity",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/resources/cam-costs",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/resources/free-rent",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/resources/rent-escalations",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/compare-commercial-leases->page:/resources/gross-vs-net-lease",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/commercial-lease-npv",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/compare-commercial-leases",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/discount-rate-sensitivity",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/resources/cam-costs",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/resources/free-rent",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/resources/rent-escalations",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/tenant-improvement-allowance->page:/resources/gross-vs-net-lease",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/commercial-lease-npv",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/compare-commercial-leases",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/tenant-improvement-allowance",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/resources/cam-costs",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/resources/free-rent",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/resources/rent-escalations",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/discount-rate-sensitivity->page:/resources/gross-vs-net-lease",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/commercial-lease-npv",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/compare-commercial-leases",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/tenant-improvement-allowance",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/discount-rate-sensitivity",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/resources/free-rent",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/resources/rent-escalations",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/resources/cam-costs->page:/resources/gross-vs-net-lease",
+        "from": "page:/resources/cam-costs",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/commercial-lease-npv",
+        "from": "page:/resources/free-rent",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/compare-commercial-leases",
+        "from": "page:/resources/free-rent",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/tenant-improvement-allowance",
+        "from": "page:/resources/free-rent",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/discount-rate-sensitivity",
+        "from": "page:/resources/free-rent",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/resources/cam-costs",
+        "from": "page:/resources/free-rent",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/resources/rent-escalations",
+        "from": "page:/resources/free-rent",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "related:page:/resources/free-rent->page:/resources/gross-vs-net-lease",
+        "from": "page:/resources/free-rent",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/commercial-lease-npv",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/compare-commercial-leases",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/tenant-improvement-allowance",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/discount-rate-sensitivity",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/resources/cam-costs",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/resources/free-rent",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/resources/rent-escalations->page:/resources/gross-vs-net-lease",
+        "from": "page:/resources/rent-escalations",
+        "to": "page:/resources/gross-vs-net-lease",
+        "type": "related",
+        "anchor": "gross lease versus net lease"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/commercial-lease-npv",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/commercial-lease-npv",
+        "type": "related",
+        "anchor": "commercial lease NPV"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/compare-commercial-leases",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/compare-commercial-leases",
+        "type": "related",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/tenant-improvement-allowance",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/tenant-improvement-allowance",
+        "type": "related",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/discount-rate-sensitivity",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/discount-rate-sensitivity",
+        "type": "related",
+        "anchor": "discount-rate sensitivity"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/resources/cam-costs",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/resources/cam-costs",
+        "type": "related",
+        "anchor": "CAM costs in a commercial lease"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/resources/free-rent",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/resources/free-rent",
+        "type": "related",
+        "anchor": "free rent and occupancy cost"
+      },
+      {
+        "edgeId": "related:page:/resources/gross-vs-net-lease->page:/resources/rent-escalations",
+        "from": "page:/resources/gross-vs-net-lease",
+        "to": "page:/resources/rent-escalations",
+        "type": "related",
+        "anchor": "rent escalations in a comparison"
+      },
+      {
+        "edgeId": "next-step:page:/commercial-lease-npv->page:/compare-commercial-leases",
+        "from": "page:/commercial-lease-npv",
+        "to": "page:/compare-commercial-leases",
+        "type": "next-step",
+        "anchor": "comparing two commercial leases"
+      },
+      {
+        "edgeId": "commercial-path:page:/compare-commercial-leases->page:/pricing",
+        "from": "page:/compare-commercial-leases",
+        "to": "page:/pricing",
+        "type": "commercial-path",
+        "anchor": "OccupancyNPV pricing"
+      },
+      {
+        "edgeId": "commercial-path:page:/pricing->page:/early-access",
+        "from": "page:/pricing",
+        "to": "page:/early-access",
+        "type": "commercial-path",
+        "anchor": "request pilot access"
+      },
+      {
+        "edgeId": "commercial-path:page:/how-it-works->page:/early-access",
+        "from": "page:/how-it-works",
+        "to": "page:/early-access",
+        "type": "commercial-path",
+        "anchor": "request pilot access"
+      },
+      {
+        "edgeId": "next-step:page:/resources->page:/how-it-works",
+        "from": "page:/resources",
+        "to": "page:/how-it-works",
+        "type": "next-step",
+        "anchor": "how the OccupancyNPV workflow works"
+      },
+      {
+        "edgeId": "definition:page:/commercial-lease-npv->entity:npv",
+        "from": "page:/commercial-lease-npv",
+        "to": "entity:npv",
+        "type": "definition",
+        "anchor": "NPV"
+      },
+      {
+        "edgeId": "definition:page:/discount-rate-sensitivity->entity:discount_rate",
+        "from": "page:/discount-rate-sensitivity",
+        "to": "entity:discount_rate",
+        "type": "definition",
+        "anchor": "discount rate"
+      },
+      {
+        "edgeId": "definition:page:/tenant-improvement-allowance->entity:tenant_improvement_allowance",
+        "from": "page:/tenant-improvement-allowance",
+        "to": "entity:tenant_improvement_allowance",
+        "type": "definition",
+        "anchor": "tenant improvement allowance"
+      },
+      {
+        "edgeId": "comparison:page:/compare-commercial-leases->entity:occupancy_cost",
+        "from": "page:/compare-commercial-leases",
+        "to": "entity:occupancy_cost",
+        "type": "comparison",
+        "anchor": "occupancy cost"
+      },
+      {
+        "edgeId": "definition:page:/resources/cam-costs->entity:cam",
+        "from": "page:/resources/cam-costs",
+        "to": "entity:cam",
+        "type": "definition",
+        "anchor": "CAM"
+      },
+      {
+        "edgeId": "definition:page:/resources/free-rent->entity:free_rent",
+        "from": "page:/resources/free-rent",
+        "to": "entity:free_rent",
+        "type": "definition",
+        "anchor": "free rent"
+      },
+      {
+        "edgeId": "definition:page:/resources/rent-escalations->entity:rent_escalation",
+        "from": "page:/resources/rent-escalations",
+        "to": "entity:rent_escalation",
+        "type": "definition",
+        "anchor": "rent escalation"
+      },
+      {
+        "edgeId": "definition:page:/for/tenant-rep-brokers->entity:tenant_representation",
+        "from": "page:/for/tenant-rep-brokers",
+        "to": "entity:tenant_representation",
+        "type": "definition",
+        "anchor": "tenant representation"
+      },
+      {
+        "edgeId": "commercial-path:page:/for/tenant-rep-brokers->page:/early-access",
+        "from": "page:/for/tenant-rep-brokers",
+        "to": "page:/early-access",
+        "type": "commercial-path",
+        "anchor": "request pilot access"
+      },
+      {
+        "edgeId": "related:page:/privacy-policy->page:/terms-of-service",
+        "from": "page:/privacy-policy",
+        "to": "page:/terms-of-service",
+        "type": "related",
+        "anchor": "terms of service"
+      },
+      {
+        "edgeId": "related:page:/terms-of-service->page:/privacy-policy",
+        "from": "page:/terms-of-service",
+        "to": "page:/privacy-policy",
+        "type": "related",
+        "anchor": "privacy policy"
+      }
+    ],
+    "orphans": [],
+    "brokenEdges": []
+  },
+  "evidence": [
+    {
+      "claim": "Net present value discounts future cash flows to a present value using a discount rate.",
+      "source": "https://www.investopedia.com/terms/n/npv.asp",
+      "sourceType": "FINANCE_REFERENCE",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Definitional finance reference for NPV, not a CRE competitor.",
+      "page": "/commercial-lease-npv",
+      "section": "direct-answer",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "HIGH"
+    },
+    {
+      "claim": "A discount rate is the rate used to convert future amounts into present value.",
+      "source": "https://www.investopedia.com/terms/d/discountrate.asp",
+      "sourceType": "FINANCE_REFERENCE",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Definitional finance reference for discount rate.",
+      "page": "/discount-rate-sensitivity",
+      "section": "direct-answer",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "HIGH"
+    },
+    {
+      "claim": "Commercial real estate practice language is maintained by recognized industry organizations.",
+      "source": "https://www.naiop.org/",
+      "sourceType": "INDUSTRY",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Industry organization context for commercial real estate terminology.",
+      "page": "/resources",
+      "section": "authority",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "MEDIUM"
+    },
+    {
+      "claim": "Building and occupancy-cost practice is discussed by recognized commercial building organizations.",
+      "source": "https://www.boma.org/",
+      "sourceType": "INDUSTRY",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Industry organization context for building operating practices such as common-area costs.",
+      "page": "/tenant-improvement-allowance",
+      "section": "authority",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "MEDIUM"
+    },
+    {
+      "claim": "Real estate broker occupational context is published by the U.S. Bureau of Labor Statistics.",
+      "source": "https://www.bls.gov/ooh/sales/real-estate-brokers-and-sales-agents.htm",
+      "sourceType": "GOVERNMENT",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Public occupational description for brokers; not used as demand volume.",
+      "page": "/compare-commercial-leases",
+      "section": "authority",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "MEDIUM"
+    },
+    {
+      "claim": "Financial reporting standards organizations publish authoritative accounting literature.",
+      "source": "https://www.fasb.org/",
+      "sourceType": "ACCOUNTING",
+      "observedAt": "2026-08-29T15:18:52.131Z",
+      "support": "Accounting-standard organization used as an authority class, not a lease-product claim.",
+      "page": "/commercial-lease-npv",
+      "section": "authority",
+      "model": "deterministic_writer_v1",
+      "provider": "infinity-native",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "qualityTarget": "PREMIUM_AUTHORITY_VALIDATION_READY"
+}

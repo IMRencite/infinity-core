@@ -18,6 +18,8 @@ export function buildPortfolioSummary(ventures: PortfolioVentureRow[]): Portfoli
     generatedAt: new Date().toISOString(),
     totalVenturesBuilt: builtIds.size,
     activeVentures: active.length,
+    operatingVentures: active.length,
+    validatingVentures: 0,
     ...financials,
     topVenture,
     topEarners,

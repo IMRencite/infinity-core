@@ -27,8 +27,8 @@ export function passesBuildGate(input: {
   const plan = input.evaluation.candidate.monetization?.primaryPlan;
   const reasons: string[] = [];
 
-  if (input.evaluation.portfolioAdjustedScore < input.thresholds.minSelectionScore) {
-    reasons.push(`Selection score below minimum (${input.evaluation.portfolioAdjustedScore}).`);
+  if (input.evaluation.selectionScore < input.thresholds.minSelectionScore) {
+    reasons.push(`Selection score below minimum (${input.evaluation.selectionScore}).`);
   }
   if ((input.evaluation.candidate.monetization?.monetizationScore ?? 0) < input.thresholds.minMonetizationScore) {
     reasons.push("Monetization score below minimum.");
@@ -85,7 +85,8 @@ export function classifyDecision(input: {
   hasResourceCapacity: boolean;
   decisionThresholds: typeof DEFAULT_DECISION_THRESHOLDS;
 }): { decision: SelectionDecision; recommendedNextAction: string } {
-  const score = input.evaluation.portfolioAdjustedScore;
+  // Absolute gates use raw selectionScore; portfolioAdjustedScore is for ranking only.
+  const score = input.evaluation.selectionScore;
 
   if (score < input.decisionThresholds.rejectSelectionScore) {
     return {

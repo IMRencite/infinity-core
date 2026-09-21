@@ -1,0 +1,259 @@
+{
+  "context": {
+    "root": "PASS",
+    "ready": "PASS",
+    "tree": "PASS"
+  },
+  "improvement": {
+    "pipeline_ok": true,
+    "duplicate_ok": true,
+    "invalid_reason": "MESSAGE_REQUIRED",
+    "live_intake": {
+      "status": 200,
+      "json": {
+        "ok": true,
+        "acknowledgement": "Thanks — your suggestion has been received and will be evaluated as product feedback.",
+        "contract": "VentureImprovementIntakeContract"
+      }
+    },
+    "live_invalid": {
+      "status": 400,
+      "json": {
+        "ok": false,
+        "reason": "MESSAGE_REQUIRED"
+      }
+    },
+    "triggerClick": true,
+    "formSubmit": true,
+    "successState": true,
+    "errorState": true,
+    "a11yOk": true,
+    "realBefore": 0,
+    "realAfter": 0,
+    "syntheticCountedReal": false,
+    "hqImprovement": {
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "real_feedback_count": 0,
+      "synthetic_counted_as_real": false,
+      "active_work": false,
+      "buckets": {
+        "new_suggestions": [],
+        "repeated_requests": [],
+        "under_evaluation": [],
+        "approved_for_build": [],
+        "building": [],
+        "qc": [],
+        "deployed": [],
+        "measuring": [],
+        "validated_improvements": []
+      }
+    },
+    "feedbackSynthetic": true
+  },
+  "checkout": {
+    "result": "PASS",
+    "detectedAt": "2026-09-12T07:27:28.497Z",
+    "fulfillment": "PASS",
+    "professionalAmount": 29000,
+    "perDealAmount": 14900,
+    "realPaymentCompleted": false
+  },
+  "occupancy": {
+    "overall": "PASS",
+    "coverage": {
+      "contract": "VentureQCCoverageContract",
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "total_applicable_systems": 38,
+      "verified_systems": 38,
+      "passing_systems": 38,
+      "failing_systems": 0,
+      "unknown_systems": 0,
+      "stale_systems": 0,
+      "partial_systems": 0,
+      "coverage_percent": 100,
+      "result": "PASS",
+      "reasons": []
+    },
+    "systems": {
+      "public_site": "PASS",
+      "navigation": "PASS",
+      "calculator": "PASS",
+      "results": "PASS",
+      "pricing": "PASS",
+      "login_account": "PASS",
+      "checkout": "PASS",
+      "payment": "PASS",
+      "fulfillment": "PASS",
+      "growth": "PASS",
+      "gmail": "PASS",
+      "gemini": "PASS",
+      "durable_queue": "PASS",
+      "reply_handling": "PASS",
+      "suggest_an_improvement": "PASS",
+      "feedback_submission": "PASS",
+      "canonical_feedback_pipeline": "PASS",
+      "legal_footer": "PASS",
+      "responsive_mobile": "PASS",
+      "accessibility": "PASS",
+      "console": "PASS",
+      "network": "PASS",
+      "domain_ssl": "PASS",
+      "analytics_performance": "PASS",
+      "design_quality": "PASS"
+    },
+    "quality": [],
+    "inventory_applicable": 38,
+    "inventory_na": [
+      [
+        "SERVER_ACTIONS",
+        "NO_MATERIAL_SERVER_ACTIONS_API_ROUTES_ONLY"
+      ],
+      [
+        "EXPORTS",
+        "NO_EXPORT_CAPABILITY"
+      ],
+      [
+        "NOTIFICATIONS",
+        "NO_CUSTOMER_NOTIFICATIONS"
+      ]
+    ],
+    "accounted": 41
+  },
+  "hq": {
+    "overall": "PASS",
+    "surfaces": {
+      "dashboard": "PASS",
+      "hq_command": "PASS",
+      "operating_floor": "PASS",
+      "operations": "PASS",
+      "venture_radar": "PASS",
+      "profit_lab": "PASS",
+      "research_grid": "PASS",
+      "systems_architect": "PASS",
+      "blueprint_lab": "PASS",
+      "growth_nexus": "PASS",
+      "creation_lab": "PASS",
+      "design_core": "PASS",
+      "validation_station": "PASS",
+      "deployment_depot": "PASS",
+      "signal_intelligence": "PASS",
+      "venture_selection": "PASS",
+      "venture_detail": "PASS",
+      "runtime_state": "PASS",
+      "console": "PASS",
+      "network": "PASS",
+      "navigation": "PASS",
+      "dev_server_process_health": "PASS"
+    },
+    "reasons": [],
+    "materialSurfaces": 23,
+    "accounted": 22,
+    "hits": {
+      "dashboard": true,
+      "login": true,
+      "hq_command": true,
+      "operating_floor": true,
+      "operations": true,
+      "venture_radar": true,
+      "research_grid": true,
+      "profit_lab": true,
+      "systems_architect": true,
+      "blueprint_lab": true,
+      "growth_nexus": true,
+      "creation_lab": true,
+      "design_core": true,
+      "validation_station": true,
+      "deployment_depot": true,
+      "signal_intelligence": true,
+      "venture_detail": true,
+      "qc_detail": true,
+      "financial_state": true,
+      "status_strip": true,
+      "runtime_state": true,
+      "venture_selection": true
+    },
+    "materialConsole": [],
+    "failed": [],
+    "navBroken": 0,
+    "loginFallbackExpected": true
+  },
+  "browser": {
+    "occConsole": [],
+    "occFailed": [],
+    "mobileOk": true
+  },
+  "locks": {
+    "trial": false,
+    "professional": 290,
+    "perDeal": 149,
+    "capital": "BLOCKED_PENDING_CAPITAL_POLICY",
+    "burn": [
+      "NOT_SET"
+    ],
+    "project": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+    "digest": "88b1e400aa2fdafd2e20b8d236804f5830a013928dfc9f89d20577a4c640ad2b",
+    "deployment": "dpl_FdtMbHohr6KxSUogvycc6Zb4E5ST"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/pricing",
+      "status": 200
+    },
+    {
+      "route": "/how-it-works",
+      "status": 200
+    },
+    {
+      "route": "/faq",
+      "status": 200
+    },
+    {
+      "route": "/suggest-improvement",
+      "status": 200
+    },
+    {
+      "route": "/privacy-policy",
+      "status": 200
+    },
+    {
+      "route": "/terms-of-service",
+      "status": 200
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200
+    },
+    {
+      "route": "/occupancynpv/app/login",
+      "status": 200
+    },
+    {
+      "route": "/occupancynpv/app",
+      "status": 200
+    },
+    {
+      "route": "/occupancynpv/app/checkout/complete",
+      "status": 200
+    }
+  ],
+  "loopCounts": {
+    "feedback": 1,
+    "opportunities": 0
+  },
+  "growth": {
+    "gmail": "PASS",
+    "provider": "gemini_grounded_search",
+    "observations": 1
+  },
+  "interactions": 10,
+  "workflows": 7,
+  "financialUnknownCost": true,
+  "screenshots": {
+    "desktop": 11,
+    "mobile": 11
+  }
+}

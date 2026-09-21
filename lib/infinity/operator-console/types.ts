@@ -14,6 +14,7 @@ import type { CodingHqReadModel } from "@/lib/infinity/coding-agents/hq/read-mod
 import type { CanonicalCapabilityProjection } from "@/lib/infinity/capability-truth/types";
 import type { CanonicalHQLiveProjection } from "@/lib/infinity/hq-live-truth/types";
 import type { AutonomousOperationsProjection } from "@/lib/infinity/autonomous-operating-loop/types";
+import type { CloudRuntimeHqProjection } from "@/lib/infinity/cloud-runtime/types";
 
 export type DepartmentId =
   | "opportunity_lab"
@@ -27,6 +28,7 @@ export type DepartmentId =
   | "quality_control"
   | "launch_operations"
   | "intelligence_center"
+  | "prospect_intelligence"
   | "executive_office"
   | "operations"
   | "sales_floor";
@@ -65,6 +67,7 @@ export type EngineId =
   | "quality_control"
   | "external_action_gateway"
   | "performance_intelligence"
+  | "prospect_intelligence"
   | "executive_decision"
   | "sales_conversion";
 
@@ -123,6 +126,7 @@ export type OperatorWorkerNode = {
   isActive: boolean;
   isDormant: boolean;
   motionActive: boolean;
+  salesRoomId?: string;
 };
 
 export type OperatorDepartmentSnapshot = {
@@ -287,6 +291,7 @@ export type OperatorVentureSnapshot = {
   capabilities?: CanonicalCapabilityProjection;
   canonicalLive?: CanonicalHQLiveProjection;
   autonomousOperating?: AutonomousOperationsProjection;
+  cloudRuntime?: CloudRuntimeHqProjection;
 };
 
 export type OperatorVentureListItem = {

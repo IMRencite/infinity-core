@@ -1,0 +1,16 @@
+{
+  "incident_id": "inc:communication-business-loop-v11",
+  "owner": "CommunicationRelease",
+  "executor": "cursor-agent",
+  "escalation": "FOUNDER",
+  "opened_at": "2026-09-21T04:20:00.000Z",
+  "deadline_at": "2026-09-22T04:20:00.000Z",
+  "status": "OPEN",
+  "stakes": "NO_REAL_PROSPECTS",
+  "decision": "HARD_CUTOVER",
+  "abandoned_inbound": "1a0be7a9feee5375",
+  "abandoned_classification": "ABANDONED_TEST_ARTIFACT",
+  "counts_toward_clean": false,
+  "objective": "Clean checkout, stage production with identity baked in, smoke, promote, prove the production tick route stays present, or roll back.",
+  "next_action": "ARM_BLACKBOX_PROBE_MAILBOX_THEN_HARD_CUTOVER"
+}

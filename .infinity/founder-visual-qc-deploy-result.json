@@ -1,0 +1,215 @@
+{
+  "artifactIdentity": "PASS",
+  "digestLock": "PASS",
+  "actualDigest": "0ac50a86b86140f197de6fff90477944de22eba6fa89496fcadf070210b3a7ec",
+  "routes": 57,
+  "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "founderVisualReviewReady": "FOUNDER_VISUAL_REVIEW_READY",
+  "executed": true,
+  "attempted": true,
+  "deploymentId": "dpl_A8G5ewhPBnefUySdwWUdnnvzGWN5",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-2lzo42ur9.vercel.app",
+  "providerFinalState": "READY",
+  "providerError": null,
+  "activated": true,
+  "activationCount": 1,
+  "activeArtifact": "art_89ea8156769a0286a700",
+  "activeDeployment": "dpl_A8G5ewhPBnefUySdwWUdnnvzGWN5",
+  "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-2lzo42ur9.vercel.app",
+  "canonicalReadback": {
+    "activeArtifactId": "art_89ea8156769a0286a700",
+    "activeDigest": "0ac50a86b86140f197de6fff90477944de22eba6fa89496fcadf070210b3a7ec",
+    "activeDeploymentId": "dpl_A8G5ewhPBnefUySdwWUdnnvzGWN5",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-2lzo42ur9.vercel.app"
+  },
+  "predecessorArtifact": "art_3b428a17dfca6e047550",
+  "predecessorDeployment": "dpl_5cFWWuPZYkJcUfmwSqGCMG8zS8hY",
+  "experimentState": "COLLECTING",
+  "evidenceStart": "2026-08-29T15:18:52.131Z",
+  "counts": {
+    "qualifiedVisitors": 0,
+    "strongIntent": 0,
+    "qualifiedSubmissions": 0,
+    "pricingSelections": 0,
+    "pageViews": 0
+  },
+  "providerCost": "UNKNOWN",
+  "deployments": 1,
+  "activations": 1,
+  "stopReason": "NONE",
+  "commandDuring": "ACTIVE_WORK",
+  "deploymentDepotDuring": "ACTIVE_WORK",
+  "validationStationDuring": "ACTIVE_WORK",
+  "growthNexusDuring": "PRESENT_IDLE",
+  "latestCompleted": "GOVERNED_CRE_FOUNDER_VISUAL_QC_DEPLOYMENT_V1",
+  "publiclyLaunched": false,
+  "live": {
+    "passingRoutes": 51,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "seoGeoPassed": true,
+    "visualPassed": true,
+    "footerContract": "PASS",
+    "semanticNav": "PASS",
+    "heroIntersection": 0,
+    "visualSeparation": 727.53125,
+    "visual": {
+      "howItWorksTall": "PASS",
+      "howItWorksDesktop": "PASS",
+      "howItWorksMobile": "PASS",
+      "heroSeparationGate": "PASS",
+      "routeCoverage": "PASS",
+      "navRendered": "PASS",
+      "circleOnly": 0,
+      "pauseIcons": 0,
+      "learnRepeat": 0,
+      "spellcheckIntact": "PASS",
+      "kickerRedundant": 0,
+      "footer1280": 32,
+      "footer1440": 32,
+      "footer390": 20,
+      "screenshots": 48,
+      "measurements": 48,
+      "screenshotDir": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-founder-visual-qc-live-1788424374738",
+      "heroLive": [
+        {
+          "viewport": "tall",
+          "width": 1440,
+          "height": 1600,
+          "screenshot": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-founder-visual-qc-live-1788424374738\\how_it_works_tall_1440x1600.png",
+          "heroClass": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+          "positionedAncestor": {
+            "tag": "HEADER",
+            "className": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+            "position": "relative"
+          },
+          "hero": {
+            "top": 108.109375,
+            "bottom": 1151.328125,
+            "height": 1043.21875,
+            "width": 1440
+          },
+          "media": {
+            "top": 108.109375,
+            "bottom": 477.703125,
+            "height": 369.59375,
+            "width": 1389.625
+          },
+          "nextSection": {
+            "top": 1151.328125,
+            "bottom": 9139.3125,
+            "height": 7987.984375,
+            "width": 1440
+          },
+          "firstBody": {
+            "top": 1205.234375,
+            "bottom": 1242.515625,
+            "height": 37.28125,
+            "width": 663.28125
+          },
+          "termHeading": {
+            "top": 1621.390625,
+            "bottom": 1695.953125,
+            "height": 74.5625,
+            "width": 374.21875
+          },
+          "mediaNextOverlap": 0,
+          "mediaHeadingOverlap": 0,
+          "visualSeparation": 727.53125
+        },
+        {
+          "viewport": "desktop",
+          "width": 1280,
+          "height": 900,
+          "screenshot": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-founder-visual-qc-live-1788424374738\\how_it_works_desktop_1280x900.png",
+          "heroClass": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+          "positionedAncestor": {
+            "tag": "HEADER",
+            "className": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+            "position": "relative"
+          },
+          "hero": {
+            "top": 108.109375,
+            "bottom": 1151.328125,
+            "height": 1043.21875,
+            "width": 1280
+          },
+          "media": {
+            "top": 108.109375,
+            "bottom": 477.703125,
+            "height": 369.59375,
+            "width": 1229.625
+          },
+          "nextSection": {
+            "top": 1151.328125,
+            "bottom": 9129.609375,
+            "height": 7978.28125,
+            "width": 1280
+          },
+          "firstBody": {
+            "top": 1205.234375,
+            "bottom": 1242.09375,
+            "height": 36.859375,
+            "width": 663.28125
+          },
+          "termHeading": {
+            "top": 1620.546875,
+            "bottom": 1694.265625,
+            "height": 73.71875,
+            "width": 374.21875
+          },
+          "mediaNextOverlap": 0,
+          "mediaHeadingOverlap": 0,
+          "visualSeparation": 727.53125
+        },
+        {
+          "viewport": "mobile",
+          "width": 390,
+          "height": 844,
+          "screenshot": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-founder-visual-qc-live-1788424374738\\how_it_works_mobile_390x844.png",
+          "heroClass": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+          "positionedAncestor": {
+            "tag": "HEADER",
+            "className": "pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article",
+            "position": "relative"
+          },
+          "hero": {
+            "top": 205.421875,
+            "bottom": 1254.96875,
+            "height": 1049.546875,
+            "width": 390
+          },
+          "media": {
+            "top": 205.421875,
+            "bottom": 474.21875,
+            "height": 268.796875,
+            "width": 348
+          },
+          "nextSection": {
+            "top": 1254.96875,
+            "bottom": 15028.046875,
+            "height": 13773.078125,
+            "width": 390
+          },
+          "firstBody": {
+            "top": 1308.875,
+            "bottom": 1367.3125,
+            "height": 58.4375,
+            "width": 263.6875
+          },
+          "termHeading": {
+            "top": 2077.75,
+            "bottom": 2136.1875,
+            "height": 58.4375,
+            "width": 306
+          },
+          "mediaNextOverlap": 0,
+          "mediaHeadingOverlap": 0,
+          "visualSeparation": 834.65625
+        }
+      ]
+    }
+  }
+}

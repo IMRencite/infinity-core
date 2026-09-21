@@ -1,0 +1,40 @@
+name: communication-blackbox
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  deadman:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: External dead-man's switch
+        env:
+          COMMUNICATION_PAGE_WEBHOOK: ${{ secrets.COMMUNICATION_PAGE_WEBHOOK }}
+          COMMUNICATION_PRODUCTION_TICK_URL: https://infinity-runtime.vercel.app/api/runtime/communication-tick
+        run: node scripts/communication-deadman-switch.mjs
+
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Black-box mailbox probe
+        env:
+          COMMUNICATION_PROBE_MAILBOX: ${{ secrets.COMMUNICATION_PROBE_MAILBOX }}
+          COMMUNICATION_PROBE_GMAIL_CLIENT_ID: ${{ secrets.COMMUNICATION_PROBE_GMAIL_CLIENT_ID }}
+          COMMUNICATION_PROBE_GMAIL_CLIENT_SECRET: ${{ secrets.COMMUNICATION_PROBE_GMAIL_CLIENT_SECRET }}
+          COMMUNICATION_PROBE_GMAIL_REFRESH_TOKEN: ${{ secrets.COMMUNICATION_PROBE_GMAIL_REFRESH_TOKEN }}
+          COMMUNICATION_PRODUCTION_MAILBOX: hello@imros.io
+          COMMUNICATION_PAGE_WEBHOOK: ${{ secrets.COMMUNICATION_PAGE_WEBHOOK }}
+          COMMUNICATION_PROBE_SLO_MS: "1200000"
+        run: node scripts/communication-blackbox-probe.mjs

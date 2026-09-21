@@ -147,8 +147,10 @@ if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || exist
   process.exit(1);
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
-const runtimeRoutes = ["communication-tick", "communication-attest"];
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
+const runtimeRoutes = ["communication-tick", "communication-attest"].concat(
+  tracked.has("app/api/runtime/communication-coverage/route.ts") ? ["communication-coverage"] : [],
+);
 const requiredTracked = [
   "app/api/runtime/communication-tick/route.ts",
   "app/api/runtime/communication-attest/route.ts",
@@ -428,18 +430,27 @@ if (prebuiltSupported) {
   if (built.status === 0) prebuiltUsed = true;
 }
 const stageOnly = process.env.INFINITY_RUNTIME_STAGE_ONLY === "1" || process.env.INFINITY_RUNTIME_PROMOTE !== "1";
-const deploy = spawnSync(
-  "npx",
-  prebuiltUsed
-    ? ["vercel@latest", "deploy", "--prebuilt", "--yes", `--token=${token}`, `--scope=${team}`]
-    : ["vercel@latest", "deploy", "--yes", `--token=${token}`, `--scope=${team}`],
-  {
-    cwd: dest,
-    encoding: "utf8",
-    shell: true,
-    env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
-  },
-);
+const productionStage = process.env.INFINITY_RUNTIME_PRODUCTION_STAGE === "1";
+if (process.env.INFINITY_RUNTIME_PLAIN_PROD === "1") {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "PLAIN_PROD_REFUSED",
+    gate: "ProductionStagedDeploymentGate",
+    required: "vercel --prod --skip-domain",
+  }, null, 2));
+  process.exit(1);
+}
+const deployArgs = ["vercel@latest", "deploy", "--yes", `--token=${token}`, `--scope=${team}`];
+if (prebuiltUsed) deployArgs.splice(2, 0, "--prebuilt");
+if (productionStage) {
+  deployArgs.push("--prod", "--skip-domain");
+}
+const deploy = spawnSync("npx", deployArgs, {
+  cwd: dest,
+  encoding: "utf8",
+  shell: true,
+  env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
+});
 
 const combined = `${deploy.stdout || ""}\n${deploy.stderr || ""}`.replace(/Bearer\s+[A-Za-z0-9._-]+/g, "Bearer [redacted]");
 writeFileSync(join(dest, "vercel-deploy.log"), combined);
@@ -465,20 +476,45 @@ const tickExists = await smoke("/api/runtime/communication-tick");
 const tickSafe = cronSecret
   ? await smoke("/api/runtime/communication-tick?mode=safe", { authorization: `Bearer ${cronSecret}` })
   : { path: "/api/runtime/communication-tick?mode=safe", status: 0, ok: false, body: null };
+const tickCronContract = cronSecret
+  ? await smoke("/api/runtime/communication-tick?mode=safe", {
+    authorization: `Bearer ${cronSecret}`,
+    "x-vercel-cron": "1",
+    "user-agent": "vercel-cron/1.0",
+  })
+  : { path: "/api/runtime/communication-tick?mode=safe", status: 0, ok: false, body: null };
 const attestGet = await smoke("/api/runtime/communication-attest");
 const attestUnauth = await smoke("/api/runtime/communication-attest", {}, "POST");
-const tickSmoke = { exists: tickExists, safe: tickSafe, ok: tickExists.ok && tickSafe.status === 200 && tickSafe.body?.business_send === false };
+const tickSmoke = {
+  exists: tickExists,
+  safe: tickSafe,
+  cronContract: tickCronContract,
+  ok: tickExists.ok
+    && tickSafe.status === 200
+    && tickSafe.body?.business_send === false
+    && tickCronContract.status === 200
+    && tickCronContract.body?.business_send === false,
+};
 const attestSmoke = { get: attestGet, unauth: attestUnauth, ok: attestGet.ok && attestUnauth.status === 401 };
 const identityMatch = tickSafe.body?.release?.release_sha === sha || tickSafe.body?.identity?.release_sha === sha;
 const smokePass = tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch);
 let promoted = false;
 let productionUrl = "https://infinity-runtime.vercel.app";
+let promoteResult = null;
 if (smokePass && process.env.INFINITY_RUNTIME_PROMOTE === "1" && candidateId) {
-  const alias = spawnSync("npx", ["vercel@latest", "alias", candidateId, "infinity-runtime.vercel.app", `--token=${token}`, `--scope=${team}`], {
-    encoding: "utf8",
-    shell: true,
+  const promote = await api(`/v10/projects/${encodeURIComponent(PROJECT_ID)}/promote/${encodeURIComponent(candidateId)}`, {
+    method: "POST",
   });
-  promoted = alias.status === 0;
+  const promoteBody = await promote.json().catch(() => null);
+  promoteResult = {
+    status: promote.status,
+    ok: promote.ok || promote.status === 409,
+    error: promoteBody?.error?.message ?? null,
+    first_failure: promote.ok || promote.status === 409
+      ? null
+      : (latest?.target ? "PRODUCTION_PROMOTE_REJECTED" : "PREVIEW_NOT_INSTANT_PROMOTABLE"),
+  };
+  promoted = Boolean(promoteResult.ok);
 }
 if (!smokePass) {
   console.log(JSON.stringify({

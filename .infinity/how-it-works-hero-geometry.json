@@ -1,0 +1,335 @@
+{
+  "390": {
+    "heroClass": "pv-hero pv-article-hero",
+    "nextTag": "SECTION",
+    "nextClass": "pv-section",
+    "hero": {
+      "top": 205.421875,
+      "bottom": 1064.078125,
+      "height": 858.65625,
+      "left": 0,
+      "width": 390
+    },
+    "media": {
+      "top": 0,
+      "bottom": 844,
+      "height": 844,
+      "left": 0,
+      "width": 390
+    },
+    "overlay": null,
+    "image": {
+      "top": 0,
+      "bottom": 844,
+      "height": 844,
+      "left": 0,
+      "width": 390
+    },
+    "nextSection": {
+      "top": 1064.078125,
+      "bottom": 14934.84375,
+      "height": 13870.765625,
+      "left": 0,
+      "width": 390
+    },
+    "firstBody": {
+      "top": 1148.078125,
+      "bottom": 14808.84375,
+      "height": 13660.765625,
+      "left": 42,
+      "width": 306
+    },
+    "termHeading": {
+      "top": 1937.265625,
+      "bottom": 1995.703125,
+      "height": 58.4375,
+      "left": 42,
+      "width": 306
+    },
+    "heroNextOverlap": 0,
+    "mediaNextOverlap": 0,
+    "mediaHeadingOverlap": 0,
+    "styles": {
+      "hero": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "858.656px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "media": {
+        "position": "absolute",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "844px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "image": {
+        "position": "static",
+        "overflow": "clip",
+        "overflowY": "clip",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "844px",
+        "objectFit": "cover",
+        "objectPosition": "50% 50%"
+      },
+      "overlay": null,
+      "next": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "13870.8px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      }
+    },
+    "htmlPreview": "<header class=\"pv-hero pv-article-hero\" data-section-type=\"HERO\" data-section-id=\"hiw_hero\" data-pattern-id=\"FOCUSED_HERO\"><figure class=\"pv-hero-media\" data-above-fold-visual=\"true\"><img src=\"/media/hero-interior.webp\" alt=\"Editorial commercial setting. Not a customer photo.\" width=\"1600\" height=\"900\" fetchpriority=\"high\" decoding=\"async\"></figure><div class=\"vg-container\"><p class=\"pv-eyebrow\">How it works</p><h1 class=\"pv-display\">From scattered terms to a shareable comparison without rebuilding the spreadsheet</h1><p><a class=\"vg-cta vg-cta--primary\" href=\"/early-access\">Request Pilot Access</a></p><div data-question-id=\"q_6b8ef893e957541f\" data-answer-chunk-id=\"q_6b8ef893e957541f_chunk\"><div class=\"pv-answer\" data-answer-first=\"true\"><p class=\"pv-eyebrow\">How does the proposed workflow capture lease terms?</p><p>The proposed workflow captures each option’s rent schedule, CAM, tenant improvement allowance, free rent, and escalations, then places them on one cash-flow timeline so tenant-rep brokers can discount that stream to NPV at an explicit rate.</p></div></div></div></header>"
+  },
+  "1280": {
+    "heroClass": "pv-hero pv-article-hero",
+    "nextTag": "SECTION",
+    "nextClass": "pv-section",
+    "hero": {
+      "top": 108.109375,
+      "bottom": 917.984375,
+      "height": 809.875,
+      "left": 0,
+      "width": 1280
+    },
+    "media": {
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "left": 0,
+      "width": 1280
+    },
+    "overlay": null,
+    "image": {
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "left": 0,
+      "width": 1280
+    },
+    "nextSection": {
+      "top": 917.984375,
+      "bottom": 9121.859375,
+      "height": 8203.875,
+      "left": 0,
+      "width": 1280
+    },
+    "firstBody": {
+      "top": 1001.984375,
+      "bottom": 8995.859375,
+      "height": 7993.875,
+      "left": 287.203125,
+      "width": 705.59375
+    },
+    "termHeading": {
+      "top": 1437.609375,
+      "bottom": 1511.328125,
+      "height": 73.71875,
+      "left": 287.203125,
+      "width": 374.21875
+    },
+    "heroNextOverlap": 0,
+    "mediaNextOverlap": 0,
+    "mediaHeadingOverlap": 0,
+    "styles": {
+      "hero": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "809.875px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "media": {
+        "position": "absolute",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "900px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "image": {
+        "position": "static",
+        "overflow": "clip",
+        "overflowY": "clip",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "900px",
+        "objectFit": "cover",
+        "objectPosition": "50% 50%"
+      },
+      "overlay": null,
+      "next": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "8203.88px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      }
+    },
+    "htmlPreview": "<header class=\"pv-hero pv-article-hero\" data-section-type=\"HERO\" data-section-id=\"hiw_hero\" data-pattern-id=\"FOCUSED_HERO\"><figure class=\"pv-hero-media\" data-above-fold-visual=\"true\"><img src=\"/media/hero-interior.webp\" alt=\"Editorial commercial setting. Not a customer photo.\" width=\"1600\" height=\"900\" fetchpriority=\"high\" decoding=\"async\"></figure><div class=\"vg-container\"><p class=\"pv-eyebrow\">How it works</p><h1 class=\"pv-display\">From scattered terms to a shareable comparison without rebuilding the spreadsheet</h1><p><a class=\"vg-cta vg-cta--primary\" href=\"/early-access\">Request Pilot Access</a></p><div data-question-id=\"q_6b8ef893e957541f\" data-answer-chunk-id=\"q_6b8ef893e957541f_chunk\"><div class=\"pv-answer\" data-answer-first=\"true\"><p class=\"pv-eyebrow\">How does the proposed workflow capture lease terms?</p><p>The proposed workflow captures each option’s rent schedule, CAM, tenant improvement allowance, free rent, and escalations, then places them on one cash-flow timeline so tenant-rep brokers can discount that stream to NPV at an explicit rate.</p></div></div></div></header>"
+  },
+  "1440": {
+    "heroClass": "pv-hero pv-article-hero",
+    "nextTag": "SECTION",
+    "nextClass": "pv-section",
+    "hero": {
+      "top": 108.109375,
+      "bottom": 917.984375,
+      "height": 809.875,
+      "left": 0,
+      "width": 1440
+    },
+    "media": {
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "left": 0,
+      "width": 1440
+    },
+    "overlay": null,
+    "image": {
+      "top": 0,
+      "bottom": 900,
+      "height": 900,
+      "left": 0,
+      "width": 1440
+    },
+    "nextSection": {
+      "top": 917.984375,
+      "bottom": 9131.5625,
+      "height": 8213.578125,
+      "left": 0,
+      "width": 1440
+    },
+    "firstBody": {
+      "top": 1001.984375,
+      "bottom": 9005.5625,
+      "height": 8003.578125,
+      "left": 367.203125,
+      "width": 705.59375
+    },
+    "termHeading": {
+      "top": 1438.453125,
+      "bottom": 1513.015625,
+      "height": 74.5625,
+      "left": 367.203125,
+      "width": 374.21875
+    },
+    "heroNextOverlap": 0,
+    "mediaNextOverlap": 0,
+    "mediaHeadingOverlap": 0,
+    "styles": {
+      "hero": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "809.875px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "media": {
+        "position": "absolute",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "900px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      },
+      "image": {
+        "position": "static",
+        "overflow": "clip",
+        "overflowY": "clip",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "0px",
+        "minHeight": "0px",
+        "height": "900px",
+        "objectFit": "cover",
+        "objectPosition": "50% 50%"
+      },
+      "overlay": null,
+      "next": {
+        "position": "static",
+        "overflow": "visible",
+        "overflowY": "visible",
+        "zIndex": "auto",
+        "transform": "none",
+        "marginTop": "0px",
+        "marginBottom": "0px",
+        "paddingBottom": "84px",
+        "minHeight": "0px",
+        "height": "8213.58px",
+        "objectFit": "fill",
+        "objectPosition": "50% 50%"
+      }
+    },
+    "htmlPreview": "<header class=\"pv-hero pv-article-hero\" data-section-type=\"HERO\" data-section-id=\"hiw_hero\" data-pattern-id=\"FOCUSED_HERO\"><figure class=\"pv-hero-media\" data-above-fold-visual=\"true\"><img src=\"/media/hero-interior.webp\" alt=\"Editorial commercial setting. Not a customer photo.\" width=\"1600\" height=\"900\" fetchpriority=\"high\" decoding=\"async\"></figure><div class=\"vg-container\"><p class=\"pv-eyebrow\">How it works</p><h1 class=\"pv-display\">From scattered terms to a shareable comparison without rebuilding the spreadsheet</h1><p><a class=\"vg-cta vg-cta--primary\" href=\"/early-access\">Request Pilot Access</a></p><div data-question-id=\"q_6b8ef893e957541f\" data-answer-chunk-id=\"q_6b8ef893e957541f_chunk\"><div class=\"pv-answer\" data-answer-first=\"true\"><p class=\"pv-eyebrow\">How does the proposed workflow capture lease terms?</p><p>The proposed workflow captures each option’s rent schedule, CAM, tenant improvement allowance, free rent, and escalations, then places them on one cash-flow timeline so tenant-rep brokers can discount that stream to NPV at an explicit rate.</p></div></div></div></header>"
+  }
+}

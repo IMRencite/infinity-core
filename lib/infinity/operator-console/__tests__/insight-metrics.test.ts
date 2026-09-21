@@ -132,6 +132,7 @@ describe("HQOutputDetail metric keys", () => {
       decisionWhy: "52.49 < 58 VALIDATE threshold",
       overview: { sections: [] },
       intelligence: { sections: [] },
+      money: { sections: [] },
       insights: { hotTakes: [], metrics: CMS_METRICS },
       evidence: { sections: [] },
       timeline: { phases: [] },

@@ -1,0 +1,251 @@
+{
+  "contract": "InfinityHqProductionDeploymentV1LiveGoldenPath",
+  "hq_url": "https://hq.imros.io",
+  "deployment_id": "dpl_H9puMqGN7GhGJfrmJiMZwwJQc39E",
+  "credentials_present": false,
+  "anonymous": {
+    "login": {
+      "url": "https://hq.imros.io/login",
+      "status": 200,
+      "location": null,
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "robots": "noindex, nofollow, noarchive, nosnippet"
+    },
+    "dashboard": {
+      "url": "https://hq.imros.io/dashboard",
+      "status": 307,
+      "location": "/login",
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "robots": "noindex, nofollow, noarchive, nosnippet"
+    },
+    "daily": {
+      "url": "https://hq.imros.io/dashboard/daily-reports",
+      "status": 307,
+      "location": "/login",
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "robots": "noindex, nofollow, noarchive, nosnippet"
+    },
+    "dailyApi": {
+      "url": "https://hq.imros.io/api/operator-console/daily-report",
+      "status": 401,
+      "location": null,
+      "cache": "private, no-store",
+      "robots": "noindex, nofollow"
+    },
+    "runtimeApi": {
+      "url": "https://hq.imros.io/api/hq/production-runtime",
+      "status": 401,
+      "location": null,
+      "cache": "private, no-store",
+      "robots": "noindex, nofollow"
+    },
+    "publicImros": {
+      "status": 200,
+      "body_length": 12020
+    },
+    "runtime": {
+      "url": "https://infinity-runtime.vercel.app/",
+      "status": 200,
+      "location": null,
+      "cache": "public, max-age=0, must-revalidate",
+      "robots": null
+    }
+  },
+  "public_leaks": {
+    "daily_reports": false,
+    "emails": false,
+    "phones": false,
+    "treasury": false,
+    "prospects": false
+  },
+  "public_markers": {
+    "command_room": true,
+    "full_width": true,
+    "grid": true
+  },
+  "live": {
+    "credentials_present": false,
+    "admin_present": true,
+    "auth_method": "magiclink",
+    "login_page": true,
+    "credential_submission": false,
+    "supabase_auth": true,
+    "authorization": true,
+    "redirect_dashboard": true,
+    "dashboard_http": 200,
+    "dashboard_visible": true,
+    "server_error": false,
+    "hydration_errors": 0,
+    "recoverable_react_errors": 0,
+    "uncaught_runtime_errors": 0,
+    "infinity_console_errors": 0,
+    "todays_report_visible": true,
+    "todays_report_id": "daily:2026-09-18:v1",
+    "todays_report_status": "LIVE",
+    "todays_persistence": "POSTGRES",
+    "daily_index": true,
+    "daily_detail": true,
+    "runtime_authenticated": true,
+    "runtime_localhost": false,
+    "private_api_authenticated": true,
+    "cookie": {
+      "inspected": true,
+      "has_value": true,
+      "count": 2,
+      "secure": true,
+      "httpOnly": true,
+      "sameSite": "Lax",
+      "path": "/",
+      "domain": "hq.imros.io",
+      "session": true
+    },
+    "private_api_statuses": {
+      "/api/operator-console/daily-report": 200,
+      "/api/hq/production-runtime": 200,
+      "/api/operator-console/hq-live-state": 200,
+      "/api/operator-console/treasury": 200,
+      "/api/operator-console/ventures": 404,
+      "/api/hq/ventures": 404
+    },
+    "private_api_cache": {
+      "/api/operator-console/daily-report": "private, no-store",
+      "/api/hq/production-runtime": "private, no-store",
+      "/api/operator-console/hq-live-state": "no-store, max-age=0",
+      "/api/operator-console/treasury": "no-store, max-age=0",
+      "/api/operator-console/ventures": "private, no-store, no-cache, must-revalidate",
+      "/api/hq/ventures": "private, no-store, no-cache, must-revalidate"
+    },
+    "dashboard_cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+    "vercel_id": "cle1::iad1::rf742-1789712929003-8471494fad54",
+    "date_navigation": true,
+    "daily_after_logout": "DENIED",
+    "login_error": null,
+    "treasury_cash": "UNKNOWN",
+    "treasury_authorized": "50",
+    "treasury_allocated": "$0",
+    "mercury": "DEGRADED",
+    "logout": true,
+    "cookie_invalidated": true,
+    "dashboard_after_logout": "DENIED",
+    "private_api_after_logout": 401,
+    "shell": {
+      "topbar": true,
+      "venture_command": false,
+      "todays_report": true,
+      "daily_reports": true,
+      "treasury": false,
+      "organic": false,
+      "sales": false,
+      "prospect": false
+    },
+    "console": []
+  },
+  "gates": {
+    "HQProductionGoldenPathGate": {
+      "gate": "HQProductionGoldenPathGate",
+      "result": "PASS",
+      "reasons": [
+        "FOUNDER_GOLDEN_PATH_COMPLETE"
+      ],
+      "proof_level": "LIVE_SESSION_PROVEN"
+    },
+    "HQProductionSessionSecurityGate": {
+      "gate": "HQProductionSessionSecurityGate",
+      "result": "PASS",
+      "reasons": [
+        "LIVE_SESSION_PROVEN"
+      ],
+      "proof_level": "LIVE_SESSION_PROVEN"
+    },
+    "HQRuntimeConnectivityGate": {
+      "gate": "HQRuntimeConnectivityGate",
+      "result": "PASS",
+      "reasons": [
+        "LIVE_SESSION_PROVEN"
+      ],
+      "proof_level": "LIVE_SESSION_PROVEN"
+    },
+    "HQLiveLogoutGate": {
+      "gate": "HQLiveLogoutGate",
+      "result": "PASS",
+      "reasons": [
+        "LOGOUT_AND_DENY_PROVEN"
+      ]
+    },
+    "HQRenderedRuntimeIntegrityGate": {
+      "gate": "HQRenderedRuntimeIntegrityGate",
+      "result": "PASS",
+      "reasons": [
+        "RUNTIME_INTEGRITY_CLEAN"
+      ]
+    },
+    "HQHydrationParityGate": {
+      "gate": "HQHydrationParityGate",
+      "result": "PASS",
+      "reasons": [
+        "SSR_CLIENT_MATCH"
+      ]
+    },
+    "HQInitialSnapshotConsistencyGate": {
+      "gate": "HQInitialSnapshotConsistencyGate",
+      "result": "PASS",
+      "reasons": [
+        "SNAPSHOT_A_THEN_POLL_B"
+      ]
+    },
+    "TreasuryDependencyIsolationGate": {
+      "gate": "TreasuryDependencyIsolationGate",
+      "result": "PASS",
+      "reasons": [
+        "TREASURY_FAILURE_ISOLATED"
+      ]
+    },
+    "HQProductionServerRuntimeGate": {
+      "gate": "HQProductionServerRuntimeGate",
+      "result": "PASS",
+      "reasons": [
+        "AUTHENTICATED_DASHBOARD_RENDER_OK"
+      ]
+    },
+    "HQDependencyIsolationGate": {
+      "gate": "HQDependencyIsolationGate",
+      "result": "PASS",
+      "reasons": [
+        "NONCRITICAL_FAILURES_DEGRADE"
+      ]
+    },
+    "HQServerlessFilesystemSafetyGate": {
+      "gate": "HQServerlessFilesystemSafetyGate",
+      "result": "PASS",
+      "reasons": [
+        "NO_INVALID_VERCEL_FS_WRITES_ON_HQ_RENDER"
+      ]
+    },
+    "HQPrivateCacheGate": {
+      "gate": "HQPrivateCacheGate",
+      "result": "PASS",
+      "reasons": [
+        "PRIVATE_NO_STORE"
+      ]
+    },
+    "HQPublicIsolationGate": {
+      "gate": "HQPublicIsolationGate",
+      "result": "PASS",
+      "reasons": [
+        "PUBLIC_ISOLATED"
+      ]
+    },
+    "DeploymentVerificationState": {
+      "contract": "DEPLOYMENT_VERIFICATION_STATE",
+      "deployment_host": "hq.imros.io",
+      "canonical_host": "hq.imros.io",
+      "hosts_differ": false,
+      "lifecycle": "LIVE_VERIFIED",
+      "result": "PASS",
+      "reasons": [
+        "CANONICAL_SERVES_NEW_ARTIFACT"
+      ]
+    }
+  },
+  "status": "VERIFIED"
+}

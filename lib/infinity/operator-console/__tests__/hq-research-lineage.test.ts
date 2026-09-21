@@ -55,7 +55,7 @@ function department(
     startedAt: null,
     lastActivityAt: null,
     recordCount: workArtifacts.length,
-    failureSemantics: null,
+    failureSemantics: undefined,
     detail: {},
     workArtifacts,
   };

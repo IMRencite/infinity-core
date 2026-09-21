@@ -57,6 +57,7 @@ export type ProviderAccount = {
   currency: string;
   accountKind: "CHECKING" | "SAVINGS" | "TREASURY" | "CARD" | "OTHER";
   externalAccountId: string;
+  last4?: string | null;
   status: "ACTIVE" | "FROZEN" | "CLOSED" | "UNKNOWN";
   fetchedAt?: string;
   provenance?: ProviderProvenance;

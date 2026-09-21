@@ -1,0 +1,1231 @@
+{
+  "screenshotCount": 28,
+  "measurementCount": 28,
+  "overflow": 0,
+  "measurements": [
+    {
+      "route": "/lease-sensitivity-analysis",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 141.09375,
+        "bottom": 567.84375,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "prose": {
+        "top": 176,
+        "bottom": 205.515625,
+        "width": 214.1875,
+        "left": 157.1875
+      },
+      "nav": {
+        "top": 9502.765625,
+        "bottom": 9894.53125,
+        "width": 1078.59375,
+        "left": 180.703125
+      },
+      "sources": {
+        "top": 9352.421875,
+        "bottom": 10111.203125,
+        "width": 1176,
+        "left": 132
+      },
+      "table": {
+        "top": 2641.265625,
+        "bottom": 2876.796875,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": {
+        "top": 343.484375,
+        "bottom": 503.171875,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 530.890625
+    },
+    {
+      "route": "/lease-sensitivity-analysis",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 169.3125,
+        "bottom": 596.0625,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "prose": {
+        "top": 204.21875,
+        "bottom": 233.734375,
+        "width": 214.1875,
+        "left": 77.1875
+      },
+      "nav": {
+        "top": 9525.5,
+        "bottom": 9940.1875,
+        "width": 1065.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9375.15625,
+        "bottom": 10156.4375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2667.796875,
+        "bottom": 2903.328125,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 371.703125,
+        "bottom": 531.390625,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 524.109375
+    },
+    {
+      "route": "/lease-sensitivity-analysis",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 197.53125,
+        "bottom": 606.9375,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 232.4375,
+        "bottom": 261.953125,
+        "width": 214.1875,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 9514.28125,
+        "bottom": 9973.625,
+        "width": 809.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9363.9375,
+        "bottom": 10182.5,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2666.515625,
+        "bottom": 2902.046875,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 382.578125,
+        "bottom": 542.265625,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 396.109375
+    },
+    {
+      "route": "/lease-sensitivity-analysis",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 507.9375,
+        "bottom": 966.65625,
+        "width": 348,
+        "left": 42
+      },
+      "prose": {
+        "top": 542.84375,
+        "bottom": 572.359375,
+        "width": 214.1875,
+        "left": 42
+      },
+      "nav": {
+        "top": 13974.65625,
+        "bottom": 15268.640625,
+        "width": 216.96875,
+        "left": 86.515625
+      },
+      "sources": {
+        "top": 13824.3125,
+        "bottom": 15533.6875,
+        "width": 306,
+        "left": 42
+      },
+      "table": {
+        "top": 3563.40625,
+        "bottom": 3839.34375,
+        "width": 306,
+        "left": 42
+      },
+      "cta": {
+        "top": 685.859375,
+        "bottom": 901.984375,
+        "width": 348,
+        "left": 42
+      },
+      "cardCount": 4,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 4,
+      "cardWidth": 216.96875
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 141.09375,
+        "bottom": 567.84375,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "prose": {
+        "top": 176,
+        "bottom": 205.515625,
+        "width": 188.90625,
+        "left": 157.1875
+      },
+      "nav": {
+        "top": 10058.640625,
+        "bottom": 10450.40625,
+        "width": 1078.59375,
+        "left": 180.703125
+      },
+      "sources": {
+        "top": 9908.296875,
+        "bottom": 10667.078125,
+        "width": 1176,
+        "left": 132
+      },
+      "table": {
+        "top": 2687.109375,
+        "bottom": 3023.546875,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": {
+        "top": 343.484375,
+        "bottom": 503.171875,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 530.890625
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 169.3125,
+        "bottom": 596.0625,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "prose": {
+        "top": 204.21875,
+        "bottom": 233.734375,
+        "width": 188.90625,
+        "left": 77.1875
+      },
+      "nav": {
+        "top": 10081.375,
+        "bottom": 10473.140625,
+        "width": 1065.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9931.03125,
+        "bottom": 10689.390625,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2713.640625,
+        "bottom": 3050.078125,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 371.703125,
+        "bottom": 531.390625,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 524.109375
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 197.53125,
+        "bottom": 606.9375,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 232.4375,
+        "bottom": 261.953125,
+        "width": 188.90625,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 10098.375,
+        "bottom": 10534.796875,
+        "width": 809.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9948.03125,
+        "bottom": 10743.671875,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2712.359375,
+        "bottom": 3048.796875,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 382.578125,
+        "bottom": 542.265625,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 396.109375
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 536.15625,
+        "bottom": 994.875,
+        "width": 348,
+        "left": 42
+      },
+      "prose": {
+        "top": 571.0625,
+        "bottom": 600.578125,
+        "width": 188.90625,
+        "left": 42
+      },
+      "nav": {
+        "top": 15443.1875,
+        "bottom": 16645.484375,
+        "width": 216.96875,
+        "left": 86.515625
+      },
+      "sources": {
+        "top": 15292.84375,
+        "bottom": 16910.53125,
+        "width": 306,
+        "left": 42
+      },
+      "table": {
+        "top": 3863.21875,
+        "bottom": 4334.375,
+        "width": 306,
+        "left": 42
+      },
+      "cta": {
+        "top": 714.078125,
+        "bottom": 930.203125,
+        "width": 348,
+        "left": 42
+      },
+      "cardCount": 4,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 4,
+      "cardWidth": 216.96875
+    },
+    {
+      "route": "/lease-comparison",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 141.09375,
+        "bottom": 612.0625,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "prose": {
+        "top": 176,
+        "bottom": 205.515625,
+        "width": 157.6875,
+        "left": 157.1875
+      },
+      "nav": {
+        "top": 9775.40625,
+        "bottom": 10190.09375,
+        "width": 1078.59375,
+        "left": 180.703125
+      },
+      "sources": {
+        "top": 9625.0625,
+        "bottom": 10406.765625,
+        "width": 1176,
+        "left": 132
+      },
+      "table": {
+        "top": 2687.109375,
+        "bottom": 2973.09375,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": {
+        "top": 387.703125,
+        "bottom": 547.390625,
+        "width": 1176,
+        "left": 157.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 530.890625
+    },
+    {
+      "route": "/lease-comparison",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 169.3125,
+        "bottom": 640.28125,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "prose": {
+        "top": 204.21875,
+        "bottom": 233.734375,
+        "width": 157.6875,
+        "left": 77.1875
+      },
+      "nav": {
+        "top": 9798.140625,
+        "bottom": 10212.828125,
+        "width": 1065.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9647.796875,
+        "bottom": 10429.078125,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2713.640625,
+        "bottom": 2999.625,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 415.921875,
+        "bottom": 575.609375,
+        "width": 1176,
+        "left": 77.1875
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 524.109375
+    },
+    {
+      "route": "/lease-comparison",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 197.53125,
+        "bottom": 642.484375,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 232.4375,
+        "bottom": 261.953125,
+        "width": 157.6875,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 9786.921875,
+        "bottom": 10269.1875,
+        "width": 809.015625,
+        "left": 107.484375
+      },
+      "sources": {
+        "top": 9636.578125,
+        "bottom": 10478.0625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "table": {
+        "top": 2712.359375,
+        "bottom": 2998.34375,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 418.125,
+        "bottom": 577.8125,
+        "width": 956.796875,
+        "left": 58.78125
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 396.109375
+    },
+    {
+      "route": "/lease-comparison",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 536.15625,
+        "bottom": 1026.859375,
+        "width": 348,
+        "left": 42
+      },
+      "prose": {
+        "top": 571.0625,
+        "bottom": 600.578125,
+        "width": 157.6875,
+        "left": 42
+      },
+      "nav": {
+        "top": 14479.65625,
+        "bottom": 15818.296875,
+        "width": 216.96875,
+        "left": 86.515625
+      },
+      "sources": {
+        "top": 14329.3125,
+        "bottom": 16083.34375,
+        "width": 306,
+        "left": 42
+      },
+      "table": {
+        "top": 3778.5625,
+        "bottom": 4051.046875,
+        "width": 306,
+        "left": 42
+      },
+      "cta": {
+        "top": 746.0625,
+        "bottom": 962.1875,
+        "width": 348,
+        "left": 42
+      },
+      "cardCount": 4,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 4,
+      "cardWidth": 216.96875
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 573.5,
+        "bottom": 6359.328125,
+        "width": 1176,
+        "left": 132
+      },
+      "prose": {
+        "top": 1325.03125,
+        "bottom": 1362.3125,
+        "width": 873.59375,
+        "left": 132
+      },
+      "nav": {
+        "top": 5478.9375,
+        "bottom": 5931.328125,
+        "width": 1125.625,
+        "left": 157.1875
+      },
+      "sources": null,
+      "table": {
+        "top": 1652.203125,
+        "bottom": 2039.09375,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": {
+        "top": 6052.28125,
+        "bottom": 6359.328125,
+        "width": 1176,
+        "left": 132
+      },
+      "cardCount": 5,
+      "columns": 3,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 364
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 601.71875,
+        "bottom": 6379.109375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 1351.140625,
+        "bottom": 1388,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 5499.140625,
+        "bottom": 5951.53125,
+        "width": 1112.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": {
+        "top": 1677.890625,
+        "bottom": 2064.78125,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 6072.484375,
+        "bottom": 6379.109375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cardCount": 5,
+      "columns": 3,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 359.484375
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 658.15625,
+        "bottom": 6735.125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 1427.140625,
+        "bottom": 1456.625,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 5556.546875,
+        "bottom": 6314.921875,
+        "width": 856.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": {
+        "top": 1774.734375,
+        "bottom": 2161.625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 6435.875,
+        "bottom": 6735.125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cardCount": 5,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 5,
+      "cardWidth": 839.25
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 952.421875,
+        "bottom": 12884.25,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "prose": {
+        "top": 2666.84375,
+        "bottom": 2754.5,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "nav": {
+        "top": 10932.234375,
+        "bottom": 12350.4375,
+        "width": 238.796875,
+        "left": 75.59375
+      },
+      "sources": null,
+      "table": {
+        "top": 3568.4375,
+        "bottom": 3984.046875,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cta": {
+        "top": 12471.390625,
+        "bottom": 12884.25,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cardCount": 5,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 5,
+      "cardWidth": 222
+    },
+    {
+      "route": "/resources",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 2863.75,
+        "bottom": 7223.375,
+        "width": 1176,
+        "left": 132
+      },
+      "prose": {
+        "top": 2863.75,
+        "bottom": 2901.03125,
+        "width": 873.59375,
+        "left": 132
+      },
+      "nav": {
+        "top": 617.171875,
+        "bottom": 1030.671875,
+        "width": 1176,
+        "left": 132
+      },
+      "sources": null,
+      "table": {
+        "top": 3299.421875,
+        "bottom": 4015.296875,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": null,
+      "cardCount": 6,
+      "columns": 3,
+      "lastRow": 3,
+      "rows": 2,
+      "cardWidth": 380.796875
+    },
+    {
+      "route": "/resources",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 2863.328125,
+        "bottom": 7215.359375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 2863.328125,
+        "bottom": 2900.1875,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 617.171875,
+        "bottom": 1030.671875,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "sources": null,
+      "table": {
+        "top": 3298.15625,
+        "bottom": 4014.03125,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": null,
+      "cardCount": 6,
+      "columns": 3,
+      "lastRow": 3,
+      "rows": 2,
+      "cardWidth": 376.265625
+    },
+    {
+      "route": "/resources",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 3107.078125,
+        "bottom": 7354.578125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 3107.078125,
+        "bottom": 3136.5625,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 673.609375,
+        "bottom": 1197.140625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "sources": null,
+      "table": {
+        "top": 3527.15625,
+        "bottom": 4243.03125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": null,
+      "cardCount": 6,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 3,
+      "cardWidth": 444.8125
+    },
+    {
+      "route": "/resources",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 6045.625,
+        "bottom": 15226.4375,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "prose": {
+        "top": 6045.625,
+        "bottom": 6074.84375,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "nav": {
+        "top": 939.65625,
+        "bottom": 2093.828125,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "sources": null,
+      "table": {
+        "top": 7058.765625,
+        "bottom": 8305.609375,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cta": null,
+      "cardCount": 6,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 6,
+      "cardWidth": 280.796875
+    },
+    {
+      "route": "/pricing",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 573.5,
+        "bottom": 2867.796875,
+        "width": 1176,
+        "left": 132
+      },
+      "prose": {
+        "top": 573.5,
+        "bottom": 686.375,
+        "width": 873.59375,
+        "left": 132
+      },
+      "nav": {
+        "top": 2078.5,
+        "bottom": 2439.796875,
+        "width": 1125.625,
+        "left": 157.1875
+      },
+      "sources": null,
+      "table": null,
+      "cta": {
+        "top": 2560.75,
+        "bottom": 2867.796875,
+        "width": 1176,
+        "left": 132
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 554.40625
+    },
+    {
+      "route": "/pricing",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 573.5,
+        "bottom": 2864.421875,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 573.5,
+        "bottom": 686.375,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 2075.546875,
+        "bottom": 2436.84375,
+        "width": 1112.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": null,
+      "cta": {
+        "top": 2557.796875,
+        "bottom": 2864.421875,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 547.625
+    },
+    {
+      "route": "/pricing",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 629.9375,
+        "bottom": 2890.078125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 629.9375,
+        "bottom": 742.8125,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 2108.578125,
+        "bottom": 2469.875,
+        "width": 856.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": null,
+      "cta": {
+        "top": 2590.828125,
+        "bottom": 2890.078125,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cardCount": 4,
+      "columns": 2,
+      "lastRow": 2,
+      "rows": 2,
+      "cardWidth": 419.625
+    },
+    {
+      "route": "/pricing",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 895.984375,
+        "bottom": 5606.296875,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "prose": {
+        "top": 895.984375,
+        "bottom": 1291.046875,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "nav": {
+        "top": 4083.4375,
+        "bottom": 5072.484375,
+        "width": 238.796875,
+        "left": 75.59375
+      },
+      "sources": null,
+      "table": null,
+      "cta": {
+        "top": 5193.4375,
+        "bottom": 5606.296875,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cardCount": 4,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 4,
+      "cardWidth": 238.796875
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": 1440,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 573.5,
+        "bottom": 5164.640625,
+        "width": 1176,
+        "left": 132
+      },
+      "prose": {
+        "top": 1805.046875,
+        "bottom": 1842.328125,
+        "width": 873.59375,
+        "left": 132
+      },
+      "nav": {
+        "top": 4485.375,
+        "bottom": 4736.640625,
+        "width": 1125.625,
+        "left": 157.1875
+      },
+      "sources": null,
+      "table": {
+        "top": 1041.421875,
+        "bottom": 1428.3125,
+        "width": 1176,
+        "left": 132
+      },
+      "cta": {
+        "top": 4857.59375,
+        "bottom": 5164.640625,
+        "width": 1176,
+        "left": 132
+      },
+      "cardCount": 3,
+      "columns": 3,
+      "lastRow": 3,
+      "rows": 1,
+      "cardWidth": 364
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": 1280,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 601.71875,
+        "bottom": 5186.109375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 1832,
+        "bottom": 1868.859375,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 4507.265625,
+        "bottom": 4758.53125,
+        "width": 1112.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": {
+        "top": 1068.375,
+        "bottom": 1455.265625,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 4879.484375,
+        "bottom": 5186.109375,
+        "width": 1162.421875,
+        "left": 58.78125
+      },
+      "cardCount": 3,
+      "columns": 3,
+      "lastRow": 3,
+      "rows": 1,
+      "cardWidth": 359.484375
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": 1024,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 658.15625,
+        "bottom": 5291.015625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "prose": {
+        "top": 1922.75,
+        "bottom": 1952.234375,
+        "width": 873.59375,
+        "left": 58.78125
+      },
+      "nav": {
+        "top": 4509.515625,
+        "bottom": 4870.8125,
+        "width": 856.046875,
+        "left": 83.96875
+      },
+      "sources": null,
+      "table": {
+        "top": 1159.125,
+        "bottom": 1546.015625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cta": {
+        "top": 4991.765625,
+        "bottom": 5291.015625,
+        "width": 906.421875,
+        "left": 58.78125
+      },
+      "cardCount": 3,
+      "columns": 2,
+      "lastRow": 1,
+      "rows": 2,
+      "cardWidth": 419.625
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": 390,
+      "overflowX": 0,
+      "footer": true,
+      "oldFooter": false,
+      "shell": {
+        "top": 980.640625,
+        "bottom": 9584.53125,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "prose": {
+        "top": 2720.8125,
+        "bottom": 2779.25,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "nav": {
+        "top": 8300.578125,
+        "bottom": 9050.71875,
+        "width": 238.796875,
+        "left": 75.59375
+      },
+      "sources": null,
+      "table": {
+        "top": 1877.875,
+        "bottom": 2293.484375,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cta": {
+        "top": 9171.671875,
+        "bottom": 9584.53125,
+        "width": 280.796875,
+        "left": 54.59375
+      },
+      "cardCount": 3,
+      "columns": 1,
+      "lastRow": 1,
+      "rows": 3,
+      "cardWidth": 238.796875
+    }
+  ]
+}

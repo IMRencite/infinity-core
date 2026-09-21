@@ -2,12 +2,9 @@
 
 import { useMemo, useState } from "react";
 import type { DepartmentId, OperatorVentureSnapshot } from "@/lib/infinity/operator-console/types";
-import type { HqInspectionContext } from "@/lib/infinity/operator-console/inspection-context";
-import {
-  HQ_INSPECTION_WRITE_BOUNDARY,
-  filterArtifactsForInspection,
-  isRoomCompatibleWithInspection,
-} from "@/lib/infinity/operator-console/inspection-context";
+import type { HqInspectionContext } from "@/lib/infinity/operator-console/inspection-model";
+import { HQ_INSPECTION_WRITE_BOUNDARY } from "@/lib/infinity/operator-console/inspection-model";
+import { filterArtifactsForInspection, isRoomCompatibleWithInspection } from "@/lib/infinity/operator-console/inspection-filter";
 import { getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
 import { abbreviateCanonicalId } from "@/lib/infinity/venture-systems-architecture/hq/identity-guards";
 import type { SystemsArchitectHqView } from "@/lib/infinity/venture-systems-architecture/hq/hq-view";
@@ -78,7 +75,7 @@ export function HqInspectionWorkspace({ snapshot, context, systemsView, open, on
           >
             ← Back to HQ
           </button>
-          <p className="hq-inspection-kicker">{context.status === "UNAVAILABLE" ? "UNAVAILABLE" : "INSPECTING"}</p>
+          <p className="hq-inspection-kicker">{context.status === "UNAVAILABLE" ? "UNAVAILABLE" : "NOW INSPECTING"}</p>
           <h2 className="hq-inspection-workspace-title" data-inspection-workspace-name={name}>
             {name}
           </h2>

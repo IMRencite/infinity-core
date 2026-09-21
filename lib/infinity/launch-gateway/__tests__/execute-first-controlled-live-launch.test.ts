@@ -102,9 +102,9 @@ describe.runIf(RUN)("First Controlled Live Launch v1", () => {
     const ghToken = process.env[GITHUB_TOKEN_ENV];
     const vzToken = process.env[VERCEL_TOKEN_ENV];
 
-    const block = (reason: string) => {
+    const block = (reason: string): never => {
       console.log(JSON.stringify({ finalStatus: `EXECUTION BLOCKED — ${reason}` }));
-      expect.fail(`EXECUTION BLOCKED — ${reason}`);
+      throw new Error(`EXECUTION BLOCKED — ${reason}`);
     };
 
     if (
@@ -135,7 +135,10 @@ describe.runIf(RUN)("First Controlled Live Launch v1", () => {
         .eq("id", step.actionId)
         .eq("organization_id", ORG)
         .single();
-      if (!row) block(`${step.actionType}: action missing`);
+      if (!row) {
+        block(`${step.actionType}: action missing`);
+        continue;
+      }
       const payload = (row.payload_manifest ?? {}) as Record<string, unknown>;
       if (stablePayloadHash(payload) !== step.payloadHash) {
         block(`${step.actionType}: payload hash changed`);

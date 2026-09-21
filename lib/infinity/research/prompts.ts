@@ -7,7 +7,7 @@ export type ResearchPromptOptions = {
   plannedQueries?: string[];
   targetDimensions?: string[];
   maxFindings?: number;
-  phase?: "initial" | "gap_fill";
+  phase?: "initial" | "gap_fill" | "revenue_model_gap_fill" | "benchmark_economics_gap_fill" | "quality_replacement";
 };
 
 export function buildResearchSystemInstructions(options?: ResearchPromptOptions): string {
@@ -54,7 +54,13 @@ export function buildResearchUserPrompt(
     options?.plannedQueries?.length
       ? [
           "",
-          options.phase === "gap_fill"
+          options.phase === "quality_replacement"
+            ? "QUALITY-REPLACEMENT PHASE: Replace or corroborate LOW-confidence economic numbers with official pricing pages, methodology-backed CAC/margin/retention studies, and setup/onboarding fees for this customer and pricing cluster. Do not invent numbers. A number with LOW confidence is not sufficient."
+            : options.phase === "benchmark_economics_gap_fill"
+            ? "BENCHMARK-ECONOMICS GAP-FILL: Research grounded CAC, churn/retention, gross margin, conversion, CPC/CPL, and sales-cycle benchmarks for this customer/category. Prefer official reports, filings, and methodology-backed studies. Do not invent numbers. Do not treat modeled estimates as observed venture economics."
+            : options.phase === "revenue_model_gap_fill"
+            ? "REVENUE-MODEL GAP-FILL: Research how comparable businesses make money — official pricing pages, plans, packages, setup/onboarding fees, monthly/annual subscriptions, per-seat or per-location fees, retainers, commissions, add-ons, and contract terms. Do not invent prices. Do not stop after confirming a company exists."
+            : options.phase === "gap_fill"
             ? "GAP-FILL PHASE: Search only the unresolved dimensions below. Do not repeat already-answered market queries."
             : "INITIAL COVERAGE PHASE: Prefer these bounded searches. Do not invent a large extra query set.",
           options.targetDimensions?.length

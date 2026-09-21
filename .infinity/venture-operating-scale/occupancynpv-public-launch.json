@@ -1,0 +1,16 @@
+{
+  "founder_authorization": true,
+  "authority": "Founder-authorized public launch of the current OccupancyNPV production product, live payment system, fulfillment configuration, approved customer experience, current legal/commercial messaging, and governed acquisition systems.",
+  "publicly_launched": "YES",
+  "launched_at": "2026-09-08T07:38:01.064Z",
+  "policy_version": "occupancynpv_public_launch_v1",
+  "production_url": "https://occupancynpv.com",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "69c17c4725a263d69c6b897a3dfd9081e4c91615fab8bab91e3937f4cdfcaf26",
+  "deployment_id": "dpl_XkdbXKrYkzoNaqit7kkEUwc28e69",
+  "experiment_id": "exp_e72beb7b6d35e7b20acf",
+  "search_discovery": "SEARCH_PROVIDER_CONFIGURATION_REQUIRED",
+  "organic": "ACTIVE",
+  "outreach": "OBSERVING",
+  "creative_media": "OBSERVING"
+}

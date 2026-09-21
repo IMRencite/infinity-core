@@ -1,0 +1,50 @@
+{
+  "crons": [
+    {
+      "path": "/api/runtime/organic-tick",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/runtime/tick",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/runtime/venture-operating-cycle",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/runtime/daily-improvement",
+      "schedule": "0 6 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    },
+    {
+      "source": "/dashboard/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store, no-cache, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/api/operator-console/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
+    {
+      "source": "/api/hq/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    }
+  ]
+}

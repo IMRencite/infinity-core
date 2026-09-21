@@ -30,6 +30,10 @@ import {
 import { classifyVentureSelectionFailure } from "./failures";
 import { loadCandidateBundlesForSelection } from "./load/load-candidates";
 import {
+  requiresExplicitSelectionPool,
+  validateSelectionPoolLineage,
+} from "./lineage/validate-pool";
+import {
   applyPortfolioCorrelationPenalties,
   generateQueueReason,
   inferDependencyTags,
@@ -46,6 +50,10 @@ import {
 } from "./persistence";
 import { calculateSelectionScore } from "./scoring/selection-score";
 import { calculateValidationDimensions } from "./scoring/validation-score";
+import {
+  aggregateAdversarialCostUsd,
+  estimateAdversarialReviewCostUsd,
+} from "./cost/estimate-adversarial-cost";
 import type {
   CandidateEvaluationDraft,
   RunVentureSelectionInput,
@@ -57,8 +65,6 @@ async function evaluateCandidateDraft(input: {
   config: ReturnType<typeof loadVentureSelectionConfig>;
   runAdversarial: boolean;
 }): Promise<CandidateEvaluationDraft> {
-  const assumptions = buildAssumptionRegister(input.candidate);
-  const fatal = analyzeFatalAssumptions(assumptions);
   const buildability = assessBuildability(input.candidate);
   const speedToValue = assessSpeedToValue(input.candidate);
   const expectedValueInputs = deriveExpectedValueInputs(input.candidate);
@@ -78,6 +84,12 @@ async function evaluateCandidateDraft(input: {
       adversarialReview = null;
     }
   }
+
+  const assumptions = buildAssumptionRegister(input.candidate, {
+    adversarialRiskInputs: adversarialReview?.riskInputs,
+    adversarialFindings: adversarialReview?.findings,
+  });
+  const fatal = analyzeFatalAssumptions(assumptions);
 
   const { dimensions, validationScore } = calculateValidationDimensions({
     candidate: input.candidate,
@@ -177,14 +189,31 @@ export async function runVentureSelectionCycle(
     };
   }
 
+  if (requiresExplicitSelectionPool(input.runPurpose) && !input.opportunityCandidateIds?.length) {
+    throw new Error(
+      "SELECTION_POOL_LINEAGE_ERROR: FAVC1 venture selection requires explicit opportunityCandidateIds",
+    );
+  }
+
   const bundles = await loadCandidateBundlesForSelection(admin, input.organizationId, {
     candidateIds: input.opportunityCandidateIds,
+    discoveryRunId: input.discoveryRunId,
     monetizationRunId: input.monetizationRunId,
     maxCandidates: input.maxCandidates ?? config.maxCandidatesPerRun,
   });
 
   if (bundles.length === 0) {
     throw new Error("No candidates with monetization analyses available for venture selection.");
+  }
+
+  if (input.opportunityCandidateIds?.length) {
+    validateSelectionPoolLineage({
+      organizationId: input.organizationId,
+      expectedCandidateIds: input.opportunityCandidateIds,
+      expectedDiscoveryRunId: input.discoveryRunId,
+      expectedMonetizationRunId: input.monetizationRunId,
+      bundles,
+    });
   }
 
   const correlationId = randomUUID();
@@ -314,11 +343,21 @@ export async function runVentureSelectionCycle(
     const report = buildVentureSelectionReport({
       evaluations,
       reasoningRunIds: [],
-      costSummary: {
-        adversarialReviewCount: adversarialCount,
-        tokenUsage,
-        estimatedCostUsd: null,
-      },
+      costSummary: (() => {
+        const adversarialReviews = evaluations
+          .map((evaluation) => evaluation.adversarialReview)
+          .filter((review): review is NonNullable<typeof review> => review != null);
+        const aggregated = aggregateAdversarialCostUsd(adversarialReviews);
+        const fallback = estimateAdversarialReviewCostUsd(tokenUsage);
+        const estimatedCostUsd = aggregated.estimatedCostUsd ?? fallback.estimatedCostUsd;
+        return {
+          adversarialReviewCount: adversarialCount,
+          tokenUsage,
+          estimatedCostUsd,
+          costKnown: aggregated.known || fallback.known,
+          pricingVersion: fallback.pricingVersion,
+        };
+      })(),
     });
 
     const serialized = JSON.stringify(report);
@@ -336,6 +375,8 @@ export async function runVentureSelectionCycle(
       reject_count: report.rejectCount,
       handoffs_created: report.handoffsCreated,
       token_usage: tokenUsage as never,
+      estimated_cost_usd: report.costSummary.estimatedCostUsd,
+      cost_uncertainty: report.costSummary.costKnown ? "known" : "unknown",
       resource_allocation_snapshot: resourceAllocation as never,
       selection_report: report as never,
       failure_classification: null,

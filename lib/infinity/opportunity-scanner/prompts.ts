@@ -50,11 +50,23 @@ export function buildExtractionPrompt(input: {
   ].join("\n");
 }
 
-export function buildStrategyResearchUserPrompt(objective: string): string {
+export function buildStrategyResearchUserPrompt(
+  objective: string,
+  options?: { requireSourceBackedFindings?: boolean },
+): string {
+  const sourceLines = options?.requireSourceBackedFindings
+    ? [
+        "RETRY REQUIREMENT: Prior attempt lacked validated source provenance.",
+        "Use Google Search grounding and ensure every grounded finding is clearly supported by retrieved search evidence.",
+        "Leave finding sourceUrls as [] — validated URLs are attached server-side from search metadata.",
+      ]
+    : [];
+
   return [
     objective,
     "",
     "Use Google Search grounding. Return evidence-backed findings only.",
     "Do not propose specific ventures to build.",
+    ...sourceLines,
   ].join("\n");
 }

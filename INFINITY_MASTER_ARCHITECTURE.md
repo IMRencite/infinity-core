@@ -19,26 +19,32 @@ Infinity is not a single website builder or content generator. It is a reusable 
 - Scale quality, not output count.
 
 ## 3. End-to-End Target Pipeline
-Opportunity Discovery / Scanner
-  (including Founder Idea Lab intake → same OpportunityCandidate)
-→ Research & Evidence
-→ Strategy / Validation
-→ Monetization Engine
+Opportunity Discovery
+→ Research / Validation
+→ Preliminary Economics
 → Venture Selection
-→ Company Builder
-→ Acquisition Architecture
-→ Organic Growth Architecture (when justified)
-→ Creative Media Architecture (verified foundation)
-→ Product + Asset Builder
-→ Production Artifact
-→ External Action Gateway / Launch
-→ Treasury + Capital / Budget Engine (governs all financial mutations)
-→ Marketing & Growth
-→ Monitoring / Measurement (Performance Intelligence V1 verified foundation)
-→ Learning / Iteration
-→ Expansion, repair, prune, pivot, or shutdown
+→ Competitive Intelligence
+→ Commercialization Economics
+→ OFFER + DEAL ARCHITECTURE
+→ Company Formation
+→ Venture Systems / Payment Architecture
+→ Organic Growth / Creative Media
+→ Product / Assets
+→ Production Artifact Handoff
+→ Governed Deployment Readiness
+→ Governed Deployment Execution
+→ Commercialization / Domain / DNS / Payments
+→ Venture-Specific Fulfillment
+→ Payment Activation
+→ Public Launch
+→ Active Evidence-Generating Growth
+→ Performance Monitoring / Learning
+→ Offer Optimization
+→ Product Improvement
+→ Customer Feedback / Suggestion Learning
+→ iteration
 
-The pipeline is adaptive. Not every venture requires every subsystem.
+Existing subsystems remain: Opportunity Scanner / Founder Idea Lab, Monetization Engine, Company Builder, Acquisition Architecture, External Action Gateway, Treasury + Capital / Budget Engine, Performance Intelligence, and Learning. The pipeline is adaptive. Not every venture requires every subsystem. Offer + Deal Architecture is required before commercial activation unless explicitly exempted.
 
 ## 4. AI Brain and Model Routing
 Infinity uses a provider-neutral AI Brain and AI Model Router. Configured provider ecosystem currently includes OpenAI, Google/Gemini, Anthropic, and xAI.
@@ -80,7 +86,19 @@ Before committing substantial build resources, Infinity should determine how a v
 - licensing
 - other evidence-supported models
 
-The engine should model revenue mechanism, pricing assumptions, unit economics, expected gross profit, acquisition economics, payback, operating costs, and risk. Monetization output should influence venture selection, product scope, organic strategy, media investment, and expansion.
+The engine should model revenue mechanism, pricing assumptions, unit economics, expected gross profit, acquisition economics, payback, operating costs, and risk. Monetization output should influence venture selection, product scope, organic strategy, media investment, and expansion. Pricing is not the offer. Offer + Deal Architecture (`OfferArchitectureContract`) sits after commercialization economics and before company formation. It reuses Monetization Engine, Venture Economics / Profit Lab, Treasury, payment readiness, fulfillment, existing experiment contracts, Performance Intelligence, Learning, and Customer Suggestions. It does not create a second economics, experiment, or feedback store.
+
+Customer Suggestions is a first-class HQ venture surface. Every customer-facing venture using the canonical feedback loop inherits `projectVentureCustomerSuggestions()`. FounderFeedbackVisibilityGate fails if canonical feedback exists without a reachable founder-visible suggestions surface. HQ remains a projection of canonical state.
+
+Payment is not fulfillment. Commercial fulfillment is global Infinity infrastructure with venture-specific contracts (`CommercialOfferContract`, `FulfillmentContract`, `CustomerEntitlement`, `FulfillmentOrder`). A paid offer may not activate unless `FulfillmentReadinessGate` is PASS. A successful payment event may trigger fulfillment; it never silently marks `FULFILLMENT_COMPLETE` without proven completion criteria. An orphaned paid customer is a critical commercial failure.
+
+Payment configuration is not payment readiness. `CommercialCredentialCapabilityContract`, `PaymentPathReadinessGate`, `PaymentPathVerificationFreshnessGate`, `EndToEndMoneyPathContract`, and `CommercialProductionReadinessGate` require a verified live executable payment path before activation and public launch. Provider adapters (Stripe Checkout today; Paddle, PayPal, app-store, and merchant providers later) must prove the credential can execute the commercial action — for Stripe, `checkout.sessions.create` — using current production credentials. Least privilege remains required. A publicly launched paid venture must continuously verify its live money path. Founder physical checkout testing is not the payment-health monitoring system.
+
+Canonical commercialization lifecycle:
+
+opportunity → validation → monetization → commercial offer → venture-specific fulfillment contract → product/service implementation → payment configuration → checkout/webhook → fulfillment validation → PaymentPathReadinessGate → payment activation → CommercialProductionReadinessGate → public launch → performance/learning
+
+Payment activation may not precede fulfillment readiness or live payment-path verification. Public launch remains a separate firewall and must re-verify the live path.
 
 ## 7. Company Builder
 Company Builder transforms an approved opportunity and monetization plan into a Venture Blueprint / BuildPackage describing what the venture actually needs. It should not independently reinvent downstream specialist architecture. For example, Organic Growth Architecture owns organic site expansion planning; Creative Media Architecture will own media planning.
@@ -169,6 +187,21 @@ Infinity must never interpret a 1,000-page model as a command to manufacture 1,0
 If 1,000 candidates produce only 175 pages that currently deserve to exist, build 175.
 
 **Scale quality, not URL count.**
+
+### Infinity Public Authority & Digital Real Estate Standard V1
+All authority-led public ventures inherit the Infinity Public Authority & Digital Real Estate Standard. Venture-specific builds may extend or specialize the standard but may not silently weaken human readability, semantic topic architecture, search-backed question coverage, GEO answer surfaces, contextual internal linking, authoritative sourcing, conversion paths, visual quality, or rendered quality-control requirements.
+
+Each core authority topic must be backed by at least 20 validated real-world search questions before Infinity may classify the topic as coverage-complete. This is a coverage rule, not a requirement to create 20 standalone URLs.
+
+Validated question relationships and visible standalone authority coverage are different metrics. Mature high-demand topic families should generally expose at least 10 distinct standalone authority-question surfaces when evidence and depth justify them. The >=10 target must never create thin or cannibalizing pages. Search evidence, not an arbitrary page quota, determines final authority depth. Long-form authority surfaces use semantic section backgrounds to create visual rhythm without mechanical striping.
+
+Page templates are archetypes, not fixed layouts. Global standards define required outcomes; the venture profile and page archetype determine how those outcomes are expressed.
+
+Founder physical browser evidence outranks automated visual-quality claims when they conflict.
+
+Canonical public footer attribution, in this visible order, is: Privacy Policy | Terms of Service | Sitemap | An Infinity OS Venture | By IMR. The venture label is exactly "An Infinity OS Venture". Hard publishability also includes SemanticContentRedundancyGate, SemanticNavigationQualityGate, and EditorialHighlightQualityGate. Legal and contact archetypes do not require semantic navigation or editorial highlights.
+
+The CRE Search-Validated Authority Expansion (`art_00cd1821c5a178bf2487`) is the first reference implementation. Its metrics demonstrate one valid implementation; they are not universal numeric floors except where the standard explicitly locks them (for example, 20 validated question relationships per core topic, zero orphans, and approximately 4th-grade readability).
 
 ### Anti-thin-content hard gate
 Every indexable page must deserve to exist independently. A page cannot pass merely because a keyword, location, entity, competitor page, or programmatic combination exists.
@@ -379,6 +412,16 @@ Founder Idea / Autonomous Opportunity → Research → Monetization → Selectio
 
 V1 stops at READY / READY_FOR_CONTROLLED_LAUNCH. READY is not PUBLICLY_LAUNCHED. Technical failure is not business REJECT. Business VALIDATE does not silently build. ZTP does not depend on FAVC1; future autonomous cycles may invoke ZTP.
 
+## 15e. Live Commercial Provider Capability Verification
+Live read-only provider probes prove the external boundary before any commercialization mutation. Mode is READ_ONLY. Provider capability status is separate from launch authority:
+
+Commercialization Engine VERIFIED ≠ Provider READ_ONLY_VERIFIED ≠ Mutation AUTHORIZED ≠ PUBLIC_LAUNCH_READY.
+
+Required path for cost-bearing external mutation:
+FinancialActionRequest → Treasury policy → authorization → External Action Gateway → provider adapter.
+
+Unknown provider costs remain UNKNOWN and never become $0 for authorization. Optional missing credentials are NOT_CONFIGURED / SKIP, not fake pass. Verification is freshness-aware (24h). Provider credentials are server-only and never enter Cursor workspaces. Mock success is not live verification. HQ reads persisted verification state and does not execute live provider probes.
+
 ## 15f. Live Deployment Provider Enablement — Vercel
 A provider capability becomes `LIVE_WRITE_VERIFIED` only after a real governed provider mutation succeeds and its result is durably recorded and verified. Verification is capability-scoped. Read-only verification still never implies write authority for other actions.
 
@@ -420,3 +463,6 @@ No global human-approval stage should be reintroduced unless explicitly required
 
 ## 17. Definition of Success
 Infinity succeeds when it can autonomously discover a viable opportunity, prove monetization potential, decide what company/product/assets/acquisition channels are needed, build and validate them, launch permitted actions, generate revenue, observe performance, and intelligently iterate—with traceable evidence and economics at each major decision.
+
+## 18. HQ Venture Identity + Growth Evidence
+A VENTURE CLICK IS A COMPLETE SELECTION ACTION. THE DROPDOWN IS A SWITCHER, NOT A SECOND CONFIRMATION STEP. ROUTE + SELECTOR + RENDERED VENTURE MUST ALWAYS AGREE. LONG ECONOMICS EXPLANATIONS MUST NOT BE FORCED INTO COMPACT STATUS-BADGE GEOMETRY. MARKETING MUST ACTIVELY GENERATE EVIDENCE. FIVE CONTACTS IS NOT A NORMAL VALIDATION SAMPLE. 10 QUALIFIED NEW PROSPECTS PER BUSINESS DAY FOR APPROXIMATELY 20 BUSINESS DAYS IS A REASONABLE ADAPTIVE STARTING VALIDATION PLAN. MINIMUM QUALIFIED CONVERSATIONS != TOTAL CONTACT COUNT. SEND TIMING MUST USE RECIPIENT LOCAL TIME AND BE OPTIMIZED FROM PERFORMANCE. ROUTINE RESPONSES SHOULD USE VARIABLE CONTEXT-AWARE PACING. URGENT ISSUES MUST NOT BE ARTIFICIALLY DELAYED. NORMAL FIRST CONTACT MAY SIMPLY IDENTIFY THE SENDER AS “INFINITY.” IF DIRECTLY ASKED ABOUT AUTOMATION OR IDENTITY, INFINITY MUST ANSWER TRUTHFULLY. INFINITY MUST NEVER IMPERSONATE A HUMAN. FREE TRIALS ARE A GLOBAL CAPABILITY, NOT A UNIVERSAL REQUIREMENT. AUTO-CONVERTING TRIALS REQUIRE CLEAR CUSTOMER AUTHORIZATION AND BILLING DISCLOSURE.

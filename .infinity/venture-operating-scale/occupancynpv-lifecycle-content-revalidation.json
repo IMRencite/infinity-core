@@ -1,0 +1,9 @@
+{
+  "transitions": [
+    "PRODUCT_NOT_BUILT → PRODUCT_BUILT",
+    "PAYMENT_DISABLED → PAYMENT_ACTIVE",
+    "FULFILLMENT_MISSING → FULFILLMENT_READY"
+  ],
+  "revalidatedAt": "2026-09-10T05:10:18.894Z",
+  "contentDigest": "b6a8072dfd0ef255709f0f44bb4dd30f9ca94fad81f8d2dbc1b79de3dfbbc955"
+}

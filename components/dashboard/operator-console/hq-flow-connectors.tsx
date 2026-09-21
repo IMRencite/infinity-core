@@ -1,6 +1,7 @@
 "use client";
 
 import type { DepartmentId } from "@/lib/infinity/operator-console/types";
+import { HQ_OPERATING_FLOOR_ORDER } from "@/lib/infinity/operator-console/floor-layout";
 import { getRoomDisplayNames, LIFECYCLE_ROOM_SEQUENCE } from "@/lib/infinity/operator-console/room-naming";
 
 type Props = {
@@ -30,8 +31,9 @@ export function HqFlowConnectors({
   return (
     <div className="hq-floor-flow-legend mb-2.5" aria-hidden>
       <ol className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
-        {LIFECYCLE_ROOM_SEQUENCE.map((id, index) => {
-          const active = index <= activeFlowIndex && activeFlowIndex >= 0;
+        {HQ_OPERATING_FLOOR_ORDER.map((id, index) => {
+          const lifecycleIndex = LIFECYCLE_ROOM_SEQUENCE.indexOf(id);
+          const active = lifecycleIndex >= 0 && lifecycleIndex <= activeFlowIndex && activeFlowIndex >= 0;
           return (
             <li key={id} className="flex items-center gap-1.5">
               <span
@@ -41,7 +43,7 @@ export function HqFlowConnectors({
               >
                 {getRoomDisplayNames(id).displayName}
               </span>
-              {index < LIFECYCLE_ROOM_SEQUENCE.length - 1 ? (
+              {index < HQ_OPERATING_FLOOR_ORDER.length - 1 ? (
                 <span className="text-[8px] text-zinc-700" aria-hidden>
                   →
                 </span>

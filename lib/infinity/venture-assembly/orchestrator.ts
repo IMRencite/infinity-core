@@ -14,7 +14,11 @@ import {
   replaceExternalDependencies,
   updateVentureAssembly,
 } from "./persistence";
-import { buildAssemblyPackages, loadAssemblySourceContext } from "./packages";
+import {
+  buildAssemblyPackages,
+  loadAssemblySourceContext,
+  resolveOpportunityCandidateIdFromPlanExecution,
+} from "./packages";
 import { materializeProductionArtifact } from "@/lib/infinity/production-artifact/materialize";
 
 export type RequestVentureAssemblyResult =
@@ -76,10 +80,17 @@ export async function requestVentureAssembly(
     return { status: "reused", ventureAssemblyId: existing.id };
   }
 
+  const opportunityCandidateId = await resolveOpportunityCandidateIdFromPlanExecution(admin, {
+    organizationId: input.organizationId,
+    missionId: input.missionId,
+    planExecutionId: pe.id,
+  });
+
   const row = await insertVentureAssembly(admin, {
     organizationId: input.organizationId,
     missionId: input.missionId,
     opportunityId: pe.opportunityId,
+    opportunityCandidateId,
     executiveDecisionId: pe.executiveDecisionId,
     planId: pe.planId,
     planVersion: pe.planVersion,
@@ -234,6 +245,7 @@ export async function executeVentureAssemblyWorker(
 
   const updated = await updateVentureAssembly(admin, input.organizationId, assembly.id, {
     company_id: company.id,
+    opportunity_candidate_id: ctx.opportunityCandidateId ?? assembly.opportunityCandidateId ?? null,
     manifest: packages.manifest as Json,
     identity_package: packages.identityPackage as Json,
     business_model_package: packages.businessModelPackage as Json,

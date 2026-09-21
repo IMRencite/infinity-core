@@ -1,0 +1,126 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_PAYMENT_SAFETY_ROLLBACK_V1",
+  "audit": {
+    "start": "2026-09-07T05:25:43.503Z",
+    "checkoutSessions": 0,
+    "customers": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "verifiedSuccessfulPayments": 0,
+    "orphanedPaidCustomerCount": 0,
+    "readable": "YES",
+    "readStatus": {
+      "sessions": "READ",
+      "customers": "READ",
+      "paymentIntents": "READ",
+      "charges": "READ",
+      "subscriptions": "READ",
+      "invoices": "READ"
+    }
+  },
+  "rollback": {
+    "previousPaymentActivation": "YES",
+    "currentPaymentActivation": "NO",
+    "checkoutSessionCreation": "BLOCKED",
+    "serverSideFulfillmentGate": "FAIL"
+  },
+  "infrastructure": {
+    "products": "PRESERVED",
+    "prices": "PRESERVED",
+    "checkoutArchitecture": "PRESERVED",
+    "webhook": "PRESERVED",
+    "analytics": "PRESERVED"
+  },
+  "fulfillment": {
+    "requiredByPaymentReadiness": "YES",
+    "current": "UNCONFIGURED",
+    "paymentReadinessGate": "BLOCKED",
+    "blockingReasons": [
+      "payment_activation_not_authorized",
+      "fulfillment_unconfigured"
+    ]
+  },
+  "commercialization": {
+    "paymentConfiguration": "CONFIGURED",
+    "paymentActivation": "NO",
+    "publiclyLaunched": "NO",
+    "newBlockers": [
+      "FULFILLMENT_CONFIGURATION"
+    ],
+    "remaining": [
+      "FULFILLMENT_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "production": {
+    "https": "PASS",
+    "wwwRedirect": "PASS",
+    "routes": "93 / 93 PASS",
+    "pricing": "PASS",
+    "attemptedCheckoutWhileBlocked": "BLOCKED",
+    "webhook": "PASS"
+  },
+  "customerSafety": {
+    "realPaidCustomerDiscovered": "NO",
+    "recoveryRequired": "NO",
+    "automaticRefundPerformed": "NO"
+  },
+  "writes": {
+    "stripeWrites": 0,
+    "refunds": 0,
+    "newCustomers": 0,
+    "newCheckoutSessions": 0,
+    "newPaymentIntents": 0,
+    "newCharges": 0,
+    "newSubscriptions": 0,
+    "dnsWrites": 0,
+    "publicLaunch": 0
+  },
+  "invariant": {
+    "paidOfferExists": true,
+    "fulfillment": "UNCONFIGURED",
+    "paymentActivation": "BLOCKED",
+    "checkoutSessionCreation": "BLOCKED"
+  },
+  "bindings": {
+    "professional": {
+      "offer": "PROFESSIONAL",
+      "productId": "prod_VDIjmRpY19C9HZ",
+      "priceId": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+      "mode": "subscription",
+      "amount": 29000,
+      "currency": "usd",
+      "recurrence": "ANNUAL_RECURRING"
+    },
+    "perDeal": {
+      "offer": "PER_DEAL",
+      "productId": "prod_VDIju0S2lBO9i5",
+      "priceId": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+      "mode": "payment",
+      "amount": 14900,
+      "currency": "usd",
+      "recurrence": "ONE_TIME"
+    },
+    "webhook": "we_1UCssQLdvXKx7R7GcHonT3rh",
+    "account": "acct_18h5CjLdvXKx7R7G",
+    "domain": "occupancynpv.com"
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4
+  },
+  "deployment": {
+    "attempted": "NO",
+    "ok": false,
+    "deploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "safeError": "NOT_ATTEMPTED"
+  },
+  "nextState": "OCCUPANCYNPV_PAYMENT_SAFELY_DEACTIVATED_PENDING_FULFILLMENT",
+  "nextGovernedAction": "VENTURE_SPECIFIC_COMMERCIAL_FULFILLMENT_ARCHITECTURE_V1"
+}

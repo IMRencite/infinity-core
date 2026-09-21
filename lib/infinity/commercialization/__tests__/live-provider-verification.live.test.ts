@@ -41,13 +41,32 @@ function testVerification(
   };
 }
 
+type VerificationTableClient = {
+  from(table: "commercial_provider_verifications"): {
+    select(columns: "id"): {
+      eq(column: string, value: string): {
+        eq(column: string, value: string): {
+          eq(column: string, value: string): Promise<{
+            data: Array<{ id: string }> | null;
+            error: { message: string } | null;
+          }>;
+        };
+      };
+    };
+    delete(): {
+      eq(column: string, value: string): Promise<{ error: { message: string } | null }>;
+    };
+  };
+};
+
 async function countIdentity(
   admin: ReturnType<typeof createAdminClient>,
   organizationId: string,
   providerCategory: string,
   providerKey: string,
 ): Promise<number> {
-  const result = await admin
+  const table = admin as unknown as VerificationTableClient;
+  const result = await table
     .from("commercial_provider_verifications")
     .select("id")
     .eq("organization_id", organizationId)
@@ -58,8 +77,9 @@ async function countIdentity(
 }
 
 async function deleteTestOwnedRows(admin: ReturnType<typeof createAdminClient>): Promise<void> {
-  await admin.from("commercial_provider_verifications").delete().eq("provider_key", TEST_PROVIDER_KEY);
-  await admin.from("commercial_provider_verifications").delete().eq("provider_key", TEST_PROVIDER_KEY_ALT);
+  const table = admin as unknown as VerificationTableClient;
+  await table.from("commercial_provider_verifications").delete().eq("provider_key", TEST_PROVIDER_KEY);
+  await table.from("commercial_provider_verifications").delete().eq("provider_key", TEST_PROVIDER_KEY_ALT);
 }
 
 const RUN_LIVE = process.env.RUN_COMMERCIAL_LIVE_PROBE === "true";

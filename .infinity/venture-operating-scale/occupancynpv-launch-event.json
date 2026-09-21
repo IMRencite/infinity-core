@@ -1,0 +1,19 @@
+{
+  "event_id": "evt_occupancynpv_public_launch_20260908",
+  "venture": "OccupancyNPV",
+  "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+  "launched_at": "2026-09-08T07:38:01.064Z",
+  "domain": "occupancynpv.com",
+  "production_url": "https://occupancynpv.com",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "69c17c4725a263d69c6b897a3dfd9081e4c91615fab8bab91e3937f4cdfcaf26",
+  "deployment_id": "dpl_XkdbXKrYkzoNaqit7kkEUwc28e69",
+  "payment_activation": "YES",
+  "fulfillment": "PASS",
+  "founder_authorization": "Founder-authorized public launch of the current OccupancyNPV production product, live payment system, fulfillment configuration, approved customer experience, current legal/commercial messaging, and governed acquisition systems.",
+  "policy_version": "occupancynpv_public_launch_v1",
+  "experiment_id": "exp_e72beb7b6d35e7b20acf",
+  "experiment_clock_restarted": false,
+  "readiness_result": "READY_FOR_PUBLIC_LAUNCH_AUTHORIZATION",
+  "traceability_id": "trl_occupancynpv_public_launch_dpl_XkdbXKrYkzoNaqit7kkEUwc28e69"
+}

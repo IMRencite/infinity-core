@@ -1,16 +1,35 @@
 import type { InspectorSection } from "@/lib/infinity/operator-console/artifacts/inspector-types";
 import { namedInspectorRow } from "@/lib/infinity/operator-console/details/insight-metrics";
 import { parseFounderIntelligenceView, type FounderIntelligenceFrontView } from "../explainability/view";
+import { FOUNDER_FRIENDLY_PRIMARY_SECTION_IDS, founderFriendlyPrimarySections } from "./founder-intelligence-primary";
+import { FOUNDER_MONEY_SECTION_IDS, founderMoneySections } from "./founder-money-sections";
+
+export { FOUNDER_MONEY_SECTION_IDS };
 
 export const FOUNDER_INTELLIGENCE_SECTION_IDS = [
+  ...FOUNDER_FRIENDLY_PRIMARY_SECTION_IDS,
   "executive-summary",
   "why-decision",
   "intelligence-evidence",
   "key-insights",
   "score-breakdown",
+  "how-this-makes-money",
+  "recommended-revenue-model",
+  "revenue-streams",
+  "pricing-architecture",
+  "comparable-revenue-models",
+  "revenue-per-customer",
+  "mrr-arr-scenarios",
+  "upsell-opportunities",
+  "revenue-quality",
+  "money-research-gaps",
   "pricing-recommendation",
   "comparable-businesses",
   "modeled-unit-economics",
+  "benchmark-economics-system",
+  "educated-estimates-system",
+  "product-advantage-system",
+  "build-plan-system",
   "risks-uncertainties",
   "what-would-change",
   "next-validation",
@@ -98,6 +117,121 @@ function fromView(view: FounderIntelligenceFrontView, metadata: Meta): Inspector
         namedInspectorRow("validation-arithmetic", "Validation arithmetic", view.scoreNotes.validationScore),
         namedInspectorRow("monetization-arithmetic", "Monetization arithmetic", view.scoreNotes.monetizationScore),
       ],
+      collapsible: true,
+      collapseLabel: "See exact score calculation",
+    },
+    {
+      id: "how-this-makes-money",
+      title: "How This Business Makes Money",
+      rows: [
+        namedInspectorRow("money-recommended-model", "Recommended revenue model", view.howShouldThisMakeMoney?.recommendedModel ?? "UNKNOWN"),
+        namedInspectorRow("money-core-revenue", "Primary recurring revenue", view.howShouldThisMakeMoney?.coreRevenue ?? "UNKNOWN"),
+        namedInspectorRow("money-setup", "Setup/onboarding", view.howShouldThisMakeMoney?.setupOnboarding ?? "UNKNOWN"),
+        namedInspectorRow("money-upsells", "Upsells", view.howShouldThisMakeMoney?.upsells ?? "UNKNOWN"),
+        namedInspectorRow("money-billing", "Billing structure", view.howShouldThisMakeMoney?.billingStructure ?? "UNKNOWN"),
+        namedInspectorRow("money-recurring-mix", "Expected recurring mix", view.howShouldThisMakeMoney?.expectedRecurringMix ?? "UNKNOWN"),
+        namedInspectorRow("money-why", "Why this model fits", view.howShouldThisMakeMoney?.why ?? "UNKNOWN"),
+        namedInspectorRow("money-confidence", "Confidence", view.howShouldThisMakeMoney?.confidence ?? "NONE"),
+        namedInspectorRow("money-platforms", "What current platforms do", view.howShouldThisMakeMoney?.whatCurrentPlatformsDo ?? "UNKNOWN"),
+        namedInspectorRow("money-patterns", "Patterns found", (view.howShouldThisMakeMoney?.patternsFound ?? ["UNKNOWN"]).join("; ")),
+        namedInspectorRow("money-follows", "Why recommended follows those patterns", view.howShouldThisMakeMoney?.whyRecommendedFollowsPatterns ?? "UNKNOWN"),
+        namedInspectorRow("money-different", "What this venture does differently", view.howShouldThisMakeMoney?.whatVentureDoesDifferently ?? "UNKNOWN"),
+      ],
+      bullets: view.howShouldThisMakeMoney?.remainingUnknowns?.length
+        ? view.howShouldThisMakeMoney.remainingUnknowns.map((item) => `Remaining unknown: ${item}`)
+        : ["Remaining unknown: UNKNOWN"],
+    },
+    {
+      id: "recommended-revenue-model",
+      title: "Recommended Revenue Model",
+      rows: [
+        namedInspectorRow("rev-coverage", "Revenue-model coverage", view.revenueModel?.coverage ?? "REVENUE_MODEL_INSUFFICIENT"),
+        namedInspectorRow("rev-recommended", "Recommended model", view.revenueModel?.recommended ?? "UNKNOWN"),
+        namedInspectorRow("rev-alternatives", "Alternatives", view.revenueModel?.alternatives ?? "NONE"),
+        namedInspectorRow("rev-attractiveness", "Will this make money?", view.revenueModel?.attractiveness ?? "INSUFFICIENT_REVENUE_EVIDENCE"),
+      ],
+    },
+    {
+      id: "revenue-streams",
+      title: "Revenue Streams",
+      rows: [],
+      bullets: view.revenueModel?.streams?.length ? view.revenueModel.streams : ["UNKNOWN"],
+    },
+    {
+      id: "pricing-architecture",
+      title: "Pricing & Packaging",
+      rows: [
+        namedInspectorRow("arch-entry", "Entry tier", view.revenueModel?.entry ?? "UNKNOWN"),
+        namedInspectorRow("arch-base", "Base tier", view.revenueModel?.base ?? "UNKNOWN"),
+        namedInspectorRow("arch-premium", "Premium tier", view.revenueModel?.premium ?? "UNKNOWN"),
+        namedInspectorRow("arch-setup", "Setup", view.revenueModel?.setup ?? "UNKNOWN"),
+      ],
+    },
+    {
+      id: "comparable-revenue-models",
+      title: "Comparable Revenue Models",
+      rows: (view.revenueModel?.comparableRows ?? []).map((row, index) =>
+        namedInspectorRow(
+          `rev-comp-${index}`,
+          row.name,
+          `${row.targetCustomer} · ${row.revenueModel} · monthly ${row.monthly} · annual ${row.annual ?? "UNKNOWN"} · setup ${row.setup} · recurring ${row.recurring} · add-ons ${row.addOns} · contract ${row.contract} · ${row.why} · ${row.confidence}`,
+        ),
+      ),
+      bullets: (view.revenueModel?.comparableRows ?? []).length
+        ? (view.revenueModel?.comparableRows ?? []).map(
+            (row) =>
+              `${row.name} | ${row.targetCustomer} | ${row.revenueModel} | ${row.monthly} | ${row.annual ?? "UNKNOWN"} | ${row.setup} | ${row.recurring} | ${row.addOns} | ${row.contract} | ${row.why} | ${row.confidence}`,
+          )
+        : ["UNKNOWN"],
+    },
+    {
+      id: "revenue-per-customer",
+      title: "Revenue per Customer",
+      rows: [
+        namedInspectorRow("rpc-mrr", "MRR / customer", view.revenueModel?.mrrPerCustomer ?? "UNKNOWN"),
+        namedInspectorRow("rpc-arr", "ARR / customer", view.revenueModel?.arrPerCustomer ?? "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-recurring", "First-year recurring / customer", view.revenueModel?.firstYearRecurring ?? "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-setup", "First-year setup / customer", view.revenueModel?.firstYearSetup ?? "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-addon", "First-year add-on / customer", view.revenueModel?.firstYearAddOn ?? "UNKNOWN"),
+        namedInspectorRow("rpc-first-year", "First-year total / customer", view.revenueModel?.firstYearPerCustomer ?? "UNKNOWN"),
+      ],
+    },
+    {
+      id: "mrr-arr-scenarios",
+      title: "MRR / ARR Scenarios",
+      rows: (view.revenueModel?.scenarios ?? []).length
+        ? (view.revenueModel?.scenarios ?? []).map((row) =>
+            namedInspectorRow(
+              `scenario-${row.customers}`,
+              `${row.customers} customers (SCENARIO_MODEL, not a forecast)`,
+              `MRR ${row.mrr}; ARR ${row.arr}; setup ${row.setup}; first-year ${row.total}`,
+            ),
+          )
+        : [namedInspectorRow("scenario-unknown", "Scenarios", "UNKNOWN")],
+      bullets: ["Customer counts are scenario planning inputs, not acquisition forecasts."],
+    },
+    {
+      id: "upsell-opportunities",
+      title: "Upsell Opportunities",
+      rows: [],
+      bullets: view.revenueModel?.upsells?.length ? view.revenueModel.upsells : ["UNKNOWN"],
+    },
+    {
+      id: "revenue-quality",
+      title: "Revenue Quality",
+      rows: [
+        namedInspectorRow("rev-quality", "Quality", view.revenueModel?.quality ?? "INSUFFICIENT_DATA"),
+        namedInspectorRow("rev-quality-reason", "Reason", view.revenueModel?.qualityReason ?? "UNKNOWN"),
+      ],
+    },
+    {
+      id: "money-research-gaps",
+      title: "Money Research Still Needed",
+      rows: [
+        namedInspectorRow("rev-research-status", "Revenue model research", view.revenueModel?.coverage ?? "REVENUE_MODEL_INSUFFICIENT"),
+        namedInspectorRow("rev-missing", "Missing", (view.revenueModel?.missingMoneyEvidence ?? ["UNKNOWN"]).join("; ") || "UNKNOWN"),
+      ],
+      bullets: view.revenueModel?.moneyGaps?.length ? view.revenueModel.moneyGaps : ["UNKNOWN"],
     },
     {
       id: "pricing-recommendation",
@@ -145,6 +279,82 @@ function fromView(view: FounderIntelligenceFrontView, metadata: Meta): Inspector
         namedInspectorRow("modeled-confidence", "Confidence", view.economics.confidence),
         namedInspectorRow("modeled-missing", "Missing evidence", view.missingEconomicEvidence.join("; ") || "NONE"),
       ],
+    },
+    {
+      id: "benchmark-economics-system",
+      title: "Benchmark Economics (System)",
+      rows: [
+        namedInspectorRow("bench-coverage-cac", "CAC coverage", view.benchmarkEconomics?.coverageCac ?? "BENCHMARK_INSUFFICIENT"),
+        namedInspectorRow("bench-coverage-retention", "Retention coverage", view.benchmarkEconomics?.coverageRetention ?? "BENCHMARK_INSUFFICIENT"),
+        namedInspectorRow("bench-coverage-margin", "Margin coverage", view.benchmarkEconomics?.coverageMargin ?? "BENCHMARK_INSUFFICIENT"),
+        namedInspectorRow("bench-coverage-conversion", "Conversion coverage", view.benchmarkEconomics?.coverageConversion ?? "BENCHMARK_INSUFFICIENT"),
+        namedInspectorRow("bench-coverage-sales-cycle", "Sales-cycle coverage", view.benchmarkEconomics?.coverageSalesCycle ?? "BENCHMARK_INSUFFICIENT"),
+        namedInspectorRow("bench-cac", "Modeled CAC", view.benchmarkEconomics?.cac ?? "UNKNOWN"),
+        namedInspectorRow("bench-ltv", "Modeled LTV", view.benchmarkEconomics?.ltv ?? "UNKNOWN"),
+        namedInspectorRow("bench-ratio", "Modeled LTV/CAC", view.benchmarkEconomics?.ltvCac ?? "UNKNOWN"),
+        namedInspectorRow("bench-ratio-conservative", "Conservative LTV/CAC", view.benchmarkEconomics?.ltvCacConservative ?? "UNKNOWN"),
+        namedInspectorRow("bench-ratio-base", "Base LTV/CAC", view.benchmarkEconomics?.ltvCacBase ?? "UNKNOWN"),
+        namedInspectorRow("bench-ratio-upside", "Upside LTV/CAC", view.benchmarkEconomics?.ltvCacUpside ?? "UNKNOWN"),
+        namedInspectorRow("bench-margin", "Modeled gross margin", view.benchmarkEconomics?.margin ?? "UNKNOWN"),
+        namedInspectorRow("bench-payback", "Modeled payback", view.benchmarkEconomics?.payback ?? "UNKNOWN"),
+        namedInspectorRow("bench-confidence", "Technical confidence", view.benchmarkEconomics?.confidence ?? "NONE"),
+        namedInspectorRow("bench-provenance", "Modeled provenance", view.benchmarkEconomics?.provenance ?? "UNKNOWN"),
+        namedInspectorRow("bench-attractiveness", "Attractiveness", view.benchmarkEconomics?.attractiveness ?? "INSUFFICIENT_DATA"),
+        namedInspectorRow("bench-observed-cac", "Observed CAC", view.benchmarkEconomics?.actualCac ?? "UNKNOWN"),
+        namedInspectorRow("bench-observed-ltv", "Observed LTV", view.benchmarkEconomics?.actualLtv ?? "UNKNOWN"),
+        namedInspectorRow("bench-accepted", "Accepted benchmarks", String(view.benchmarkEconomics?.sampleAccepted ?? 0)),
+      ],
+      bullets: (view.benchmarkEconomics?.sources ?? []).map(
+        (item) => `${item.label} | ${item.value} | ${item.relevance} | ${item.why} | ${item.source}`,
+      ),
+    },
+    {
+      id: "educated-estimates-system",
+      title: "Educated Estimates (System)",
+      rows: [
+        namedInspectorRow("est-observed-cac", "Observed CAC", view.educatedEstimatesSystem?.observedCac ?? "UNKNOWN"),
+        namedInspectorRow("est-observed-ltv", "Observed LTV", view.educatedEstimatesSystem?.observedLtv ?? "UNKNOWN"),
+        namedInspectorRow("est-observed-margin", "Observed margin", view.educatedEstimatesSystem?.observedMargin ?? "UNKNOWN"),
+        namedInspectorRow("est-cac-provenance", "CAC provenance", view.educatedEstimatesSystem?.cacProvenance ?? "UNKNOWN"),
+        namedInspectorRow("est-margin-provenance", "Margin provenance", view.educatedEstimatesSystem?.marginProvenance ?? "UNKNOWN"),
+        namedInspectorRow("est-ltv-provenance", "LTV provenance", view.educatedEstimatesSystem?.ltvProvenance ?? "UNKNOWN"),
+        namedInspectorRow("est-grants-build", "grantsBuild", String(view.educatedEstimatesSystem?.grantsBuild ?? false)),
+      ],
+    },
+    {
+      id: "product-advantage-system",
+      title: "Product Advantage (System)",
+      rows: [
+        namedInspectorRow(
+          "adv-authority-roadmap",
+          "canPrioritizeCanonicalRoadmap",
+          String(view.productAdvantage?.authority.canPrioritizeCanonicalRoadmap ?? false),
+        ),
+        namedInspectorRow("adv-authority-assign", "canAssignWork", String(view.productAdvantage?.authority.canAssignWork ?? false)),
+        namedInspectorRow("adv-authority-build", "canApproveBuild", String(view.productAdvantage?.authority.canApproveBuild ?? false)),
+      ],
+      bullets: (view.productAdvantage?.painClusters ?? []).map(
+        (cluster) =>
+          `${cluster.id} | ${cluster.category} | ${cluster.confidence} | ${cluster.sourceQuality} | evidenceCount:${cluster.evidenceCount}`,
+      ),
+    },
+    {
+      id: "build-plan-system",
+      title: "Build Plan (System)",
+      rows: [
+        namedInspectorRow("bp-position", "currentPosition", view.buildPlan?.currentPosition ?? "UNKNOWN"),
+        namedInspectorRow("bp-effort", "effort", view.buildPlan?.effort ?? "UNKNOWN"),
+        namedInspectorRow("bp-grants-build", "grantsBuild", String(view.buildPlan?.grantsBuild ?? false)),
+        namedInspectorRow("bp-missions", "canCreateMissions", String(view.buildPlan?.authority.canCreateMissions ?? false)),
+        namedInspectorRow("bp-roadmap", "canMutateRoadmap", String(view.buildPlan?.authority.canMutateRoadmap ?? false)),
+        namedInspectorRow("bp-approve", "canApproveBuild", String(view.buildPlan?.authority.canApproveBuild ?? false)),
+        namedInspectorRow("bp-ready", "systemsReady", String(view.buildPlan?.systemsReady ?? 0)),
+        namedInspectorRow("bp-partial", "systemsPartial", String(view.buildPlan?.systemsPartial ?? 0)),
+        namedInspectorRow("bp-missing", "systemsMissing", String(view.buildPlan?.systemsMissing ?? 0)),
+        namedInspectorRow("bp-blocked", "systemsBlocked", String(view.buildPlan?.systemsBlocked ?? 0)),
+        namedInspectorRow("bp-coverage", "coverageSummary", view.buildPlan?.coverageSummary ?? "UNKNOWN"),
+      ],
+      bullets: (view.buildPlan?.phases ?? []).map((phase) => `${phase.order} | ${phase.name} | ${phase.readiness} | ${phase.systems.join(",")}`),
     },
     {
       id: "risks-uncertainties",
@@ -227,6 +437,93 @@ function fromFlatMetadata(metadata: Meta): InspectorSection[] {
         namedInspectorRow("validation-arithmetic", "Validation arithmetic", String(metadata.scoreValidationNote ?? "UNKNOWN")),
         namedInspectorRow("monetization-arithmetic", "Monetization arithmetic", String(metadata.scoreMonetizationNote ?? "UNKNOWN")),
       ],
+      collapsible: true,
+      collapseLabel: "See exact score calculation",
+    },
+    {
+      id: "how-this-makes-money",
+      title: "How This Business Makes Money",
+      rows: [
+        namedInspectorRow("money-recommended-model", "Recommended revenue model", "UNKNOWN"),
+        namedInspectorRow("money-core-revenue", "Primary recurring revenue", "UNKNOWN"),
+        namedInspectorRow("money-setup", "Setup/onboarding", "UNKNOWN"),
+        namedInspectorRow("money-upsells", "Upsells", "UNKNOWN"),
+        namedInspectorRow("money-billing", "Billing structure", "UNKNOWN"),
+        namedInspectorRow("money-recurring-mix", "Expected recurring mix", "UNKNOWN"),
+        namedInspectorRow("money-why", "Why this model fits", "Revenue-model fields were not persisted on this artifact."),
+        namedInspectorRow("money-confidence", "Confidence", "NONE"),
+      ],
+      bullets: ["Remaining unknown: UNKNOWN"],
+    },
+    {
+      id: "recommended-revenue-model",
+      title: "Recommended Revenue Model",
+      rows: [
+        namedInspectorRow("rev-coverage", "Revenue-model coverage", "REVENUE_MODEL_INSUFFICIENT"),
+        namedInspectorRow("rev-recommended", "Recommended model", "UNKNOWN"),
+      ],
+    },
+    {
+      id: "revenue-streams",
+      title: "Revenue Streams",
+      rows: [],
+      bullets: ["UNKNOWN"],
+    },
+    {
+      id: "pricing-architecture",
+      title: "Pricing & Packaging",
+      rows: [
+        namedInspectorRow("arch-entry", "Entry tier", "UNKNOWN"),
+        namedInspectorRow("arch-base", "Base tier", "UNKNOWN"),
+        namedInspectorRow("arch-premium", "Premium tier", "UNKNOWN"),
+        namedInspectorRow("arch-setup", "Setup", "UNKNOWN"),
+      ],
+    },
+    {
+      id: "comparable-revenue-models",
+      title: "Comparable Revenue Models",
+      rows: [],
+      bullets: ["UNKNOWN"],
+    },
+    {
+      id: "revenue-per-customer",
+      title: "Revenue per Customer",
+      rows: [
+        namedInspectorRow("rpc-mrr", "MRR / customer", "UNKNOWN"),
+        namedInspectorRow("rpc-arr", "ARR / customer", "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-recurring", "First-year recurring / customer", "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-setup", "First-year setup / customer", "UNKNOWN"),
+        namedInspectorRow("rpc-first-year-addon", "First-year add-on / customer", "UNKNOWN"),
+        namedInspectorRow("rpc-first-year", "First-year total / customer", "UNKNOWN"),
+      ],
+    },
+    {
+      id: "mrr-arr-scenarios",
+      title: "MRR / ARR Scenarios",
+      rows: [namedInspectorRow("scenario-unknown", "Scenarios", "UNKNOWN")],
+      bullets: ["Customer counts are scenario planning inputs, not acquisition forecasts."],
+    },
+    {
+      id: "upsell-opportunities",
+      title: "Upsell Opportunities",
+      rows: [],
+      bullets: ["UNKNOWN"],
+    },
+    {
+      id: "revenue-quality",
+      title: "Revenue Quality",
+      rows: [
+        namedInspectorRow("rev-quality", "Quality", "INSUFFICIENT_DATA"),
+      ],
+    },
+    {
+      id: "money-research-gaps",
+      title: "Money Research Still Needed",
+      rows: [
+        namedInspectorRow("rev-research-status", "Revenue model research", "REVENUE_MODEL_INSUFFICIENT"),
+        namedInspectorRow("rev-missing", "Missing", "public pricing; setup fees; packaging; upsells; contract terms"),
+      ],
+      bullets: ["Find comparable public monthly pricing"],
     },
     {
       id: "pricing-recommendation",
@@ -287,7 +584,14 @@ function fromFlatMetadata(metadata: Meta): InspectorSection[] {
   ];
 }
 
+function markAdvanced(sections: InspectorSection[]): InspectorSection[] {
+  return sections.map((section) => ({ ...section, presentation: section.presentation ?? "advanced" }));
+}
+
 export function founderIdeaIntelligenceSections(metadata: Meta): InspectorSection[] {
   const view = parseFounderIntelligenceView(metadata.founderIntelligenceJson);
-  return view ? fromView(view, metadata) : fromFlatMetadata(metadata);
+  const primary = founderFriendlyPrimarySections(view, metadata);
+  const money = founderMoneySections(view, metadata);
+  const advanced = markAdvanced(view ? fromView(view, metadata) : fromFlatMetadata(metadata));
+  return [...primary, ...money, ...advanced];
 }

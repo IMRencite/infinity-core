@@ -131,7 +131,8 @@ describe("mercury token redaction", () => {
     const provider = new MercuryFinancialProvider({ env: sandboxEnv(), fetchImpl: mockMercuryFetch({ accounts: [] }) });
     expect(JSON.stringify(provider)).not.toContain(TOKEN);
     expect(JSON.stringify(provider.http)).not.toContain(TOKEN);
-    expect(JSON.stringify(config.credentials)).toEqual(JSON.stringify({ configured: true }));
+    expect(JSON.stringify(config.credentials)).toContain("\"configured\":true");
+    expect(JSON.stringify(config.credentials)).not.toContain(TOKEN);
   });
 
   it("redacts tokens from strings, objects, and error messages", () => {

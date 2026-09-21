@@ -1,0 +1,243 @@
+{
+  "local": {
+    "chip": {
+      "gate": "BlogTaxonomyChipGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "contrast": {
+      "gate": "BlogTaxonomyContrastGate",
+      "result": "PASS",
+      "reasons": [
+        "REST_HOVER_FOCUS_CONTRAST"
+      ]
+    },
+    "visual": {
+      "gate": "BlogRenderedVisualQualityGate",
+      "result": "PASS",
+      "reasons": [
+        "RENDERED_REST_HOVER_FOCUS"
+      ]
+    },
+    "creative": {
+      "sameEntity": "SAME_ENTITY_VARIANT",
+      "uniqueness": {
+        "gate": "CreativeUniquenessGate",
+        "result": "PASS",
+        "reasons": [
+          "UNIQUE_GEOMETRY"
+        ]
+      },
+      "overuse": {
+        "gate": "CreativeOveruseGate",
+        "result": "PASS",
+        "reasons": [
+          "NO_GENERIC_OVERUSE"
+        ]
+      },
+      "surface": {
+        "gate": "CreativeSurfaceFitGate",
+        "result": "PASS",
+        "reasons": [
+          "SURFACE_FIT"
+        ]
+      },
+      "quality": {
+        "gate": "DesignCoreCreativeQualityGate",
+        "result": "PASS",
+        "reasons": [
+          "INSPECTED_SVG_QUALITY"
+        ]
+      },
+      "inspected": [
+        {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        },
+        {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        },
+        {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        },
+        {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        },
+        {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        }
+      ]
+    }
+  },
+  "live": {
+    "deployed": true,
+    "deployment_id": "dpl_4R3yXV9QguEXQEs69rdZSRRsXLix",
+    "aliased": true,
+    "preview_url": "https://infinity-validation-cre-lease-npv-e72beb7b-egv49lf5d.vercel.app",
+    "safe_error": null,
+    "statuses": {
+      "index": 200,
+      "article": 200,
+      "valuation": 200,
+      "interest": 200,
+      "cap": 200,
+      "cre": 200
+    },
+    "hover_rule": false,
+    "hover_visited_rule": false,
+    "hover_background": true,
+    "cascade_conflict": true,
+    "hover_readable": true,
+    "hero_contain": false,
+    "archive_contain": false,
+    "cover_risk": true,
+    "unique_interest": true,
+    "svgs": {
+      "valuation": {
+        "status": 200,
+        "inspect": {
+          "uniqueGeometry": false,
+          "genericFiller": true,
+          "textArtifacts": true,
+          "clippedEdgeText": true,
+          "tooBasic": true,
+          "sharedTemplate": true,
+          "safeAspect": false,
+          "reasons": [
+            "GENERIC_LINE_CHART_TEMPLATE",
+            "CREATIVE_TOO_BASIC",
+            "EDGE_TEXT_CLIP_RISK",
+            "ASPECT_CROP_RISK",
+            "TEXT_ARTIFACTS"
+          ]
+        },
+        "markup": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 675\" role=\"img\"><rect width=\"1200\" height=\"675\" fill=\"#10232c\"/><path d=\"M80 520 L280 300 L460 420 L720 180 L1120 520\" fil"
+      },
+      "interest": {
+        "status": 200,
+        "inspect": {
+          "uniqueGeometry": false,
+          "genericFiller": true,
+          "textArtifacts": true,
+          "clippedEdgeText": true,
+          "tooBasic": true,
+          "sharedTemplate": true,
+          "safeAspect": false,
+          "reasons": [
+            "GENERIC_LINE_CHART_TEMPLATE",
+            "CREATIVE_TOO_BASIC",
+            "EDGE_TEXT_CLIP_RISK",
+            "ASPECT_CROP_RISK",
+            "TEXT_ARTIFACTS"
+          ]
+        },
+        "markup": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 675\" role=\"img\"><rect width=\"1200\" height=\"675\" fill=\"#0f2740\"/><path d=\"M80 520 L280 300 L460 420 L720 180 L1120 520\" fil"
+      },
+      "cap": {
+        "status": 200,
+        "inspect": {
+          "uniqueGeometry": true,
+          "genericFiller": false,
+          "textArtifacts": false,
+          "clippedEdgeText": false,
+          "tooBasic": false,
+          "sharedTemplate": false,
+          "safeAspect": true,
+          "reasons": []
+        },
+        "markup": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 900\" role=\"img\" aria-label=\"NOI over price becoming going-in cap rate\">\n<defs><linearGradient id=\"cap-ground\" x1=\"0\" y1=\"0"
+      },
+      "cre": {
+        "status": 200,
+        "inspect": {
+          "uniqueGeometry": false,
+          "genericFiller": true,
+          "textArtifacts": true,
+          "clippedEdgeText": true,
+          "tooBasic": true,
+          "sharedTemplate": true,
+          "safeAspect": false,
+          "reasons": [
+            "GENERIC_LINE_CHART_TEMPLATE",
+            "CREATIVE_TOO_BASIC",
+            "EDGE_TEXT_CLIP_RISK",
+            "ASPECT_CROP_RISK",
+            "TEXT_ARTIFACTS"
+          ]
+        },
+        "markup": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 675\" role=\"img\"><rect width=\"1200\" height=\"675\" fill=\"#2a1f18\"/><path d=\"M80 520 L280 300 L460 420 L720 180 L1120 520\" fil"
+      },
+      "hub": {
+        "status": 200,
+        "inspect": {
+          "uniqueGeometry": false,
+          "genericFiller": true,
+          "textArtifacts": true,
+          "clippedEdgeText": true,
+          "tooBasic": true,
+          "sharedTemplate": true,
+          "safeAspect": false,
+          "reasons": [
+            "GENERIC_LINE_CHART_TEMPLATE",
+            "CREATIVE_TOO_BASIC",
+            "EDGE_TEXT_CLIP_RISK",
+            "ASPECT_CROP_RISK",
+            "TEXT_ARTIFACTS"
+          ]
+        },
+        "markup": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 675\" role=\"img\"><rect width=\"1200\" height=\"675\" fill=\"#10232c\"/><path d=\"M80 520 L280 300 L460 420 L720 180 L1120 520\" fil"
+      }
+    },
+    "rendered": {
+      "rest": {
+        "color": "rgb(29, 78, 99)",
+        "background": "rgb(244, 247, 248)"
+      },
+      "hover": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(16, 35, 44)"
+      },
+      "hero": {
+        "fit": "cover",
+        "naturalWidth": 200,
+        "complete": true
+      }
+    },
+    "hoverWhiteOnNavy": true
+  },
+  "passed": false
+}

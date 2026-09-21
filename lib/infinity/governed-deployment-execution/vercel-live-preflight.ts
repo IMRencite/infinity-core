@@ -12,6 +12,10 @@ import {
   type VercelLiveVerificationConfig,
 } from "./vercel-live-config";
 import { classifyVercelLiveCost } from "./vercel-live-config";
+import {
+  governanceInputToPreflightArgs,
+  type VercelLiveVerificationGovernanceInput,
+} from "./vercel-live-governance";
 
 const REQUIRED_EAG_ACTIONS = ["CREATE_HOSTING_PROJECT", "DEPLOY_APPLICATION", "VERIFY_HEALTH"] as const;
 const REQUIRED_TREASURY_ACTIONS = ["CREATE_HOSTING_PROJECT", "DEPLOY_APPLICATION"] as const;
@@ -94,12 +98,18 @@ export function evaluateVercelLiveVerificationPreflight(input?: {
   eagAuthorizations?: ActionAuthorityGrant[];
   treasuryAuthorizations?: TreasuryActionGrant[];
   providerWrites?: ProviderWriteEvidence[];
+  governance?: VercelLiveVerificationGovernanceInput | null;
   now?: string;
 }): VercelLiveVerificationPreflight {
   const config = loadVercelLiveVerificationConfig();
-  const request = input?.request ?? null;
-  const readiness = input?.readiness ?? null;
+  const fromGovernance = input?.governance ? governanceInputToPreflightArgs(input.governance) : null;
+  const request = fromGovernance?.request ?? input?.request ?? null;
+  const readiness = fromGovernance?.readiness ?? input?.readiness ?? null;
+  const eagAuthorizations = fromGovernance?.eagAuthorizations ?? input?.eagAuthorizations ?? [];
+  const treasuryAuthorizations = fromGovernance?.treasuryAuthorizations ?? input?.treasuryAuthorizations ?? [];
+  const providerWrites = fromGovernance?.providerWrites ?? input?.providerWrites ?? [];
   const blockers: string[] = [];
+  if (input?.governance?.blockers.length) blockers.push(...input.governance.blockers);
 
   if (!config.credentialPresent) blockers.push("VERCEL_TOKEN is missing");
   if (!config.intendedScopeExact) blockers.push("VERCEL_TOKEN_SCOPE is missing or is not the exact Infinity-intended action set");
@@ -126,7 +136,7 @@ export function evaluateVercelLiveVerificationPreflight(input?: {
   const deploymentAuthoritySatisfied = Boolean(request?.deploymentAuthorizationId);
   const publicLaunchDisabled = !request?.publicLaunchAuthorizationId;
   const idempotencySatisfied = Boolean(request?.idempotencyKey && request.idempotencyKey === request.executionRequestId);
-  const hostingWrite = input?.providerWrites?.find((row) => row.capability === "HOSTING");
+  const hostingWrite = providerWrites.find((row) => row.capability === "HOSTING");
   const writeAuthorized =
     hostingWrite?.verificationState === "WRITE_AUTHORIZED" && hostingWrite.writeAuthorityGranted === true;
   if (request && request.mode !== "LIVE") blockers.push("mode is not LIVE");
@@ -143,10 +153,10 @@ export function evaluateVercelLiveVerificationPreflight(input?: {
   if (!deploymentAuthoritySatisfied) blockers.push("canonical deployment authority is missing");
   if (!writeAuthorized) blockers.push("HOSTING write is not WRITE_AUTHORIZED");
 
-  const eag = preflightVercelLiveEag({ grants: input?.eagAuthorizations ?? [] });
+  const eag = preflightVercelLiveEag({ grants: eagAuthorizations });
   if (!eag.satisfied) blockers.push(...eag.blockers);
   const treasury = preflightVercelLiveTreasury({
-    grants: input?.treasuryAuthorizations ?? [],
+    grants: treasuryAuthorizations,
     expectedVentureId: request?.ventureId ?? readiness?.ventureId ?? null,
     now: input?.now,
   });

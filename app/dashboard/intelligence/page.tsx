@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
+import { DailyImprovementSection } from "@/components/dashboard/daily-improvement-section";
 import { IntelligencePortfolioSection } from "@/components/dashboard/intelligence-portfolio-section";
+import { projectDailyImprovementHq } from "@/lib/infinity/daily-improvement-engine";
 import {
   calculateIntelligenceSummary,
   listRecentEvidence,
@@ -52,22 +54,24 @@ export default async function IntelligencePage() {
     listRecentEvidence(supabase, organizationId, 10),
     listRecentLessons(supabase, organizationId, 10),
   ]);
+  const dailyImprovement = projectDailyImprovementHq();
 
   return (
     <div>
       <header className="mb-6">
         <h1 className="text-[1.75rem] font-semibold tracking-tight text-white sm:text-[2.125rem]">
-          Intelligence
+          Performance Intelligence & Continuous Improvement
         </h1>
         <p className="mt-2 text-[15px] font-medium text-zinc-300">
           {membership.organizations.name}
         </p>
         <p className="mt-1 text-[13px] text-zinc-500">
-          Read-only view of evidence, claims, knowledge, memory, lessons, and
-          procedures. Autonomous observation and external research are not active
-          yet.
+          Observes the whole OS, benchmarks it against evidence, and routes
+          improvements back to the system that owns them. It does not become a new silo.
         </p>
       </header>
+
+      <DailyImprovementSection view={dailyImprovement} />
 
       <IntelligencePortfolioSection
         summary={summary}

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { ResearchError } from "../failures";
 import { canonicalizeSourceUrl, dedupeSources, extractDomain, sourceIdentityKey } from "./dedupe";
+import { extractProviderSourceMetadata } from "@/lib/infinity/founder-idea-lab/revenue-model-research/source-redirect";
 import type {
   GroundingUsage,
   NormalizedEvidenceItem,
@@ -11,7 +12,7 @@ import type {
 } from "../types";
 
 type GroundingChunk = {
-  web?: { uri?: string; title?: string; domain?: string };
+  web?: { uri?: string; title?: string; domain?: string; publisher?: string };
   retrievedContext?: { uri?: string; title?: string };
 };
 
@@ -21,21 +22,38 @@ type GroundingMetadata = {
   webSearchQueries?: string[];
 };
 
-function chunkUri(chunk: GroundingChunk): { uri: string; title: string | null; domain: string | null } | null {
+function chunkUri(chunk: GroundingChunk): { uri: string; title: string | null; domain: string | null; publisher: string | null } | null {
   const webUri = chunk.web?.uri?.trim();
   if (webUri && /^https?:\/\//i.test(webUri)) {
+    const meta = extractProviderSourceMetadata({
+      url: webUri,
+      title: chunk.web?.title,
+      publisher: chunk.web?.publisher,
+      domain: chunk.web?.domain,
+      groundingTitle: chunk.web?.title,
+      groundingPublisher: chunk.web?.publisher,
+      webTitle: chunk.web?.title,
+      webUri,
+    });
     return {
       uri: webUri,
-      title: chunk.web?.title ?? null,
-      domain: chunk.web?.domain ?? extractDomain(webUri),
+      title: meta.title,
+      domain: meta.domain,
+      publisher: meta.publisher,
     };
   }
   const retrievedUri = chunk.retrievedContext?.uri?.trim();
   if (retrievedUri && /^https?:\/\//i.test(retrievedUri)) {
+    const meta = extractProviderSourceMetadata({
+      url: retrievedUri,
+      title: chunk.retrievedContext?.title,
+      groundingTitle: chunk.retrievedContext?.title,
+    });
     return {
       uri: retrievedUri,
-      title: chunk.retrievedContext?.title ?? null,
-      domain: extractDomain(retrievedUri),
+      title: meta.title,
+      domain: meta.domain || extractDomain(retrievedUri),
+      publisher: meta.publisher,
     };
   }
   return null;
@@ -56,6 +74,9 @@ function extractAllowedSourceUrls(groundingMetadata: GroundingMetadata | null): 
     const canonicalUrl = canonicalizeSourceUrl(extracted.uri);
     const existing = sourcesByCanonical.get(canonicalUrl);
     if (existing) {
+      if (!existing.title && extracted.title) existing.title = extracted.title;
+      if (!existing.domain && extracted.domain) existing.domain = extracted.domain;
+      if (!existing.publisher && extracted.publisher) existing.publisher = extracted.publisher;
       sourceByChunkIndex.set(index, existing);
       continue;
     }
@@ -66,6 +87,7 @@ function extractAllowedSourceUrls(groundingMetadata: GroundingMetadata | null): 
       canonicalUrl,
       title: extracted.title,
       domain: extracted.domain,
+      publisher: extracted.publisher,
       retrievedAt,
       providerChunkIndex: index,
     };

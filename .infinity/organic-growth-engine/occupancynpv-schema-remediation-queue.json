@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-09-17T05:40:00.000Z",
+  "live_organic_complete": [
+    "/commercial-lease-npv/how-is-cap-rate-calculated/",
+    "/blog/",
+    "/blog/how-interest-rates-affect-commercial-property-values/"
+  ],
+  "counts": {
+    "SCHEMA_COMPLETE": 3,
+    "SCHEMA_PARTIAL": 77,
+    "SCHEMA_MISSING": 0,
+    "SCHEMA_CONFLICT": 0
+  },
+  "note": "The 3 live Organic Growth pages now carry the full IMR connected graph. Remaining authority question pages and topic hubs stay SCHEMA_PARTIAL until a content refresh also passes schema QC. execute_publish remains false."
+}

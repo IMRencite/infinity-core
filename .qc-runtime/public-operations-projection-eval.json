@@ -1,0 +1,256 @@
+{
+  "projection": {
+    "contract": "PublicOperationsProjection",
+    "projection_version": "public-operations-projection-v1",
+    "generated_at": "2026-09-15T02:55:26.125Z",
+    "system_status": "OPERATIONAL",
+    "autonomous_mode": "ENABLED",
+    "public_activity_summary": "MONITORING",
+    "public_activity_reason": "Monitoring an active growth experiment",
+    "active_public_agents": 0,
+    "idle_public_agents": 3,
+    "public_departments": [
+      {
+        "public_name": "OPERATIONS",
+        "public_status": "MONITORING",
+        "active_agent_count": 0,
+        "generic_activity_label": "Monitoring venture performance",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "RESEARCH",
+        "public_status": "IDLE",
+        "active_agent_count": 0,
+        "generic_activity_label": "Evaluating opportunities",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "GROWTH",
+        "public_status": "MONITORING",
+        "active_agent_count": 0,
+        "generic_activity_label": "Monitoring active campaigns",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "VALIDATION",
+        "public_status": "REVIEWING",
+        "active_agent_count": 0,
+        "generic_activity_label": "Reviewing quality",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "SYSTEMS",
+        "public_status": "IDLE",
+        "active_agent_count": 0,
+        "generic_activity_label": "Monitoring infrastructure",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "FINANCE",
+        "public_status": "IDLE",
+        "active_agent_count": 0,
+        "generic_activity_label": "Reviewing financial infrastructure",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "PRODUCT",
+        "public_status": "IDLE",
+        "active_agent_count": 0,
+        "generic_activity_label": "Preparing product improvements",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_name": "CREATIVE",
+        "public_status": "IDLE",
+        "active_agent_count": 0,
+        "generic_activity_label": "Waiting for new evidence",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      }
+    ],
+    "public_agents": [
+      {
+        "public_agent_id": "public-ops",
+        "role": "Operations",
+        "department": "OPERATIONS",
+        "public_status": "IDLE",
+        "generic_activity": "Present and idle",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_agent_id": "public-growth",
+        "role": "Growth",
+        "department": "GROWTH",
+        "public_status": "IDLE",
+        "generic_activity": "Present and idle",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      },
+      {
+        "public_agent_id": "public-validation",
+        "role": "Validation",
+        "department": "VALIDATION",
+        "public_status": "IDLE",
+        "generic_activity": "Present and idle",
+        "last_activity_at": "2026-09-15T02:55:02.044Z"
+      }
+    ],
+    "ventures_started_count": 2,
+    "ventures_operating_count": 1,
+    "public_ventures_count": 1,
+    "missions_completed_count": 22,
+    "autonomous_operating_hours": 0,
+    "autonomous_operating_hours_label": "Hours since autonomous operations enabled",
+    "deployments_completed_count": 1,
+    "public_assets_created_count": 0,
+    "research_cycles_completed_count": 0,
+    "last_public_activity_at": "2026-09-15T02:55:02.044Z",
+    "public_ventures": [
+      {
+        "public_name": "OccupancyNPV",
+        "status_label": "Live",
+        "public_url": "https://occupancynpv.com",
+        "category": "Commercial real estate",
+        "sanitized_description": "Lease-scenario analysis for commercial real estate teams",
+        "approved_stats": {
+          "live": true
+        }
+      }
+    ],
+    "stats": [
+      {
+        "key": "ventures_started",
+        "label": "Ventures Started",
+        "value": 2
+      },
+      {
+        "key": "ventures_operating",
+        "label": "Ventures Operating",
+        "value": 1
+      },
+      {
+        "key": "public_ventures_live",
+        "label": "Public Ventures Live",
+        "value": 1
+      },
+      {
+        "key": "missions_completed",
+        "label": "Missions Completed",
+        "value": 22
+      },
+      {
+        "key": "autonomous_operating_hours",
+        "label": "Hours since autonomous operations enabled",
+        "value": 0,
+        "unit": "hours"
+      },
+      {
+        "key": "deployments_completed",
+        "label": "Deployments Completed",
+        "value": 1
+      },
+      {
+        "key": "assets_created",
+        "label": "Assets Created",
+        "value": 0
+      },
+      {
+        "key": "research_cycles_completed",
+        "label": "Research Cycles Completed",
+        "value": 0
+      }
+    ]
+  },
+  "forbidden_hits": [],
+  "gates": [
+    {
+      "gate": "PublicProjectionNoSensitiveDataGate",
+      "result": "PASS",
+      "reasons": [
+        "NO_SENSITIVE_CLASSIFICATION"
+      ]
+    },
+    {
+      "gate": "PublicFinancialDisclosureGate",
+      "result": "PASS",
+      "reasons": [
+        "DENY_DEFAULT"
+      ]
+    },
+    {
+      "gate": "PublicCustomerDataGate",
+      "result": "PASS",
+      "reasons": [
+        "NO_CUSTOMER_DATA"
+      ]
+    },
+    {
+      "gate": "PublicMissionDetailGate",
+      "result": "PASS",
+      "reasons": [
+        "GENERIC_ACTIVITY_ONLY"
+      ]
+    },
+    {
+      "gate": "PublicProviderDataGate",
+      "result": "PASS",
+      "reasons": [
+        "NO_PROVIDER_SECRETS"
+      ]
+    },
+    {
+      "gate": "PublicInfrastructureDataGate",
+      "result": "PASS",
+      "reasons": [
+        "NO_INFRASTRUCTURE_DETAIL"
+      ]
+    },
+    {
+      "gate": "PublicVentureVisibilityGate",
+      "result": "PASS",
+      "reasons": [
+        "HIDDEN_DEFAULT_ENFORCED"
+      ]
+    },
+    {
+      "gate": "PublicProjectionReadOnlyGate",
+      "result": "PASS",
+      "reasons": [
+        "READ_ONLY"
+      ]
+    },
+    {
+      "gate": "PublicProjectionCanonicalTruthGate",
+      "result": "PASS",
+      "reasons": [
+        "COUNTERS_MATCH_CANONICAL"
+      ]
+    },
+    {
+      "gate": "PublicProjectionUnknownNotZeroGate",
+      "result": "PASS",
+      "reasons": [
+        "UNKNOWN_PRESERVED"
+      ]
+    },
+    {
+      "gate": "PublicAgentActivityTruthGate",
+      "result": "PASS",
+      "reasons": [
+        "ACTIVE_MATCHES_EXECUTION"
+      ]
+    },
+    {
+      "gate": "PublicProjectionFailureSanitizationGate",
+      "result": "PASS",
+      "reasons": [
+        "FAILURE_SANITIZED"
+      ]
+    },
+    {
+      "gate": "PublicProjectionFieldAllowlistGate",
+      "result": "PASS",
+      "reasons": [
+        "ALLOWLIST_ONLY"
+      ]
+    }
+  ]
+}

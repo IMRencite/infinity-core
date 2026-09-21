@@ -1,7 +1,10 @@
 import type { DepartmentId } from "./types";
-import { LIFECYCLE_ROOM_SEQUENCE } from "./room-naming";
+import { LIFECYCLE_ROOM_SEQUENCE, OPERATIONS_ROOM_ID } from "./room-naming";
 
 export const HQ_FLOOR_CANONICAL_ROOMS: DepartmentId[] = LIFECYCLE_ROOM_SEQUENCE;
+
+/** One source for operating-floor DOM, legend, and first-class room sequencing. */
+export const HQ_OPERATING_FLOOR_ORDER: DepartmentId[] = [OPERATIONS_ROOM_ID, ...LIFECYCLE_ROOM_SEQUENCE];
 
 export type HqFloorColumn = "left" | "right";
 export type HqFloorSpan = "left" | "right" | "full";
@@ -15,6 +18,7 @@ export type HqFloorPackedRoom = {
 };
 
 export type HqFloorLayoutSections = {
+  leading: DepartmentId[];
   above: { left: DepartmentId[]; right: DepartmentId[] };
   full: DepartmentId[];
   below: { left: DepartmentId[]; right: DepartmentId[] };
@@ -23,17 +27,47 @@ export type HqFloorLayoutSections = {
 /** Reusable full-width operating-floor roles. Validation is the current gate. */
 export const HQ_FLOOR_FULL_WIDTH_ROOMS: DepartmentId[] = ["quality_control"];
 
+export const HQ_OPERATING_FLOOR_PLACEMENT_CONTRACT = "HQOperatingFloorPlacementContract" as const;
+export const HQ_ROOM_POSITION_INTEGRITY_GATE = "HQRoomPositionIntegrityGate" as const;
+export const HQ_OPERATING_FLOOR_COLUMN_BALANCE_GATE = "HQOperatingFloorColumnBalanceGate" as const;
+
+/** Desktop-only move: Profit Lab and Systems Architect stay under Creation Lab. */
+export const HQ_FLOOR_RIGHT_AFTER_CREATION: DepartmentId[] = [
+  "strategy_finance",
+  "systems_architect",
+];
+
+/** Design Core sits under Venture Radar to rebalance the left column. */
+export const HQ_FLOOR_LEFT_ABOVE_SEQUENCE: DepartmentId[] = ["opportunity_lab", "creative_studio"];
+
+export const HQ_FLOOR_RIGHT_ABOVE_SEQUENCE: DepartmentId[] = [
+  "research_department",
+  "company_operations",
+  "growth_department",
+  "product_lab",
+  ...HQ_FLOOR_RIGHT_AFTER_CREATION,
+];
+
+export const HQ_FLOOR_LEFT_BELOW_SEQUENCE: DepartmentId[] = ["launch_operations"];
+export const HQ_FLOOR_RIGHT_BELOW_SEQUENCE: DepartmentId[] = ["intelligence_center", "prospect_intelligence"];
+
+export type HqOperatingFloorPlacement = {
+  room_id: DepartmentId;
+  canonical_sequence: number;
+  column: HqFloorSpan;
+  position_in_column: number;
+};
+
 export function hqFloorSpan(id: DepartmentId): HqFloorSpan {
-  if (id === "sales_floor") return "full";
+  if (id === OPERATIONS_ROOM_ID || id === "executive_office" || id === "sales_floor") return "full";
   if (HQ_FLOOR_FULL_WIDTH_ROOMS.includes(id)) return "full";
-  // Keep the deployment wing stable when rooms are inserted above Validation.
-  if (id === "launch_operations") return "left";
-  if (id === "intelligence_center") return "right";
+  if (HQ_FLOOR_LEFT_ABOVE_SEQUENCE.includes(id) || HQ_FLOOR_LEFT_BELOW_SEQUENCE.includes(id)) return "left";
+  if (HQ_FLOOR_RIGHT_ABOVE_SEQUENCE.includes(id) || HQ_FLOOR_RIGHT_BELOW_SEQUENCE.includes(id)) return "right";
   const index = HQ_FLOOR_CANONICAL_ROOMS.indexOf(id);
   return index % 2 === 0 ? "left" : "right";
 }
 
-/** Even canonical indexes stay left; odd indexes stay right unless the room is full-width. */
+/** Desktop column. Full-span rooms are not packed into a side column. */
 export function hqFloorColumn(id: DepartmentId): HqFloorColumn {
   const span = hqFloorSpan(id);
   return span === "full" ? "right" : span;
@@ -42,6 +76,14 @@ export function hqFloorColumn(id: DepartmentId): HqFloorColumn {
 export function hqFloorCanonicalIndex(id: DepartmentId): number {
   return HQ_FLOOR_CANONICAL_ROOMS.indexOf(id);
 }
+
+/** 1-based operating-floor position. Operations is always 1. */
+export function hqOperatingFloorIndex(id: DepartmentId): number {
+  const index = HQ_OPERATING_FLOOR_ORDER.indexOf(id);
+  return index >= 0 ? index + 1 : -1;
+}
+
+export const HQ_OPERATING_FLOOR_LEGEND = ["Operations", "Discovery", "Production", "Deployment"] as const;
 
 export function hqFloorWing(id: DepartmentId): HqFloorWing {
   switch (id) {
@@ -63,24 +105,42 @@ export function hqFloorWing(id: DepartmentId): HqFloorWing {
 }
 
 export function hqFloorLayoutSections(): HqFloorLayoutSections {
-  const above = { left: [] as DepartmentId[], right: [] as DepartmentId[] };
-  const full: DepartmentId[] = [];
-  const below = { left: [] as DepartmentId[], right: [] as DepartmentId[] };
-  let afterFull = false;
+  return {
+    leading: [OPERATIONS_ROOM_ID],
+    above: {
+      left: [...HQ_FLOOR_LEFT_ABOVE_SEQUENCE],
+      right: [...HQ_FLOOR_RIGHT_ABOVE_SEQUENCE],
+    },
+    full: [...HQ_FLOOR_FULL_WIDTH_ROOMS],
+    below: {
+      left: [...HQ_FLOOR_LEFT_BELOW_SEQUENCE],
+      right: [...HQ_FLOOR_RIGHT_BELOW_SEQUENCE],
+    },
+  };
+}
 
-  for (const id of HQ_FLOOR_CANONICAL_ROOMS) {
-    const span = hqFloorSpan(id);
-    if (span === "full") {
-      full.push(id);
-      afterFull = true;
-      continue;
-    }
-    const target = afterFull ? below : above;
-    if (span === "left") target.left.push(id);
-    else target.right.push(id);
+export function hqFloorPositionInColumn(id: DepartmentId): number {
+  const sections = hqFloorLayoutSections();
+  if (sections.leading.includes(id) || sections.full.includes(id)) return 1;
+  const lists = [sections.above.left, sections.above.right, sections.below.left, sections.below.right];
+  for (const list of lists) {
+    const index = list.indexOf(id);
+    if (index >= 0) return index + 1;
   }
+  return -1;
+}
 
-  return { above, full, below };
+export function projectHqOperatingFloorPlacement(id: DepartmentId): HqOperatingFloorPlacement {
+  return {
+    room_id: id,
+    canonical_sequence: hqOperatingFloorIndex(id),
+    column: hqFloorSpan(id),
+    position_in_column: hqFloorPositionInColumn(id),
+  };
+}
+
+export function listHqOperatingFloorPlacements(): HqOperatingFloorPlacement[] {
+  return HQ_OPERATING_FLOOR_ORDER.map(projectHqOperatingFloorPlacement);
 }
 
 export function hqFloorDesktopColumns(): { left: DepartmentId[]; right: DepartmentId[] } {
@@ -107,12 +167,14 @@ export function interleaveFloorColumns(left: DepartmentId[], right: DepartmentId
   return out;
 }
 
-export function assembleCanonicalFloorOrder(sections: HqFloorLayoutSections = HQ_FLOOR_LAYOUT_SECTIONS): DepartmentId[] {
-  return [
-    ...interleaveFloorColumns(sections.above.left, sections.above.right),
-    ...sections.full,
-    ...interleaveFloorColumns(sections.below.left, sections.below.right),
-  ];
+export function assembleCanonicalFloorOrder(_sections: HqFloorLayoutSections = HQ_FLOOR_LAYOUT_SECTIONS): DepartmentId[] {
+  return [...HQ_FLOOR_CANONICAL_ROOMS];
+}
+
+export function assembleOperatingFloorRenderOrder(
+  sections: HqFloorLayoutSections = HQ_FLOOR_LAYOUT_SECTIONS,
+): DepartmentId[] {
+  return [...sections.leading, ...assembleCanonicalFloorOrder(sections)];
 }
 
 /** Independent column packing: a tall right room must not delay the next left room. */

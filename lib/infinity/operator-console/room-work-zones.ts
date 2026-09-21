@@ -31,7 +31,9 @@ const ROOM_WORK_ZONES: Record<DepartmentId, RoomWorkZoneConfig> = {
   quality_control: { intake: "Artifact", process: "Review", output: "Pass / repair", motif: "checkpoint" },
   launch_operations: { intake: "Ready asset", process: "Deploy", output: "External action", motif: "launch" },
   intelligence_center: { intake: "Performance", process: "Diagnosis", output: "Learning signal", motif: "metrics" },
+  prospect_intelligence: { intake: "Sources", process: "Resolve + match", output: "Sales inventory", motif: "network" },
   executive_office: { intake: "Evidence", process: "Decision", output: "Next mission", motif: "command" },
+  operations: { intake: "Canonical state", process: "Observe", output: "Operating status", motif: "metrics" },
   sales_floor: { intake: "Demand and pipeline", process: "Sales motion", output: "Revenue conversion", motif: "pipeline" },
 };
 

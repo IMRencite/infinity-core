@@ -1,0 +1,428 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_PRODUCTION_DNS_VERCEL_SSL_EXECUTION_V4",
+  "ownership": {
+    "domain": "occupancynpv.com",
+    "owned": "YES",
+    "registration": "ACTIVE",
+    "registrar": "cloudflare.registrar_v1"
+  },
+  "cloudflare": {
+    "zone": "dbc6bd7446d67b25699aa62c88d9e5a5",
+    "zoneStatus": "active",
+    "zoneExists": "YES",
+    "dnsRead": "READ_ONLY_VERIFIED",
+    "dnsWrite": "LIVE_WRITE_VERIFIED",
+    "nameservers": [
+      "dante.ns.cloudflare.com",
+      "poppy.ns.cloudflare.com"
+    ],
+    "nameserverReconciliation": "PENDING",
+    "currentZoneWritable": "YES",
+    "futureAccountZonesCovered": "UNKNOWN",
+    "providerError": null
+  },
+  "tokenCapability": {
+    "dnsRead": "READ_ONLY_VERIFIED",
+    "dnsWrite": "LIVE_WRITE_VERIFIED",
+    "tokenType": "USER_OWNED",
+    "currentZoneWritable": "YES",
+    "futureAccountZonesCovered": "UNKNOWN",
+    "tokenZoneScope": "UNKNOWN",
+    "providerError": null,
+    "futureDomainPurchaseAuthority": "NO",
+    "registrarToken": "SEPARATE",
+    "registrarTokenUsed": false
+  },
+  "dnsSnapshot": [],
+  "vercel": {
+    "team": "infinite-media-resources-imr",
+    "plan": "PRO",
+    "project": "infinity-validation-cre-lease-npv",
+    "existingDeployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "customDomainAdded": "YES",
+    "primaryDomain": "occupancynpv.com",
+    "wwwConfiguration": "redirect-to-apex",
+    "requiredDns": [
+      {
+        "type": "CNAME",
+        "name": "occupancynpv.com",
+        "content": "d98a9119cef50aca.vercel-dns-016.com.",
+        "purpose": "ROUTING"
+      },
+      {
+        "type": "CNAME",
+        "name": "www.occupancynpv.com",
+        "content": "d98a9119cef50aca.vercel-dns-016.com.",
+        "purpose": "ROUTING"
+      }
+    ],
+    "verificationRecords": [],
+    "safeError": null
+  },
+  "dnsRecords": [
+    {
+      "type": "CNAME",
+      "name": "occupancynpv.com",
+      "target": "d98a9119cef50aca.vercel-dns-016.com",
+      "proxy": false,
+      "ttl": 1,
+      "action": "CREATED",
+      "readback": "PASS"
+    },
+    {
+      "type": "CNAME",
+      "name": "www.occupancynpv.com",
+      "target": "d98a9119cef50aca.vercel-dns-016.com",
+      "proxy": false,
+      "ttl": 1,
+      "action": "CREATED",
+      "readback": "PASS"
+    }
+  ],
+  "verification": {
+    "apex": "VALID",
+    "www": "PENDING",
+    "propagation": "PASS"
+  },
+  "ssl": {
+    "certificate": "PENDING",
+    "https": "PENDING",
+    "tlsHostname": "PENDING",
+    "httpToHttps": "PENDING",
+    "wwwCertificate": "PENDING",
+    "wwwHttps": "PENDING",
+    "wwwRedirect": "PENDING"
+  },
+  "artifact": {
+    "id": "art_11bd5b74a925257a7319",
+    "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "contentChanged": "NO",
+    "rebuilt": "NO",
+    "founderReviewPreserved": "YES"
+  },
+  "routes": {
+    "totalExpected": 93,
+    "publicPages": 87,
+    "intentionalRedirects": 6,
+    "notFound": "UNKNOWN",
+    "runtimeFailures": "UNKNOWN",
+    "unexpectedRedirects": "UNKNOWN",
+    "missingRoutes": "UNKNOWN"
+  },
+  "productionHost": {
+    "productionUrl": "https://occupancynpv.com",
+    "canonicalHost": "UNKNOWN",
+    "sitemapHost": "UNKNOWN",
+    "validationHostLeakage": "UNKNOWN",
+    "configuration": "UPDATE_REQUIRED"
+  },
+  "footer": {
+    "privacy": "FAIL",
+    "terms": "FAIL",
+    "sitemap": "FAIL",
+    "infinityOs": "FAIL",
+    "imr": "FAIL"
+  },
+  "record": {
+    "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+    "venture_name": "CRE Lease NPV Validation",
+    "venture_status": "ACTIVE",
+    "operating_stage": "VALIDATING",
+    "business_model": "B2B_SAAS",
+    "primary_offer": "Lease-scenario NPV comparison for tenant-representation brokers",
+    "monetization_model": "UNCONFIGURED",
+    "primary_domain": "occupancynpv.com",
+    "domain_history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:26:40.975Z",
+        "evidence": "Selected candidate preserved; not purchased."
+      },
+      {
+        "domain": "leasenpv.com",
+        "event": "RELEASED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Cloudflare domain-check proved leasenpv.com unavailable; no longer preferred."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Selected from Cloudflare Registrar domain-check evidence; not purchased."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "PURCHASED",
+        "at": "2026-09-06T06:19:55Z",
+        "evidence": "Cloudflare Registrar purchase occupancynpv.com; registration 10.46; renewal 10.46; FOUNDER_CONFIRMED_DASHBOARD_PREREQUISITES; DNS not configured."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "BOUND",
+        "at": "2026-09-06T10:50:25.607Z",
+        "evidence": "Cloudflare DNS + Vercel production binding for occupancynpv.com; PUBLICLY_LAUNCHED remains NO."
+      }
+    ],
+    "public_url": "https://occupancynpv.com",
+    "canonical_url": "https://occupancynpv.com",
+    "public_launch_state": "NO",
+    "deployment_provider": "vercel",
+    "deployment_project": "infinity-validation-cre-lease-npv",
+    "active_artifact": "art_11bd5b74a925257a7319",
+    "active_artifact_digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "active_deployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "active_deployment_url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+    "deployment_state": "DEPLOYED_NOT_PUBLICLY_LAUNCHED",
+    "domain_provider": "cloudflare.registrar_v1",
+    "domain_registration_state": "ACTIVE",
+    "dns_provider": "cloudflare.dns_v1",
+    "dns_zone": "dbc6bd7446d67b25699aa62c88d9e5a5",
+    "dns_state": "CONFIGURED",
+    "ssl_state": "UNCONFIGURED",
+    "commercialization_state": "FOUNDATION_READY",
+    "pricing_state": "HYPOTHESIS_RECONCILED",
+    "checkout_state": "UNCONFIGURED",
+    "payment_provider": "stripe",
+    "payment_account_binding": {
+      "kind": "PROVIDER_BINDING",
+      "key": "acct_livecre1",
+      "rawSecretStored": false
+    },
+    "payment_products": [
+      {
+        "id": "prod_pro1",
+        "name": "Professional",
+        "providerProductRef": {
+          "kind": "PROVIDER_BINDING",
+          "key": "stripe.product",
+          "rawSecretStored": false
+        }
+      },
+      {
+        "id": "prod_deal1",
+        "name": "Per-deal",
+        "providerProductRef": {
+          "kind": "PROVIDER_BINDING",
+          "key": "stripe.product",
+          "rawSecretStored": false
+        }
+      }
+    ],
+    "payment_prices": [
+      {
+        "id": "price_pro1",
+        "productId": "prod_pro1",
+        "amountUsd": 290,
+        "providerPriceRef": {
+          "kind": "PROVIDER_BINDING",
+          "key": "stripe.price",
+          "rawSecretStored": false
+        }
+      },
+      {
+        "id": "price_deal1",
+        "productId": "prod_deal1",
+        "amountUsd": 149,
+        "providerPriceRef": {
+          "kind": "PROVIDER_BINDING",
+          "key": "stripe.price",
+          "rawSecretStored": false
+        }
+      }
+    ],
+    "payment_webhooks": {
+      "kind": "UNCONFIGURED",
+      "key": null,
+      "rawSecretStored": false
+    },
+    "revenue_state": "UNCONFIGURED",
+    "analytics_provider": "UNCONFIGURED",
+    "analytics_property": "UNCONFIGURED",
+    "search_console_binding": "UNCONFIGURED",
+    "sitemap_url": "https://occupancynpv.com/sitemap.xml",
+    "robots_state": "UNCONFIGURED",
+    "indexability_state": "UNCONFIGURED",
+    "primary_sender_identity": "infinitemediaresources@gmail.com",
+    "communication_provider": "gmail.com_v1",
+    "communication_capabilities": {
+      "communication.email.read": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+      "communication.email.reply_ingest": "ARCHITECTURE_BUILT",
+      "communication.email.thread.read": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+      "communication.email.search": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+      "communication.email.mailbox_watch": "ARCHITECTURE_BUILT_POLLING_FALLBACK",
+      "communication.email.reply.send": "ARCHITECTURE_BUILT_WRITE_UNVERIFIED",
+      "communication.email.suppression.write": "ARCHITECTURE_BUILT",
+      "communication.email.delivery.observe": "ARCHITECTURE_BUILT"
+    },
+    "inbound_observer_state": "RUNNING:4",
+    "suppression_state": "ARCHITECTURE_BUILT",
+    "privacy_policy_url": "https://occupancynpv.com/privacy-policy/",
+    "terms_of_service_url": "https://occupancynpv.com/terms-of-service/",
+    "legal_configuration_state": "LEGAL_SURFACES_PRESENT",
+    "active_channels": [
+      "bounded_professional_outreach"
+    ],
+    "current_experiment": "exp_e72beb7b6d35e7b20acf",
+    "outreach_strategy": "CONTEXT_RICH_CONSULTATIVE",
+    "acquisition_state": "OBSERVING",
+    "primary_kpis": [
+      "qualified_engagement",
+      "process_disclosure",
+      "friction_disclosure"
+    ],
+    "current_metric_state": "INSUFFICIENT_OUTCOME_EVIDENCE",
+    "performance_source_bindings": [
+      "performance_intelligence_engine",
+      "inbound_communication_runtime"
+    ],
+    "latest_learning_decision": "CRE_CLOUDFLARE_DNS_VERCEL_BINDING_VERIFIED",
+    "optimization_state": "OBSERVING",
+    "current_missions": [],
+    "active_authorizations": [],
+    "blocked_actions": [
+      "LEGAL_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ],
+    "risk_state": "LOW",
+    "secret_references": [
+      {
+        "kind": "ENV_KEY",
+        "key": "GMAIL_OAUTH_REFRESH_TOKEN",
+        "rawSecretStored": false
+      },
+      {
+        "kind": "ENV_KEY",
+        "key": "STRIPE_SECRET_KEY",
+        "rawSecretStored": false
+      },
+      {
+        "kind": "ENV_KEY",
+        "key": "VERCEL_TOKEN",
+        "rawSecretStored": false
+      },
+      {
+        "kind": "ENV_KEY",
+        "key": "CLOUDFLARE_API_TOKEN",
+        "rawSecretStored": false
+      },
+      {
+        "kind": "ENV_KEY",
+        "key": "CLOUDFLARE_REGISTRAR_API_TOKEN",
+        "rawSecretStored": false
+      }
+    ]
+  },
+  "daily": {
+    "orchestrator": "DailyVentureOperatingCycle",
+    "replacesDecisionEngine": false,
+    "snapshot": {
+      "ventureId": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "currentStage": "VALIDATING",
+      "publicStatus": "NO",
+      "revenueStatus": "UNCONFIGURED",
+      "trafficPerformanceState": "INSUFFICIENT_OUTCOME_EVIDENCE",
+      "activeExperiments": [
+        "exp_e72beb7b6d35e7b20acf"
+      ],
+      "activeMissions": [],
+      "newInbound": 0,
+      "blockedActions": [
+        "LEGAL_CONFIGURATION",
+        "PRODUCTION_DOMAIN_BINDING",
+        "SSL_VERIFICATION",
+        "CHECKOUT_CONFIGURATION",
+        "WEBHOOK_CONFIGURATION",
+        "ANALYTICS_CONFIGURATION",
+        "PAYMENT_ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "importantChangesSincePriorCycle": [
+        "operating_record_reconciled"
+      ],
+      "learningSignals": [
+        "foundation_ready",
+        "experiment_waiting_externally",
+        "domain_acquisition_status",
+        "payment_verification_status",
+        "commercialization_blockers_present"
+      ],
+      "nextGovernedWork": [
+        "LEGAL_CONFIGURATION",
+        "PRODUCTION_DOMAIN_BINDING",
+        "SSL_VERIFICATION",
+        "CHECKOUT_CONFIGURATION",
+        "WEBHOOK_CONFIGURATION",
+        "ANALYTICS_CONFIGURATION",
+        "PAYMENT_ACTIVATION",
+        "PUBLIC_LAUNCH"
+      ],
+      "riskAlerts": [],
+      "dailyResult": "ORCHESTRATE_EXISTING_ENGINES"
+    },
+    "enginesConsulted": [
+      "Decision Engine",
+      "Performance Intelligence",
+      "Economic Action Governance",
+      "Mission Runtime",
+      "Communication Runtime",
+      "Deployment Governance",
+      "Treasury",
+      "Validation systems"
+    ],
+    "commercializationWorkRecognized": true,
+    "externalWaitingRecognized": true,
+    "providerAccessBlockerRecognized": false
+  },
+  "remainingBlockers": [
+    "LEGAL_CONFIGURATION",
+    "PRODUCTION_DOMAIN_BINDING",
+    "SSL_VERIFICATION",
+    "CHECKOUT_CONFIGURATION",
+    "WEBHOOK_CONFIGURATION",
+    "ANALYTICS_CONFIGURATION",
+    "PAYMENT_ACTIVATION",
+    "PUBLIC_LAUNCH"
+  ],
+  "clearedBlockers": [
+    "DNS_CONFIGURATION"
+  ],
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "purchases": 0,
+  "otherPurchases": 0,
+  "vercelPurchases": 0,
+  "dnsWrites": 2,
+  "domainBindings": 0,
+  "deployments": 0,
+  "stripeWrites": 0,
+  "customerCharges": 0,
+  "searchSubmissions": 0,
+  "publiclyLaunched": "NO",
+  "nextState": "CRE_SSL_PENDING",
+  "nextGovernedAction": "CRE_SSL_PENDING",
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_PRODUCTION_DNS_VERCEL_SSL_EXECUTION_V4",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

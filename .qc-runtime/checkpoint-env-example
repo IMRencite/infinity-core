@@ -1,0 +1,80 @@
+# Server-only (never use NEXT_PUBLIC_* for secrets)
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-5.6-terra
+OPENAI_REASONING_EFFORT=medium
+OPENAI_MAX_OUTPUT_TOKENS=4096
+OPENAI_TIMEOUT_MS=60000
+OPENAI_MAX_RETRIES=2
+
+# Governed AI website generation: mock | shadow | advisory | disabled (default: disabled)
+AI_WEBSITE_GENERATION_MODE=disabled
+ALLOW_AI_WEBSITE_E2E_AUTO_APPROVE=false
+RUN_LIVE_AI_WEBSITE_TESTS=false
+
+# Governed reasoning modes: mock | shadow | advisory | disabled (default: disabled)
+AI_REASONING_MODE=disabled
+AI_PROVIDER_ALLOW_LIVE_EXECUTION=false
+
+# AI Brain v1 — structured reasoning foundation
+AI_PROVIDER=openai
+AI_REASONING_MODEL=gpt-5.6-terra
+AI_BRAIN_ENABLED=true
+AI_BRAIN_TEST_ORG_ID=
+RUN_AI_BRAIN_LIVE_TEST=false
+
+# Gemini Grounded Research v1 — evidence collection (not strategic reasoning)
+GEMINI_API_KEY=
+RESEARCH_PROVIDER=gemini
+GEMINI_RESEARCH_MODEL=gemini-3.5-flash
+RESEARCH_ENABLED=true
+RESEARCH_TEST_ORG_ID=
+RUN_GEMINI_GROUNDED_RESEARCH_V1_TEST=false
+RESEARCH_MAX_ESTIMATED_COST_USD=2
+RESEARCH_MAX_SEARCH_QUERIES=5
+
+# Optional cost controls
+AI_REASONING_MAX_INPUT_TOKENS=16000
+AI_REASONING_MAX_ESTIMATED_COST_USD=1
+AI_REASONING_MAX_SESSIONS_PER_STAGE=1
+
+# Live OpenAI tests (off by default)
+RUN_LIVE_OPENAI_TESTS=false
+
+# Namecheap registrar adapter v1.1 — read-only. Default disabled.
+# Never use NEXT_PUBLIC_ for Namecheap credentials. Client IP must be allowlisted at Namecheap.
+NAMECHEAP_ENABLED=false
+NAMECHEAP_ENV=sandbox
+NAMECHEAP_API_USER=
+NAMECHEAP_API_KEY=
+NAMECHEAP_USERNAME=
+NAMECHEAP_CLIENT_IP=
+
+# Cloudflare DNS adapter v1.1 — read-only. Default disabled.
+# Prefer a token scoped to Zone:Read and DNS:Read only.
+CLOUDFLARE_ENABLED=false
+CLOUDFLARE_API_TOKEN=
+CLOUDFLARE_ACCOUNT_ID=
+
+# Mercury Treasury adapter — server-side READ-ONLY only.
+# Never use NEXT_PUBLIC_ for Mercury credentials. Never commit the token.
+# Token: Mercury dashboard → Settings → Tokens → Create token → Read Only.
+# Required live cash vars: MERCURY_ENABLED, MERCURY_ENV, MERCURY_API_TOKEN
+# MERCURY_BASE_URL is optional. Production host must be api.mercury.com.
+# Local: set in .env.local (gitignored via .env*). Restart Next.js after saving.
+# Production: add the same server-only keys to the Infinity Core Vercel/runtime env.
+# Do not create a Read-Write token. Do not enable ACH, wires, transfers, or cards.
+MERCURY_ENABLED=false
+MERCURY_ENV=production
+MERCURY_API_TOKEN=
+# MERCURY_BASE_URL=https://api.mercury.com/api/v1/
+
+# Discovery Engine v1 (live fetches off by default; use manual provider in tests)
+DISCOVERY_ALLOW_LIVE_FETCH=false
+# DISCOVERY_RSS_FEED_URLS=https://example.com/feed.xml
+# DISCOVERY_GOOGLE_TRENDS_TOPICS=ai agents,saas tools
+# PRODUCT_HUNT_API_TOKEN=
+# GITHUB_TOKEN=
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=

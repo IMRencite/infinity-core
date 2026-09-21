@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="cfTitle cfDesc">
+  <title id="cfTitle">Cash moves later and shrinks toward today</title>
+  <desc id="cfDesc">A simple timeline. Later cash boxes sit farther right and look smaller than year-one cash.</desc>
+  <rect width="720" height="220" fill="#f4f7fb"/>
+  <line x1="48" y1="150" x2="680" y2="150" stroke="#1d3557" stroke-width="2"/>
+  <rect x="60" y="70" width="88" height="64" rx="8" fill="#1d4e89"/>
+  <rect x="210" y="86" width="76" height="48" rx="8" fill="#2c6aa6"/>
+  <rect x="360" y="98" width="64" height="36" rx="8" fill="#4d88c4"/>
+  <rect x="500" y="108" width="54" height="26" rx="8" fill="#7aa6d4"/>
+  <text x="104" y="190" text-anchor="middle" font-size="13" fill="#243044" font-family="Georgia, serif">Year 1</text>
+  <text x="248" y="190" text-anchor="middle" font-size="13" fill="#243044" font-family="Georgia, serif">Year 2</text>
+  <text x="392" y="190" text-anchor="middle" font-size="13" fill="#243044" font-family="Georgia, serif">Year 3</text>
+  <text x="527" y="190" text-anchor="middle" font-size="13" fill="#243044" font-family="Georgia, serif">Later</text>
+  <text x="48" y="36" font-size="16" fill="#102033" font-family="Georgia, serif">Later cash is smaller in today's dollars</text>
+</svg>

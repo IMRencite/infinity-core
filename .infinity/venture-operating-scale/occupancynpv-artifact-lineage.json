@@ -1,0 +1,18 @@
+{
+  "finding": "B",
+  "explanation": "premiumAuthorityArtifactIdFor hashes planId+packageId+version+contract, not file contents. The same package-derived artifact ID can therefore label multiple digests. Immutable production identity is digest + deployment_id.",
+  "packageDerivedArtifactId": "art_5eb5eeb74bfd2a300b85",
+  "immutableIdentity": "digest_plus_deployment",
+  "previous": {
+    "artifactId": "art_5eb5eeb74bfd2a300b85",
+    "digest": "9fdde8037346ed084c2effa436c6d87582c5aa792267b4e49b1e798c784e0eaa",
+    "deploymentId": "dpl_EJz4Awry75nD7HyXaDTrLqu86JYe"
+  },
+  "current": {
+    "artifactId": "art_5eb5eeb74bfd2a300b85",
+    "digest": "79ba6e300182f0f5dca61a3dbf5d55e75d2354f91937d1f5aa0b8ae6d356594b",
+    "deploymentId": "dpl_DANyg3Hv3iY7GpgU3xDwfkxuPq72"
+  },
+  "composeDigestMatchesCurrent": true,
+  "repairRequired": false
+}

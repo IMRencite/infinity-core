@@ -37,8 +37,24 @@ describe("Worker Capability Foundation v1", () => {
 
   it("denies permissions not granted on context", () => {
     const ctx = {
+      organizationId: "org-1",
+      missionId: "m1",
+      runtimeInstanceId: "rt-1",
+      opportunityId: null,
+      planId: null,
+      planStepId: null,
+      engineJobId: "job-1",
+      workerRunId: "run-1",
+      correlationId: "corr-1",
+      capabilityKey: "blueprint.validate",
+      capabilityVersion: "1.0.0",
+      idempotencyKey: "idemp-1",
+      executionKey: "exec-1",
+      attemptNumber: 1,
+      approvedInput: {},
+      constraints: {},
       grantedPermissions: new Set(["evidence.read"]),
-    } as WorkerExecutionContextBound;
+    } satisfies WorkerExecutionContextBound;
     expect(() => assertWorkerPermission(ctx, "blueprint.read")).toThrow(WorkerPermissionError);
   });
 

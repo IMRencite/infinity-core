@@ -3,10 +3,14 @@ import {
   PUBLIC_OPERATIONS_SURFACE,
   PUBLIC_PROJECTION_CACHE_TTL_MS,
   evaluatePublicProjectionReadOnlyGate,
-  projectPublicOperations,
+  projectPublicOperationsAsync,
 } from "@/lib/infinity/public-operations-projection";
 
-const CACHE_CONTROL = `public, max-age=${Math.floor(PUBLIC_PROJECTION_CACHE_TTL_MS / 1000)}, s-maxage=${Math.floor(PUBLIC_PROJECTION_CACHE_TTL_MS / 1000)}`;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const runtime = "nodejs";
+
+const CACHE_CONTROL = `public, max-age=0, s-maxage=${Math.floor(PUBLIC_PROJECTION_CACHE_TTL_MS / 1000)}, stale-while-revalidate=${Math.floor(PUBLIC_PROJECTION_CACHE_TTL_MS / 1000)}`;
 
 function readOnlyDenied(): NextResponse {
   const gate = evaluatePublicProjectionReadOnlyGate({
@@ -32,11 +36,13 @@ function readOnlyDenied(): NextResponse {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const projection = projectPublicOperations({ useCache: true });
+  const projection = await projectPublicOperationsAsync({ useCache: true });
   return NextResponse.json(projection, {
     status: 200,
     headers: {
       "Cache-Control": CACHE_CONTROL,
+      "CDN-Cache-Control": CACHE_CONTROL,
+      "Vercel-CDN-Cache-Control": CACHE_CONTROL,
       "X-Robots-Tag": "index, follow",
     },
   });

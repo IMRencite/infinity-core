@@ -5,12 +5,19 @@ import type { DepartmentId, OperatorDepartmentSnapshot, OperatorCurrentActivity,
 import { LIFECYCLE_ROOM_SEQUENCE, getRoomDisplayNames } from "@/lib/infinity/operator-console/room-naming";
 import {
   HQ_FLOOR_LAYOUT_SECTIONS,
+  HQ_OPERATING_FLOOR_LEGEND,
+  HQ_OPERATING_FLOOR_ORDER,
   hqFloorCanonicalIndex,
+  hqFloorPositionInColumn,
   hqFloorSpan,
   hqFloorWing,
+  hqOperatingFloorIndex,
 } from "@/lib/infinity/operator-console/floor-layout";
+import { aggregateRoomVisualState } from "@/lib/infinity/hq-live-activity";
 import { DepartmentRoom } from "./department-room";
+import { roomPresenceFromActivityStatus } from "@/lib/infinity/operator-console/room-presence";
 import { HqFlowConnectors, closedLoopTargetLabel } from "./hq-flow-connectors";
+import { HqOperationsFloorRoom } from "./hq-operations-floor-room";
 import { HqSalesFloor } from "./hq-sales-floor";
 
 type Props = {
@@ -25,6 +32,10 @@ type Props = {
   handoffLineageColorKey?: string | null;
   isTerminalCycle?: boolean;
   ventureName?: string | null;
+  liveRoomStatus?: Record<string, { status?: string; summary?: string | null } | undefined> | null;
+  nowInspectingTask?: string | null;
+  currentWorkTitle?: string | null;
+  lastVentureWorkTitle?: string | null;
 };
 
 export const FLOW_SEQUENCE = [...LIFECYCLE_ROOM_SEQUENCE, "executive_office"] as DepartmentId[];
@@ -41,6 +52,9 @@ function RoomCell({
   closedLoopRoute,
   onSelectDepartment,
   isTerminalCycle = false,
+  liveStatus = null,
+  liveSummary = null,
+  nowInspectingTask = null,
 }: {
   deptId: DepartmentId;
   departments: Map<string, OperatorDepartmentSnapshot>;
@@ -53,6 +67,9 @@ function RoomCell({
   closedLoopRoute: Props["closedLoopRoute"];
   onSelectDepartment: (id: DepartmentId) => void;
   isTerminalCycle?: boolean;
+  liveStatus?: string | null;
+  liveSummary?: string | null;
+  nowInspectingTask?: string | null;
 }) {
   const names = getRoomDisplayNames(deptId);
   const dept = departments.get(deptId);
@@ -66,6 +83,9 @@ function RoomCell({
       data-hq-floor-room={deptId}
       data-hq-floor-column={span}
       data-hq-floor-span={span}
+      data-hq-floor-position-in-column={hqFloorPositionInColumn(deptId)}
+      data-hq-operating-floor-index={hqOperatingFloorIndex(deptId)}
+      data-hq-live-status={liveStatus ?? ""}
       style={{ "--hq-floor-order": hqFloorCanonicalIndex(deptId) } as CSSProperties}
     >
       <DepartmentRoom
@@ -78,13 +98,17 @@ function RoomCell({
         closedLoopRoute={closedLoopRoute}
         ventureName={ventureName}
         isSelected={selectedDepartment === deptId}
-        isActive={activeSet.has(deptId)}
+        isActive={aggregateRoomVisualState(deptNodes) === "ACTIVE" || liveStatus === "ACTIVE_WORK"}
         isNextMissionTarget={dept?.isNextMissionTarget ?? false}
         isOnActivePath={activeFlowIndex >= 0 && idx >= 0 && idx <= activeFlowIndex}
         closedLoopTarget={closedLoopRoute.toDepartmentId === deptId && closedLoopRoute.active}
         isTerminal={isTerminalCycle}
         onSelect={() => onSelectDepartment(deptId)}
         span={span === "full" ? "full" : "standard"}
+        livePresence={roomPresenceFromActivityStatus(liveStatus)}
+        liveStatus={liveStatus}
+        liveSummary={liveSummary}
+        nowInspectingTask={nowInspectingTask}
       />
     </div>
   );
@@ -124,6 +148,10 @@ export function HqSpatialFloor({
   handoffLineageColorKey = null,
   isTerminalCycle = false,
   ventureName = null,
+  liveRoomStatus = null,
+  nowInspectingTask = null,
+  currentWorkTitle = null,
+  lastVentureWorkTitle = null,
 }: Props) {
   const deptMap = new Map(departments.map((d) => [d.id, d]));
   const activeSet = new Set(activeDepartments);
@@ -144,6 +172,9 @@ export function HqSpatialFloor({
       closedLoopRoute={closedLoopRoute}
       onSelectDepartment={onSelectDepartment}
       isTerminalCycle={isTerminalCycle}
+      liveStatus={liveRoomStatus?.[deptId]?.status ?? null}
+      liveSummary={liveRoomStatus?.[deptId]?.summary ?? null}
+      nowInspectingTask={nowInspectingTask}
     />
   );
 
@@ -161,8 +192,24 @@ export function HqSpatialFloor({
         <div className="relative p-2 md:p-3">
           <p className="mb-1 text-center text-[9px] uppercase tracking-[0.35em] text-zinc-600">HQ Operating Floor</p>
           <p className="mb-2 text-center text-[8px] font-semibold uppercase tracking-[0.22em] text-zinc-600">
-            Discovery wing · Production wing · Deployment &amp; intelligence wing
+            {HQ_OPERATING_FLOOR_LEGEND.join(" · ")}
           </p>
+          {currentWorkTitle || nowInspectingTask ? (
+            <p
+              className="mb-2 text-center text-[11px] font-medium text-sky-200/90"
+              data-hq-floor-current-work={currentWorkTitle ?? nowInspectingTask ?? ""}
+            >
+              {currentWorkTitle ?? nowInspectingTask}
+            </p>
+          ) : lastVentureWorkTitle ? (
+            <p
+              className="mb-2 text-center text-[10px] text-zinc-500"
+              data-hq-floor-last-venture-work={lastVentureWorkTitle}
+              data-hq-latest-venture-work={lastVentureWorkTitle}
+            >
+              Last venture work: {lastVentureWorkTitle}
+            </p>
+          ) : null}
 
           <HqFlowConnectors
             activeDepartmentIds={activeDepartments}
@@ -173,14 +220,45 @@ export function HqSpatialFloor({
             handoffLineageColorKey={handoffLineageColorKey}
           />
 
-          <div className="hq-floor-stack relative min-w-0">
-            <div className="hq-floor-full-row" data-hq-floor-full-row="sales_floor">
-              <HqSalesFloor
-                snapshot={deptMap.get("sales_floor")}
-                selected={selectedDepartment === "sales_floor"}
-                onSelect={() => onSelectDepartment("sales_floor")}
-              />
-            </div>
+          <div
+            className="hq-floor-stack relative min-w-0"
+            data-hq-operating-floor-order={HQ_OPERATING_FLOOR_ORDER.join(",")}
+          >
+            {sections.leading.map((id) => (
+              <div
+                key={id}
+                className="hq-floor-full-row"
+                data-hq-floor-full-row={id}
+                data-hq-operating-floor-index={hqOperatingFloorIndex(id)}
+              >
+                {id === "operations" ? (
+                  <HqOperationsFloorRoom
+                    snapshot={deptMap.get("operations")}
+                    workerNodes={workerNodes}
+                    currentActivity={currentActivity}
+                    closedLoopRoute={closedLoopRoute}
+                    selected={selectedDepartment === "operations"}
+                    onSelect={() => onSelectDepartment("operations")}
+                    ventureName={ventureName}
+                    liveStatus={liveRoomStatus?.operations?.status ?? null}
+                    liveSummary={liveRoomStatus?.operations?.summary ?? deptMap.get("operations")?.currentTask ?? null}
+                    nowInspectingTask={nowInspectingTask ?? deptMap.get("operations")?.currentTask ?? null}
+                  />
+                ) : (
+                  cell(id)
+                )}
+                {id === "operations" ? (
+                  <div className="mt-2" data-hq-floor-full-row="sales_floor">
+                    <HqSalesFloor
+                      snapshot={deptMap.get("sales_floor")}
+                      workerNodes={workerNodes.filter((node) => node.departmentId === "sales_floor")}
+                      selected={selectedDepartment === "sales_floor"}
+                      onSelect={() => onSelectDepartment("sales_floor")}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ))}
             <FloorColumns left={sections.above.left} right={sections.above.right} renderRoom={cell} />
             {sections.full.map((id) => (
               <div key={id} className="hq-floor-full-row" data-hq-floor-full-row={id}>

@@ -1,12 +1,29 @@
-import { CLOUDFLARE_ACCOUNT_ID_ENV, CLOUDFLARE_API_TOKEN_ENV, CLOUDFLARE_ENABLED_ENV, CLOUDFLARE_LIVE_ENV, CLOUDFLARE_PROBE_ZONE_ENV, CLOUDFLARE_ZONE_ID_ENV } from "../config";
+import { CLOUDFLARE_ACCOUNT_ID_ENV, CLOUDFLARE_API_TOKEN_ENV, CLOUDFLARE_ENABLED_ENV, CLOUDFLARE_LIVE_ENV, CLOUDFLARE_PROBE_ZONE_ENV, CLOUDFLARE_REGISTRAR_API_TOKEN_ENV, CLOUDFLARE_ZONE_ID_ENV } from "../config";
 
 export const CLOUDFLARE_API_BASE_URL = "https://api.cloudflare.com/client/v4";
 export const CLOUDFLARE_DEFAULT_TIMEOUT_MS = 15_000;
+export const CLOUDFLARE_REGISTRATION_TIMEOUT_MS = 60_000;
 export const CLOUDFLARE_PAGE_SIZE = 50;
 export const CLOUDFLARE_MAX_PAGES = 5;
 export const CLOUDFLARE_RECORD_DETAIL_CAP = 5;
 
 export type CloudflareTokenScope = "TOKEN_SCOPE_MINIMAL" | "TOKEN_SCOPE_BROADER_THAN_REQUIRED" | "UNKNOWN";
+
+export type CloudflareTokenKind =
+  | "USER_API_TOKEN"
+  | "ACCOUNT_API_TOKEN"
+  | "GLOBAL_API_KEY"
+  | "LEGACY_UNPREFIXED"
+  | "MISSING";
+
+export function classifyCloudflareTokenKind(token: string | null | undefined): CloudflareTokenKind {
+  const value = (token ?? "").trim();
+  if (!value) return "MISSING";
+  if (value.startsWith("cfut_")) return "USER_API_TOKEN";
+  if (value.startsWith("cfat_")) return "ACCOUNT_API_TOKEN";
+  if (value.startsWith("cfk_")) return "GLOBAL_API_KEY";
+  return "LEGACY_UNPREFIXED";
+}
 
 export type CloudflarePublicConfig = {
   enabled: boolean;
@@ -80,4 +97,38 @@ export function serializeCloudflarePublicConfig(config: CloudflarePublicConfig):
 export function cloudflareTokenVerifyPath(accountId: string | null): string {
   if (accountId) return `/accounts/${encodeURIComponent(accountId)}/tokens/verify`;
   return "/user/tokens/verify";
+}
+
+export type CloudflareRegistrarPublicConfig = {
+  registrarTokenConfigured: boolean;
+  generalTokenConfigured: boolean;
+  tokensAreDistinct: boolean;
+  accountIdConfigured: boolean;
+  accountId: string | null;
+  timeoutMs: number;
+};
+
+export type CloudflareRegistrarResolvedConfig = {
+  public: CloudflareRegistrarPublicConfig;
+  registrarCredentials: CloudflareCredentials | null;
+  generalCredentials: CloudflareCredentials | null;
+};
+
+export function loadCloudflareRegistrarConfig(env: NodeJS.Dict<string> = process.env): CloudflareRegistrarResolvedConfig {
+  const registrarToken = (env[CLOUDFLARE_REGISTRAR_API_TOKEN_ENV] ?? "").trim();
+  const generalToken = (env[CLOUDFLARE_API_TOKEN_ENV] ?? "").trim();
+  const accountId = (env[CLOUDFLARE_ACCOUNT_ID_ENV] ?? "").trim() || null;
+  const registrarConfigured = registrarToken.length >= 8;
+  return {
+    public: {
+      registrarTokenConfigured: registrarConfigured,
+      generalTokenConfigured: generalToken.length >= 8,
+      tokensAreDistinct: registrarConfigured && generalToken.length >= 8 && registrarToken !== generalToken,
+      accountIdConfigured: Boolean(accountId),
+      accountId,
+      timeoutMs: CLOUDFLARE_DEFAULT_TIMEOUT_MS,
+    },
+    registrarCredentials: registrarConfigured ? new CloudflareCredentials(registrarToken) : null,
+    generalCredentials: generalToken.length >= 8 ? new CloudflareCredentials(generalToken) : null,
+  };
 }

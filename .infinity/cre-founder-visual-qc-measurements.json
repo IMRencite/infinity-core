@@ -1,0 +1,1378 @@
+{
+  "screenshotCount": 30,
+  "measurementCount": 30,
+  "overflow": 0,
+  "measurements": [
+    {
+      "route": "/",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 197.53125,
+        "bottom": 255.625,
+        "height": 58.09375,
+        "width": 1280
+      },
+      "media": {
+        "top": 197.53125,
+        "bottom": 254.625,
+        "height": 57.09375,
+        "width": 1280
+      },
+      "nextSection": {
+        "top": 255.625,
+        "bottom": 1256.015625,
+        "height": 1000.390625,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 339.625,
+        "bottom": 376.484375,
+        "height": 36.859375,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        118.609375,
+        118.609375,
+        118.609375,
+        93.890625,
+        93.890625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Open the workflow"
+    },
+    {
+      "route": "/",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 227.40625,
+        "height": 58.09375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 226.40625,
+        "height": 57.09375,
+        "width": 1440
+      },
+      "nextSection": {
+        "top": 227.40625,
+        "bottom": 1229.484375,
+        "height": 1002.078125,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 311.40625,
+        "bottom": 348.6875,
+        "height": 37.28125,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        118.609375,
+        118.609375,
+        118.609375,
+        93.890625,
+        93.890625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Open the workflow"
+    },
+    {
+      "route": "/",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 677.25,
+        "bottom": 720.25,
+        "height": 43,
+        "width": 390
+      },
+      "media": {
+        "top": 677.25,
+        "bottom": 719.25,
+        "height": 42,
+        "width": 390
+      },
+      "nextSection": {
+        "top": 720.25,
+        "bottom": 2284.671875,
+        "height": 1564.421875,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 804.25,
+        "bottom": 833.46875,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        194.921875,
+        194.921875,
+        170.203125,
+        170.203125,
+        170.203125
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Open the workflow"
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 197.53125,
+        "bottom": 568.125,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 197.53125,
+        "bottom": 567.125,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 568.125,
+        "bottom": 7597.75,
+        "height": 7029.625,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 622.03125,
+        "bottom": 658.890625,
+        "height": 36.859375,
+        "width": 663.28125
+      },
+      "termHeading": {
+        "top": 1037.34375,
+        "bottom": 1111.0625,
+        "height": 73.71875,
+        "width": 374.21875
+      },
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        199.234375,
+        199.234375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore the ideas behind the steps"
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 7578.8125,
+        "height": 7038.90625,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 593.8125,
+        "bottom": 631.09375,
+        "height": 37.28125,
+        "width": 663.28125
+      },
+      "termHeading": {
+        "top": 1009.96875,
+        "bottom": 1084.53125,
+        "height": 74.5625,
+        "width": 374.21875
+      },
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        199.234375,
+        199.234375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore the ideas behind the steps"
+    },
+    {
+      "route": "/how-it-works",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 649.03125,
+        "bottom": 918.828125,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 649.03125,
+        "bottom": 917.828125,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 918.828125,
+        "bottom": 13138.203125,
+        "height": 12219.375,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 972.734375,
+        "bottom": 1031.171875,
+        "height": 58.4375,
+        "width": 263.6875
+      },
+      "termHeading": {
+        "top": 1741.609375,
+        "bottom": 1800.046875,
+        "height": 58.4375,
+        "width": 306
+      },
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        246.515625,
+        248.671875,
+        302.421875,
+        248.671875,
+        329.296875
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore the ideas behind the steps"
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 1025.859375,
+        "height": 485.953125,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.359375,
+        "height": 36.859375,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        219.640625
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED QUESTIONS",
+      "title": "Questions in this topic"
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 141.09375,
+        "bottom": 511.6875,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 141.09375,
+        "bottom": 510.6875,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 511.6875,
+        "bottom": 998.0625,
+        "height": 486.375,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 545.28125,
+        "bottom": 582.5625,
+        "height": 37.28125,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        219.640625
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED QUESTIONS",
+      "title": "Questions in this topic"
+    },
+    {
+      "route": "/commercial-lease-npv",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 536.15625,
+        "bottom": 805.953125,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 536.15625,
+        "bottom": 804.953125,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 805.953125,
+        "bottom": 1538.234375,
+        "height": 732.28125,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 839.546875,
+        "bottom": 868.765625,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        248.671875,
+        302.421875,
+        248.671875,
+        194.921875
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED QUESTIONS",
+      "title": "Questions in this topic"
+    },
+    {
+      "route": "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 895.359375,
+        "height": 355.453125,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.359375,
+        "height": 36.859375,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 895.78125,
+        "height": 355.875,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.78125,
+        "height": 37.28125,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 592.59375,
+        "bottom": 862.390625,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 592.59375,
+        "bottom": 861.390625,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 862.390625,
+        "bottom": 1238.421875,
+        "height": 376.03125,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 895.984375,
+        "bottom": 925.203125,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        194.921875,
+        302.421875,
+        376.578125,
+        221.796875,
+        246.515625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 895.359375,
+        "height": 355.453125,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.359375,
+        "height": 36.859375,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        356.171875,
+        356.171875,
+        356.171875,
+        197.078125,
+        197.078125
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 895.78125,
+        "height": 355.875,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.78125,
+        "height": 37.28125,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        356.171875,
+        356.171875,
+        356.171875,
+        197.078125,
+        197.078125
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 592.59375,
+        "bottom": 862.390625,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 592.59375,
+        "bottom": 861.390625,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 862.390625,
+        "bottom": 1323.078125,
+        "height": 460.6875,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 895.984375,
+        "bottom": 925.203125,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        244.359375,
+        277.703125,
+        380.890625,
+        351.859375,
+        246.515625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/effective-rent/effective-rent-vs-npv",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 895.359375,
+        "height": 355.453125,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.359375,
+        "height": 36.859375,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        329.296875,
+        329.296875,
+        329.296875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/effective-rent/effective-rent-vs-npv",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 141.09375,
+        "bottom": 511.6875,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 141.09375,
+        "bottom": 510.6875,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 511.6875,
+        "bottom": 867.5625,
+        "height": 355.875,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 545.28125,
+        "bottom": 582.5625,
+        "height": 37.28125,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        329.296875,
+        329.296875,
+        329.296875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/effective-rent/effective-rent-vs-npv",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 536.15625,
+        "bottom": 805.953125,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 536.15625,
+        "bottom": 804.953125,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 805.953125,
+        "bottom": 1266.640625,
+        "height": 460.6875,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 839.546875,
+        "bottom": 868.765625,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        194.921875,
+        275.546875,
+        329.296875,
+        275.546875,
+        246.515625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "LEARN NEXT",
+      "title": "Explore related ideas"
+    },
+    {
+      "route": "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 711.15625,
+        "height": 171.25,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.359375,
+        "height": 36.859375,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "GO DEEPER",
+      "title": "A closer look"
+    },
+    {
+      "route": "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 141.09375,
+        "bottom": 511.6875,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 141.09375,
+        "bottom": 510.6875,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 511.6875,
+        "bottom": 683.359375,
+        "height": 171.671875,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 545.28125,
+        "bottom": 582.5625,
+        "height": 37.28125,
+        "width": 772.796875
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        302.421875,
+        302.421875,
+        302.421875,
+        145.484375,
+        145.484375
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "GO DEEPER",
+      "title": "A closer look"
+    },
+    {
+      "route": "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 564.375,
+        "bottom": 834.171875,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 564.375,
+        "bottom": 833.171875,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 834.171875,
+        "bottom": 1027,
+        "height": 192.828125,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 867.765625,
+        "bottom": 926.203125,
+        "height": 58.4375,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        194.921875,
+        302.421875,
+        302.421875,
+        275.546875,
+        246.515625
+      ],
+      "iconCount": 5,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "GO DEEPER",
+      "title": "A closer look"
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 197.53125,
+        "bottom": 568.125,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 197.53125,
+        "bottom": 567.125,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 568.125,
+        "bottom": 5931.921875,
+        "height": 5363.796875,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 601.71875,
+        "bottom": 638.578125,
+        "height": 36.859375,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        246.515625,
+        246.515625,
+        246.515625
+      ],
+      "iconCount": 3,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "FOR YOUR ROLE",
+      "title": "Paths for this role"
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 5910.875,
+        "height": 5370.96875,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 610.78125,
+        "height": 37.28125,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        246.515625,
+        246.515625,
+        246.515625
+      ],
+      "iconCount": 3,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "FOR YOUR ROLE",
+      "title": "Paths for this role"
+    },
+    {
+      "route": "/for/tenant-rep-brokers",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 677.25,
+        "bottom": 947.046875,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 677.25,
+        "bottom": 946.046875,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 947.046875,
+        "bottom": 9871.953125,
+        "height": 8924.90625,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 980.640625,
+        "bottom": 1009.859375,
+        "height": 29.21875,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        221.796875,
+        194.921875,
+        194.921875
+      ],
+      "iconCount": 3,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "FOR YOUR ROLE",
+      "title": "Paths for this role"
+    },
+    {
+      "route": "/pricing",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 3484.484375,
+        "height": 2944.578125,
+        "width": 1280
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 714.59375,
+        "height": 141.09375,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        246.515625,
+        246.515625,
+        246.515625,
+        194.921875
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Related product paths"
+    },
+    {
+      "route": "/pricing",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 3488.28125,
+        "height": 2948.375,
+        "width": 1440
+      },
+      "firstBody": {
+        "top": 573.5,
+        "bottom": 714.59375,
+        "height": 141.09375,
+        "width": 705.59375
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        246.515625,
+        246.515625,
+        246.515625,
+        194.921875
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Related product paths"
+    },
+    {
+      "route": "/pricing",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 592.59375,
+        "bottom": 862.390625,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 592.59375,
+        "bottom": 861.390625,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 862.390625,
+        "bottom": 5517.6875,
+        "height": 4655.296875,
+        "width": 390
+      },
+      "firstBody": {
+        "top": 895.984375,
+        "bottom": 1234.609375,
+        "height": 338.625,
+        "width": 306
+      },
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        194.921875,
+        194.921875,
+        194.921875,
+        194.921875
+      ],
+      "iconCount": 4,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "USE THE TOOL",
+      "title": "Related product paths"
+    },
+    {
+      "route": "/resources",
+      "viewport": "desktop",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1280
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1229.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 1045.5,
+        "height": 505.59375,
+        "width": 1280
+      },
+      "firstBody": null,
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        118.609375,
+        118.609375,
+        118.609375,
+        93.890625,
+        93.890625,
+        93.890625
+      ],
+      "iconCount": 6,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED TOPICS",
+      "title": "Explore the topic map"
+    },
+    {
+      "route": "/resources",
+      "viewport": "wide",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 169.3125,
+        "bottom": 539.90625,
+        "height": 370.59375,
+        "width": 1440
+      },
+      "media": {
+        "top": 169.3125,
+        "bottom": 538.90625,
+        "height": 369.59375,
+        "width": 1389.625
+      },
+      "nextSection": {
+        "top": 539.90625,
+        "bottom": 1045.5,
+        "height": 505.59375,
+        "width": 1440
+      },
+      "firstBody": null,
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        118.609375,
+        118.609375,
+        118.609375,
+        93.890625,
+        93.890625,
+        93.890625
+      ],
+      "iconCount": 6,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED TOPICS",
+      "title": "Explore the topic map"
+    },
+    {
+      "route": "/resources",
+      "viewport": "mobile",
+      "overflowX": 0,
+      "footer": true,
+      "hero": {
+        "top": 592.59375,
+        "bottom": 862.390625,
+        "height": 269.796875,
+        "width": 390
+      },
+      "media": {
+        "top": 592.59375,
+        "bottom": 861.390625,
+        "height": 268.796875,
+        "width": 348
+      },
+      "nextSection": {
+        "top": 862.390625,
+        "bottom": 1952.296875,
+        "height": 1089.90625,
+        "width": 390
+      },
+      "firstBody": null,
+      "termHeading": null,
+      "mediaNextOverlap": 0,
+      "mediaHeadingOverlap": 0,
+      "cardHeights": [
+        118.609375,
+        143.328125,
+        118.609375,
+        118.609375,
+        118.609375,
+        118.609375
+      ],
+      "iconCount": 6,
+      "emptyIcons": 0,
+      "rowSpread": 0,
+      "nav": true,
+      "kicker": "RELATED TOPICS",
+      "title": "Explore the topic map"
+    }
+  ]
+}

@@ -54,7 +54,7 @@ function department(id: OperatorDepartmentSnapshot["id"], workArtifacts: HqWorkA
     startedAt: null,
     lastActivityAt: null,
     recordCount: workArtifacts.length,
-    failureSemantics: null,
+    failureSemantics: undefined,
     detail: {},
     workArtifacts,
   };
@@ -204,22 +204,24 @@ describe("HQ in-place inspection workspace", () => {
     expect(opportunityCards).toContain('data-hq-inspection-card={inspectionRef ? "opportunity_candidate"');
     expect(opportunityCards).toContain("selectInspection");
     expect(opportunityCards).not.toContain("/dashboard/ventures/");
-    expect(opportunityCards).not.toContain("router.push");
+    expect(opportunityCards).toMatch(/if \(href && \(universeCard/);
+    expect(opportunityCards).not.toMatch(/function DecisionToken[\s\S]*router\.push/);
     expect(opportunityCards).not.toMatch(/function DecisionToken[\s\S]*selectInspection/);
 
     const commandBar = readComponent("venture-operator-console.tsx");
-    expect(commandBar).toContain("hqDashboardInspectionPath");
+    expect(commandBar).toContain("buildHqVentureInspectionHref");
     expect(commandBar).toContain("HqInspectionWorkspace");
     expect(commandBar).toContain("scroll: false");
-    expect(commandBar).toMatch(/const handleVentureChange = \(id: string\) => \{[\s\S]{0,220}hqDashboardInspectionPath/);
+    expect(commandBar).toMatch(/const handleVentureChange = \(id: string\) => \{[\s\S]{0,300}buildHqVentureInspectionHref/);
     expect(commandBar).not.toMatch(/const handleVentureChange = \(id: string\) => \{[\s\S]{0,220}\/dashboard\/ventures\//);
 
     const idle = readComponent("hq-idle-shell.tsx");
     expect(idle).toContain("HqVentureInspectionLink");
+    expect(idle).toContain("buildHqVentureInspectionHref");
     expect(idle).not.toContain("/dashboard/ventures/");
 
     const selector = readComponent("venture-selector.tsx");
-    expect(selector).toContain("hqDashboardInspectionPath");
+    expect(selector).toContain("buildHqVentureInspectionHref");
     expect(selector).not.toContain("/dashboard/ventures/");
 
     const portfolio = readComponent("portfolio-executive-strip.tsx");

@@ -14,6 +14,24 @@ function shouldUseInteractionsApi(modelId: string): boolean {
   return /^gemini-3/i.test(modelId);
 }
 
+function withExtractionTimeout<T>(promise: Promise<T>, timeoutMs: number, strategyId: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new ResearchError(`Strategy extraction timed out after ${timeoutMs}ms`, "timeout"));
+    }, timeoutMs);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 export async function runStrategyExtractionResearch(input: {
   strategyId: DiscoveryStrategyId;
   researchSummary: string;
@@ -33,6 +51,13 @@ export async function runStrategyExtractionResearch(input: {
     throw new ResearchError("GEMINI_API_KEY is not configured.", "authentication_failure");
   }
 
+  const timeoutMs = Number(process.env.OPPORTUNITY_SCANNER_EXTRACTION_TIMEOUT_MS ?? 120_000);
+  const startedAt = Date.now();
+  console.info("[FAVC1] strategy extraction start", {
+    strategyId: input.strategyId,
+    timeoutMs,
+  });
+
   const ai = new GoogleGenAI({ apiKey: config.geminiApiKey });
   const modelId = config.modelId;
   const systemInstructions = buildExtractionSystemInstructions();
@@ -43,42 +68,59 @@ export async function runStrategyExtractionResearch(input: {
     researchSources: input.researchSources,
   });
 
+  let output: ProviderExtractionOutput;
   if (shouldUseInteractionsApi(modelId)) {
-    const interaction = await ai.interactions.create({
-      model: modelId,
-      system_instruction: systemInstructions,
-      input: userPrompt,
-      response_format: {
-        type: "text",
-        mime_type: "application/json",
-        schema: providerExtractionJsonSchema(),
-      },
-      generation_config: { max_output_tokens: config.maxOutputTokens },
-    });
+    const interaction = await withExtractionTimeout(
+      ai.interactions.create({
+        model: modelId,
+        system_instruction: systemInstructions,
+        input: userPrompt,
+        response_format: {
+          type: "text",
+          mime_type: "application/json",
+          schema: providerExtractionJsonSchema(),
+        },
+        generation_config: { max_output_tokens: config.maxOutputTokens },
+      }),
+      timeoutMs,
+      input.strategyId,
+    );
 
     const interactionRecord = interaction as unknown as Record<string, unknown>;
     const direct = interactionRecord.outputText ?? interactionRecord.output_text;
     const rawText = typeof direct === "string" ? direct : "";
-    return parseProviderExtractionJson(rawText, input.strategyId);
+    output = parseProviderExtractionJson(rawText, input.strategyId);
+  } else {
+    const response = await withExtractionTimeout(
+      ai.models.generateContent({
+        model: modelId,
+        contents: [
+          { role: "user", parts: [{ text: systemInstructions }] },
+          { role: "user", parts: [{ text: userPrompt }] },
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: providerExtractionJsonSchema(),
+          maxOutputTokens: config.maxOutputTokens,
+        },
+      }),
+      timeoutMs,
+      input.strategyId,
+    );
+
+    const rawText = response.text;
+    if (!rawText) {
+      throw new ResearchError("Gemini returned empty extraction output.", "malformed_response");
+    }
+
+    output = parseProviderExtractionJson(rawText, input.strategyId);
   }
 
-  const response = await ai.models.generateContent({
-    model: modelId,
-    contents: [
-      { role: "user", parts: [{ text: systemInstructions }] },
-      { role: "user", parts: [{ text: userPrompt }] },
-    ],
-    config: {
-      responseMimeType: "application/json",
-      responseSchema: providerExtractionJsonSchema(),
-      maxOutputTokens: config.maxOutputTokens,
-    },
+  console.info("[FAVC1] strategy extraction complete", {
+    strategyId: input.strategyId,
+    candidateCount: output.candidates.length,
+    durationMs: Date.now() - startedAt,
   });
 
-  const rawText = response.text;
-  if (!rawText) {
-    throw new ResearchError("Gemini returned empty extraction output.", "malformed_response");
-  }
-
-  return parseProviderExtractionJson(rawText, input.strategyId);
+  return output;
 }

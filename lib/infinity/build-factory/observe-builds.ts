@@ -5,6 +5,7 @@ import { loadBuildById } from "./workspace";
 import { verifyAiWebsiteBuildReproducibility } from "@/lib/infinity/ai-website-generation/reproducibility";
 import { emitBuildFactoryEvent } from "./events";
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
+import { enqueueArtifactQcAfterBuildComplete } from "@/lib/infinity/universal-artifact-qc/orchestrator";
 
 type InfinitySupabase = SupabaseClient<Database>;
 
@@ -69,6 +70,13 @@ export async function observeBuildFactoryBuilds(
       build.id,
       undefined,
     );
+    enqueueArtifactQcAfterBuildComplete({
+      builder_execution_id: build.id,
+      buildId: build.id,
+      organizationId,
+      missionId,
+      change_scope: "build-factory internally_complete — QC_PENDING required before release",
+    });
     if (build.correlation_id) {
       const adminClient = supabase as unknown as AdminSupabaseClient;
       await emitBuildFactoryEvent(adminClient, {

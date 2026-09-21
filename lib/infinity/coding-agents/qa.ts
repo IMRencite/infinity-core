@@ -2,7 +2,7 @@ import { isForbiddenPath, defaultForbiddenPaths } from "./policy";
 import type { CanonicalCodingTask, CodingAgentProviderResult, InfinityQaResult } from "./types";
 
 const SECRET_PATTERNS = [
-  /sk-[a-zA-Z0-9_-]{20,}/,
+  /(?:^|[^A-Za-z])sk-[a-zA-Z0-9_-]{20,}/,
   /xai-[a-zA-Z0-9_-]{20,}/,
   /CURSOR_API_KEY\s*=/,
   /STRIPE_SECRET_KEY\s*=/,

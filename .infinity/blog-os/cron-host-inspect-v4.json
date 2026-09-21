@@ -1,0 +1,75 @@
+{
+  "collected_at": "2026-09-21T05:26:19.244Z",
+  "route": "/api/runtime/organic-tick",
+  "source_vercel_json_crons": [
+    {
+      "path": "/api/runtime/organic-tick",
+      "schedule": "0 7 * * *"
+    }
+  ],
+  "hq": {
+    "project": "infinity-hq",
+    "project_id": "prj_AVa1EK79vagoOB8PEtzWAQZTX0xI",
+    "details_ok": true,
+    "production_target": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+    "domains": [
+      "infinity-hq-infinite-media-resources-imr.vercel.app"
+    ],
+    "latest_production": {
+      "id": "dpl_AgYvu7v8rca3cSht3G7mzKtsCrX5",
+      "url": "infinity-gyw7elyc8-infinite-media-resources-imr.vercel.app",
+      "created": "2026-09-20T16:01:29.223Z",
+      "state": "ERROR",
+      "target": "production"
+    },
+    "files_status": 200,
+    "route_in_production_artifact": "YES",
+    "runtime_logs_status": 404,
+    "events_status": 200,
+    "organic_tick_log_mentions": 0
+  },
+  "runtime": {
+    "project": "infinity-runtime",
+    "project_id": "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox",
+    "details_ok": true,
+    "production_target": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+    "domains": [
+      "infinity-runtime.vercel.app",
+      "infinity-runtime-infinite-media-resources-imr.vercel.app"
+    ],
+    "latest_production": {
+      "id": "dpl_8sX5jqiu7YUPox4gJoto3td6f5mS",
+      "url": "infinity-runtime-bsgkvm8vs-infinite-media-resources-imr.vercel.app",
+      "created": "2026-09-21T02:46:48.497Z",
+      "state": "READY",
+      "target": "production"
+    },
+    "files_status": 200,
+    "route_in_production_artifact": "NO",
+    "runtime_logs_status": 404,
+    "events_status": 200,
+    "organic_tick_log_mentions": 0
+  },
+  "occupancynpv_site": {
+    "project": "occupancynpv",
+    "project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+    "details_ok": true,
+    "production_target": "dpl_4yVgtVZ1LU8HqrgJa4oyMCasVWK7",
+    "domains": [
+      "infinity-validation-cre-lease-npv-infinite-media-resources-imr.vercel.app"
+    ],
+    "latest_production": {
+      "id": "dpl_4yVgtVZ1LU8HqrgJa4oyMCasVWK7",
+      "url": "infinity-validation-cre-lease-npv-e72beb7b-qoyx9rrv5.vercel.app",
+      "created": "2026-08-29T04:39:05.107Z",
+      "state": "ERROR",
+      "target": "production"
+    },
+    "files_status": 200,
+    "route_in_production_artifact": "NO",
+    "runtime_logs_status": 404,
+    "events_status": 200,
+    "organic_tick_log_mentions": 0
+  },
+  "note": "infinity-runtime isolated deploy strips Blog-OS and only crons communication-tick. occupancynpv.com is the public site, not the Blog cron host."
+}

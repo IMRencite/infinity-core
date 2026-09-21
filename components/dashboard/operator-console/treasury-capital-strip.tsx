@@ -115,9 +115,9 @@ export function TreasuryCapitalStrip({ model, inspectArtifact = null }: Props) {
         </div>
       ) : null}
       <div className="relative grid grid-cols-2 gap-px bg-zinc-800/40 md:grid-cols-4">
-        <Cell label="Authorized capital" value={model.cards.internalCapital.display} />
+        <Cell label="Authorized capital" value={model.cards.internalCapital.display} hint="Internal policy · not Mercury cash" />
         <Cell label="Remaining authorization" value={model.cards.availableCapital.display} />
-        <Cell label="Allocated capital" value={model.cards.infinityAllocatedCapital.display} />
+        <Cell label="Allocated capital" value={model.cards.infinityAllocatedCapital.display} hint="Internal policy · not Mercury cash" />
         <Cell label="Unallocated capital" value={model.cards.unallocatedCapital.display} />
       </div>
       {presentation === "EXPANDED" ? (

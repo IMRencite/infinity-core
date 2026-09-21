@@ -6,6 +6,9 @@ import { founderHotTakesFromMetadata } from "@/lib/infinity/founder-idea-lab/hq/
 import { founderIdeaJourney } from "@/lib/infinity/founder-idea-lab/hq/journey";
 import { INSIGHT_METRIC_IDS, formatBuildReadyDisplay, insightMetricRow, namedInspectorRow } from "../details/insight-metrics";
 import { founderIdeaIntelligenceSections } from "@/lib/infinity/founder-idea-lab/hq/intelligence-sections";
+import { parseFounderIntelligenceView } from "@/lib/infinity/founder-idea-lab/explainability/view";
+import { revenueModelSentence } from "@/lib/infinity/founder-idea-lab/explainability/founder-language";
+import { moneyAttractivenessLabel } from "@/lib/infinity/founder-idea-lab/explainability/money-view";
 import type {
   HqArtifactInspectorModel,
   InspectorJourney,
@@ -1099,6 +1102,9 @@ export function buildArtifactInspectorModel(
         artifact.metadata.selectionScore != null &&
         portfolioSource != null &&
         String(artifact.metadata.selectionScore) === String(portfolioSource);
+      const moneyView = parseFounderIntelligenceView(
+        typeof artifact.metadata.founderIntelligenceJson === "string" ? artifact.metadata.founderIntelligenceJson : null,
+      );
       sections = [
         {
           id: "overview",
@@ -1110,6 +1116,20 @@ export function buildArtifactInspectorModel(
             { label: "Customer", value: `${fmt(artifact.metadata.customer)} (${fmt(artifact.metadata.customerSource)})` },
             { label: "Problem", value: `${fmt(artifact.metadata.problem)} (${fmt(artifact.metadata.problemSource)})` },
             { label: "Solution", value: `${fmt(artifact.metadata.solution)} (${fmt(artifact.metadata.solutionSource)})` },
+            {
+              label: "Business model",
+              value: revenueModelSentence(moneyView?.revenueModel?.recommended ?? moneyView?.howShouldThisMakeMoney?.recommendedModel),
+            },
+            {
+              label: "Revenue model",
+              value: revenueModelSentence(moneyView?.revenueModel?.recommended ?? moneyView?.howShouldThisMakeMoney?.recommendedModel),
+            },
+            {
+              label: "Economic status",
+              value: moneyAttractivenessLabel(
+                moneyView?.benchmarkEconomics?.attractiveness ?? moneyView?.economics.attractiveness ?? artifact.metadata.economicHealth,
+              ),
+            },
             { label: "Status", value: fmt(artifact.metadata.status) },
             { label: "Origin", value: fmt(artifact.metadata.origin) },
           ],

@@ -11,6 +11,7 @@ import { emptyMonetizationLayers } from "./monetization-levels";
 import { buildFounderResearchSeed } from "./research-seed";
 import { buildCanonicalResearchRequest } from "./research-request";
 import { founderResearchPacketFromFailure, founderResearchPacketFromResult } from "./research-from-canonical";
+import { researchRevenueModel } from "./revenue-model-research/from-evidence";
 import type { FounderIdeaStore } from "./store";
 import type { FounderIdeaGrade, FounderIdeaSubmission } from "./types";
 import type { ScoringAssessmentInput } from "@/lib/infinity/opportunity-scanner/types";
@@ -167,8 +168,22 @@ function analyzeFromPacket(
   const layers = layersFromPacket(bound);
   const scored = scoreFromEvidenceCoverage({ coverage, monetizationLayers: layers });
   const candidate = applyResearchPacketToCandidate(store, submission, bound, scored.scores);
+  const revenueModel = researchRevenueModel({
+    packet: bound,
+    context: {
+      title: submission.title,
+      description: submission.description,
+      targetCustomer: submission.targetCustomer,
+      problem: submission.problem,
+      proposedSolution: submission.proposedSolution,
+      businessModelHypothesis: submission.businessModelHypothesis,
+      pricingHypothesis: submission.pricingHypothesis,
+    },
+  });
   const monetization =
-    options.monetization === undefined ? monetizeFromResearchPacket({ candidate, packet: bound }) : options.monetization;
+    options.monetization === undefined
+      ? monetizeFromResearchPacket({ candidate, packet: bound, revenueModel })
+      : options.monetization;
   if (monetization) store.monetizationBySubmission.set(submission.id, monetization);
   const readiness = evaluateEvidenceReadiness({ packet: bound, coverage, monetization, layers });
 

@@ -5,9 +5,10 @@ import type { PublicOperationsProjection } from "@/lib/infinity/public-operation
 import { PUBLIC_OPERATIONS_PROJECTION } from "@/lib/infinity/public-operations-projection/types";
 import { PUBLIC_OPERATIONS_ROOM_ENDPOINT, PUBLIC_OPERATIONS_ROOM_POLL_MS } from "@/lib/infinity/public-operations-room/contract";
 import { HowInfinityOperates } from "./how-infinity-operates";
+import { ImrBrandMark } from "./imr-brand-mark";
 import { OperationsFloor } from "./operations-floor";
 import { OperationsHeader } from "./operations-header";
-import { PublicActivityFeed } from "./public-activity-feed";
+import { PublicCommandRail } from "./public-command-rail";
 import { PublicDegradedState } from "./public-degraded-state";
 import { PublicOperationsFooter } from "./public-operations-footer";
 import { PublicStatsStrip } from "./public-stats-strip";
@@ -29,7 +30,7 @@ export function LiveOperationsRoom() {
     let cancelled = false;
     const pull = async () => {
       try {
-        const response = await fetch(PUBLIC_OPERATIONS_ROOM_ENDPOINT, { credentials: "omit" });
+        const response = await fetch(PUBLIC_OPERATIONS_ROOM_ENDPOINT, { credentials: "omit", cache: "no-store" });
         if (!response.ok) {
           if (!cancelled) setUnavailable(true);
           return;
@@ -54,9 +55,12 @@ export function LiveOperationsRoom() {
   }, []);
 
   return (
-    <div className={styles.page} data-imros-operations-room="true">
+    <div className={styles.page} data-imros-operations-room="true" data-hq-grid="true" data-full-width="true">
+      <ImrBrandMark />
       <div className={styles.shell}>
-        <OperationsHeader />
+        <div className={styles.heroCopy}>
+          <OperationsHeader />
+        </div>
         {!projection && !unavailable ? (
           <section className={styles.statusStrip} data-public-loading="true">
             <p className={styles.roomTitle}>Live Operations</p>
@@ -66,11 +70,22 @@ export function LiveOperationsRoom() {
         {unavailable && !projection ? <PublicDegradedState /> : null}
         {projection ? (
           <>
-            <PublicSystemStatus projection={projection} />
+            <div className={`${styles.hud} ${styles.commandRail}`}>
+              <PublicSystemStatus projection={projection} />
+              <PublicStatsStrip projection={projection} />
+            </div>
             {projection.system_status === "TEMPORARILY_UNAVAILABLE" ? <PublicDegradedState /> : null}
-            <OperationsFloor departments={projection.public_departments} agents={projection.public_agents} />
-            <PublicStatsStrip projection={projection} />
-            <PublicActivityFeed departments={projection.public_departments} />
+            <div className={styles.hqDeck}>
+              <OperationsFloor
+                departments={projection.public_departments}
+                agents={projection.public_agents}
+                salesRooms={projection.public_sales_rooms}
+              />
+              <PublicCommandRail
+                departments={projection.public_departments}
+                ventures={projection.public_ventures}
+              />
+            </div>
             <PublicVentureGrid ventures={projection.public_ventures} />
           </>
         ) : null}

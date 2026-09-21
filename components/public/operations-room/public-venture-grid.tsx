@@ -3,7 +3,7 @@ import styles from "./operations-room.module.css";
 
 export function PublicVentureGrid({ ventures }: { ventures: PublicVentureProjection[] }) {
   return (
-    <section className={styles.ventures} aria-label="Public ventures">
+    <section className={styles.ventures} id="public-ventures" aria-label="Public ventures">
       <h2 className={styles.roomTitle}>Public Ventures</h2>
       {ventures.length === 0 ? (
         <p>No public ventures are currently listed.</p>

@@ -1,0 +1,304 @@
+{
+  "artifactIdentity": "PASS",
+  "digestLock": "PASS",
+  "actualDigest": "2600f3fbea296ef2f3c7b52805ecd1b3259133bf2c86952170099fe93c726e1c",
+  "routes": 93,
+  "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "founderVisualReviewReady": "FOUNDER_VISUAL_REVIEW_READY",
+  "hubLayout": "PASS",
+  "discovery": "PASS",
+  "hookBoundary": "PASS",
+  "humanFirst": "PASS",
+  "pageLoop": {
+    "overall": "PASS",
+    "rendered": 93,
+    "validated": 93,
+    "finalFailed": 0,
+    "missingEvidence": 0,
+    "fullRoute": "PASS"
+  },
+  "predeployOverall": "PASS",
+  "executed": true,
+  "attempted": true,
+  "authorizationConsumed": true,
+  "deploymentId": "dpl_EYmWkVXVQXkxkCwJKAzKn27Cyodf",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-lf5grlck3.vercel.app",
+  "providerFinalState": "READY",
+  "providerError": null,
+  "activated": false,
+  "activationCount": 0,
+  "activeArtifact": "art_e6d2a3a1f46d117d61c9",
+  "activeDeployment": "dpl_5zWCLA1rQLVLXed4Wi2ypvk9tfFj",
+  "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-kd9ktl3qy.vercel.app",
+  "canonicalReadback": {
+    "activeArtifactId": "art_e6d2a3a1f46d117d61c9",
+    "activeDigest": "6f6393a8a9a9cb7b1c713fe396017b0da58903b70c842856a5cfd2bf2e55113f",
+    "activeDeploymentId": "dpl_5zWCLA1rQLVLXed4Wi2ypvk9tfFj",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-kd9ktl3qy.vercel.app"
+  },
+  "experimentState": "COLLECTING",
+  "evidenceStart": "2026-08-29T15:18:52.131Z",
+  "clockRestarted": false,
+  "counts": {
+    "qualifiedVisitors": 0,
+    "strongIntent": 0,
+    "qualifiedSubmissions": 0,
+    "pricingSelections": 0,
+    "pageViews": 0
+  },
+  "providerCost": "UNKNOWN",
+  "deployments": 1,
+  "activations": 0,
+  "stopReason": "NOT_ACTIVATED",
+  "commandDuring": "ACTIVE_WORK",
+  "deploymentDepotDuring": "ACTIVE_WORK",
+  "validationStationDuring": "ACTIVE_WORK",
+  "creationLabDuring": "PRESENT_IDLE",
+  "systemsArchitectDuring": "PRESENT_IDLE",
+  "growthNexusDuring": "PRESENT_IDLE",
+  "missionRoomActivityProjection": "PASS",
+  "latestCompleted": "GOVERNED_CRE_SITE_CHROME_LINK_CONTRAST_DEPLOYMENT_V1",
+  "publiclyLaunched": false,
+  "hqAfter": {
+    "active": 0,
+    "currentMission": null,
+    "currentExecution": "PRESENT_IDLE",
+    "latestCompleted": "GOVERNED_CRE_SITE_CHROME_LINK_CONTRAST_DEPLOYMENT_V1",
+    "latestOutcome": "DEPLOYED_NOT_ACTIVATED",
+    "authorizationRequired": null,
+    "blocker": null,
+    "rooms": {
+      "opportunity_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "research_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "strategy_finance": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "company_operations": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "systems_architect": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "growth_department": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "creative_studio": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "product_lab": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "quality_control": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "launch_operations": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      },
+      "intelligence_center": {
+        "status": "EMPTY",
+        "summary": null
+      },
+      "executive_office": {
+        "status": "PRESENT_IDLE",
+        "summary": null
+      }
+    }
+  },
+  "observer": {
+    "status": "RUNNING",
+    "provider": "gmail.com_v1",
+    "lastCheckpoint": "14930180",
+    "lastSuccessfulObservation": "2026-09-04T18:42:17.759Z",
+    "trackedConversations": 2,
+    "lastInboundProcessed": null,
+    "lastProviderError": null,
+    "cadenceMs": 300000,
+    "runtimeDurability": "LOCAL_RUNTIME_ONLY",
+    "mode": "GMAIL_HISTORY_BOUNDED_POLL"
+  },
+  "live": {
+    "passingRoutes": 87,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "seoGeoPassed": true,
+    "visualPassed": true,
+    "fullTextContrast": "PASS",
+    "fullLinkContrast": "FAIL",
+    "sameColorFailures": 0,
+    "nearInvisibleFailures": 0,
+    "hoverFocusFailures": 0,
+    "missingLiveEvidence": 0,
+    "liveMachinePhrases": 0,
+    "livePlaceholders": 0,
+    "cam": {
+      "board": "rgb(243, 246, 249)",
+      "heading": "rgb(21, 32, 51)",
+      "link": "rgb(29, 78, 137)",
+      "headingContrast": 15.05,
+      "linkContrast": 7.89,
+      "headingSample": "PRESENT",
+      "linkSample": "PRESENT"
+    },
+    "pageRoutesChecked": 87,
+    "fullRouteRendered": 174,
+    "overflowFailures": 0,
+    "contrastSamples": 1117,
+    "linkSamples": 3876,
+    "humanFirst": "PASS",
+    "renderedTextContrast": "PASS",
+    "trustedSources": "PASS",
+    "trustedSourcesLinks": "PASS",
+    "machinePhrases": 0,
+    "relatedPagePlaceholders": 0,
+    "hubRoutesChecked": 7,
+    "hubFailures": 0,
+    "missingHubGeometry": 0,
+    "hubOverflow": 0,
+    "strayLeftovers": 0,
+    "responsive": {
+      "390": "PASS",
+      "1024": "PASS",
+      "1280": "PASS",
+      "1440": "PASS"
+    },
+    "founder": {
+      "route": "/commercial-lease-npv",
+      "containerWidth": 1179.21875,
+      "gridWidth": 1179.21875,
+      "columnCount": 3,
+      "row1": 3,
+      "row2": 2,
+      "roleBandWidth": 1179.21875,
+      "roleBandPlacement": "FULL_WIDTH_BAND",
+      "leftover": "ABSENT",
+      "overall": "PASS"
+    },
+    "navSamples": [
+      {
+        "text": "Lease NPV comparison",
+        "href": "/",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "How it works",
+        "href": "/how-it-works",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "Resources",
+        "href": "/resources",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "Compare",
+        "href": "/lease-comparison",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "Pricing",
+        "href": "/pricing",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "FAQ",
+        "href": "/faq",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      },
+      {
+        "text": "Request Pilot Access",
+        "href": "/early-access",
+        "foreground": "rgb(21, 32, 51)",
+        "effectiveBackground": "rgb(255, 255, 255)",
+        "contrastRatio": 16.33,
+        "luminanceDelta": 0.986,
+        "visibility": "VISIBLE",
+        "result": "PASS"
+      }
+    ],
+    "navSevenChecked": 7,
+    "navSevenPassing": 7,
+    "navSameColor": 0,
+    "navNearInvisible": 0,
+    "navWcagFailures": 0,
+    "colorParser": {
+      "parsing": "PASS",
+      "normalizedChannelConversion": "PASS",
+      "alphaCompositing": "PASS",
+      "effectiveBackground": "PASS",
+      "proof": {
+        "rawProof": "color(srgb 1 1 1 / 0.92)",
+        "parsed": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 0.92,
+          "space": "srgb"
+        },
+        "treatedAsEightBitRgb": false,
+        "normalized": true,
+        "composited": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1
+        },
+        "srgbContrast": 16.33,
+        "physicallyPlausible": true,
+        "liveNavBackground": "rgb(255, 255, 255)",
+        "liveNavParsed": {
+          "r": 255,
+          "g": 255,
+          "b": 255,
+          "a": 1,
+          "space": "rgb"
+        }
+      }
+    }
+  }
+}

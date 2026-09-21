@@ -1,0 +1,399 @@
+{
+  "mission": "CRE_DOMAIN_PROVIDER_AND_STRIPE_CONFIGURATION_V1",
+  "concurrency": "PASS",
+  "parallelExecution": "PASS",
+  "domain": {
+    "mission": "CRE_DOMAIN_PROVIDER_VERIFICATION_V1",
+    "Namecheap": "UNVERIFIED",
+    "capabilities": {
+      "domain.search": "UNVERIFIED",
+      "domain.availability": "UNVERIFIED",
+      "domain.pricing": "UNVERIFIED",
+      "domain.registration": "UNVERIFIED",
+      "domain.readback": "UNVERIFIED",
+      "domain.ownership": "UNVERIFIED"
+    },
+    "cloudflareDns": "READ_ONLY_VERIFIED",
+    "availabilityVerification": "FAIL",
+    "pricingVerification": "FAIL",
+    "failureReason": "ApiUser has been blocked by administrator",
+    "checked": [
+      {
+        "domain": "leasenpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "leasecomp.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "leasebasis.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "occupancynpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "leasedelta.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "dealnpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "tenantnpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "complease.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "holdcost.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      },
+      {
+        "domain": "npvlease.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "ApiUser has been blocked by administrator",
+        "timestamp": "2026-09-05T10:07:19.746Z"
+      }
+    ],
+    "preferred": {
+      "domain": "leasenpv.com",
+      "strategicScore": 88,
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "available": "UNKNOWN"
+    },
+    "conflict": {
+      "obviousConflictFound": "NO",
+      "conflictUncertainty": "HIGH — no trademark register search was executed; CRE generic-term collision remains possible.",
+      "trademarkReviewRequired": "YES"
+    },
+    "registrationWriteAuthority": "REGISTRATION_WRITE_AUTHORITY_UNVERIFIED",
+    "purchaseReadiness": "DOMAIN_PURCHASE_PROVIDER_WRITE_VERIFICATION_REQUIRED",
+    "treasury": "PASS",
+    "eag": "AUTHORIZATION_REQUIRED",
+    "purchaseAuthorization": "NOT_GRANTED",
+    "purchases": 0,
+    "unknownCosts": [
+      "first_year_cost",
+      "renewal_cost",
+      "transaction_fees",
+      "icann_fee",
+      "switching_cost"
+    ]
+  },
+  "stripe": {
+    "connected": "YES",
+    "accountIdentityVerified": "NO",
+    "stripeAccountId": "UNKNOWN",
+    "environment": "LIVE",
+    "wrongAccountProtection": "FAIL",
+    "reads": {
+      "account.read": "UNVERIFIED",
+      "product.read": "UNVERIFIED",
+      "price.read": "UNVERIFIED",
+      "webhook.read": "UNVERIFIED",
+      "payment.read": "UNVERIFIED",
+      "event.read": "UNVERIFIED",
+      "balance/revenue.read": "READ_ONLY_VERIFIED"
+    },
+    "equivalentProductsFound": 0,
+    "equivalentPricesFound": 0,
+    "duplicatesAvoided": 0,
+    "productsCreated": 0,
+    "pricesCreated": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "webhooksCreated": 0,
+    "paymentIntents": 0,
+    "professional": {
+      "offer": "Professional",
+      "productId": "NONE",
+      "priceId": "NONE",
+      "livemode": null,
+      "currency": "UNKNOWN",
+      "amountUsd": "UNKNOWN",
+      "billingMode": "RECURRING_ANNUAL",
+      "recurrence": "year",
+      "active": null,
+      "metadataLinkage": "NONE",
+      "readback": "FAIL",
+      "reused": false
+    },
+    "perDeal": {
+      "offer": "Per-deal",
+      "productId": "NONE",
+      "priceId": "NONE",
+      "livemode": null,
+      "currency": "UNKNOWN",
+      "amountUsd": "UNKNOWN",
+      "billingMode": "ONE_TIME",
+      "recurrence": null,
+      "active": null,
+      "metadataLinkage": "NONE",
+      "readback": "FAIL",
+      "reused": false
+    },
+    "writes": {
+      "product.create": "UNVERIFIED",
+      "price.create": "UNVERIFIED",
+      "checkout/session.create": "UNVERIFIED",
+      "webhook.create": "UNVERIFIED"
+    },
+    "paymentGate": {
+      "gate": "PaymentReadinessGate",
+      "result": "CONFIGURATION_REQUIRED",
+      "paymentsActive": false,
+      "reasons": [
+        "legal_pages_unconfigured",
+        "domain_public_url_unconfigured",
+        "stripe_read_only_does_not_grant_write",
+        "live_payment_objects_not_written",
+        "payment_activation_not_authorized"
+      ]
+    },
+    "configurationComplete": false,
+    "activationReady": false,
+    "activationBlockers": [
+      "stripe_account_identity_unverified",
+      "STRIPE_ACCOUNT_IDENTITY_UNVERIFIED",
+      "domain_public_url_unconfigured",
+      "webhook_domain_dependency",
+      "checkout_unverified",
+      "payment_activation_not_authorized"
+    ],
+    "writeStoppedReason": "STRIPE_ACCOUNT_IDENTITY_UNVERIFIED",
+    "webhookState": "WEBHOOK_DOMAIN_DEPENDENCY"
+  },
+  "legal": {
+    "mission": "CRE_LEGAL_COMMERCIALIZATION_RECONCILIATION_V1",
+    "privacy": {
+      "path": "/privacy-policy/",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/privacy-policy/",
+      "http": 200,
+      "ok": true
+    },
+    "terms": {
+      "path": "/terms-of-service/",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/terms-of-service/",
+      "http": 200,
+      "ok": true
+    },
+    "sitemap": {
+      "path": "/sitemap.xml",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/sitemap.xml",
+      "http": 200,
+      "ok": true
+    },
+    "footerContract": "PASS",
+    "nofollowDefault": "PASS",
+    "surfacesPresent": true,
+    "configurationComplete": false,
+    "legalConfigurationState": "LEGAL_SURFACES_PRESENT",
+    "blockers": [
+      "unknown_fact:legal_entity",
+      "unknown_fact:company_address",
+      "unknown_fact:jurisdiction"
+    ],
+    "artifactMutated": false,
+    "unknownFacts": [
+      "legal_entity",
+      "company_address",
+      "jurisdiction"
+    ]
+  },
+  "record": {
+    "domain": "UNCONFIGURED",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:07:21.257Z",
+        "evidence": "Re-ranked by CRE_DOMAIN_PROVIDER_AND_STRIPE_CONFIGURATION_V1; not purchased."
+      }
+    ],
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "legal": "LEGAL_SURFACES_PRESENT",
+    "privacy": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/privacy-policy/",
+    "terms": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/terms-of-service/",
+    "sitemap": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/sitemap.xml",
+    "stripeAccount": {
+      "kind": "ENV_KEY",
+      "key": "STRIPE_SECRET_KEY",
+      "rawSecretStored": false
+    },
+    "products": [],
+    "prices": [],
+    "checkout": "UNCONFIGURED",
+    "webhooks": {
+      "kind": "UNCONFIGURED",
+      "key": null,
+      "rawSecretStored": false
+    },
+    "revenue": "UNCONFIGURED",
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4",
+    "launch": "NO"
+  },
+  "readiness": {
+    "gate": "VentureCommercializationReadinessGate",
+    "result": "MULTIPLE_ACTIONS_REQUIRED",
+    "reasons": [
+      "domain_unconfigured",
+      "dns_unconfigured",
+      "ssl_unconfigured",
+      "analytics_unconfigured",
+      "payments_unconfigured",
+      "revenue_telemetry_unconfigured"
+    ],
+    "orderedBlockers": [
+      "DOMAIN_PURCHASE",
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "ANALYTICS_CONFIGURATION"
+    ]
+  },
+  "daily": {
+    "result": "ORCHESTRATE_EXISTING_ENGINES",
+    "next": [
+      "DOMAIN_PURCHASE",
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "ANALYTICS_CONFIGURATION"
+    ]
+  },
+  "hq": {
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "ACTIVE_WORK",
+    "researchGrid": "ACTIVE_WORK",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "newInbound": 0,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "external": {
+    "domainPurchases": 0,
+    "dnsWrites": 0,
+    "stripeProductsCreated": 0,
+    "stripePricesCreated": 0,
+    "paymentActivations": 0,
+    "realCharges": 0,
+    "websiteDeployments": 0,
+    "coldOutreach": 0,
+    "wave2": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextAuthorizations": {
+    "DOMAIN_PURCHASE": "DOMAIN_PURCHASE_PROVIDER_WRITE_VERIFICATION_REQUIRED",
+    "DNS_CONFIGURATION": "BLOCKED:DOMAIN_NOT_PURCHASED",
+    "PRODUCTION_DOMAIN_BINDING": "BLOCKED:DNS_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "CHECKOUT_CONFIGURATION": "UNVERIFIED:checkout/session.create_not_authorized_in_this_mission",
+    "WEBHOOK_CONFIGURATION": "WEBHOOK_DOMAIN_DEPENDENCY",
+    "PAYMENT_ACTIVATION": "BLOCKED:PAYMENT_ACTIVATION_NOT_AUTHORIZED",
+    "ANALYTICS_CONFIGURATION": "BLOCKED:PRODUCTION_DOMAIN_BINDING_REQUIRED",
+    "PUBLIC_LAUNCH": "BLOCKED:PUBLIC_LAUNCH_AUTHORIZATION_REQUIRED"
+  },
+  "nextState": "CRE_COMMERCIALIZATION_CONFIGURATION_REPAIR_REQUIRED"
+}

@@ -126,11 +126,10 @@ describe("validate-e2e guardrails", () => {
     "fails closed in production without override",
     async () => {
       const { assertWorkerE2EAllowed } = await import("@/lib/infinity/workers/validate-e2e");
-      const prev = process.env.NODE_ENV;
-      process.env.NODE_ENV = "production";
+      vi.stubEnv("NODE_ENV", "production");
       delete process.env.ALLOW_WORKER_E2E;
       expect(() => assertWorkerE2EAllowed()).toThrow(/development-only/i);
-      process.env.NODE_ENV = prev;
+      vi.unstubAllEnvs();
     },
     30_000,
   );

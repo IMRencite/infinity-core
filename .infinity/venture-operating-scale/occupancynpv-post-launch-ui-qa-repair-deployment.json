@@ -1,0 +1,27 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "e25e33158a01b7fca99733e1769a72be61b5790bcba3db4df76321a50912e179",
+  "previous_deployment_id": "dpl_EQ4qu1nedjBnu5RLhwm3MxAARXto",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "b6a8072dfd0ef255709f0f44bb4dd30f9ca94fad81f8d2dbc1b79de3dfbbc955",
+  "deployment_id": "dpl_APChdHwMw9QuKZhvQsDrd6scSPf1",
+  "deployed": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "supabase_migrations": 0,
+  "public_launch": 0,
+  "marketing_content_changed": "YES",
+  "reason": "Repair OccupancyNPV customer-safe checkout failure UX and keep live Professional/Per-Deal bindings unchanged. PUBLICLY_LAUNCHED remains YES.",
+  "changed_routes": [
+    "/",
+    "/pricing",
+    "/early-access",
+    "/how-it-works",
+    "/faq",
+    "/occupancynpv/app",
+    "/occupancynpv/app/login"
+  ],
+  "safe_error": null,
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+}

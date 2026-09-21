@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { durableLocalPersistEnabled } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import type { MissionActivityEvent } from "./types";
 
 /** Statically scoped runtime file. Do not interpolate process.cwd() here — Next NFT traces that as the whole project. */
@@ -31,6 +32,7 @@ export function readPersistedMissionActivity(): MissionActivityEvent[] {
 }
 
 export function writePersistedMissionActivity(records: MissionActivityEvent[]): void {
+  if (!durableLocalPersistEnabled() && !persistFileOverride) return;
   const file = missionActivityPersistFile();
   const payload = `${JSON.stringify(records)}\n`;
   if (existsSync(file) && readFileSync(file, "utf8") === payload) return;

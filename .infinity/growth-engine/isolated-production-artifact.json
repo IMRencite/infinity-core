@@ -1,0 +1,19 @@
+{
+  "contract": "IsolatedProductionArtifactContract",
+  "result": "PASS",
+  "strategy": "clean baseline worktree + closed growth-runtime overlay",
+  "temporaryWorkspace": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\infinity-occupancynpv-growth-artifact-v1",
+  "baseline": "07f7b0401edcb8413e23c77cba4fdd66e5c1b308",
+  "includedCount": 40,
+  "askReviewIncluded": 0,
+  "unknownCount": 0,
+  "digest": "bc4df75949dc80859df92ecec583d258da016d895f7c4d08cec50101e0d2f433",
+  "isolation": "PASS",
+  "contamination": "PASS",
+  "askReviewIsolation": "PASS",
+  "uiIndependence": "PASS",
+  "overlayTypescriptErrors": 0,
+  "nextProductionBuild": "PASS",
+  "deploymentPerformed": false,
+  "externalSends": 0
+}

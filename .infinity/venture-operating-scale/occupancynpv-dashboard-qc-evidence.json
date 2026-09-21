@@ -1,0 +1,169 @@
+{
+  "validatedAt": "2026-09-16T08:32:22.012Z",
+  "samples": [
+    {
+      "route": "/occupancynpv/app",
+      "state": "empty",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "empty",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "empty",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "empty",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "populated",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "populated",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "populated",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "populated",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "source",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "source",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "source",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "source",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "result": "PASS"
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-25",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 25,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-25",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 25,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-25",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 25,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-25",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 25,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-100",
+      "viewportWidth": 375,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 100,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-100",
+      "viewportWidth": 390,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 100,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-100",
+      "viewportWidth": 768,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 100,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    },
+    {
+      "route": "/occupancynpv/app",
+      "state": "heavy-100",
+      "viewportWidth": 1280,
+      "overflowPx": 0,
+      "result": "PASS",
+      "fixtureCount": 100,
+      "renderedItemCount": 10,
+      "pageSize": 10
+    }
+  ]
+}

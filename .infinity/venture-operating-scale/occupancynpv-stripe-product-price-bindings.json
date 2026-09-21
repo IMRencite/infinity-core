@@ -1,0 +1,29 @@
+{
+  "PaymentProviderBinding": {
+    "venture": "occupancynpv",
+    "provider": "stripe",
+    "account": "acct_18h5CjLdvXKx7R7G",
+    "mode": "LIVE",
+    "state": "VERIFIED"
+  },
+  "PaymentProductBinding": {
+    "PROFESSIONAL": "prod_VDIjmRpY19C9HZ",
+    "PER_DEAL": "prod_VDIju0S2lBO9i5"
+  },
+  "PaymentPriceBinding": {
+    "PROFESSIONAL": {
+      "id": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+      "currency": "usd",
+      "amount": 29000,
+      "recurrence": "ANNUAL_RECURRING"
+    },
+    "PER_DEAL": {
+      "id": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+      "currency": "usd",
+      "amount": 14900,
+      "recurrence": "ONE_TIME"
+    }
+  },
+  "authorization": "GOVERNED_CANONICAL_STRIPE_PRODUCT_PRICE_AUTHORIZATION",
+  "readbackAt": "2026-09-07T02:17:29.101Z"
+}

@@ -195,5 +195,8 @@ export function resolveTreasuryVentureLabel(
   ventureId: string,
   index?: number,
 ): string {
+  if (!ventureId || ventureId === "UNKNOWN" || ventureId === "UNATTRIBUTED" || ventureId === "PORTFOLIO") {
+    return "UNATTRIBUTED";
+  }
   return resolveTreasuryVentureDisplay(options, ventureId, index).label;
 }

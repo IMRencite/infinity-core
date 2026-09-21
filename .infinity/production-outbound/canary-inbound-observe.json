@@ -1,0 +1,95 @@
+{
+  "contract": "OccupancyNpvCanaryInboundObserveV1",
+  "observed": {
+    "inbound_connection": "PASS",
+    "detector_enabled": true,
+    "detector_mode": "GMAIL_SEARCH_ON_RUNTIME_TICK",
+    "last_successful_check": "2026-09-18T00:19:17.841Z",
+    "last_error": null,
+    "worker_running": false,
+    "reply_found": true,
+    "provider_message_id": "1a0b113843dd3f35",
+    "thread_id": "1a0af74557b0eb36",
+    "received_at": "2026-09-17T20:33:59.000Z",
+    "ingested": true,
+    "conversation_event": true,
+    "canonical_message": true,
+    "duplicate": false,
+    "thread_match": true,
+    "prospect_match": true,
+    "campaign_match": true,
+    "venture_match": true,
+    "classifier_executed": true,
+    "classification": "POSITIVE_INTEREST",
+    "next_action": "RESPOND_TO_INTERESTED_REPLY",
+    "eligible": true,
+    "blocked": false,
+    "block_reason": null,
+    "inbound_at": "2026-09-17T20:33:59.000Z",
+    "eligible_at": "2026-09-17T20:41:59.000Z",
+    "pacing_state": "SENT",
+    "configured_delay_minutes": 8,
+    "queue_record": true,
+    "idempotency_key": "canary-reply:1a0b113843dd3f35",
+    "send_attempted": true,
+    "send_accepted": true,
+    "same_thread": true,
+    "reply_provider_message_id": null,
+    "sent_at": null,
+    "pipeline_state": "DELIVERED",
+    "processed_keys": [
+      "canary-reply:1a0b113843dd3f35"
+    ]
+  },
+  "gates": {
+    "InboundReplyIngestionGate": {
+      "gate": "InboundReplyIngestionGate",
+      "result": "PASS",
+      "reasons": [
+        "REPLY_INGESTED"
+      ]
+    },
+    "OutboundConversationContinuityGate": {
+      "gate": "OutboundConversationContinuityGate",
+      "result": "PASS",
+      "reasons": [
+        "CONVERSATION_MATCHED"
+      ]
+    },
+    "InboundReplyClassificationGate": {
+      "gate": "InboundReplyClassificationGate",
+      "result": "PASS",
+      "reasons": [
+        "POSITIVE_INTEREST"
+      ]
+    },
+    "NaturalResponsePacingGate": {
+      "gate": "NaturalResponsePacingGate",
+      "result": "FAIL",
+      "reasons": [
+        "NO_WORKER"
+      ]
+    },
+    "ProductionOptOutSuppressionGate": {
+      "gate": "ProductionOptOutSuppressionGate",
+      "result": "NOT_PROVEN",
+      "reasons": [
+        "STOP_NOT_EXERCISED"
+      ]
+    },
+    "ProductionOutboundClosedLoopGate": {
+      "gate": "ProductionOutboundClosedLoopGate",
+      "result": "FAIL",
+      "reasons": [
+        "workerExecuted",
+        "providerAcceptedResponse",
+        "responseDelivered",
+        "salesUpdated",
+        "performanceUpdated",
+        "optOutTested",
+        "suppressionProven",
+        "restartContinuity"
+      ]
+    }
+  }
+}

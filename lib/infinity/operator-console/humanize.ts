@@ -1,3 +1,4 @@
+import { requiredDepartmentHeadlines } from "@/lib/infinity/hq-first-class-room/headlines";
 import type {
   DepartmentId,
   DepartmentUiState,
@@ -12,96 +13,6 @@ import { deriveUiStateFromEngineStatus } from "./status-derivation";
 
 const RUNNING = new Set(["running", "ingesting", "analyzing", "generating", "processing", "executing", "in_progress", "active", "building"]);
 const COMPLETE = new Set(["completed", "complete", "ready", "succeeded", "success", "passed", "approved"]);
-
-const DEPARTMENT_HEADLINES: Record<
-  DepartmentId,
-  { active: string; idle: string; complete: string; blocked: string; failed: string }
-> = {
-  opportunity_lab: {
-    active: "Scanning for promising venture ideas",
-    idle: "Standing by to scan",
-    complete: "Opportunity signals reviewed",
-    blocked: "Scan paused",
-    failed: "Scan failed",
-  },
-  research_department: {
-    active: "Studying the market and validating demand",
-    idle: "Research grid standing by",
-    complete: "Market evidence gathered",
-    blocked: "Research blocked",
-    failed: "Research run failed",
-  },
-  strategy_finance: {
-    active: "Defining the revenue strategy",
-    idle: "Profit lab ready",
-    complete: "Revenue strategy defined",
-    blocked: "Planning blocked",
-    failed: "Strategy planning failed",
-  },
-  company_operations: {
-    active: "Structuring the venture",
-    idle: "Blueprint lab ready",
-    complete: "Venture structure ready",
-    blocked: "Formation blocked",
-    failed: "Structure build failed",
-  },
-  systems_architect: {
-    active: "Mapping required operating systems",
-    idle: "Systems architect ready",
-    complete: "Operating blueprint mapped",
-    blocked: "Systems mapping blocked",
-    failed: "Systems mapping failed",
-  },
-  growth_department: {
-    active: "Planning how the venture gets discovered",
-    idle: "Growth nexus ready",
-    complete: "Growth plan prepared",
-    blocked: "Growth planning blocked",
-    failed: "Growth planning failed",
-  },
-  creative_studio: {
-    active: "Creating visual direction",
-    idle: "Design core ready",
-    complete: "Visual assets ready",
-    blocked: "Media generation blocked",
-    failed: "Media generation failed",
-  },
-  product_lab: {
-    active: "Building the first working version",
-    idle: "Creation lab ready",
-    complete: "Product build complete",
-    blocked: "Product build blocked",
-    failed: "Product build failed",
-  },
-  quality_control: {
-    active: "Checking what is ready",
-    idle: "Validation station ready",
-    complete: "Quality pass complete",
-    blocked: "Quality review blocked",
-    failed: "Quality review failed",
-  },
-  launch_operations: {
-    active: "Preparing the launch",
-    idle: "Deployment depot ready",
-    complete: "Launch action completed",
-    blocked: "Launch blocked",
-    failed: "Launch action failed",
-  },
-  intelligence_center: {
-    active: "Reviewing results and performance",
-    idle: "Signal intelligence ready",
-    complete: "Performance reviewed",
-    blocked: "Performance review blocked",
-    failed: "Performance review failed",
-  },
-  executive_office: {
-    active: "Choosing what happens next",
-    idle: "Command standing by",
-    complete: "Decision recorded",
-    blocked: "Decision blocked",
-    failed: "Decision failed",
-  },
-};
 
 const HISTORICAL_FAILURE_HEADLINES: Partial<Record<DepartmentId, string>> = {
   strategy_finance: "An earlier strategy pass did not complete",
@@ -287,7 +198,9 @@ export function humanizeTask(raw: string | null | undefined): string | null {
       return typeof replacement === "function" ? replacement(match) : replacement;
     }
   }
-  return raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const trimmed = raw.trim();
+  if (/[a-z]/.test(trimmed) && trimmed.split(/\s+/).length >= 4) return trimmed;
+  return trimmed.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function humanizeEventSummary(event: Pick<OperatorActivityEvent, "eventType" | "summary" | "status">): string {
@@ -317,7 +230,7 @@ export function humanizeDepartmentHeadline(
   if (failureSemantics === "CURRENT_BLOCKING_FAILURE") {
     return CURRENT_FAILURE_HEADLINES[departmentId] ?? "Needs attention";
   }
-  const headlines = DEPARTMENT_HEADLINES[departmentId];
+  const headlines = requiredDepartmentHeadlines(departmentId);
   if (state === "RUNNING" || state === "WAITING") return headlines.active;
   if (state === "COMPLETE") return headlines.complete;
   if (state === "BLOCKED") return headlines.blocked;

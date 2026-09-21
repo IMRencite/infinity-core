@@ -1,7 +1,7 @@
 import { canonicalizeSourceUrl } from "./dedupe";
 
 type GroundingChunk = {
-  web?: { uri?: string; title?: string; domain?: string };
+  web?: { uri?: string; title?: string; domain?: string; publisher?: string };
   retrievedContext?: { uri?: string; title?: string };
 };
 

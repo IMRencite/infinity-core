@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import {
-  hqDashboardInspectionPath,
-  inspectionRefFromVentureId,
-} from "@/lib/infinity/operator-console/inspection-context";
+import { inspectionRefFromVentureId } from "@/lib/infinity/operator-console/inspection-ref";
+import { buildHqVentureInspectionHref } from "@/lib/infinity/hq-venture-selection/navigate";
 
 type Props = {
   ventureId: string;
@@ -16,7 +14,7 @@ type Props = {
 
 export function hqVentureInspectionHref(ventureId: string): string {
   const ref = inspectionRefFromVentureId(ventureId);
-  return ref ? hqDashboardInspectionPath(ref) : "/dashboard";
+  return ref ? buildHqVentureInspectionHref(ref) : "/dashboard";
 }
 
 export function HqVentureInspectionLink({ ventureId, className, children }: Props) {
@@ -31,7 +29,7 @@ export function HqVentureInspectionLink({ ventureId, className, children }: Prop
       onClick={(event) => {
         event.preventDefault();
         if (!inspectionRefFromVentureId(ventureId)) return;
-        router.replace(href, { scroll: false });
+        router.push(href, { scroll: false });
       }}
     >
       {children}

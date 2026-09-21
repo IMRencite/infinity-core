@@ -1,0 +1,600 @@
+{
+  "report_id": "daily:2026-09-17:v1",
+  "report_date": "2026-09-17",
+  "timezone": "America/New_York",
+  "status": "FINAL",
+  "version": 1,
+  "generated_at": "2026-09-17T05:55:17.092Z",
+  "updated_at": "2026-09-18T03:44:31.668Z",
+  "finalized_at": "2026-09-18T05:30:57.391Z",
+  "summary": "Infinity recorded 43 completed items, 0 in progress, 1 planned, and 0 blocked or founder-attention items.",
+  "completed_count": 43,
+  "in_progress_count": 0,
+  "planned_count": 1,
+  "blocked_count": 0,
+  "venture_ids": [
+    "occupancynpv"
+  ],
+  "source_event_ids": [
+    "organic-growth",
+    "organic-growth-blog-refresh",
+    "outbound-event:OccupancyNPV Outbound Delivered",
+    "outbound-event:Inbound Reply Detected",
+    "outbound-event:Positive Interest Classified",
+    "outbound-event:Response Sent",
+    "outbound-event:Response Delivered",
+    "outbound-event:Outbound Semantic Defect Detected",
+    "outbound-event:False Opt-Out Invalidated",
+    "outbound-event:Conversation State Repaired",
+    "organic-plan",
+    "blog-ux:Blog Taxonomy Upgrade",
+    "blog-ux:Category Archive Added",
+    "blog-ux:Tag Archive Added",
+    "blog-ux:Primary Category Routing",
+    "blog-ux:Permalink Migration",
+    "blog-ux:Redirect Validation",
+    "blog-ux:Sitemap Update",
+    "blog-ux:Article Discovery Continuity",
+    "blog-ux:Latest Blogs Article Integration",
+    "blog-qc:Blog Depth Upgrade",
+    "blog-qc:Blog Editorial QC Upgrade",
+    "dpl_EvcacHF9ENGyLV87PtVLMQU1cSWy",
+    "dpl_93yYF4sCvcrhzmhZzgzMEmpozqPZ",
+    "dpl_FQ1ur9uRpcZbYKwjTRXeWPi17mxE",
+    "dpl_7E63AMXop63ksnEP2kryrPEkXUMf",
+    "blog-ux:Blog Hero Upgrade",
+    "blog-ux:Editorial Design Upgrade",
+    "blog-ux:Carousel Contrast Fix",
+    "blog-ux:Section Spacing Fix",
+    "blog-ux:Article Sidebar Upgrade",
+    "blog-ux:OccupancyNPV Blog Remediation",
+    "dpl_6wxV72mZGyv4Kk89pjEPy8Wh2BqM",
+    "blog-ux:Blog Carousel UX Remediation",
+    "blog-ux:Article Discovery Upgrade",
+    "blog-ux:Blog Editorial QC Upgrade",
+    "dpl_AQuf8hzB4Qr6yxX1tVBxraMMswhB",
+    "blog-ux:Blog UX Remediation",
+    "blog-ux:Latest Blogs carousel",
+    "blog-ux:Blog Taxonomy UX",
+    "blog-ux:Blog Navigation Upgrade",
+    "blog-ux:Featured Article Changes",
+    "dpl_6cST5DKoMs9EJgWgePS7Hkh2UgpS",
+    "dpl_BHXrgC4Ud9j5rJ5sXmQ1pxs1DdHn"
+  ],
+  "organic_pages": 1,
+  "blogs": 1,
+  "outreach_sent": 0,
+  "prospects_added": 0,
+  "deployments": 8,
+  "founder_attention": [],
+  "treasury_verification": "UNKNOWN",
+  "sections": [
+    {
+      "id": "completed",
+      "title": "Completed",
+      "items": [
+        {
+          "item_id": "organic:COMPLETED:organic-growth",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Published 1 organic page",
+          "source_ids": [
+            "organic-growth"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:organic-growth-blog-refresh",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Expanded 1 blog resource",
+          "source_ids": [
+            "organic-growth-blog-refresh"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:OccupancyNPV Outbound Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "OccupancyNPV Outbound Delivered",
+          "source_ids": [
+            "outbound-event:OccupancyNPV Outbound Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Inbound Reply Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Inbound Reply Detected",
+          "source_ids": [
+            "outbound-event:Inbound Reply Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Interest Classified",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Interest Classified",
+          "source_ids": [
+            "outbound-event:Positive Interest Classified"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Sent",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Sent",
+          "source_ids": [
+            "outbound-event:Response Sent"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Delivered",
+          "source_ids": [
+            "outbound-event:Response Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Outbound Semantic Defect Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Outbound Semantic Defect Detected",
+          "source_ids": [
+            "outbound-event:Outbound Semantic Defect Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:False Opt-Out Invalidated",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "False Opt-Out Invalidated",
+          "source_ids": [
+            "outbound-event:False Opt-Out Invalidated"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Conversation State Repaired",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Conversation State Repaired",
+          "source_ids": [
+            "outbound-event:Conversation State Repaired"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Taxonomy Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Taxonomy Upgrade",
+          "source_ids": [
+            "blog-ux:Blog Taxonomy Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Category Archive Added",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Category Archive Added",
+          "source_ids": [
+            "blog-ux:Category Archive Added"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Tag Archive Added",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Tag Archive Added",
+          "source_ids": [
+            "blog-ux:Tag Archive Added"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Primary Category Routing",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Primary Category Routing",
+          "source_ids": [
+            "blog-ux:Primary Category Routing"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Permalink Migration",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Permalink Migration",
+          "source_ids": [
+            "blog-ux:Permalink Migration"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Redirect Validation",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Redirect Validation",
+          "source_ids": [
+            "blog-ux:Redirect Validation"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Sitemap Update",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Sitemap Update",
+          "source_ids": [
+            "blog-ux:Sitemap Update"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Article Discovery Continuity",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Article Discovery Continuity",
+          "source_ids": [
+            "blog-ux:Article Discovery Continuity"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Latest Blogs Article Integration",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Latest Blogs Article Integration",
+          "source_ids": [
+            "blog-ux:Latest Blogs Article Integration"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-qc:Blog Depth Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Depth Upgrade",
+          "source_ids": [
+            "blog-qc:Blog Depth Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-qc:Blog Editorial QC Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Editorial QC Upgrade",
+          "source_ids": [
+            "blog-qc:Blog Editorial QC Upgrade"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_EvcacHF9ENGyLV87PtVLMQU1cSWy",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_EvcacHF9ENGyLV87PtVLMQU1cSWy → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_EvcacHF9ENGyLV87PtVLMQU1cSWy"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_93yYF4sCvcrhzmhZzgzMEmpozqPZ",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_93yYF4sCvcrhzmhZzgzMEmpozqPZ → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_93yYF4sCvcrhzmhZzgzMEmpozqPZ"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_FQ1ur9uRpcZbYKwjTRXeWPi17mxE",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_FQ1ur9uRpcZbYKwjTRXeWPi17mxE → occupancynpv.com (FAILED)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_FQ1ur9uRpcZbYKwjTRXeWPi17mxE"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_7E63AMXop63ksnEP2kryrPEkXUMf",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_7E63AMXop63ksnEP2kryrPEkXUMf → occupancynpv.com (FAILED)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_7E63AMXop63ksnEP2kryrPEkXUMf"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Hero Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Hero Upgrade",
+          "source_ids": [
+            "blog-ux:Blog Hero Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Editorial Design Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Editorial Design Upgrade",
+          "source_ids": [
+            "blog-ux:Editorial Design Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Carousel Contrast Fix",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Carousel Contrast Fix",
+          "source_ids": [
+            "blog-ux:Carousel Contrast Fix"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Section Spacing Fix",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Section Spacing Fix",
+          "source_ids": [
+            "blog-ux:Section Spacing Fix"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Article Sidebar Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Article Sidebar Upgrade",
+          "source_ids": [
+            "blog-ux:Article Sidebar Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:OccupancyNPV Blog Remediation",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "OccupancyNPV Blog Remediation",
+          "source_ids": [
+            "blog-ux:OccupancyNPV Blog Remediation"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_6wxV72mZGyv4Kk89pjEPy8Wh2BqM",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_6wxV72mZGyv4Kk89pjEPy8Wh2BqM → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_6wxV72mZGyv4Kk89pjEPy8Wh2BqM"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Carousel UX Remediation",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Carousel UX Remediation",
+          "source_ids": [
+            "blog-ux:Blog Carousel UX Remediation"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Article Discovery Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Article Discovery Upgrade",
+          "source_ids": [
+            "blog-ux:Article Discovery Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Editorial QC Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Editorial QC Upgrade",
+          "source_ids": [
+            "blog-ux:Blog Editorial QC Upgrade"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_AQuf8hzB4Qr6yxX1tVBxraMMswhB",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_AQuf8hzB4Qr6yxX1tVBxraMMswhB → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_AQuf8hzB4Qr6yxX1tVBxraMMswhB"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog UX Remediation",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog UX Remediation",
+          "source_ids": [
+            "blog-ux:Blog UX Remediation"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Latest Blogs carousel",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Latest Blogs carousel",
+          "source_ids": [
+            "blog-ux:Latest Blogs carousel"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Taxonomy UX",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Taxonomy UX",
+          "source_ids": [
+            "blog-ux:Blog Taxonomy UX"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Blog Navigation Upgrade",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Blog Navigation Upgrade",
+          "source_ids": [
+            "blog-ux:Blog Navigation Upgrade"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:blog-ux:Featured Article Changes",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Featured Article Changes",
+          "source_ids": [
+            "blog-ux:Featured Article Changes"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_6cST5DKoMs9EJgWgePS7Hkh2UgpS",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_6cST5DKoMs9EJgWgePS7Hkh2UgpS → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_6cST5DKoMs9EJgWgePS7Hkh2UgpS"
+          ]
+        },
+        {
+          "item_id": "deploy:COMPLETED:dpl_BHXrgC4Ud9j5rJ5sXmQ1pxs1DdHn",
+          "status": "COMPLETED",
+          "engine": "deploy",
+          "title": "Deployment dpl_BHXrgC4Ud9j5rJ5sXmQ1pxs1DdHn → occupancynpv.com (READY)",
+          "href": "/dashboard/builds",
+          "source_ids": [
+            "dpl_BHXrgC4Ud9j5rJ5sXmQ1pxs1DdHn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "planned",
+      "title": "Planned Today",
+      "items": [
+        {
+          "item_id": "organic:PLANNED:organic-plan",
+          "status": "PLANNED",
+          "engine": "organic",
+          "title": "Monitor indexation and content quality gates",
+          "source_ids": [
+            "organic-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "organic",
+      "title": "Organic Growth",
+      "items": [
+        {
+          "item_id": "organic:COMPLETED:organic-growth",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Published 1 organic page",
+          "source_ids": [
+            "organic-growth"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:organic-growth-blog-refresh",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Expanded 1 blog resource",
+          "source_ids": [
+            "organic-growth-blog-refresh"
+          ]
+        },
+        {
+          "item_id": "organic:PLANNED:organic-plan",
+          "status": "PLANNED",
+          "engine": "organic",
+          "title": "Monitor indexation and content quality gates",
+          "source_ids": [
+            "organic-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "title": "Sales / Outreach",
+      "items": [
+        {
+          "item_id": "sales:COMPLETED:outbound-event:OccupancyNPV Outbound Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "OccupancyNPV Outbound Delivered",
+          "source_ids": [
+            "outbound-event:OccupancyNPV Outbound Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Inbound Reply Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Inbound Reply Detected",
+          "source_ids": [
+            "outbound-event:Inbound Reply Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Interest Classified",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Interest Classified",
+          "source_ids": [
+            "outbound-event:Positive Interest Classified"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Sent",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Sent",
+          "source_ids": [
+            "outbound-event:Response Sent"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Delivered",
+          "source_ids": [
+            "outbound-event:Response Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Outbound Semantic Defect Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Outbound Semantic Defect Detected",
+          "source_ids": [
+            "outbound-event:Outbound Semantic Defect Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:False Opt-Out Invalidated",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "False Opt-Out Invalidated",
+          "source_ids": [
+            "outbound-event:False Opt-Out Invalidated"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Conversation State Repaired",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Conversation State Repaired",
+          "source_ids": [
+            "outbound-event:Conversation State Repaired"
+          ]
+        }
+      ]
+    }
+  ]
+}

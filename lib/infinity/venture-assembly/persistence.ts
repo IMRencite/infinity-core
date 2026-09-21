@@ -10,6 +10,7 @@ function rowToRecord(row: Record<string, unknown>): VentureAssemblyRecord {
     organizationId: String(row.organization_id),
     missionId: String(row.mission_id),
     opportunityId: String(row.opportunity_id),
+    opportunityCandidateId: row.opportunity_candidate_id ? String(row.opportunity_candidate_id) : null,
     executiveDecisionId: String(row.executive_decision_id),
     planId: String(row.plan_id),
     planVersion: Number(row.plan_version ?? 1),
@@ -79,6 +80,7 @@ export async function insertVentureAssembly(
     organizationId: string;
     missionId: string;
     opportunityId: string;
+    opportunityCandidateId?: string | null;
     executiveDecisionId: string;
     planId: string;
     planVersion: number;
@@ -97,6 +99,7 @@ export async function insertVentureAssembly(
       organization_id: row.organizationId,
       mission_id: row.missionId,
       opportunity_id: row.opportunityId,
+      opportunity_candidate_id: row.opportunityCandidateId ?? null,
       executive_decision_id: row.executiveDecisionId,
       plan_id: row.planId,
       plan_version: row.planVersion,

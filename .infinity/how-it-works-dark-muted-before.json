@@ -1,0 +1,64 @@
+{
+  "workflow": [
+    {
+      "role": "workflow_kicker",
+      "selector": "figcaption.pv-caption",
+      "text": "Proposed workflow sequence",
+      "foreground": "rgb(90, 101, 115)",
+      "effectiveBackground": "rgb(15, 28, 46)",
+      "contrastRatio": 2.89,
+      "fontSize": "12.096px",
+      "fontWeight": "400",
+      "opacity": 1,
+      "surfaceRole": "DEFAULT"
+    },
+    {
+      "role": "sample_caption",
+      "selector": "caption.pv-caption",
+      "text": "ILLUSTRATIVE EXAMPLE — Lease A versus Lease B, not customer data",
+      "foreground": "rgb(90, 101, 115)",
+      "effectiveBackground": "rgb(247, 249, 252)",
+      "contrastRatio": 5.62,
+      "fontSize": "12.096px",
+      "fontWeight": "400",
+      "opacity": 1,
+      "surfaceRole": "DEFAULT"
+    },
+    {
+      "role": "bottom_caption",
+      "selector": "p.pv-caption",
+      "text": "Illustrative sample — not a production screenshot.",
+      "foreground": "rgb(90, 101, 115)",
+      "effectiveBackground": "rgb(15, 28, 46)",
+      "contrastRatio": 2.89,
+      "fontSize": "12.096px",
+      "fontWeight": "400",
+      "opacity": 1,
+      "surfaceRole": "DEFAULT"
+    }
+  ],
+  "ctaLede": {
+    "role": "cta_muted",
+    "selector": "p",
+    "text": "Pilot / early access. In validation. Not generally available. No payment is collected.",
+    "foreground": "rgb(247, 251, 255)",
+    "effectiveBackground": "rgb(18, 58, 92)",
+    "contrastRatio": 11.31,
+    "fontSize": "17.64px",
+    "fontWeight": "400",
+    "opacity": 1,
+    "surfaceRole": "EMPHASIS"
+  },
+  "learnNext": {
+    "navWidth": 722.4,
+    "proseWidth": 1162.4,
+    "cardWidths": [
+      229.6,
+      229.6,
+      229.6,
+      352.8,
+      352.8
+    ],
+    "cardCount": 5
+  }
+}

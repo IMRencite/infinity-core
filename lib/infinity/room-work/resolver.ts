@@ -84,21 +84,65 @@ function roomRole(roomId: string): string {
   return `Contribute the ${roomName(roomId)} department role to the current mission.`;
 }
 
+function punctuate(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed) return trimmed;
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+function shortTheme(theme: string): string {
+  return theme.replace(/^INFINITY\s*[—-]\s*/i, "").trim();
+}
+
+function roomExactContribution(roomId: string, theme: string, step: string | null): string {
+  const role = contributionFromRole(roomId, theme);
+  if (!step || isGenericImplementationText(step) || isUnavailableTaskDetail(step)) return role;
+  const action = step.replace(/[.]+$/, "");
+  const themeLabel = shortTheme(theme);
+  const needsTheme =
+    Boolean(themeLabel) &&
+    !action.toLowerCase().includes(themeLabel.slice(0, Math.min(24, themeLabel.length)).toLowerCase());
+  const withTheme = (sentence: string) =>
+    needsTheme ? `${sentence.replace(/[.]+$/, "")} for ${themeLabel}.` : punctuate(sentence);
+
+  if (roomId === "product_lab" || roomId === "creative_studio") return withTheme(action);
+  if (roomId === "quality_control") return withTheme(`Checking that this is done correctly: ${action}`);
+  if (roomId === "launch_operations") return withTheme(`Preparing to ship: ${action}`);
+  if (roomId === OPERATIONS_ROOM_ID || roomId === "operations") {
+    return withTheme(`Reporting live progress: ${action}`);
+  }
+  if (roomId === "executive_office") return withTheme(`Directing: ${action}`);
+  if (roomId === "systems_architect") return withTheme(`Fitting this into the system: ${action}`);
+  return `${role.replace(/[.]+$/, "")}: ${action}.`;
+}
+
 function contributionFromRole(roomId: string, theme: string): string {
   if (roomId === "executive_office") return theme;
   if (roomId === OPERATIONS_ROOM_ID || roomId === "operations") {
+    if (/spend authority/i.test(theme)) {
+      return `Confirm live Treasury projection of OccupancyNPV allocation vs spend authority during ${theme}.`;
+    }
     return `Coordinate operational verification of live HQ capability projections and affected venture state during ${theme}.`;
   }
   if (roomId === "systems_architect") {
+    if (/spend authority/i.test(theme)) {
+      return `Author VentureSpendAuthority, commitment, and EconomicActionGate contracts for ${theme}.`;
+    }
     return `Repair canonical capability source, scope, and freshness contracts for ${theme}.`;
   }
   if (roomId === "quality_control") {
+    if (/spend authority/i.test(theme)) {
+      return `Verify spend-authority gates, Treasury/HQ consistency, and no-money-movement QC for ${theme}.`;
+    }
     return `Run data/state, rendered, responsive, and final-browser QC for ${theme}.`;
   }
   if (roomId === "launch_operations") {
     return `Verify hosting, DNS, and deployment capability projections for ${theme}.`;
   }
   if (roomId === "strategy_finance") {
+    if (/spend authority/i.test(theme)) {
+      return `Keep OccupancyNPV $25 allocation separate from the $5 spend ceiling and $0 paid acquisition during ${theme}.`;
+    }
     return `Verify shared payment processor state and venture activation consistency for ${theme}.`;
   }
   if (roomId === "intelligence_center") {
@@ -111,7 +155,7 @@ function contributionFromRole(roomId: string, theme: string): string {
 }
 
 function specificStep(work: CanonicalWorkExecutionContract): string | null {
-  const description = work.description?.trim() ?? "";
+  const description = (work.description ?? "").trim().replace(/^Continue\s+/i, "");
   if (!description || isGenericImplementationText(description) || isUnavailableTaskDetail(description)) return null;
   return description;
 }
@@ -125,7 +169,7 @@ export function resolveRoomCurrentWork(
   const source = step && !isGenericImplementationText(work.description)
     ? "assigned_task"
     : "mission_phase_role";
-  const contribution = contributionFromRole(roomId, theme);
+  const contribution = roomExactContribution(roomId, theme, step);
   return {
     contract: ROOM_CURRENT_WORK_PROJECTION,
     mission_id: work.mission_id,
@@ -153,7 +197,7 @@ export function resolveAgentCurrentTask(input: {
   const roleTask = room.room_role.replace(/\.$/, "");
   const theme = workTheme(input.work);
   const lineageTask = step
-    ? `${roleTask} · ${step}`
+    ? step
     : !isGenericImplementationText(theme) && theme
       ? `${roleTask} · ${theme}`
       : roleTask;
@@ -173,5 +217,9 @@ export function resolveAgentCurrentTask(input: {
 }
 
 export function commandMissionSummary(work: CanonicalWorkExecutionContract): string {
-  return `${work.title} · ${work.status} · ${work.source}`;
+  const step = specificStep(work);
+  if (step) return punctuate(step);
+  const theme = workTheme(work);
+  if (theme && !isGenericImplementationText(theme)) return punctuate(theme);
+  return punctuate(work.title.replace(/^INFINITY\s*[—-]\s*/i, "").trim() || "Coordinating the current implementation");
 }

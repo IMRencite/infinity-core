@@ -390,6 +390,9 @@ describe("Mission Runtime Foundation v1", () => {
     });
 
     expect(result.status).toBe("blocked");
+    if (result.status === "skipped") {
+      throw new Error("expected blocked runtime result");
+    }
     expect(result.message).toMatch(/Build Factory/i);
   });
 

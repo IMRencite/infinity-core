@@ -1,0 +1,20 @@
+{
+  "supabase_project_ref": "igenurhjwdjxqzflpgxl",
+  "identity_verified": true,
+  "migration": "20260907030000_occupancynpv_paid_product_v1.sql",
+  "migration_prior_state": "NOT_APPLIED",
+  "migration_applied_this_mission": true,
+  "unrelated_migrations_applied": 0,
+  "tables_exist": true,
+  "durable_adapter": true,
+  "persistence_live_verified": true,
+  "paid_application_deployed": true,
+  "browser_verified": true,
+  "tenant_isolation_verified": true,
+  "production_auth_backend": "SUPABASE_AUTH",
+  "deployment_id": "dpl_Eg3iFbB1jqm79wNBhX3reHq8ejwC",
+  "artifact_id": "art_058ccf09643a71a9c062",
+  "digest": "2b601ea513ef2e8e93e86547f2340426ee93930456dcb857d0768ecd9d8c1004",
+  "predecessor_artifact_id": "art_ece7047b3a1e771ca187",
+  "predecessor_digest": "b35d6fe74a048a8157acdc62637a67d291d266db826053e3c568a5708ae8b14e"
+}

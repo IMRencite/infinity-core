@@ -40,6 +40,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       mode: "safe",
       business_send: false,
       execute_jobs: false,
+      invoked_by: "SMOKE",
       auth: auth.reason,
       identity: vercelRuntimeIdentity(),
       release: runtimeReleaseIdentity(),

@@ -9,6 +9,7 @@ const SECRET_PATTERNS = [
   /ANTHROPIC_API_KEY/gi,
   /NAMECHEAP_API_KEY/gi,
   /CLOUDFLARE_API_TOKEN/gi,
+  /CLOUDFLARE_REGISTRAR_API_TOKEN/gi,
 ];
 
 const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi;

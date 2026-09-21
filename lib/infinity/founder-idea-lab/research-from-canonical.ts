@@ -94,6 +94,7 @@ export function founderResearchPacketFromResult(input: {
       url: source.url,
       title: source.title,
       domain: source.domain,
+      publisher: source.publisher ?? null,
     })),
     competitorLeads: leads,
     verifiedCompetitors: [...new Set(verified)],

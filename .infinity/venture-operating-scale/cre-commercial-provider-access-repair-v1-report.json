@@ -1,0 +1,442 @@
+{
+  "mission": "CRE_COMMERCIAL_PROVIDER_ACCESS_REPAIR_V1",
+  "classification": {
+    "namecheapBlockerType": "PROVIDER_ACCOUNT_CONFIGURATION_REQUIRED",
+    "stripeBlockerType": "PROVIDER_ACCOUNT_CONFIGURATION_REQUIRED",
+    "codeRepairRequired": "NO",
+    "providerAccountActionRequired": "YES",
+    "namecheapCause": "API_USER_BLOCKED_BY_ADMINISTRATOR",
+    "stripeCause": "RESTRICTED_KEY_MISSING_ACCOUNT_READ"
+  },
+  "namecheap": {
+    "config": {
+      "apiUsernameConfigured": "YES",
+      "apiUserConfigured": "YES",
+      "apiKeyConfigured": "YES",
+      "clientIpConfigured": "YES",
+      "endpoint": "PRODUCTION"
+    },
+    "providerResponse": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+    "repair": {
+      "humanActionRequired": "YES",
+      "supportInterventionRequired": "YES",
+      "where": "https://ap.www.namecheap.com/settings/tools/apiaccess/",
+      "settings": [
+        "Namecheap account → Profile → Tools → Business & Dev Tools → Namecheap API Access",
+        "Enable API Access for the production API user",
+        "Confirm ApiUser is enabled/unlocked (error 1017101 = disabled or locked)",
+        "Whitelist the current public IPv4 of the Infinity server/runtime under API Access → Whitelisted IPs",
+        "Confirm UserName matches the Namecheap account username and ApiUser matches the API user",
+        "Use production endpoint https://api.namecheap.com/xml.response when NAMECHEAP_ENV=production"
+      ],
+      "apiAccessMustBeEnabled": "YES",
+      "whitelistCurrentPublicIp": "YES",
+      "accountSupportMustUnblockApiUser": "YES",
+      "doNotPasteCredentialsIntoChat": true,
+      "credentialsRemainServerOnly": true,
+      "infinityWillVerifyAfterward": [
+        "namecheap.domains.check against leasenpv.com and the CRE shortlist",
+        "namecheap.users.getPricing for the relevant TLD",
+        "domain.search / domain.availability / domain.pricing readback",
+        "No domain purchase, DNS write, or registration probe"
+      ],
+      "instructions": "Open Namecheap → Profile → Tools → Namecheap API Access. Enable API Access if it is off. If the API user shows blocked, disabled, or locked — or live calls return “ApiUser has been blocked by administrator” / 1017101 — contact Namecheap support and ask them to unblock the API user. A dashboard toggle may not be enough once an administrator block is in place. Whitelist the current public IPv4 used by Infinity (the NAMECHEAP_CLIENT_IP already stored server-side). Do not paste the API key, username, or IP into Cursor or chat. Keep credentials only in the server environment (.env.local / host secrets). Infinity will re-run domain.search, domain.availability, and domain.pricing after access is restored. This failure class is an API-user administrator block, not a missing Infinity adapter or wrong sandbox/production URL."
+    },
+    "capabilities": {
+      "domain.search": "UNVERIFIED",
+      "domain.availability": "UNVERIFIED",
+      "domain.pricing": "UNVERIFIED",
+      "domain.registration": "UNVERIFIED",
+      "domain.readback": "UNVERIFIED",
+      "domain.ownership": "UNVERIFIED"
+    },
+    "preferred": {
+      "domain": "leasenpv.com",
+      "strategicScore": 88,
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "available": "UNKNOWN"
+    },
+    "availabilityVerification": "FAIL",
+    "pricingVerification": "FAIL",
+    "checked": [
+      {
+        "domain": "leasenpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "leasecomp.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "leasebasis.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "occupancynpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "leasedelta.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "dealnpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "tenantnpv.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "complease.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "holdcost.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      },
+      {
+        "domain": "npvlease.com",
+        "available": "UNKNOWN",
+        "premium": "UNKNOWN",
+        "firstYear": "UNKNOWN",
+        "renewal": "UNKNOWN",
+        "currency": "USD",
+        "providerResponseId": null,
+        "evidence": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+        "timestamp": "2026-09-05T10:24:40.196Z"
+      }
+    ],
+    "purchases": 0
+  },
+  "stripe": {
+    "keyPresent": "YES",
+    "keyType": "RESTRICTED",
+    "environment": "LIVE",
+    "livemode": "YES",
+    "permissions": {
+      "account.read": "NO",
+      "product.read": "NO",
+      "product.write": "UNKNOWN",
+      "price.read": "NO",
+      "price.write": "UNKNOWN",
+      "checkout.write": "UNKNOWN",
+      "webhook.read": "NO",
+      "webhook.write": "UNKNOWN",
+      "event.read": "NO",
+      "payment.read": "NO",
+      "balance.read": "YES"
+    },
+    "statuses": {
+      "account.read": "UNAVAILABLE",
+      "product.read": "UNAVAILABLE",
+      "product.create": "UNVERIFIED",
+      "price.read": "UNAVAILABLE",
+      "price.create": "UNVERIFIED",
+      "checkout/session.create": "UNVERIFIED",
+      "webhook.read": "UNAVAILABLE",
+      "webhook.create": "UNVERIFIED",
+      "event.read": "UNAVAILABLE",
+      "payment.read": "UNAVAILABLE",
+      "balance/revenue.read": "READ_ONLY_VERIFIED"
+    },
+    "account": {
+      "ok": false,
+      "id": "UNKNOWN",
+      "livemode": true,
+      "country": "UNKNOWN",
+      "currency": "UNKNOWN",
+      "display": "UNKNOWN",
+      "errorCode": "more_permissions_required",
+      "errorType": "invalid_request_error",
+      "safeError": "Permission denied. The provided key does not have the required permissions for this endpoint. Enabling Accounts Read ('connected_account_read') on this restricted key would allow GET /v1/account to continue.",
+      "missingPermission": "connected_account_read"
+    },
+    "accountIdentityVerified": "NO",
+    "wrongAccountProtection": "FAIL",
+    "objects": {
+      "professionalProduct": "NONE",
+      "professionalPrice": "NONE",
+      "perDealProduct": "NONE",
+      "perDealPrice": "NONE",
+      "duplicateRisk": "NONE"
+    },
+    "writeHttpCalls": 0,
+    "postCalls": 0,
+    "repair": {
+      "humanActionRequired": "YES",
+      "minimumPermissionChanges": [
+        "rak_account_read (Accounts → Read)",
+        "rak_product_read (Products → Read)",
+        "rak_product_write (Products → Write) — needed before authorized commercial writes; not used in this repair",
+        "rak_price_read (Prices → Read)",
+        "rak_price_write (Prices → Write) — needed before authorized commercial writes; not used in this repair"
+      ],
+      "futurePermissions": [
+        "checkout.session.create / Checkout Sessions → Write — after production domain exists",
+        "rak_webhook_read and rak_webhook_write — after production domain exists",
+        "rak_event_read — for webhook/event observation",
+        "Charges/PaymentIntents → Read — for payment.read after activation architecture"
+      ],
+      "preferRestrictedKey": true,
+      "doNotRequestUnrestrictedKey": true,
+      "doNotPasteKeyIntoChat": true,
+      "instructions": "Open Stripe Dashboard → Developers → API keys → the existing restricted live key (rk_live_…). Edit permissions. Enable the minimum current-phase set: Accounts Read, Products Read, Products Write, Prices Read, Prices Write. Leave Checkout Sessions, Webhooks, Events, and Payment reads unset until those later authorizations exist. Do not replace this key with an unrestricted sk_live_ key. Do not paste the secret into Cursor or chat. Update only the server-side STRIPE_SECRET_KEY environment value if Stripe rotates the key. After saving, Infinity will re-run GET /v1/account, then product/price reads, and will not create objects until STRIPE_ACCOUNT_IDENTITY_VERIFIED = PASS."
+    }
+  },
+  "legal": {
+    "mission": "CRE_LEGAL_COMMERCIALIZATION_RECONCILIATION_V1",
+    "privacy": {
+      "path": "/privacy-policy/",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/privacy-policy/",
+      "http": 200,
+      "ok": true
+    },
+    "terms": {
+      "path": "/terms-of-service/",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/terms-of-service/",
+      "http": 200,
+      "ok": true
+    },
+    "sitemap": {
+      "path": "/sitemap.xml",
+      "url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app/sitemap.xml",
+      "http": 200,
+      "ok": true
+    },
+    "footerContract": "PASS",
+    "nofollowDefault": "PASS",
+    "surfacesPresent": true,
+    "configurationComplete": false,
+    "legalConfigurationState": "LEGAL_SURFACES_PRESENT",
+    "blockers": [
+      "unknown_fact:legal_entity",
+      "unknown_fact:company_address",
+      "unknown_fact:jurisdiction"
+    ],
+    "artifactMutated": false,
+    "unknownFacts": [
+      "legal_entity",
+      "company_address",
+      "jurisdiction"
+    ]
+  },
+  "legalFacts": {
+    "legalEntity": "UNKNOWN",
+    "companyAddress": "UNKNOWN",
+    "jurisdiction": "UNKNOWN",
+    "configuration": "FOUNDER_CONFIGURATION_REQUIRED",
+    "missingFields": [
+      "legal_entity",
+      "company_address",
+      "jurisdiction"
+    ],
+    "founderConfigurationRequired": "FOUNDER_LEGAL_CONFIGURATION_REQUIRED",
+    "invented": false,
+    "sourcesInspected": [
+      "VentureOperationalRecord",
+      "CANONICAL_IMR_LABEL",
+      "CANONICAL_IMR_URL",
+      "CRE_VENTURE_NAME",
+      "canonical IMR/venture constants"
+    ]
+  },
+  "record": {
+    "domain": "UNCONFIGURED",
+    "domainRegistration": "NAMECHEAP_API_USER_BLOCKED",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:24:41.803Z",
+        "evidence": "Selected candidate preserved by CRE_COMMERCIAL_PROVIDER_ACCESS_REPAIR_V1; not purchased."
+      }
+    ],
+    "legal": "LEGAL_SURFACES_PRESENT",
+    "stripeBinding": {
+      "kind": "ENV_KEY",
+      "key": "STRIPE_SECRET_KEY",
+      "rawSecretStored": false
+    },
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4",
+    "launch": "NO",
+    "blocked": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "STRIPE_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "readiness": {
+    "gate": "VentureCommercializationReadinessGate",
+    "result": "MULTIPLE_ACTIONS_REQUIRED",
+    "reasons": [
+      "namecheap_account_action_required",
+      "stripe_account_action_required",
+      "domain_unconfigured",
+      "dns_unconfigured",
+      "ssl_unconfigured",
+      "analytics_unconfigured",
+      "payments_unconfigured",
+      "revenue_telemetry_unconfigured"
+    ],
+    "orderedBlockers": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "STRIPE_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "daily": {
+    "result": "ORCHESTRATE_EXISTING_ENGINES",
+    "next": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "STRIPE_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ],
+    "providerAccess": true,
+    "commercialization": true,
+    "externalWaiting": true
+  },
+  "hq": {
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "ACTIVE_WORK",
+    "researchGrid": "ACTIVE_WORK",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "PRESENT_IDLE",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "newInbound": 0,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "external": {
+    "domainPurchases": 0,
+    "dnsWrites": 0,
+    "stripeProductWrites": 0,
+    "stripePriceWrites": 0,
+    "checkoutSessions": 0,
+    "webhookWrites": 0,
+    "paymentActivations": 0,
+    "charges": 0,
+    "websiteDeployments": 0,
+    "coldOutreach": 0,
+    "wave2": 0,
+    "publiclyLaunched": "NO",
+    "artifactChanged": "NO"
+  },
+  "nextAuthorizations": {
+    "DOMAIN_PURCHASE": "BLOCKED:NAMECHEAP_ACCOUNT_ACTION_REQUIRED",
+    "PAYMENT_CONFIGURATION": "BLOCKED:STRIPE_ACCOUNT_IDENTITY_UNVERIFIED",
+    "LEGAL_CONFIGURATION": "FOUNDER_LEGAL_CONFIGURATION_REQUIRED",
+    "DNS_CONFIGURATION": "BLOCKED:DOMAIN_NOT_PURCHASED",
+    "PRODUCTION_DOMAIN_BINDING": "BLOCKED:DNS_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "CHECKOUT_CONFIGURATION": "UNVERIFIED:checkout/session.create_not_authorized_in_this_mission",
+    "WEBHOOK_CONFIGURATION": "WEBHOOK_DOMAIN_DEPENDENCY",
+    "PAYMENT_ACTIVATION": "BLOCKED:PAYMENT_ACTIVATION_NOT_AUTHORIZED",
+    "ANALYTICS_CONFIGURATION": "BLOCKED:PRODUCTION_DOMAIN_BINDING_REQUIRED",
+    "PUBLIC_LAUNCH": "BLOCKED:PUBLIC_LAUNCH_AUTHORIZATION_REQUIRED"
+  },
+  "nextState": "CRE_NAMECHEAP_AND_STRIPE_ACCOUNT_ACTION_REQUIRED"
+}

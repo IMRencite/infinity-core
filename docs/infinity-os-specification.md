@@ -998,6 +998,9 @@ Historical models and scoring versions are **preserved**—past decisions are no
 | **8 — Build Factory** | First builder, reusable modules, artifact tracking, deployment, **Registry registration of builders and modules** |
 | **9 — Execution and Growth** | Workers, campaigns, metrics, optimization, **worker registration and quality feedback to Registry** |
 | **10 — Portfolio Intelligence** | Capital allocation, cross-venture learning, acquisitions/partnerships |
+| **Evidence-Driven Product & Design Quality V1** | Learn from actual product use, support friction, customer feedback, QC findings, and experiments to improve future product/design decisions without forcing visual sameness |
+| **Venture Profitability & Scale Readiness V1** | Real revenue, real costs, contribution economics, acquisition economics, reliable fulfillment, quality health, and evidence threshold before meaningful scaling capital |
+| **Paid Acquisition / Ads Engine V1** | Separate governed ads capability (Google/Meta/Microsoft and other justified providers). Campaign budgets, daily caps, CAC, ROAS, contribution, attribution, creative/landing experiments, pause rules, Treasury/EAG. Default budget **$0** until authorized. **Not built in the customer-feedback loop.** |
 
 **Current position:** Phase 1 complete (Discovery schema foundation). Phase 2 OS Foundation and durable execution runtime substantially implemented in `infinity-core` (missions, Command, Planner, Scheduler seam, Registry seed, Worker Runtime, deterministic discovery scan, development Command controls, **Build Factory Runtime v2 for internal builds**). Continuous autonomous observation, external evidence, **public deployment/launch**, and Memory remain future phases.
 
@@ -1082,6 +1085,7 @@ Changes to **locked** items require an ADR and specification version bump.
 | **Website Build Worker Foundation v1** | Deterministic internal website source; `website.*` capabilities; `website_build_metadata`; not deployed |
 | **AI Website Generation Foundation v1** | Advisory `WebsiteGenerationPlan` via governed provider (mock default); context manifest + honesty rules; approval before deterministic translation; no AI filesystem writes |
 | **Worker Capability Foundation v1** | Governed worker contract in `lib/infinity/workers/`; `worker_results` / `worker_artifacts`; safe internal capabilities; Scheduler → Registry → Worker Runtime dispatcher; Mission Runtime observes results on later ticks; **no deployment/financial side effects** |
+| **Durable Commercial Provider Mutation Authority V1** | Policy-authorized routine bounded provider mutations in Venture Operating Scale; decisions `ALLOW_AUTONOMOUS` / `REQUIRE_AUTHORIZATION` / `ESCALATE` / `BLOCK`; payment activation ≠ configuration ≠ public launch ≠ fulfillment; OccupancyNPV payment activation rolled back pending fulfillment; PUBLIC_LAUNCH remains; HQ reports only |
 
 ### Not yet implemented (planned)
 

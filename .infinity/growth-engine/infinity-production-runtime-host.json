@@ -1,0 +1,31 @@
+{
+  "contract": "InfinityProductionRuntimeHostContract",
+  "result": "PASS",
+  "runtime_project_id": "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox",
+  "runtime_project_name": "infinity-runtime",
+  "provider": "vercel.com_v1",
+  "team_id": "team_ildi4jRJvHUKWF93cu4XEZ7Z",
+  "team_slug": "infinite-media-resources-imr",
+  "production_domain": "infinity-runtime.vercel.app",
+  "deployment_environment": "production",
+  "production_deployment_id": "dpl_FdixPktdLbwjwVKiNVgTpu6Fcg7b",
+  "production_url": "infinity-runtime-3apl1qiy0-infinite-media-resources-imr.vercel.app",
+  "scheduler_ownership": true,
+  "operating_cycle_ownership": true,
+  "growth_runtime_ownership": true,
+  "provider_credential_scope": [
+    "CRON_SECRET",
+    "GMAIL_*",
+    "PUBLIC_WEB_SEARCH_PROVIDER"
+  ],
+  "deployment_status": "DEPLOYED",
+  "last_verified_at": "2026-09-11T03:12:34.750Z",
+  "canonical_artifact_digest": "bc4df75949dc80859df92ecec583d258da016d895f7c4d08cec50101e0d2f433",
+  "occupancynpv_customer_untouched": true,
+  "askreview_untouched": true,
+  "public_web_production": {
+    "provider": "duckduckgo_html",
+    "result": "FAIL",
+    "reason": "PROVIDER_FORMAT_CHANGED"
+  }
+}

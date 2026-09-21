@@ -1,0 +1,769 @@
+{
+  "artifactIdentity": "PASS",
+  "digestLock": "PASS",
+  "actualDigest": "d35578c714c2556998e4f548c214aad045ca2cefc157496c4ead2334f2d0f953",
+  "routes": 57,
+  "routeManifest": {
+    "topLevelProduct": [
+      "/",
+      "/how-it-works",
+      "/compare-commercial-leases",
+      "/resources",
+      "/pricing",
+      "/faq",
+      "/early-access",
+      "/for/tenant-rep-brokers"
+    ],
+    "topicHubs": [
+      "/commercial-lease-npv",
+      "/lease-comparison",
+      "/effective-rent",
+      "/occupancy-costs",
+      "/lease-sensitivity-analysis",
+      "/tenant-rep-analysis",
+      "/lease-financial-modeling"
+    ],
+    "questionAuthorityPages": [
+      "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "/commercial-lease-npv/what-discount-rate-should-you-use",
+      "/commercial-lease-npv/when-is-npv-the-wrong-metric",
+      "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+      "/lease-comparison/how-do-you-compare-different-lease-terms",
+      "/effective-rent/effective-rent-vs-npv",
+      "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show",
+      "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics",
+      "/lease-financial-modeling/what-are-common-lease-analysis-mistakes",
+      "/commercial-lease-npv/how-is-lease-npv-calculated",
+      "/commercial-lease-npv/what-costs-belong-in-lease-npv",
+      "/commercial-lease-npv/npv-vs-present-value",
+      "/commercial-lease-npv/how-to-explain-lease-npv-to-clients",
+      "/lease-comparison/how-do-you-normalize-commercial-lease-proposals",
+      "/lease-comparison/how-do-you-compare-gross-and-net-leases",
+      "/lease-comparison/what-belongs-in-a-commercial-lease-comparison",
+      "/lease-comparison/how-do-brokers-compare-lease-offers",
+      "/effective-rent/how-to-calculate-effective-rent",
+      "/effective-rent/effective-rent-vs-face-rent",
+      "/effective-rent/effective-rent-per-square-foot",
+      "/effective-rent/common-effective-rent-mistakes",
+      "/occupancy-costs/what-is-total-occupancy-cost",
+      "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "/occupancy-costs/hidden-occupancy-costs",
+      "/occupancy-costs/occupancy-cost-per-square-foot",
+      "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis",
+      "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking",
+      "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo",
+      "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois",
+      "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo",
+      "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation",
+      "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model",
+      "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model"
+    ],
+    "personaCommercial": [
+      "/for/tenant-rep-brokers",
+      "/compare-commercial-leases",
+      "/pricing",
+      "/early-access"
+    ],
+    "legal": [
+      "/privacy-policy",
+      "/terms-of-service"
+    ],
+    "redirectSupport": [
+      "/tenant-improvement-allowance",
+      "/discount-rate-sensitivity",
+      "/resources/cam-costs",
+      "/resources/free-rent",
+      "/resources/rent-escalations",
+      "/resources/gross-vs-net-lease"
+    ],
+    "sitemapRobots": [
+      "/sitemap.xml",
+      "/robots.txt"
+    ],
+    "pageRoutes": [
+      "/",
+      "/how-it-works",
+      "/compare-commercial-leases",
+      "/resources",
+      "/pricing",
+      "/faq",
+      "/early-access",
+      "/for/tenant-rep-brokers",
+      "/commercial-lease-npv",
+      "/lease-comparison",
+      "/effective-rent",
+      "/occupancy-costs",
+      "/lease-sensitivity-analysis",
+      "/tenant-rep-analysis",
+      "/lease-financial-modeling",
+      "/commercial-lease-npv/what-is-npv-in-a-commercial-lease",
+      "/commercial-lease-npv/what-discount-rate-should-you-use",
+      "/commercial-lease-npv/when-is-npv-the-wrong-metric",
+      "/lease-comparison/how-do-you-compare-two-commercial-lease-options",
+      "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+      "/lease-comparison/how-do-you-compare-different-lease-terms",
+      "/effective-rent/effective-rent-vs-npv",
+      "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show",
+      "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics",
+      "/lease-financial-modeling/what-are-common-lease-analysis-mistakes",
+      "/commercial-lease-npv/how-is-lease-npv-calculated",
+      "/commercial-lease-npv/what-costs-belong-in-lease-npv",
+      "/commercial-lease-npv/npv-vs-present-value",
+      "/commercial-lease-npv/how-to-explain-lease-npv-to-clients",
+      "/lease-comparison/how-do-you-normalize-commercial-lease-proposals",
+      "/lease-comparison/how-do-you-compare-gross-and-net-leases",
+      "/lease-comparison/what-belongs-in-a-commercial-lease-comparison",
+      "/lease-comparison/how-do-brokers-compare-lease-offers",
+      "/effective-rent/how-to-calculate-effective-rent",
+      "/effective-rent/effective-rent-vs-face-rent",
+      "/effective-rent/effective-rent-per-square-foot",
+      "/effective-rent/common-effective-rent-mistakes",
+      "/occupancy-costs/what-is-total-occupancy-cost",
+      "/occupancy-costs/what-is-cam-in-a-commercial-lease",
+      "/occupancy-costs/hidden-occupancy-costs",
+      "/occupancy-costs/occupancy-cost-per-square-foot",
+      "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis",
+      "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking",
+      "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo",
+      "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois",
+      "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo",
+      "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation",
+      "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model",
+      "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model",
+      "/privacy-policy",
+      "/terms-of-service",
+      "/tenant-improvement-allowance",
+      "/discount-rate-sensitivity",
+      "/resources/cam-costs",
+      "/resources/free-rent",
+      "/resources/rent-escalations",
+      "/resources/gross-vs-net-lease"
+    ],
+    "intendedCount": 57
+  },
+  "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+  "founderVisualReviewReady": "FOUNDER_VISUAL_REVIEW_READY",
+  "compatibility": {
+    "standardId": "InfinityPublicAuthorityStandard",
+    "standardVersion": "V1",
+    "pageContract": "PASS",
+    "siteProfile": "PASS",
+    "archetypes": "PASS",
+    "reference": "PASS",
+    "expanded": "PASS",
+    "global": "PASS",
+    "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+    "publishability": {
+      "model": "PublicAuthorityPublishabilityGate",
+      "overall": "PASS",
+      "ready": "PREMIUM_AUTHORITY_VALIDATION_READY",
+      "semanticQuestionCoverage": "PASS",
+      "depth": "PASS",
+      "humanReadability": "PASS",
+      "directAnswerQuality": "PASS",
+      "citationReadiness": "PASS",
+      "internalLinkGraph": "PASS",
+      "authorityReferences": "PASS",
+      "metadata": "PASS",
+      "schema": "PASS",
+      "ctaRelevance": "PASS",
+      "sectionVariety": "PASS",
+      "visualUsefulness": "PASS",
+      "truthfulClaims": "PASS",
+      "failures": [],
+      "aboveFoldVisualCoverage": "PASS",
+      "semanticInternalLinkDensity": "PASS",
+      "topicGraphConnectivity": "PASS",
+      "answerSurfaceCoverage": "PASS",
+      "searchIntentConversionPath": "PASS",
+      "topicalCompleteness": "PASS",
+      "graph": {
+        "authorityNodes": 41,
+        "contextualInternalEdges": 409,
+        "hubToSpoke": 34,
+        "spokeToHub": 57,
+        "sameTopicLateral": 184,
+        "crossTopic": 97,
+        "commercialPath": 128,
+        "orphans": 0,
+        "deadEnds": 0
+      },
+      "expansionDepth": "PASS",
+      "expansionReadability": "PASS"
+    }
+  },
+  "graphCounts": {
+    "rawBodyLinkInstances": 652,
+    "rawSemanticNavInstances": 223,
+    "uniqueBodyGraphEdges": 362,
+    "uniqueSemanticNavGraphEdges": 191,
+    "overlappingSourceDestinationEdges": 144,
+    "totalUniqueAuthorityGraphEdges": 409,
+    "connectivityEdges": 409,
+    "authorityNodes": 41,
+    "orphans": 0,
+    "deadEnds": 0,
+    "previous409Explanation": "A+C: evaluateTopicGraphConnectivity counts unique outbound source→destination edges per authority page into authority nodes plus the commercial set. Semantic-nav hrefs sit in the same page body, so they are included in the 409. The 253 figure is raw semantic-nav card instances, not unique edges. Duplicate source→destination pairs on one page are deduplicated. The second 409 was therefore the total unique authority graph, not body-only plus nav.",
+    "model": "A+C",
+    "overall": "PASS"
+  },
+  "founderDuplicateRegressions": {
+    "camFail": false,
+    "mistakeFail": false,
+    "pass": true
+  },
+  "redundancy": {
+    "exactFound": 123,
+    "nearFound": 0,
+    "repaired": 123,
+    "retained": 41,
+    "evaluated": 3043,
+    "overall": "FAIL"
+  },
+  "highlights": {
+    "added": 252,
+    "sourcedQuotes": 0
+  },
+  "navigation": {
+    "blocks": 54,
+    "cards": 253,
+    "uniqueDestinations": 38,
+    "duplicateDestinationProblems": 0
+  },
+  "executed": true,
+  "attempted": true,
+  "authorizationConsumed": true,
+  "project": "infinity-validation-cre-lease-npv-e72beb7b",
+  "deploymentId": "dpl_5cFWWuPZYkJcUfmwSqGCMG8zS8hY",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-3mxvegjtz.vercel.app",
+  "providerFinalState": "READY",
+  "providerError": null,
+  "live": {
+    "routes": {
+      "intendedCount": 57,
+      "passingRoutes": 57,
+      "failingRoutes": 0,
+      "failing": [],
+      "notFound": 0,
+      "runtimeErrors": 0,
+      "http": "PASS",
+      "titles": "PASS",
+      "h1s": "PASS",
+      "breadcrumbs": "PASS",
+      "schema": "PASS",
+      "sitemap": "PASS",
+      "robots": "PASS",
+      "indexability": "PASS",
+      "directAnswer": "PASS",
+      "authorityLinks": "PASS",
+      "cta": "PASS",
+      "footer": "FAIL",
+      "legal": "PASS",
+      "visualizations": "PASS",
+      "experiment": "PASS",
+      "pages": {
+        "/": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 68678
+        },
+        "/how-it-works": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 58938
+        },
+        "/compare-commercial-leases": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 59415
+        },
+        "/resources": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 66744
+        },
+        "/pricing": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 35506
+        },
+        "/faq": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 32947
+        },
+        "/early-access": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 15895
+        },
+        "/for/tenant-rep-brokers": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 52338
+        },
+        "/commercial-lease-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78707
+        },
+        "/lease-comparison": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76364
+        },
+        "/effective-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 73587
+        },
+        "/occupancy-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 73943
+        },
+        "/lease-sensitivity-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 74721
+        },
+        "/tenant-rep-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 75289
+        },
+        "/lease-financial-modeling": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 74039
+        },
+        "/commercial-lease-npv/what-is-npv-in-a-commercial-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78489
+        },
+        "/commercial-lease-npv/what-discount-rate-should-you-use": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 77458
+        },
+        "/commercial-lease-npv/when-is-npv-the-wrong-metric": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76772
+        },
+        "/lease-comparison/how-do-you-compare-two-commercial-lease-options": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76462
+        },
+        "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76043
+        },
+        "/lease-comparison/how-do-you-compare-different-lease-terms": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76397
+        },
+        "/effective-rent/effective-rent-vs-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 74195
+        },
+        "/lease-sensitivity-analysis/what-does-lease-sensitivity-analysis-show": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 75735
+        },
+        "/tenant-rep-analysis/how-should-a-tenant-rep-broker-explain-lease-economics": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 74512
+        },
+        "/lease-financial-modeling/what-are-common-lease-analysis-mistakes": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 74176
+        },
+        "/commercial-lease-npv/how-is-lease-npv-calculated": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 85247
+        },
+        "/commercial-lease-npv/what-costs-belong-in-lease-npv": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 81742
+        },
+        "/commercial-lease-npv/npv-vs-present-value": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78683
+        },
+        "/commercial-lease-npv/how-to-explain-lease-npv-to-clients": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78891
+        },
+        "/lease-comparison/how-do-you-normalize-commercial-lease-proposals": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 81187
+        },
+        "/lease-comparison/how-do-you-compare-gross-and-net-leases": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78293
+        },
+        "/lease-comparison/what-belongs-in-a-commercial-lease-comparison": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 80107
+        },
+        "/lease-comparison/how-do-brokers-compare-lease-offers": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78492
+        },
+        "/effective-rent/how-to-calculate-effective-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79678
+        },
+        "/effective-rent/effective-rent-vs-face-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79227
+        },
+        "/effective-rent/effective-rent-per-square-foot": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78393
+        },
+        "/effective-rent/common-effective-rent-mistakes": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78827
+        },
+        "/occupancy-costs/what-is-total-occupancy-cost": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79321
+        },
+        "/occupancy-costs/what-is-cam-in-a-commercial-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79293
+        },
+        "/occupancy-costs/hidden-occupancy-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79083
+        },
+        "/occupancy-costs/occupancy-cost-per-square-foot": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78648
+        },
+        "/lease-sensitivity-analysis/why-use-lease-sensitivity-analysis": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79761
+        },
+        "/lease-sensitivity-analysis/how-does-discount-rate-sensitivity-change-a-ranking": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79594
+        },
+        "/lease-sensitivity-analysis/how-to-present-lease-scenarios-to-a-cfo": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79856
+        },
+        "/tenant-rep-analysis/how-do-tenant-rep-brokers-compare-lois": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78336
+        },
+        "/tenant-rep-analysis/what-belongs-in-a-lease-recommendation-memo": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78491
+        },
+        "/tenant-rep-analysis/how-to-compare-renewal-vs-relocation": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 79088
+        },
+        "/lease-financial-modeling/what-inputs-belong-in-a-commercial-lease-model": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 78416
+        },
+        "/lease-financial-modeling/how-to-build-a-lease-cash-flow-model": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 77943
+        },
+        "/privacy-policy": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 17013
+        },
+        "/terms-of-service": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 15953
+        },
+        "/tenant-improvement-allowance": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76043
+        },
+        "/discount-rate-sensitivity": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 77458
+        },
+        "/resources/cam-costs": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 73943
+        },
+        "/resources/free-rent": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76043
+        },
+        "/resources/rent-escalations": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 76364
+        },
+        "/resources/gross-vs-net-lease": {
+          "status": 200,
+          "ok": true,
+          "location": null,
+          "bytes": 73943
+        }
+      }
+    },
+    "visual": {
+      "footer1280": 32,
+      "footer1440": 32,
+      "footer390": 20,
+      "footerTouches": 0,
+      "overflowX": 0,
+      "overflowByViewport": {
+        "390": 0,
+        "1280": 0,
+        "1440": 0
+      },
+      "utilizationMin": 0.9934640522875817,
+      "imageFailures": 0,
+      "screenshots": 42,
+      "measurements": 42,
+      "familiesRepresented": true,
+      "table": {
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "top": 0,
+        "height": 0
+      },
+      "hero": {
+        "left": 0,
+        "right": 1280,
+        "width": 1280,
+        "top": 108.109375,
+        "height": 826.28125
+      },
+      "footer": {
+        "left": 32,
+        "right": 1248,
+        "width": 1216,
+        "top": 9999.234375,
+        "height": 90.390625
+      },
+      "screenshotDir": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-authority-final-polish-live-1788421056768",
+      "footerDefect": "PASS",
+      "homepageFooter": "PASS",
+      "tableDefect": "PASS",
+      "imageryDefect": "PASS",
+      "textWallDefect": "PASS",
+      "relatedDefect": "PASS",
+      "sources": "PASS",
+      "ctaHierarchy": "PASS",
+      "viewport1280": "PASS",
+      "viewport1440": "PASS",
+      "viewport390": "PASS",
+      "semanticNav": "PASS",
+      "editorial": "PASS"
+    },
+    "liveGraph": {
+      "hubToSpoke": "PASS",
+      "spokeToHub": "PASS",
+      "sameTopic": "PASS",
+      "crossTopic": "PASS",
+      "commercialPath": "PASS",
+      "overall": "PASS"
+    },
+    "intendedCount": 57,
+    "passingRoutes": 51,
+    "intentionalRedirects": 6,
+    "failingRoutes": 0,
+    "notFound": 0,
+    "runtimeErrors": 0,
+    "sitemap": "PASS",
+    "robots": "PASS",
+    "footerContract": "PASS",
+    "homepageFooterWording": "PASS",
+    "internalFooterWording": "PASS",
+    "oldWordingRendered": "NO",
+    "semanticNav": "PASS",
+    "editorial": "PASS",
+    "duplicateAdjacentLive": 0,
+    "seoGeoPassed": true,
+    "visualPassed": true,
+    "resourcesPresent": true,
+    "redirectHops": [
+      {
+        "from": "/tenant-improvement-allowance",
+        "to": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv/",
+        "status": 307,
+        "location": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+        "redirecting": true
+      },
+      {
+        "from": "/discount-rate-sensitivity",
+        "to": "/commercial-lease-npv/what-discount-rate-should-you-use/",
+        "status": 307,
+        "location": "/commercial-lease-npv/what-discount-rate-should-you-use",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/cam-costs",
+        "to": "/occupancy-costs/",
+        "status": 307,
+        "location": "/occupancy-costs",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/free-rent",
+        "to": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv/",
+        "status": 307,
+        "location": "/lease-comparison/how-do-free-rent-and-ti-allowances-affect-npv",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/rent-escalations",
+        "to": "/lease-comparison/",
+        "status": 307,
+        "location": "/lease-comparison",
+        "redirecting": true
+      },
+      {
+        "from": "/resources/gross-vs-net-lease",
+        "to": "/occupancy-costs/",
+        "status": 307,
+        "location": "/occupancy-costs",
+        "redirecting": true
+      }
+    ],
+    "screenshotDir": "C:\\Users\\Antivist\\AppData\\Local\\Temp\\cre-authority-final-polish-live-1788421056768"
+  },
+  "activated": true,
+  "activationCount": 1,
+  "activeArtifact": "art_3b428a17dfca6e047550",
+  "activeDeployment": "dpl_5cFWWuPZYkJcUfmwSqGCMG8zS8hY",
+  "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-3mxvegjtz.vercel.app",
+  "canonicalReadback": {
+    "activeArtifactId": "art_3b428a17dfca6e047550",
+    "activeDigest": "d35578c714c2556998e4f548c214aad045ca2cefc157496c4ead2334f2d0f953",
+    "activeDeploymentId": "dpl_5cFWWuPZYkJcUfmwSqGCMG8zS8hY",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-3mxvegjtz.vercel.app"
+  },
+  "predecessorArtifact": "art_00cd1821c5a178bf2487",
+  "predecessorDeployment": "dpl_EppQ8GVJfZ6uQpyXxWiukXP52kKz",
+  "experimentState": "COLLECTING",
+  "evidenceStart": "2026-08-29T15:18:52.131Z",
+  "deadline": "2026-09-12T15:18:52.131Z",
+  "counts": {
+    "qualifiedVisitors": 0,
+    "strongIntent": 0,
+    "qualifiedSubmissions": 0,
+    "pricingSelections": 0,
+    "pageViews": 0
+  },
+  "providerCost": "UNKNOWN",
+  "deployments": 1,
+  "activations": 1,
+  "stopReason": "NONE",
+  "commandDuring": "ACTIVE_WORK",
+  "deploymentDepotDuring": "ACTIVE_WORK",
+  "validationStationDuring": "ACTIVE_WORK",
+  "systemsArchitectDuring": "PRESENT_IDLE",
+  "growthNexusDuring": "PRESENT_IDLE",
+  "latestCompleted": "GOVERNED_CRE_FINAL_AUTHORITY_POLISH_DEPLOYMENT_V1",
+  "publiclyLaunched": false,
+  "missionId": "msn_cre_final_authority_polish_governed_deploy_v1"
+}

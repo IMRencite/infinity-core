@@ -1,0 +1,38 @@
+{
+  "contract": "InfinityHqProductionDeploymentV1",
+  "hq_origin": "https://hq.imros.io",
+  "project": "infinity-hq",
+  "project_id": "prj_AVa1EK79vagoOB8PEtzWAQZTX0xI",
+  "deployment_id": "dpl_HizvEusPYZETPmp1yTpcjVHaSfgF",
+  "prior_deployment_id": "dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ",
+  "dns": {
+    "type": "CNAME",
+    "target": "217bb448cfd9bcc0.vercel-dns-016.com",
+    "mode": "DNS_ONLY"
+  },
+  "anonymous": {
+    "root": "307 /login",
+    "login": "200",
+    "dashboard": "307 /login",
+    "daily_reports": "307 /login",
+    "daily_report_api": "401",
+    "production_runtime_api": "401"
+  },
+  "public_imros": {
+    "origin": "https://imros.io",
+    "status": 200
+  },
+  "runtime": {
+    "origin": "https://infinity-runtime.vercel.app",
+    "status": 200
+  },
+  "server_error": {
+    "browser_reference": "1400196868",
+    "correlated_digest": "4062965126",
+    "root_cause": "ENOENT mkdir .infinity/opportunity-universe during authenticated /dashboard SSR",
+    "fixed_in": "dpl_HizvEusPYZETPmp1yTpcjVHaSfgF"
+  },
+  "authorized_founder_live_session": "NOT_EXERCISED_AFTER_FIX",
+  "execute_publish": false,
+  "outbound_mode": "CANARY"
+}

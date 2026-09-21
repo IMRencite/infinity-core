@@ -8,6 +8,7 @@ import {
 } from "@/lib/infinity/venture-selection/assumptions/register";
 import { assessBuildability } from "@/lib/infinity/venture-selection/buildability/assess";
 import {
+  DEFAULT_BUILD_GATE_THRESHOLDS,
   DEFAULT_SELECTION_WEIGHTS,
   DEFAULT_VALIDATION_WEIGHTS,
 } from "@/lib/infinity/venture-selection/constants";
@@ -75,6 +76,8 @@ function buildMockCandidate(overrides: Partial<LoadedCandidateBundle> = {}): Loa
         modelName: "GEO Analytics SaaS",
         monetizationScore: 70,
         estimatedCapitalRequired: 50000,
+        estimatedPriceBase: 99,
+        estimatedCustomersYear1: 200,
         estimatedMonthsToFirstRevenue: 3,
         estimatedGrossRevenueYear1: 240000,
         estimatedGrossMarginPercent: 75,
@@ -247,7 +250,7 @@ describe("Venture Selection v1", () => {
 
   it("classifies decisions without LLM authority", () => {
     const evaluation = buildMockEvaluation(buildMockCandidate());
-    evaluation.portfolioAdjustedScore = 40;
+    evaluation.selectionScore = 40;
     const result = classifyDecision({
       evaluation,
       buildGatePassed: false,
@@ -262,19 +265,7 @@ describe("Venture Selection v1", () => {
     const evaluation = buildMockEvaluation(buildMockCandidate());
     const gate = passesBuildGate({
       evaluation,
-      thresholds: {
-        minSelectionScore: 50,
-        minMonetizationScore: 50,
-        minValidationScore: 50,
-        minBuildabilityScore: 50,
-        minEvidenceConfidence: 0.4,
-        maxFatalAssumptionRisk: 0.8,
-        maxStartupCapital: 200000,
-        maxPlatformDependency: 0.9,
-        maxRegulatoryRisk: 0.9,
-        minExpectedRoi: 0.5,
-        minLtvCacRatio: 2,
-      },
+      thresholds: DEFAULT_BUILD_GATE_THRESHOLDS,
     });
     expect(typeof gate.passes).toBe("boolean");
   });

@@ -77,8 +77,9 @@ describe("Venture Assembly Foundation v1", () => {
     });
     expect(packages.brandPackage.logoArtifactPresent).toBe(false);
     expect(packages.externalDependencies.length).toBeGreaterThan(0);
-    expect(packages.digitalPropertyPackage.properties[0].regeneratePolicy).toBe(
-      "consume_existing_artifact",
-    );
+    const digitalProperty = packages.digitalPropertyPackage as {
+      properties: Array<{ regeneratePolicy: string }>;
+    };
+    expect(digitalProperty.properties[0]?.regeneratePolicy).toBe("consume_existing_artifact");
   });
 });

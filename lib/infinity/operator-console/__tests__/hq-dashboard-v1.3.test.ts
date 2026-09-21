@@ -38,12 +38,12 @@ function dept(id: OperatorDepartmentSnapshot["id"], overrides: Partial<OperatorD
 }
 
 describe("HQ Dashboard V1.3 — welcome header and room naming", () => {
-  it("1. welcome title is Welcome to Infinity OS", () => {
-    expect(HQ_WELCOME_TITLE).toBe("Welcome to Infinity OS");
+  it("1. welcome title is Infinity OS", () => {
+    expect(HQ_WELCOME_TITLE).toBe("Infinity OS");
   });
 
   it("2. department display-name mapping exists for all rooms", () => {
-    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(13);
+    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(15);
     expect(getRoomDisplayNames("product_lab").displayName).toBe("Creation Lab");
     expect(getRoomDisplayNames("executive_office").displayName).toBe("Command");
   });

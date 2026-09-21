@@ -1,0 +1,14 @@
+{
+  "founder_reauthorization": true,
+  "payment_activation": "YES",
+  "publicly_launched": "NO",
+  "activated_at": "2026-09-08T04:40:24.713Z",
+  "authority": "Founder reauthorization after FulfillmentReadinessGate PASS",
+  "stripe_account": "acct_18h5CjLdvXKx7R7G",
+  "professional_price": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+  "per_deal_price": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+  "webhook": "we_1UCssQLdvXKx7R7GcHonT3rh",
+  "deployment_id": "dpl_CxbVvgwuMREnye4Lq2RHYHi6iKAK",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "b5dacd67a503dcb624ea018260dc618dd4582d5d95ac00ef2dc6bc5fcb5d42b8"
+}

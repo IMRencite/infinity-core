@@ -44,6 +44,11 @@ export function occupancyNpvSalesEvidence(input?: Partial<SalesFloorEvidence> & 
     paid_acquisition: 0,
     money_movement: "DISABLED",
     mercury: "READ_ONLY",
+    affiliate_program: input?.affiliate_program ?? {
+      present: true,
+      building: true,
+      state: "PENDING_ECONOMICS",
+    },
   };
 }
 
@@ -68,6 +73,11 @@ export function askReviewSalesEvidence(): SalesFloorEvidence {
     paid_acquisition: 0,
     money_movement: "DISABLED",
     mercury: "READ_ONLY",
+    affiliate_program: {
+      present: true,
+      building: true,
+      state: "PENDING_ECONOMICS",
+    },
   };
 }
 

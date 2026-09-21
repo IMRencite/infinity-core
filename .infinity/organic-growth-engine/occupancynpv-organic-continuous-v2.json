@@ -1,0 +1,806 @@
+{
+  "venture_id": "occupancynpv",
+  "graph": {
+    "venture_id": "occupancynpv",
+    "nodes": [
+      {
+        "id": "pillar:valuation",
+        "label": "Valuation",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:valuation:noi",
+        "label": "NOI",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:valuation:cap-rates",
+        "label": "Cap Rates",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:valuation:dcf",
+        "label": "DCF",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:valuation:comparable-sales",
+        "label": "Comparable Sales",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:valuation:property-valuation",
+        "label": "Property Valuation",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:valuation:occupancy-economics",
+        "label": "Occupancy Economics",
+        "kind": "cluster",
+        "parent_id": "pillar:valuation",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:leasing",
+        "label": "Leasing",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:leasing:triple-net",
+        "label": "Triple Net",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:leasing:gross-lease",
+        "label": "Gross Lease",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:leasing:modified-gross",
+        "label": "Modified Gross",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:leasing:cam",
+        "label": "CAM",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/commercial-real-estate/leasing/cam/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "cluster:leasing:rent-escalations",
+        "label": "Rent Escalations",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/commercial-real-estate/leasing/rent-escalations/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "cluster:leasing:lease-analysis",
+        "label": "Lease Analysis",
+        "kind": "cluster",
+        "parent_id": "pillar:leasing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [
+          "/commercial-real-estate/leasing/lease-analysis/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "pillar:financing",
+        "label": "Financing",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:financing:debt",
+        "label": "Debt",
+        "kind": "cluster",
+        "parent_id": "pillar:financing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:financing:equity",
+        "label": "Equity",
+        "kind": "cluster",
+        "parent_id": "pillar:financing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:financing:refinancing",
+        "label": "Refinancing",
+        "kind": "cluster",
+        "parent_id": "pillar:financing",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:investment",
+        "label": "Investment",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:investment:returns",
+        "label": "Returns",
+        "kind": "cluster",
+        "parent_id": "pillar:investment",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:investment:hold-period",
+        "label": "Hold Period",
+        "kind": "cluster",
+        "parent_id": "pillar:investment",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:investment:risk",
+        "label": "Risk",
+        "kind": "cluster",
+        "parent_id": "pillar:investment",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/commercial-real-estate/investment/risk/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "pillar:due-diligence",
+        "label": "Due Diligence",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:due-diligence:financial-diligence",
+        "label": "Financial Diligence",
+        "kind": "cluster",
+        "parent_id": "pillar:due-diligence",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:due-diligence:physical-diligence",
+        "label": "Physical Diligence",
+        "kind": "cluster",
+        "parent_id": "pillar:due-diligence",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:asset-management",
+        "label": "Asset Management",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:asset-management:operations",
+        "label": "Operations",
+        "kind": "cluster",
+        "parent_id": "pillar:asset-management",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:asset-management:capex",
+        "label": "CapEx",
+        "kind": "cluster",
+        "parent_id": "pillar:asset-management",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:property-types",
+        "label": "Property Types",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:property-types:office",
+        "label": "Office",
+        "kind": "cluster",
+        "parent_id": "pillar:property-types",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:property-types:industrial",
+        "label": "Industrial",
+        "kind": "cluster",
+        "parent_id": "pillar:property-types",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:property-types:retail",
+        "label": "Retail",
+        "kind": "cluster",
+        "parent_id": "pillar:property-types",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:property-types:multifamily",
+        "label": "Multifamily",
+        "kind": "cluster",
+        "parent_id": "pillar:property-types",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:market-analysis",
+        "label": "Market Analysis",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:market-analysis:supply",
+        "label": "Supply",
+        "kind": "cluster",
+        "parent_id": "pillar:market-analysis",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:market-analysis:demand",
+        "label": "Demand",
+        "kind": "cluster",
+        "parent_id": "pillar:market-analysis",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:market-analysis:absorption",
+        "label": "Absorption",
+        "kind": "cluster",
+        "parent_id": "pillar:market-analysis",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:taxes",
+        "label": "Taxes",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/occupancy-costs/how-property-taxes-change-occupancy-cost/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "cluster:taxes:property-tax",
+        "label": "Property Tax",
+        "kind": "cluster",
+        "parent_id": "pillar:taxes",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/commercial-real-estate/taxes/property-tax/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "cluster:taxes:1031",
+        "label": "1031",
+        "kind": "cluster",
+        "parent_id": "pillar:taxes",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:transactions",
+        "label": "Transactions",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": true,
+        "existing_urls": [],
+        "gap": false
+      },
+      {
+        "id": "cluster:transactions:acquisition",
+        "label": "Acquisition",
+        "kind": "cluster",
+        "parent_id": "pillar:transactions",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:transactions:disposition",
+        "label": "Disposition",
+        "kind": "cluster",
+        "parent_id": "pillar:transactions",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "pillar:risk",
+        "label": "Risk",
+        "kind": "pillar",
+        "parent_id": null,
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [
+          "/occupancy-costs/how-cam-caps-change-occupancy-cost-risk/",
+          "/lease-sensitivity-analysis/what-decision-risks-lease-sensitivity-reveals/"
+        ],
+        "gap": false
+      },
+      {
+        "id": "cluster:risk:vacancy",
+        "label": "Vacancy",
+        "kind": "cluster",
+        "parent_id": "pillar:risk",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:risk:credit",
+        "label": "Credit",
+        "kind": "cluster",
+        "parent_id": "pillar:risk",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "cluster:risk:interest-rate",
+        "label": "Interest Rate",
+        "kind": "cluster",
+        "parent_id": "pillar:risk",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      },
+      {
+        "id": "question:how-is-cap-rate-calculated",
+        "label": "How is cap rate calculated?",
+        "kind": "question",
+        "parent_id": "cluster:valuation:cap-rates",
+        "search_intent": "informational",
+        "geo_intent": false,
+        "commercial_intent": false,
+        "existing_urls": [],
+        "gap": true
+      }
+    ],
+    "questions": [
+      "How is cap rate calculated?"
+    ],
+    "entities": [
+      "NOI",
+      "Cap Rates",
+      "DCF",
+      "Comparable Sales",
+      "Property Valuation",
+      "Occupancy Economics",
+      "Triple Net",
+      "Gross Lease",
+      "Modified Gross",
+      "CAM",
+      "Rent Escalations",
+      "Lease Analysis",
+      "Debt",
+      "Equity",
+      "Refinancing",
+      "Returns",
+      "Hold Period",
+      "Risk",
+      "Financial Diligence",
+      "Physical Diligence",
+      "Operations",
+      "CapEx",
+      "Office",
+      "Industrial",
+      "Retail",
+      "Multifamily",
+      "Supply",
+      "Demand",
+      "Absorption",
+      "Property Tax",
+      "1031",
+      "Acquisition",
+      "Disposition",
+      "Vacancy",
+      "Credit",
+      "Interest Rate"
+    ],
+    "content_gaps": [
+      "NOI",
+      "Cap Rates",
+      "DCF",
+      "Comparable Sales",
+      "Property Valuation",
+      "Occupancy Economics",
+      "Triple Net",
+      "Gross Lease",
+      "Modified Gross",
+      "Debt",
+      "Equity",
+      "Refinancing",
+      "Returns",
+      "Hold Period",
+      "Financial Diligence",
+      "Physical Diligence",
+      "Operations",
+      "CapEx",
+      "Office",
+      "Industrial",
+      "Retail",
+      "Multifamily",
+      "Supply",
+      "Demand",
+      "Absorption",
+      "1031",
+      "Acquisition",
+      "Disposition",
+      "Vacancy",
+      "Credit",
+      "Interest Rate",
+      "How is cap rate calculated?"
+    ],
+    "internal_links": [],
+    "authority_sources": [
+      "appraisal institute",
+      "nareit",
+      "sec filings"
+    ],
+    "sales_relevance": {
+      "cluster:valuation:noi": 0.8,
+      "cluster:valuation:cap-rates": 0.8,
+      "cluster:valuation:dcf": 0.8,
+      "cluster:leasing:gross-lease": 0.8,
+      "cluster:leasing:lease-analysis": 0.8,
+      "pillar:financing": 0.8,
+      "pillar:investment": 0.8,
+      "pillar:transactions": 0.8
+    },
+    "refresh_state": {}
+  },
+  "questions": [
+    {
+      "question": "How is cap rate calculated?",
+      "normalized_intent": "cap rate",
+      "source_channel": "internal_venture_research",
+      "venture_id": "occupancynpv",
+      "topic": "Cap Rates",
+      "frequency": 1,
+      "first_seen": "2026-09-17T04:42:29.914Z",
+      "last_seen": "2026-09-17T04:42:29.914Z",
+      "related_objections": [
+        "cap rate confused with lease NPV"
+      ],
+      "related_prospect_count": 1,
+      "existing_content_match": null,
+      "answer_state": "UNANSWERED",
+      "content_gap_score": 0.7,
+      "commercial_relevance": 0.85,
+      "sales_relevance": 0.8
+    }
+  ],
+  "opportunities": [
+    {
+      "opportunity_id": "opp:occupancynpv:cap rate",
+      "venture_id": "occupancynpv",
+      "content_type": "EVERGREEN_QUESTION",
+      "topic": "Cap Rates",
+      "cluster": "Cap Rates",
+      "pillar": "Valuation",
+      "question": "How is cap rate calculated?",
+      "intent": "cap rate",
+      "score": 68.1,
+      "reasons": [
+        "new_question",
+        "content_gap",
+        "commercial_value"
+      ],
+      "existing_url": null
+    }
+  ],
+  "demand_signals": [
+    {
+      "signal_id": "demand:occupancynpv:cap rate",
+      "venture_id": "occupancynpv",
+      "normalized_intent": "cap rate",
+      "question": "How is cap rate calculated?",
+      "topic": "Cap Rates",
+      "reason": "UNANSWERED",
+      "at": "2026-09-17T04:42:29.914Z"
+    }
+  ],
+  "queue": [
+    {
+      "item_id": "organic-v2-live-cap-rate:live",
+      "venture_id": "occupancynpv",
+      "stage": "INDEX_MONITOR",
+      "opportunity_id": "opp:occupancynpv:cap rate",
+      "work_kind": "NEW_URL"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "organic-v2-live-cap-rate",
+      "venture_id": "occupancynpv",
+      "url": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+      "title": "How is cap rate calculated? — OccupancyNPV",
+      "content_type": "EVERGREEN_QUESTION",
+      "topic": "Cap Rates",
+      "cluster": "commercial-lease-npv",
+      "question_answered": "How is cap rate calculated?",
+      "intent": "cap rate",
+      "status": "PUBLISHED",
+      "published_at": "2026-09-17T04:42:29.914Z",
+      "updated_at": "2026-09-17T04:42:29.914Z",
+      "quality_score": 90,
+      "evidence_status": "PASS",
+      "internal_links": [
+        "/commercial-lease-npv/",
+        "/commercial-lease-npv/what-is-npv-in-a-commercial-lease/",
+        "/occupancy-costs/what-is-cam-in-a-commercial-lease/",
+        "/compare-commercial-leases"
+      ],
+      "taxonomy": {
+        "categories": [
+          "Valuation"
+        ],
+        "tags": [
+          "cap-rate",
+          "commercial-real-estate"
+        ]
+      },
+      "sales_relevance": 0.9,
+      "objections_addressed": [
+        "cap rate confused with lease NPV"
+      ],
+      "indexation": "published"
+    }
+  ],
+  "sales_assets": [
+    {
+      "asset_id": "organic-v2-live-cap-rate",
+      "venture_id": "occupancynpv",
+      "url": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+      "title": "How is cap rate calculated? — OccupancyNPV",
+      "content_type": "EVERGREEN_QUESTION",
+      "topic": "Cap Rates",
+      "cluster": "commercial-lease-npv",
+      "question_answered": "How is cap rate calculated?",
+      "intent": "cap rate",
+      "status": "PUBLISHED",
+      "published_at": "2026-09-17T04:42:29.914Z",
+      "updated_at": "2026-09-17T04:42:29.914Z",
+      "quality_score": 90,
+      "evidence_status": "PASS",
+      "internal_links": [
+        "/commercial-lease-npv/",
+        "/commercial-lease-npv/what-is-npv-in-a-commercial-lease/",
+        "/occupancy-costs/what-is-cam-in-a-commercial-lease/",
+        "/compare-commercial-leases"
+      ],
+      "taxonomy": {
+        "categories": [
+          "Valuation"
+        ],
+        "tags": [
+          "cap-rate",
+          "commercial-real-estate"
+        ]
+      },
+      "sales_relevance": 0.9,
+      "objections_addressed": [
+        "cap rate confused with lease NPV"
+      ],
+      "indexation": "published"
+    }
+  ],
+  "published_today": 1,
+  "refreshed_today": 0,
+  "rejected_quality": 0,
+  "rejected_duplicate": 0,
+  "last_tick_at": "2026-09-17T04:42:29.914Z",
+  "remediation_queue": [
+    {
+      "url": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+      "classification": "COMPLETE",
+      "priority": "NORMAL",
+      "reason": "EXPANDED_ON_CANONICAL_URL"
+    }
+  ],
+  "blog_readiness": "BLOG_READY",
+  "schema_remediation_queue": [],
+  "schema_readiness": "SCHEMA_READY",
+  "blog_editorial_quality": "PASS",
+  "blog_remediation_queue": [
+    {
+      "url": "/blog/valuation/how-interest-rates-affect-commercial-property-values/",
+      "classification": "BLOG_COMPLETE",
+      "priority": "HIGH",
+      "reasons": [
+        "remediated_interest_rate_resource"
+      ]
+    }
+  ]
+}

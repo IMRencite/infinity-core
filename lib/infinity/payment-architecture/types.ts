@@ -96,7 +96,7 @@ export type PaymentValidationGap = {
 };
 
 export type ConnectWriteReadinessReport = {
-  stripeVerification: ProviderCapabilityStatus | "UNKNOWN";
+  stripeVerification: ProviderCapabilityStatus | "UNVERIFIED" | "LIVE_WRITE_VERIFIED" | "UNKNOWN";
   connectWriteReadiness: ConnectWriteReadiness;
   marketplacePaymentReadiness: MarketplacePaymentReadiness;
   liveWriteAuthority: false;

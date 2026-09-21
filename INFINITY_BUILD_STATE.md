@@ -1,7 +1,7 @@
 # Infinity — Build State
 
 **Canonical implementation checkpoint**  
-**Date:** August 15, 2026
+**Date:** September 7, 2026
 
 Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VERIFIED. Do not infer implementation from architecture documents.
 
@@ -26,6 +26,7 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Product + Asset Builder V2.1 | VERIFIED LIVE | Real AI coding output applied to workspace and verified. |
 | External Action Gateway | VERIFIED live path | Allowlisted/within-policy autonomous external action path; first autonomous live launch previously succeeded. |
 | Organic Growth Architecture Engine V1 | VERIFIED | v1.2 final live PAB handoff: real OpenAI `gpt-4.1-mini` + Gemini review via PAB V2.1; 33 mock/simulation + 3 live tests pass; post-generation gate executes on AI artifact. Live grounded research: SKIPPED_MISSING_CREDENTIALS (integration implemented, not live-verified). |
+| Infinity Public Authority & Digital Real Estate Standard V1 | VERIFIED foundation | Global contracts, archetypes, search-coverage rule, Factory flow, and override governance. CRE Search-Validated Authority Expansion (`art_00cd1821c5a178bf2487`) is the reference implementation. Search-demand standalone coverage and section-surface rhythm are now global hard gates. CRE Search-Demand Authority Depth + Section Rhythm successor (`art_e6d2a3a1f46d117d61c9`) is composed only — not deployed. Active public artifact remains the width successor. |
 | Creative Media Architecture Engine V1 | VERIFIED | Provider-neutral media pipeline; migration `20260815280000`; 23 mock + 2 live tests pass. |
 | Performance Intelligence & Learning Engine V1 | VERIFIED | V1.1 verification closure complete; population-correct execution success rate; RLS hardening migration `20260816040000`; 31 mock + 1 live + 3 RLS tests pass. |
 | Full Growth/Monitoring learning engine | FUTURE | Superseded at foundation level by Performance Intelligence V1; full autonomous learning loop not yet complete. |
@@ -41,11 +42,18 @@ Use this file to distinguish what is VERIFIED, DESIGNED/PLANNED, and NOT YET VER
 | Founder Idea Lab V1 | VERIFIED | Manual idea intake into the canonical pipeline; founder control without Treasury bypass; see section 6i. |
 | Cursor Coding Agent Adapter V1 | VERIFIED | Optional CodingAgentProvider; Native Coder preserved; live Cursor execution NOT CONFIGURED; see section 6j. |
 | Zero-to-Production Venture Builder V1 | VERIFIED IN DRY-RUN / NON-LAUNCH MODE | Canonical closed-loop orchestrator; READY ≠ PUBLICLY_LAUNCHED; see section 6k. |
+| Live Commercial Provider Capability Verification V1 | HARNESS VERIFIED — LIVE PROVIDERS NOT FULLY CONFIGURED | Read-only probes; Hosting READ_ONLY_VERIFIED; Registrar/DNS/Payments NOT_CONFIGURED; mutations LOCKED; see section 6l. |
 | Vercel Live Verification Preflight V1 | VERIFIED | Governed live preflight for disposable Vercel verification; see section 6m. |
 | Vercel Governed Live Verification Session V1 | VERIFIED | Same org/mission session; replay-safe durable actions; see section 6m. |
 | Vercel Live Execution Activation + Durability V1 | VERIFIED | Real create/deploy/verify recorded on `external_actions`; see section 6m. |
 | Vercel Deployment Mode + Cost Semantics Fix V1 | VERIFIED | `git_integrated` mapping; authorized ceiling ≠ spend; see section 6m. |
 | Live Deployment Provider Enablement V1 — Vercel | VERIFIED | Capability-scoped LIVE_WRITE_VERIFIED for three hosting actions only; see section 6m. |
+| Durable Commercial Provider Mutation Authority V1 | VERIFIED foundation | Policy-authorized routine bounded provider mutations; OccupancyNPV first payment activation is complete; see section 11. |
+| OccupancyNPV First Live Payment Activation V1 | SUPERSEDED by safety rollback | First activation executed 2026-09-07T05:25:43.503Z before fulfillment was a hard gate; see section 11. |
+| OccupancyNPV Payment Safety Rollback + Fulfillment Gate V1 | VERIFIED | Customer checkout initiation disabled; Stripe infrastructure preserved; fulfillment is now a hard PaymentReadinessGate dependency; PUBLICLY_LAUNCHED remains NO; see section 11. |
+| Venture-Specific Commercial Fulfillment Architecture V1 | VERIFIED foundation | Global fulfillment domain, gates, entitlements, orphan detection, and OccupancyNPV contracts from product truth; OccupancyNPV FulfillmentReadinessGate is FAIL because the paid application, identity, and policy are missing; payments remain NO; PUBLICLY_LAUNCHED remains NO; see section 11. |
+| Customer Suggestions HQ Surface V1 | VERIFIED | First-class venture detail tab after System View; projects CustomerFeedbackRecord / intake / CanonicalVentureImprovement; FounderFeedbackVisibilityGate required; OccupancyNPV real 1 / synthetic 1 at lock; no duplicate store. |
+| Offer + Deal Architecture Engine V1 | VERIFIED foundation | Canonical stage after commercialization economics; analysis-only OccupancyNPV; no live price/trial change; reuses economics, treasury, payment, fulfillment, experiment, PI, learning, and Customer Suggestions. |
 
 ## 2. Product + Asset Builder V2.1 — Verified Checkpoint
 
@@ -472,7 +480,7 @@ Migration `20260818010000_treasury_capital_budget_engine_v1.sql` — RLS enabled
 ### Test totals
 - Treasury suites: **28/28 passed**
 - Commercialization dry-run regression: **12/12 passed**
-- Operator console / HQ regressions: **passed** (live-provider-probes UNKNOWN-renewal assertion remains a pre-existing `undefined` vs `null` mismatch, unrelated)
+- Operator console / HQ regressions: **passed**
 - Production build: **passed**
 - Full-repo `tsc --noEmit`: pre-existing failures in unrelated test files; no treasury errors after index export fix
 
@@ -557,12 +565,45 @@ Migration `20260818040000_zero_to_production_v1.sql` — `zero_to_production_run
 ### Test totals
 - Zero-to-Production: **16/16 passed**
 - Required regressions (Founder Idea Lab, Opportunity, Research, Monetization, Selection, Company Builder, PAB, Coding Agents, Treasury, Commercialization, Creative Media, Organic Growth, Operator Console; live FAVC1 excluded): **459 passed, 1 skipped**
-- Pre-existing non-ZTP failure: `commercialization/live-provider-probes` registrar mock `renewalPriceUsd` undefined vs null
 - Live Cursor probe: **SKIPPED (NOT CONFIGURED)**
 - Production build: **passed**
 
 ### Real actions
 FAVC1 runs: 0. Domains purchased: 0. DNS mutations: 0. Public deployments: 0. Payment products created: 0. Payments charged: 0. Bank connections: 0. Real financial transactions: 0. Live Cursor runs: 0.
+
+## 6l. Live Commercial Provider Capability Verification V1 — HARNESS VERIFIED; LIVE PROVIDERS NOT FULLY CONFIGURED
+
+**Status:** `HARNESS VERIFIED — LIVE PROVIDERS NOT FULLY CONFIGURED`
+
+Read-only / zero-spend verification that the Commercialization Control Plane can talk to real external providers. This is not a commercialization execution milestone. Mutation authority remains LOCKED.
+
+### Mode
+`READ_ONLY` via `CommercialProviderVerificationMode`. Mutating capabilities throw `READ_ONLY_MUTATION_BLOCKED` before the inner provider function runs.
+
+HQ reads persisted verification only; it does not execute live provider probes on dashboard load.
+
+### Live evidence (`node scripts/verify-commercialization-providers.mjs`)
+- Registrar (Namecheap): **SKIP / NOT_CONFIGURED** — no real provider call
+- DNS (Cloudflare): **SKIP / NOT_CONFIGURED** — no real provider call
+- Hosting (Vercel): **PASS / READ_ONLY_VERIFIED** — real GET user/projects/deployments; account accessible; 4 projects / 3 deployments readable; environment LIVE
+- Payments (Stripe): **SKIP / NOT_CONFIGURED** — no real provider call
+
+Do not claim LIVE PROVIDER VERIFIED across all categories. Hosting alone is live-verified read-only.
+
+### Normalization
+`renewalPriceUsd` unknown is canonical `null` (never `undefined`, never invented `0`). Regression tests pass.
+
+### Persistence
+Migration `20260818050000_commercial_provider_verification_v1.sql` — `commercial_provider_verifications`. RLS enabled, service_role GRANT, no blanket policies, no secret columns.
+
+### Tests
+- Unit/integration `live-provider-probes.test.ts`: **22/22 passed**
+- Commercialization dry-run regression: **12/12 passed**
+- Live provider: **1 passed** (Hosting), Registrar/DNS/Payments skipped as NOT_CONFIGURED
+- Production build: **passed**
+
+### Real actions
+Domains purchased: 0. DNS mutations: 0. Deployments created: 0. Payment products created: 0. Checkout sessions created: 0. Charges created: 0. Subscriptions created: 0. Bank connections: 0. Mercury: not in this milestone.
 
 ## 6m. Live Deployment Provider Enablement V1 — Vercel — VERIFIED
 
@@ -570,7 +611,7 @@ FAVC1 runs: 0. Domains purchased: 0. DNS mutations: 0. Public deployments: 0. Pa
 
 This is a governed live provider-write milestone. It is not public launch, DNS, domain registration, payments, GitHub writes, production migrations, or full commercialization.
 
-Read-only commercial GET probes remain a separate harness and still do not authorize writes. This section records a later, capability-scoped write verification.
+Read-only commercial probes in section 6l remain a separate harness. Those GET probes still do not authorize writes. This section records a later, capability-scoped write verification.
 
 ### Supporting classifications
 - Vercel Live Verification Preflight V1: **VERIFIED**
@@ -636,7 +677,8 @@ Vercel project creations after reuse: 0. Successful Vercel deployments: 1. Verif
 - Do not claim Founder Idea Lab V1 is unimplemented — **V1 foundation is VERIFIED** (see section 6i). Founder approval still never bypasses Treasury or public deployment.
 - Do not claim live Cursor execution is verified — **Cursor Coding Agent Adapter V1 is VERIFIED** (see section 6j). Live Cursor remains NOT CONFIGURED until a governed non-destructive probe runs.
 - Do not claim Zero-to-Production public launch, live domain/DNS/payments, or autonomous revenue — **ZTP V1 is VERIFIED IN DRY-RUN / NON-LAUNCH MODE** (see section 6k). READY is not PUBLICLY_LAUNCHED.
-- Do not claim Public Launch, DNS, Domain Registration, Payments, GitHub writes, production migrations, or Full Commercialization from the Vercel hosting write path — **Live Deployment Provider Enablement V1 — Vercel is VERIFIED** only for `hosting.create_project`, `hosting.deploy`, and `hosting.verify_deployment` (see section 6m). `LIVE_WRITE_VERIFIED` is capability-scoped. Read-only verification still never implies write authority for other actions.
+- Do not claim live commercial provider verification across Registrar/DNS/Payments — section 6l Hosting GET probes remain **READ_ONLY_VERIFIED**; Registrar, DNS, and Payments remain **NOT_CONFIGURED**. Read-only verification still never implies write authority for other actions.
+- Do not claim Public Launch, DNS, Domain Registration, Payments, GitHub writes, production migrations, or Full Commercialization from the Vercel hosting write path — **Live Deployment Provider Enablement V1 — Vercel is VERIFIED** only for `hosting.create_project`, `hosting.deploy`, and `hosting.verify_deployment` (see section 6m). `LIVE_WRITE_VERIFIED` is capability-scoped.
 
 ## 9. First Autonomous Venture Cycle V1 — ATTEMPTED / BLOCKED
 
@@ -671,5 +713,112 @@ Command → Venture Radar → Research Grid → Profit Lab → Venture Selection
 ### Remaining blockers
 - Restore Supabase project / PostgREST schema cache availability, then re-run `node scripts/execute-first-autonomous-venture-cycle-v1.mjs`.
 
+## 10. Infinity Public Authority & Digital Real Estate Standard V1 — VERIFIED foundation
+
+**Status:** `PUBLIC_AUTHORITY_STANDARD_V1_BUILT_FROM_CRE_REFERENCE`  
+**Date:** September 3, 2026
+
+Global standard lives in `lib/infinity/venture-website-architecture/public-authority-standard/`. CRE Search-Validated Authority Expansion remains the reference implementation:
+
+- Artifact: `art_00cd1821c5a178bf2487`
+- Digest: `09857789812df6bcba9f18a70ab35e03965373855bb3fa849e22e43d363f4823`
+- CRE successor rebuilt by this standard: **NO**
+- CRE experiment / observer changed: **NO**
+- Governed CRE deployment: **not authorized by this milestone**
+
+All authority-led public ventures inherit the Infinity Public Authority & Digital Real Estate Standard. Venture-specific builds may extend or specialize the standard but may not silently weaken human readability, semantic topic architecture, search-backed question coverage, GEO answer surfaces, contextual internal linking, authoritative sourcing, conversion paths, visual quality, or rendered quality-control requirements.
+
+Each core authority topic must be backed by at least 20 validated real-world search questions before Infinity may classify the topic as coverage-complete. This is a coverage rule, not a requirement to create 20 standalone URLs.
+
+Page templates are archetypes, not fixed layouts. Global standards define required outcomes; the venture profile and page archetype determine how those outcomes are expressed.
+
+Founder physical browser evidence outranks automated visual-quality claims when they conflict.
+
+Canonical public footer attribution, in this visible order, is: Privacy Policy | Terms of Service | Sitemap | An Infinity OS Venture | By IMR. The venture label is exactly "An Infinity OS Venture". Hard publishability also includes SemanticContentRedundancyGate, SemanticNavigationQualityGate, and EditorialHighlightQualityGate. Legal and contact archetypes do not require semantic navigation or editorial highlights.
+
+## 11. Durable Commercial Provider Mutation Authority V1 — VERIFIED foundation
+
+**Status:** `DURABLE_COMMERCIAL_PROVIDER_MUTATION_AUTHORITY_COMPLETE`  
+**Date:** September 6, 2026
+
+Canonical model: `CommercialProviderMutationAuthority` in `lib/infinity/venture-operating-scale/`. This extends Venture Operating Scale. It does not create a competing EAG or Treasury.
+
+Locked principle: routine bounded commercial provider mutations are policy-authorized, not founder-prompt-authorized. Authority is not blanket write, financial, or mutation authority.
+
+Decision outcomes: `ALLOW_AUTONOMOUS` | `REQUIRE_AUTHORIZATION` | `ESCALATE` | `BLOCK`.
+
+Routine classes that may run autonomously when all gates pass: DNS create/update, zone create, domain binding create/update, SSL provision, Stripe product/price/webhook create/update, checkout configuration, analytics configuration.
+
+Financial and high-risk classes remain gated:
+
+- Domain registration requires a founder-configured spend ceiling. No ceiling is invented. Missing ceiling or amount above ceiling → `REQUIRE_AUTHORIZATION`. Unknown material cost is not zero → `BLOCK`.
+- Provider plan purchase/upgrade requires a configured recurring ceiling plus Treasury, EAG, budget, and plan-economics match. Above ceiling → `REQUIRE_AUTHORIZATION`.
+- Price change, subscription plan change, and material offer change are not routine provider configuration. Outside approved bounds → `ESCALATE`.
+- Destructive mutations default to `ESCALATE`.
+- Legal identity mutations require human confirmation.
+- Provider identity mismatch / unknown account overrides autonomy → `BLOCK`.
+
+Payment is not fulfillment. A paid offer may not remain activated unless FulfillmentReadinessGate is PASS. OccupancyNPV first payment activation was executed at 2026-09-07T05:25:43.503Z before that gate existed. That historical authorization is preserved and does not bypass fulfillment. Current state is `ACTIVATION_SAFETY_ROLLBACK_PENDING_FULFILLMENT`. Payment infrastructure remains configured. Payment activation is NO. Checkout session creation is BLOCKED.
+
+Venture-specific commercial fulfillment architecture is now the global foundation (`lib/infinity/fulfillment/`). OccupancyNPV Professional and Per-Deal contracts exist, but FulfillmentReadinessGate is FAIL: occupancynpv.com is a validation website, not an authenticated lease-NPV application. Remaining blockers: `FULFILLMENT_CONFIGURATION`, `CUSTOMER_IDENTITY_CONFIGURATION`, `PRODUCT_DELIVERABLE_CONFIGURATION`, `POST_PURCHASE_ACCESS_CONFIGURATION`, `REFUND_CANCELLATION_POLICY_CONFIGURATION`, `PAYMENT_ACTIVATION`, `PUBLIC_LAUNCH`. Historical activation status is `BLOCKED_PENDING_FULFILLMENT`.
+
+HQ shows payment infrastructure READY, payment activation BLOCKED, fulfillment REQUIRED/FAIL, offer contracts PROFESSIONAL + PER_DEAL, orphaned paid customers 0, and public launch BLOCKED. HQ does not become the decision engine.
+
+Next governed action: `BUILD_OCCUPANCYNPV_DEAL_WORKSPACE_AND_CUSTOMER_IDENTITY`. Do not reactivate payments. Do not run public launch readiness.
+
+## 12. Global Payment Path Assurance V1 — VERIFIED foundation
+
+**Status:** `GLOBAL_PAYMENT_PATH_ASSURANCE_COMPLETE`  
+**Date:** September 10, 2026
+
+Payment configuration is not payment readiness. Live unpaid executable path verification is required before payment activation and public launch. OccupancyNPV known-good baseline: founder physical checkout PASS, Professional and Per-Deal Stripe Checkout reachable, incident RESOLVED. The OccupancyNPV restricted-key missing `checkout_session_write` failure is a permanent regression fixture. Founder checkout testing is not future monitoring.
+
+Canonical modules: `lib/infinity/payment-path/`.
+
+## 13. Repository TypeScript Build Health Recovery V1 — VERIFIED
+
+**Status:** `INFINITY_REPO_TYPESCRIPT_BUILD_HEALTH_RECOVERED`  
+**Date:** September 10, 2026
+
+Previous project-wide TypeScript debt: 829 errors. Fresh audit reproduced 829. Root causes were shared contracts, not 829 independent defects:
+
+- `runInstrumentedMission<T>` failed to infer `T` because the handle was generic in `T`, so `instrumented.result` / `inner` were `unknown` (about 300 errors plus spread failures).
+- `.mts` scripts imported `*.ts` paths while `allowImportingTsExtensions` was unset (188 TS5097).
+- Over-narrow `as const` default objects and stale test fixtures accounted for most of the remainder.
+
+Final: project-wide TypeScript errors 0. Full Next.js production build PASS. `strict` remains true. Application code was not excluded. OccupancyNPV payment/fulfillment/checkout unchanged. AskReview remains paused.
+
+Gates: `RepositoryTypeHealthGate`, `ProductionBuildHealthGate`, `ChangedModuleTypeSafetyGate` in `lib/infinity/repository-type-health/`. Future TypeScript errors are regressions.
+
+Repo-wide ESLint debt remains outside this milestone.
+
+## 14. Global Venture Economics Assurance V1 — VERIFIED foundation
+
+**Status:** `GLOBAL_ECONOMICS_AND_BUILD_HEALTH_COMPLETE`  
+**Date:** September 10, 2026
+
+Profit Lab was empty because economics engines existed (monetization, comparable economics, venture-intelligence) but were not projected into `strategy_finance`. Competitor research was not a required canonical contract. OccupancyNPV and AskReview now have `VentureEconomicsIntelligenceContract` records: OccupancyNPV with observed $290/$149 prices and evidence-backed competitors/substitutes; AskReview with hypothesized $29/$49 prices, competitor category context, and production still paused. UNKNOWN values are explicit and never defaulted to zero. Promotion auto-enqueues economics. Missing economics blocks canonical BUILD. TypeScript remains 0; Next.js production build must stay PASS.
+
+## 15. Execution Context + Run State + HQ Infinity Logo Visibility V2 — VERIFIED foundation
+
+**Status:** `EXECUTION_CONTEXT_RUN_STATE_AND_INFINITY_LOGO_COMPLETE`  
+**Date:** September 10, 2026
+
+Canonical repo is `C:\Users\Antivist\Desktop\Infinity\infinity-core`. Parent `Infinity` is not a git repo; evidence from that directory is invalid. Run/job attempts now distinguish CURRENT vs HISTORICAL/SUPERSEDED. The OccupancyNPV VALIDATE→ECONOMICS_BLOCKED test failure is preserved as SUPERSEDED after the passing rerun. VALIDATE with incomplete economics stays VALIDATE. HQ Infinity inner rotating lines are neon purple (`--hq-infinity-inner-active`).
+
+## 16. HQ Venture Selection + Profit Lab UX + Global Growth Engine V4 — ARCHITECTURE COMPLETE
+
+**Status:** `HQ_SELECTION_PROFITLAB_AND_GLOBAL_GROWTH_ENGINE_COMPLETE`  
+**Date:** September 10, 2026
+
+Venture click is a complete selection. Dropdown is a switcher only. Route, selector, and rendered venture must agree. Long economics text must not use compact pill geometry. Growth architecture now plans decision-grade outreach (~10 qualified new prospects/business day for ~20 business days), recipient-local send timing, variable response pacing, brand-first Infinity identity with truthful-on-inquiry disclosure, and reusable trial/entry contracts. OccupancyNPV prices unchanged. AskReview remains paused. No real outreach, trial enablement, deploy, stage, commit, or push in this milestone.
+
+## 17. Offer + Deal Architecture Engine V1 + Customer Suggestions Canonicalization — VERIFIED foundation
+
+**Status:** `OFFER_DEAL_ARCHITECTURE_ACTIVE`  
+**Date:** September 12, 2026
+
+Customer Suggestions remains the first-class HQ venture surface (`projectVentureCustomerSuggestions`, FounderFeedbackVisibilityGate). No second feedback store. Offer + Deal Architecture is now a canonical stage after Commercialization Economics and before Company Formation. Offer Optimization is part of the post-launch loop. OccupancyNPV analysis is read-only: Professional $290/year, Per-Deal $149, trial OFF. Do not activate FREE_FIRST_DEAL. Capital remains NOT_SET / BLOCKED_PENDING_CAPITAL_POLICY. AskReview remains SELECTION_UNDER_REVIEW / PRODUCTION PAUSED. Multi-venture factory remains NOT_ACTIVATED.
+
 ## 8. Next Step
-Restore Supabase connectivity and re-execute **First Autonomous Venture Cycle V1** using the implemented orchestrator at `scripts/execute-first-autonomous-venture-cycle-v1.mjs`. External architect review of uncommitted platform source recommended before merge.
+Restore Supabase connectivity and re-execute **First Autonomous Venture Cycle V1** using the implemented orchestrator at `scripts/execute-first-autonomous-venture-cycle-v1.mjs`. External architect review of uncommitted platform source recommended before merge. Next CRE public-site milestone, separately governed: **GOVERNED_CRE_SEARCH_VALIDATED_AUTHORITY_DEPLOYMENT_V1**.

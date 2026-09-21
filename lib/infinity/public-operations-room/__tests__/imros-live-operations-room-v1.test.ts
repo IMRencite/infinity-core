@@ -35,6 +35,7 @@ function renderMarkup(observation = idleTruthObservation()) {
     markup: [
       projection.system_status,
       ...projection.public_departments.map((row) => `${row.public_name} ${row.generic_activity_label}`),
+      ...projection.public_sales_rooms.map((row) => `${row.public_name} ${row.generic_activity_label}`),
       ...projection.public_ventures.map((row) => `${row.public_name} ${row.public_url ?? ""}`),
       `Agents Active ${formatPublicCount(projection.active_public_agents)}`,
       `Autonomous Hours ${formatPublicCount(projection.autonomous_operating_hours)}`,
@@ -123,6 +124,8 @@ describe("IMROS Live Operations Room V1", () => {
     const occupancy = projection.public_ventures.find((row) => row.public_name === "OccupancyNPV");
     expect(occupancy?.public_url).toBe("https://occupancynpv.com");
     expect(readFileSync("components/public/operations-room/public-venture-grid.tsx", "utf8")).toContain("venture.public_url");
+    expect(readFileSync("components/public/operations-room/public-recent-ventures.tsx", "utf8")).toContain("recentPublicVentures");
+    expect(readFileSync("components/public/operations-room/public-recent-ventures.tsx", "utf8")).not.toMatch(/AskReview/i);
   });
 
   it("25. footer links are valid public paths", () => {
@@ -130,7 +133,27 @@ describe("IMROS Live Operations Room V1", () => {
     expect(footer).toContain("/public/privacy");
     expect(footer).toContain("/public/terms");
     expect(footer).toContain("/public/sitemap.xml");
+    expect(footer).toContain("https://imros.io");
     expect(footer).toContain("By IMR");
+    expect(footer).toContain("https://infinitemediaresources.com");
+  });
+
+  it("sales floor rooms remain public-safe and architecturally present", () => {
+    const { projection, markup } = renderMarkup();
+    expect(projection.public_sales_rooms.map((row) => row.public_name)).toEqual([
+      "Outbound Acquisition",
+      "Inbound Conversion",
+      "Expansion & Retention",
+      "Partnerships & Channel",
+      "Offer & Closing",
+    ]);
+    expect(markup).toContain("Partnerships & Channel");
+    expect(markup).toMatch(/affiliate-program activity/i);
+    expect(markup).not.toMatch(/commission|payout|@gmail|prospect@|prospect_entity|prospect_id/i);
+    expect(markup).toContain("PROSPECT_INTELLIGENCE");
+    const floor = readFileSync("components/public/operations-room/operations-floor.tsx", "utf8");
+    expect(floor).toContain("data-public-operations-building");
+    expect(floor).toContain("Sales Floor");
   });
 
   it("26-29. public page is independent of HQ auth and does not change HQ/runtime/loop", () => {

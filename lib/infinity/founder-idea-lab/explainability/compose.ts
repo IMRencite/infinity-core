@@ -10,8 +10,11 @@ import type { MonetizationEvidenceLayers } from "../monetization-levels";
 import type { FounderResearchPacket } from "../research-packet";
 import type { ScoreProvenanceRow } from "../score-from-evidence";
 import type { FounderIdeaGrade, FounderIdeaSubmission } from "../types";
-import { formatRange, type EconomicEvidenceClass } from "../comparable-economics/provenance";
+import { formatRange, rangeHasValue, type EconomicEvidenceClass } from "../comparable-economics/provenance";
 import { modelComparableEconomics } from "../comparable-economics/from-evidence";
+import { researchRevenueModel } from "../revenue-model-research/from-evidence";
+import { researchBenchmarkEconomics } from "../benchmark-economics/from-evidence";
+import { buildProductAdvantage } from "../product-advantage/from-packet";
 import type { ComparableEconomicsModel } from "../comparable-economics/types";
 import type {
   DecisionExplanation,
@@ -95,12 +98,22 @@ function keyFindings(packet: FounderResearchPacket | null, submission: FounderId
 
 function sourceTrace(packet: FounderResearchPacket | null, provenance: ScoreProvenanceRow[]): SourceTraceRow[] {
   const rows: SourceTraceRow[] = [];
+  const byUrl = new Map((packet?.sources ?? []).map((source) => [source.url, source]));
   for (const finding of packet?.findings ?? []) {
     const impact = provenance.find((row) => row.evidenceRefs.includes(finding.findingId));
     for (const url of finding.sourceUrls) {
+      const meta = byUrl.get(url);
+      const opaque = /vertexaisearch\.cloud\.google\.com\/grounding-api-redirect/i.test(url);
+      const domain = meta?.domain && !/vertexaisearch\.cloud\.google\.com/i.test(meta.domain) ? meta.domain : null;
+      const title = meta?.title?.trim() || null;
+      const display = domain
+        ? `${domain}${title ? ` — ${title}` : ""} (${url})`
+        : title && !opaque
+          ? `${title} (${url})`
+          : url;
       rows.push({
         findingId: finding.findingId,
-        sourceUrl: url,
+        sourceUrl: display,
         researchRunId: packet?.researchRunId ?? null,
         dimension: finding.dimension,
         scoreImpact: impact
@@ -389,36 +402,58 @@ export function composeFounderExplainability(input: {
   packet: FounderResearchPacket | null;
   layers: MonetizationEvidenceLayers | null;
 }): FounderExplainability {
+  const emptyPacket = {
+    researchRunId: input.submission.researchRunId ?? "none",
+    candidateId: input.submission.opportunityCandidateId ?? "none",
+    submissionId: input.submission.id,
+    grounded: false,
+    failed: true,
+    failureCode: "RESEARCH_FAILED" as const,
+    summary: "",
+    findings: [],
+    sources: [],
+    competitorLeads: [],
+    verifiedCompetitors: [],
+    monetizationLayers: input.layers ?? { category: "UNKNOWN", ideaSpecific: "UNKNOWN", unitEconomics: "UNKNOWN" },
+    requiresMoreResearch: true,
+  };
+  const packet = input.packet ?? emptyPacket;
+  const context = {
+    title: input.submission.title,
+    description: input.submission.description,
+    targetCustomer: input.submission.targetCustomer,
+    problem: input.submission.problem,
+    proposedSolution: input.submission.proposedSolution,
+    businessModelHypothesis: input.submission.businessModelHypothesis,
+    pricingHypothesis: input.submission.pricingHypothesis,
+  };
+  const revenueModel = researchRevenueModel({ packet, context });
+  const benchmarkEconomics = researchBenchmarkEconomics({ packet, context, revenueModel });
   const economics = modelComparableEconomics({
-    packet: input.packet ?? {
-      researchRunId: input.submission.researchRunId ?? "none",
-      candidateId: input.submission.opportunityCandidateId ?? "none",
-      submissionId: input.submission.id,
-      grounded: false,
-      failed: true,
-      failureCode: "RESEARCH_FAILED",
-      summary: "",
-      findings: [],
-      sources: [],
-      competitorLeads: [],
-      verifiedCompetitors: [],
-      monetizationLayers: input.layers ?? { category: "UNKNOWN", ideaSpecific: "UNKNOWN", unitEconomics: "UNKNOWN" },
-      requiresMoreResearch: true,
-    },
-    context: {
-      title: input.submission.title,
-      description: input.submission.description,
-      targetCustomer: input.submission.targetCustomer,
-      problem: input.submission.problem,
-      proposedSolution: input.submission.proposedSolution,
-      businessModelHypothesis: input.submission.businessModelHypothesis,
-      pricingHypothesis: input.submission.pricingHypothesis,
-    },
+    packet,
+    context,
     layers: input.layers ?? input.grade.monetizationLayers ?? { category: "UNKNOWN", ideaSpecific: "UNKNOWN", unitEconomics: "UNKNOWN" },
     founderPricingHypothesis: input.submission.pricingHypothesis,
+    revenueModel,
+    benchmarkEconomics,
   });
   const decision = decisionExplanation({ grade: input.grade, coverage: input.grade.coverage, economics });
   const provenanceClass: EconomicEvidenceClass = economics.pricing.provenance;
+  const productAdvantage = buildProductAdvantage({
+    packet,
+    context: {
+      proposedSolution: input.submission.proposedSolution,
+      pricingHypothesis: input.submission.pricingHypothesis,
+      businessModelHypothesis: input.submission.businessModelHypothesis,
+      targetCustomer: input.submission.targetCustomer,
+    },
+    willingnessToPay: rangeHasValue(revenueModel?.revenuePerCustomer.coreRecurringARPU ?? null)
+      ? `Public competitor prices cluster around ${formatRange(revenueModel!.revenuePerCustomer.coreRecurringARPU, "$")} per month. That is a pricing-anchor signal, not proof Infinity will charge the same.`
+      : "Competitor prices are anchors, not proof that Infinity will achieve the same price.",
+    economicUncertainty: !rangeHasValue(benchmarkEconomics.modeled.grossMargin.range)
+      ? "The biggest economic uncertainty is gross/contribution margin — still modeled or missing, not observed."
+      : benchmarkEconomics.mainUncertainty,
+  });
   return {
     executiveSummary: executiveSummary({ submission: input.submission, grade: input.grade, decision, economics }),
     evidenceSummary: evidenceSummary(input.packet, input.grade.coverage),
@@ -450,6 +485,9 @@ export function composeFounderExplainability(input: {
       majorAssumptions: economics.assumptions.map((item) => `${item.name}: ${item.assumption}`),
     },
     comparables: economics,
+    revenueModel,
+    benchmarkEconomics,
+    productAdvantage,
     opportunityProvenance: input.grade.provenance,
   };
 }

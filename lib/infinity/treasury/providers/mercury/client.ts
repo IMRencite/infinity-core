@@ -5,7 +5,7 @@ import {
   ProviderUnavailableError,
   UnsupportedCapabilityError,
 } from "../provider";
-import type { MercuryCredentials, MercuryPublicConfig } from "./config";
+import type { MercuryAuthMode, MercuryCredentials, MercuryPublicConfig } from "./config";
 import { mercurySafeErrorMessage, redactMercuryValue } from "./redact";
 import { mercuryUnknownReadCost, type MercuryReadOperation, type MercuryReadTelemetry } from "./telemetry";
 
@@ -25,6 +25,8 @@ export class MercuryHttpClient {
   writeHttpCalls = 0;
   writeAttempts = 0;
   telemetry: MercuryReadTelemetry[] = [];
+  lastAuthMode: MercuryAuthMode | null = null;
+  lastVerifiedAt: string | null = null;
   private readonly fetchImpl: typeof fetch;
   private readonly now: () => Date;
 
@@ -56,32 +58,47 @@ export class MercuryHttpClient {
       throw new ProviderUnavailableError("mercury", "PROVIDER_NOT_CONFIGURED");
     }
     const url = new URL(path.replace(/^\//, ""), this.config.baseUrl).toString();
+    const bearer = await this.requestOnce(url, this.credentials.authorizationHeader("bearer"));
+    this.recordGet(operation);
+    this.telemetry.push(mercuryUnknownReadCost(operation, this.config.mode, path.split("?")[0] ?? path));
+    if (bearer.status === 401 || bearer.status === 403) {
+      const basic = await this.requestOnce(url, this.credentials.authorizationHeader("basic"));
+      this.recordGet(operation);
+      if (basic.ok) {
+        this.lastAuthMode = "basic";
+        this.lastVerifiedAt = this.now().toISOString();
+        this.config.lastVerifiedAt = this.lastVerifiedAt;
+        return basic.body;
+      }
+      throw new ProviderAuthFailedError("mercury");
+    }
+    this.classifyFailure(bearer.status);
+    this.lastAuthMode = "bearer";
+    this.lastVerifiedAt = this.now().toISOString();
+    this.config.lastVerifiedAt = this.lastVerifiedAt;
+    return bearer.body;
+  }
+
+  private classifyFailure(status: number): void {
+    if (status === 429) throw new ProviderRateLimitedError("mercury");
+    if (status >= 500) throw new ProviderUnavailableError("mercury", "UNAVAILABLE");
+    if (status < 200 || status >= 300) throw new ProviderUnavailableError("mercury", `HTTP_${status}`);
+  }
+
+  private async requestOnce(url: string, authorization: string): Promise<{ status: number; ok: boolean; body: unknown }> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.config.timeoutMs);
     try {
       const response = await this.fetchImpl(url, {
         method: "GET",
         headers: {
-          Authorization: this.credentials.authorizationHeader(),
+          Authorization: authorization,
           Accept: "application/json",
         },
         signal: controller.signal,
       });
-      this.recordGet(operation);
-      this.telemetry.push(mercuryUnknownReadCost(operation, this.config.mode, path.split("?")[0] ?? path));
-      if (response.status === 401 || response.status === 403) {
-        throw new ProviderAuthFailedError("mercury");
-      }
-      if (response.status === 429) {
-        throw new ProviderRateLimitedError("mercury");
-      }
-      if (response.status >= 500) {
-        throw new ProviderUnavailableError("mercury", "UNAVAILABLE");
-      }
-      if (!response.ok) {
-        throw new ProviderUnavailableError("mercury", `HTTP_${response.status}`);
-      }
-      return await response.json();
+      const body = response.ok ? await response.json() : null;
+      return { status: response.status, ok: response.ok, body };
     } catch (error) {
       if (error instanceof ProviderAuthFailedError || error instanceof ProviderRateLimitedError || error instanceof ProviderUnavailableError) {
         throw error;
@@ -107,6 +124,11 @@ export class MercuryHttpClient {
       mode: this.config.mode,
       baseUrl: this.config.baseUrl,
       tokenConfigured: this.config.tokenConfigured,
+      tokenSource: this.config.tokenSource,
+      tokenFingerprint: this.config.tokenFingerprint,
+      tokenConflict: this.config.tokenConflict,
+      lastAuthMode: this.lastAuthMode,
+      lastVerifiedAt: this.lastVerifiedAt,
       getCallCount: { ...this.getCallCount },
       writeHttpCalls: this.writeHttpCalls,
       writeAttempts: this.writeAttempts,

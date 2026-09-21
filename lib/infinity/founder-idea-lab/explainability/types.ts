@@ -3,6 +3,9 @@ import type { SelectionDecision } from "@/lib/infinity/venture-selection/constan
 import type { ScoreProvenanceRow } from "../score-from-evidence";
 import type { ComparableEconomicsModel } from "../comparable-economics/types";
 import type { EconomicEvidenceClass } from "../comparable-economics/provenance";
+import type { RevenueModelResearch } from "../revenue-model-research/types";
+import type { BenchmarkEconomicsResearch } from "../benchmark-economics/types";
+import type { FounderProductAdvantageView } from "../product-advantage/types";
 
 export const FINDING_DISPLAY_KINDS = [
   "SOURCE_BACKED_FINDING",
@@ -108,5 +111,8 @@ export type FounderExplainability = {
   decision: DecisionExplanation;
   economics: EconomicsExplanation;
   comparables: ComparableEconomicsModel;
+  revenueModel: RevenueModelResearch | null;
+  benchmarkEconomics: BenchmarkEconomicsResearch | null;
+  productAdvantage?: FounderProductAdvantageView | null;
   opportunityProvenance: ScoreProvenanceRow[];
 };

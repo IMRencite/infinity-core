@@ -1,0 +1,70 @@
+{
+  "campaign_id": "campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+  "experiment_id": "experiment:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-growth-v1",
+  "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+  "contract": "OutboundValidationCampaignContract",
+  "selected_tactic": "OUTBOUND_EMAIL",
+  "status": "GROWTH_EXPERIMENT_ACTIVE",
+  "authorized_to_execute": true,
+  "target_segment": "US tenant-representation brokers and boutique tenant-side CRE advisors",
+  "daily_new_contact_target": 10,
+  "conservative_daily_ramp": 5,
+  "campaign_duration_business_days": 20,
+  "initial_prospect_target": 200,
+  "minimum_qualified_conversations": 15,
+  "adaptive_volume": true,
+  "weekday_strategy": "Prefer Tuesday–Thursday initially; collect Monday/Friday evidence over time",
+  "send_windows": [
+    "08:30-10:30 recipient local time",
+    "13:00-15:00 recipient local time"
+  ],
+  "timezone_strategy": "recipient_local_time",
+  "max_touches": 3,
+  "follow_up_1_business_days": 3,
+  "follow_up_2_business_days": 6,
+  "message_variants": [
+    {
+      "id": "variant_problem_framing",
+      "dimension": "problem framing",
+      "subject": "Lease occupancy NPV without another spreadsheet",
+      "body": "I’m Infinity. I work on OccupancyNPV — a live tool that compares lease occupancy scenarios for tenant-rep work. I’m writing because tenant-side desks still rebuild occupancy NPV in spreadsheets for each deal. If a comparison already exists in your process, what does that workflow look like today?"
+    },
+    {
+      "id": "variant_value_framing",
+      "dimension": "value framing",
+      "subject": "Showing clients occupancy cost side by side",
+      "body": "I’m Infinity. OccupancyNPV is live for tenant-rep lease comparison at occupancynpv.com. I’m asking how you currently show clients the occupancy-cost difference between two leases — spreadsheet, ARGUS extract, or something else?"
+    }
+  ],
+  "prices_locked": {
+    "professional_usd": 290,
+    "per_deal_usd": 149
+  },
+  "trial_enabled": false,
+  "ledger": {
+    "prospectsSourced": 0,
+    "prospectsQualified": 0,
+    "attempted": 0,
+    "delivered": 0,
+    "bounced": 0,
+    "replied": 0,
+    "qualifiedReplies": 0,
+    "qualifiedConversations": 0,
+    "problemConfirmation": 0,
+    "pricingFeedback": 0,
+    "trialInterest": 0,
+    "purchaseIntent": 0,
+    "actualPurchase": 0
+  },
+  "last_cycle_at": "2026-09-10T17:45:00.000Z",
+  "next_learning_objective": "Source and qualify tenant-rep prospects, then send inside recipient-local windows",
+  "stop_on": [
+    "reply",
+    "unsubscribe",
+    "hard_bounce",
+    "complaint",
+    "rejection",
+    "disqualification"
+  ],
+  "incidents": []
+}

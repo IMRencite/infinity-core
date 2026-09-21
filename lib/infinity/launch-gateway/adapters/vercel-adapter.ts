@@ -27,6 +27,25 @@ import {
   lookupVercelProjectByName,
   projectNameMatchesVerificationTarget,
 } from "./vercel-project-lookup";
+import {
+  buildVercelSourceBundleDeploymentBody,
+  evaluateVercelSourceBundleDeploymentBody,
+  fileUploadBytes,
+  rejectFabricatedGitIdentity,
+  VERCEL_DEPLOYMENTS_PATH,
+  VERCEL_FILES_UPLOAD_PATH,
+  VERCEL_SOURCE_BUNDLE_DEPLOYMENT_MODE,
+} from "./vercel-source-bundle";
+import { SOURCE_BUNDLE_CAPABILITY } from "@/lib/infinity/provider-capabilities/source-bundle-capability";
+import { VERCEL_ADAPTER_SUPPORTED_ACTIONS } from "@/lib/infinity/provider-capabilities/vercel-adapter-actions";
+import { evaluateProviderEquivalentDeploymentEligibility } from "@/lib/infinity/venture-build-orchestration/provider-equivalent-artifact-build-gate";
+import { assertVercelDeploymentTargetWriteSafe } from "./vercel-deployment-target";
+import {
+  buildVercelDisableSsoProtectionBody,
+  evaluateVercelProtectionMutationRequest,
+  PROTECTION_CAPABILITY,
+  vercelProjectUpdatePath,
+} from "./vercel-deployment-protection";
 
 async function resolveGithubRepositoryId(repositoryFullName: string): Promise<number> {
   const token = process.env[GITHUB_TOKEN_ENV];
@@ -73,7 +92,7 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
   capabilities = {
     provider: PROVIDER_KEYS.vercel,
     adapterKey: PROVIDER_KEYS.vercel,
-    supportedActions: ["hosting.create_project", "hosting.deploy", "hosting.verify_deployment"],
+    supportedActions: [...VERCEL_ADAPTER_SUPPORTED_ACTIONS] as string[],
     supportsSimulation: true,
     supportsVerification: true,
     supportsRollback: false,
@@ -105,6 +124,41 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
       if (!ctx.payload.repository_full_name) {
         return { valid: false, issues: ["missing_repository_full_name"] };
       }
+    }
+    if (ctx.actionType === SOURCE_BUNDLE_CAPABILITY) {
+      const issues = rejectFabricatedGitIdentity(ctx.payload);
+      if (!ctx.payload.production_artifact_id && !ctx.payload.artifact_id) {
+        issues.push("missing_production_artifact_id");
+      }
+      if (!ctx.payload.source_digest) issues.push("missing_source_digest");
+      const files = ctx.payload.files;
+      if (!Array.isArray(files) || files.length === 0) issues.push("missing_source_files");
+      if (ctx.payload.source_type && ctx.payload.source_type !== "GENERATED_FILE_TREE") {
+        issues.push("unsupported_source_type");
+      }
+      if (ctx.payload.deployment_mode && ctx.payload.deployment_mode !== VERCEL_SOURCE_BUNDLE_DEPLOYMENT_MODE) {
+        issues.push("unsupported_deployment_mode");
+      }
+      issues.push(...assertVercelDeploymentTargetWriteSafe(ctx.payload.target ?? "staging"));
+      if (Array.isArray(files) && files.length) {
+        const projectName = String(ctx.payload.project_name ?? ctx.target ?? "validation");
+        const body = buildVercelSourceBundleDeploymentBody({
+          projectName,
+          files: files as Array<{ path: string; content: string }>,
+        });
+        issues.push(...evaluateVercelSourceBundleDeploymentBody(body).issues);
+      }
+      return { valid: issues.length === 0, issues };
+    }
+    if (ctx.actionType === PROTECTION_CAPABILITY) {
+      const contract = evaluateVercelProtectionMutationRequest({
+        projectName: String(ctx.payload.project_name ?? ctx.target ?? ""),
+        body: ctx.payload.body ?? buildVercelDisableSsoProtectionBody(),
+        teamDefault: Boolean(ctx.payload.team_default),
+        protectionBypassHeader:
+          ctx.payload.protection_bypass_header ?? ctx.payload["x-vercel-protection-bypass"],
+      });
+      return { valid: contract.valid, issues: contract.issues };
     }
     return { valid: true, issues: [] };
   }
@@ -382,6 +436,143 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
       };
     }
 
+    if (ctx.actionType === SOURCE_BUNDLE_CAPABILITY) {
+      const projectName = String(ctx.payload.project_name ?? ctx.target ?? "");
+      if (!projectName) throw new Error("missing_project_name");
+      const requestedTarget = ctx.payload.target ?? "staging";
+      const requestedTargetIssues = assertVercelDeploymentTargetWriteSafe(requestedTarget);
+      if (requestedTargetIssues.length) {
+        throw new Error(requestedTargetIssues[0]);
+      }
+      const files =
+        (ctx.payload.files as Array<{ path: string; content: string; encoding?: "utf8" | "base64" }>) ?? [];
+      const artifactId = String(ctx.payload.production_artifact_id ?? ctx.payload.artifact_id ?? "");
+      const digest = String(ctx.payload.source_digest ?? "");
+      const eligibility = evaluateProviderEquivalentDeploymentEligibility({
+        artifactId,
+        digest,
+        files,
+      });
+      if (eligibility.status !== "PASS") {
+        throw new Error(eligibility.issues[0] ?? "PROVIDER_EQUIVALENT_BUILD_GATE_REQUIRED");
+      }
+      const body = buildVercelSourceBundleDeploymentBody({ projectName, files });
+      const targetIssues = evaluateVercelSourceBundleDeploymentBody(body).issues;
+      if (targetIssues.length) {
+        throw new Error(targetIssues[0]);
+      }
+      for (const file of files) {
+        const sha = body.files.find((item) => item.file === file.path.replace(/\\/g, "/").replace(/^\/+/, ""))?.sha;
+        if (!sha) throw new Error(`missing_file_sha:${file.path}`);
+        const bytes = fileUploadBytes(file);
+        const upload = await vercelFetch(VERCEL_FILES_UPLOAD_PATH, {
+          method: "POST",
+          headers: {
+            "Content-Length": String(bytes.length),
+            "x-vercel-digest": sha,
+            "Content-Type": "application/octet-stream",
+          },
+          body: bytes as unknown as BodyInit,
+        });
+        if (!upload.ok && upload.status !== 200 && upload.status !== 409) {
+          const errText = await upload.text();
+          throw new Error(`Vercel file upload failed: ${upload.status} ${errText.slice(0, 200)}`);
+        }
+      }
+      const res = await vercelFetch(VERCEL_DEPLOYMENTS_PATH, {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Vercel source-bundle deploy failed: ${res.status} ${errText.slice(0, 200)}`);
+      }
+      const created = (await res.json()) as {
+        id: string;
+        url?: string;
+        readyState?: string;
+        errorCode?: string;
+        errorMessage?: string;
+      };
+      const poll = await pollWithBackoff(async () => {
+        const statusRes = await vercelFetch(`/v13/deployments/${created.id}`);
+        if (!statusRes.ok) return { done: false, state: "building" as const };
+        const status = (await statusRes.json()) as {
+          id: string;
+          url?: string;
+          readyState?: string;
+          errorCode?: string;
+          errorMessage?: string;
+        };
+        const state = normalizeVercelReadyState(status.readyState);
+        if (state === "ready") return { done: true, value: status, state };
+        if (state === "failed" || state === "cancelled") return { done: false, state, value: status };
+        return { done: false, state: "building" as const };
+      }, DEFAULT_DEPLOYMENT_POLL);
+      const ready = poll.state === "ready" && Boolean(poll.value);
+      const polled = poll.value as
+        | { id?: string; url?: string; readyState?: string; errorCode?: string; errorMessage?: string }
+        | null
+        | undefined;
+      return {
+        simulated: false,
+        externalIds: {
+          deployment_id: polled?.id ?? created.id,
+          url: polled?.url ?? created.url ?? "",
+        },
+        manifest: redactUnknown({
+          provider: PROVIDER_KEYS.vercel,
+          action_type: ctx.actionType,
+          execution_mode: "live",
+          deployment_mode: VERCEL_SOURCE_BUNDLE_DEPLOYMENT_MODE,
+          provider_lifecycle_state: poll.state,
+          ready_state: polled?.readyState ?? created.readyState ?? poll.state,
+          ready,
+          error_code: polled?.errorCode ?? created.errorCode ?? null,
+          error_message: polled?.errorMessage ?? created.errorMessage ?? null,
+          source_digest: ctx.payload.source_digest,
+          production_artifact_id: ctx.payload.production_artifact_id ?? ctx.payload.artifact_id,
+          commit_sha: null,
+          repository_full_name: null,
+          target: "staging",
+        }) as Record<string, unknown>,
+      };
+    }
+
+    if (ctx.actionType === PROTECTION_CAPABILITY) {
+      const projectName = String(ctx.payload.project_name ?? ctx.target ?? "");
+      const contract = evaluateVercelProtectionMutationRequest({
+        projectName,
+        body: ctx.payload.body ?? buildVercelDisableSsoProtectionBody(),
+        teamDefault: Boolean(ctx.payload.team_default),
+        protectionBypassHeader:
+          ctx.payload.protection_bypass_header ?? ctx.payload["x-vercel-protection-bypass"],
+      });
+      if (!contract.valid) throw new Error(contract.issues[0] ?? "invalid_protection_mutation");
+      const res = await vercelFetch(vercelProjectUpdatePath(projectName), {
+        method: "PATCH",
+        body: JSON.stringify(buildVercelDisableSsoProtectionBody()),
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Vercel protection configure failed: ${res.status} ${errText.slice(0, 200)}`);
+      }
+      const updated = (await res.json()) as { name?: string; ssoProtection?: unknown };
+      return {
+        simulated: false,
+        externalIds: { project_id: projectName },
+        manifest: redactUnknown({
+          provider: PROVIDER_KEYS.vercel,
+          action_type: ctx.actionType,
+          execution_mode: "live",
+          project_name: updated.name ?? projectName,
+          sso_protection: updated.ssoProtection ?? null,
+          vercel_auth_enabled: updated.ssoProtection != null,
+          team_default_changed: false,
+        }) as Record<string, unknown>,
+      };
+    }
+
     if (ctx.actionType === "hosting.verify_deployment") {
       const deploymentId = String(ctx.payload.deployment_id ?? "");
       const res = await vercelFetch(`/v13/deployments/${deploymentId}`);
@@ -408,7 +599,7 @@ export class VercelProviderAdapter implements ExternalActionAdapter {
     if (result.manifest.execution_mode !== "live") {
       return mockInfinityAdapter.verify(ctx, result);
     }
-    if (ctx.actionType === "hosting.deploy") {
+    if (ctx.actionType === "hosting.deploy" || ctx.actionType === SOURCE_BUNDLE_CAPABILITY) {
       if (result.manifest.ready !== true) {
         return {
           verified: false,

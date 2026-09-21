@@ -378,6 +378,7 @@ describe("HQ + authority regressions", () => {
     expect(titles.some((title) => title.startsWith("Why Infinity Chose"))).toBe(true);
     const detail = buildEntityDetail(inspector);
     expect(detail.availableTabs[0]).toBe("intelligence");
+    expect(detail.availableTabs[1]).toBe("money");
     expect(detail.intelligence.sections.map((section) => section.title)).toEqual(
       expect.arrayContaining([
         "Executive Summary",

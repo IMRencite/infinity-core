@@ -1,0 +1,236 @@
+{
+  "records": [
+    {
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "venture_name": "CRE Lease NPV Validation",
+      "venture_status": "ACTIVE",
+      "operating_stage": "VALIDATING",
+      "business_model": "B2B_SAAS",
+      "primary_offer": "Lease-scenario NPV comparison for tenant-representation brokers",
+      "monetization_model": "UNCONFIGURED",
+      "primary_domain": "UNCONFIGURED",
+      "domain_history": [
+        {
+          "domain": "UNCONFIGURED",
+          "event": "NONE",
+          "at": null,
+          "evidence": "No domain selected or purchased."
+        }
+      ],
+      "public_url": "UNCONFIGURED",
+      "canonical_url": "UNCONFIGURED",
+      "public_launch_state": "NO",
+      "deployment_provider": "vercel",
+      "deployment_project": "infinity-validation-cre-lease-npv",
+      "active_artifact": "art_11bd5b74a925257a7319",
+      "active_artifact_digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+      "active_deployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+      "active_deployment_url": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+      "deployment_state": "DEPLOYED_NOT_PUBLICLY_LAUNCHED",
+      "domain_provider": "UNCONFIGURED",
+      "domain_registration_state": "UNCONFIGURED",
+      "dns_provider": "UNCONFIGURED",
+      "dns_zone": "UNCONFIGURED",
+      "dns_state": "UNCONFIGURED",
+      "ssl_state": "UNCONFIGURED",
+      "commercialization_state": "FOUNDATION_READY",
+      "pricing_state": "UNCONFIGURED",
+      "checkout_state": "UNCONFIGURED",
+      "payment_provider": "UNCONFIGURED",
+      "payment_account_binding": {
+        "kind": "UNCONFIGURED",
+        "key": null,
+        "rawSecretStored": false
+      },
+      "payment_products": [],
+      "payment_prices": [],
+      "payment_webhooks": {
+        "kind": "UNCONFIGURED",
+        "key": null,
+        "rawSecretStored": false
+      },
+      "revenue_state": "UNCONFIGURED",
+      "fulfillment_state": "UNCONFIGURED",
+      "analytics_provider": "UNCONFIGURED",
+      "analytics_property": "UNCONFIGURED",
+      "search_console_binding": "UNCONFIGURED",
+      "sitemap_url": "UNCONFIGURED",
+      "robots_state": "UNCONFIGURED",
+      "indexability_state": "UNCONFIGURED",
+      "primary_sender_identity": "infinitemediaresources@gmail.com",
+      "communication_provider": "gmail.com_v1",
+      "communication_capabilities": {
+        "communication.email.read": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+        "communication.email.reply_ingest": "ARCHITECTURE_BUILT",
+        "communication.email.thread.read": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+        "communication.email.search": "ARCHITECTURE_BUILT_SCOPE_BLOCKED",
+        "communication.email.mailbox_watch": "ARCHITECTURE_BUILT_POLLING_FALLBACK",
+        "communication.email.reply.send": "ARCHITECTURE_BUILT_WRITE_UNVERIFIED",
+        "communication.email.suppression.write": "ARCHITECTURE_BUILT",
+        "communication.email.delivery.observe": "ARCHITECTURE_BUILT"
+      },
+      "inbound_observer_state": "DEGRADED:4",
+      "suppression_state": "ARCHITECTURE_BUILT",
+      "privacy_policy_url": "UNCONFIGURED",
+      "terms_of_service_url": "UNCONFIGURED",
+      "legal_configuration_state": "UNCONFIGURED",
+      "legal_entity": "UNCONFIGURED",
+      "company_address": "UNCONFIGURED",
+      "jurisdiction": "UNCONFIGURED",
+      "support_email": "UNCONFIGURED",
+      "privacy_operator": "UNCONFIGURED",
+      "terms_operator": "UNCONFIGURED",
+      "active_channels": [
+        "bounded_professional_outreach"
+      ],
+      "current_experiment": "exp_e72beb7b6d35e7b20acf",
+      "outreach_strategy": "CONTEXT_RICH_CONSULTATIVE",
+      "acquisition_state": "OBSERVING",
+      "primary_kpis": [
+        "qualified_engagement",
+        "process_disclosure",
+        "friction_disclosure"
+      ],
+      "current_metric_state": "INSUFFICIENT_OUTCOME_EVIDENCE",
+      "performance_source_bindings": [
+        "performance_intelligence_engine",
+        "inbound_communication_runtime"
+      ],
+      "latest_learning_decision": "UNCONFIGURED",
+      "optimization_state": "OBSERVING",
+      "current_missions": [],
+      "active_authorizations": [],
+      "blocked_actions": [
+        "DOMAIN_ACQUISITION",
+        "DNS_CONFIGURATION",
+        "PRODUCTION_DOMAIN_BINDING",
+        "PAYMENT_CONFIGURATION",
+        "PAYMENT_ACTIVATION",
+        "PUBLIC_LAUNCH",
+        "CRE_VALIDATION_WAVE_2"
+      ],
+      "risk_state": "LOW",
+      "secret_references": [
+        {
+          "kind": "ENV_KEY",
+          "key": "GMAIL_OAUTH_REFRESH_TOKEN",
+          "rawSecretStored": false
+        },
+        {
+          "kind": "ENV_KEY",
+          "key": "STRIPE_SECRET_KEY",
+          "rawSecretStored": false
+        },
+        {
+          "kind": "ENV_KEY",
+          "key": "VERCEL_TOKEN",
+          "rawSecretStored": false
+        }
+      ]
+    },
+    {
+      "venture_id": "candidate:f1336945-3350-4d08-921e-4dcb5bc77b8e",
+      "venture_name": "AskReview",
+      "venture_status": "ACTIVE",
+      "operating_stage": "VALIDATING",
+      "business_model": "MICRO_SAAS_GENERATED_KIT",
+      "primary_offer": "Affordable Google Review Automation & QR Utility",
+      "monetization_model": "HYPOTHESIZED_MONTHLY_SUBSCRIPTION_UNRESOLVED",
+      "primary_domain": "UNCONFIGURED",
+      "domain_history": [
+        {
+          "domain": "UNCONFIGURED",
+          "event": "NONE",
+          "at": null,
+          "evidence": "No domain purchased. Authorization required."
+        }
+      ],
+      "public_url": "UNCONFIGURED",
+      "canonical_url": "UNCONFIGURED",
+      "public_launch_state": "NO",
+      "deployment_provider": "UNCONFIGURED",
+      "deployment_project": "UNCONFIGURED",
+      "active_artifact": "UNCONFIGURED",
+      "active_artifact_digest": "UNCONFIGURED",
+      "active_deployment": "UNCONFIGURED",
+      "active_deployment_url": "UNCONFIGURED",
+      "deployment_state": "IN_REPO_BUILD",
+      "domain_provider": "UNCONFIGURED",
+      "domain_registration_state": "UNCONFIGURED",
+      "dns_provider": "UNCONFIGURED",
+      "dns_zone": "UNCONFIGURED",
+      "dns_state": "UNCONFIGURED",
+      "ssl_state": "UNCONFIGURED",
+      "commercialization_state": "FOUNDATION_READY",
+      "pricing_state": "HYPOTHESIS_UNRESOLVED",
+      "checkout_state": "UNCONFIGURED",
+      "payment_provider": "UNCONFIGURED",
+      "payment_account_binding": {
+        "kind": "UNCONFIGURED",
+        "key": null,
+        "rawSecretStored": false
+      },
+      "payment_products": [],
+      "payment_prices": [],
+      "payment_webhooks": {
+        "kind": "UNCONFIGURED",
+        "key": null,
+        "rawSecretStored": false
+      },
+      "revenue_state": "UNCONFIGURED",
+      "fulfillment_state": "FULFILLMENT_READY_PAYMENT_NOT_ACTIVATED",
+      "analytics_provider": "UNCONFIGURED",
+      "analytics_property": "UNCONFIGURED",
+      "search_console_binding": "SEARCH_PROVIDER_CONFIGURATION_REQUIRED",
+      "sitemap_url": "/askreview/sitemap.xml",
+      "robots_state": "UNCONFIGURED",
+      "indexability_state": "UNCONFIGURED",
+      "primary_sender_identity": "infinitemediaresources@gmail.com",
+      "communication_provider": "UNCONFIGURED",
+      "communication_capabilities": {},
+      "inbound_observer_state": "UNCONFIGURED",
+      "suppression_state": "UNCONFIGURED",
+      "privacy_policy_url": "/askreview/privacy-policy/",
+      "terms_of_service_url": "/askreview/terms-of-service/",
+      "legal_configuration_state": "SAME_OPERATOR_IMR_FACTS",
+      "legal_entity": "Infinite Media Resources LLC",
+      "company_address": "1896 Coventry Dr, Brunswick, OH 44212, United States",
+      "jurisdiction": "Ohio, United States",
+      "support_email": "infinitemediaresources@gmail.com",
+      "privacy_operator": "Infinite Media Resources LLC",
+      "terms_operator": "Infinite Media Resources LLC",
+      "active_channels": [
+        "organic_unconfigured_search"
+      ],
+      "current_experiment": "askreview_price_model_validation_v1",
+      "outreach_strategy": "UNCONFIGURED",
+      "acquisition_state": "NOT_STARTED",
+      "primary_kpis": [
+        "kit_generation",
+        "returning_sign_in",
+        "location_saves"
+      ],
+      "current_metric_state": "INSUFFICIENT_POST_LAUNCH_EVIDENCE",
+      "performance_source_bindings": [
+        "performance_intelligence_engine"
+      ],
+      "latest_learning_decision": "SELECTION_UNDER_REVIEW",
+      "optimization_state": "OBSERVING",
+      "current_missions": [
+        "SECOND_VENTURE_SELECTION_PROVENANCE_REVIEW"
+      ],
+      "active_authorizations": [],
+      "blocked_actions": [
+        "ASKREVIEW_PRODUCTION_PAUSED",
+        "PRICE_VALIDATION_REQUIRED",
+        "DOMAIN_ACQUISITION",
+        "PAYMENT_CONFIGURATION",
+        "PAYMENT_ACTIVATION",
+        "PUBLIC_LAUNCH",
+        "SEARCH_PROVIDER_CONFIGURATION_REQUIRED"
+      ],
+      "risk_state": "LOW",
+      "secret_references": []
+    }
+  ]
+}

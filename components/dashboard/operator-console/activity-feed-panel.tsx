@@ -1,6 +1,7 @@
 "use client";
 
 import type { OperatorActivityEvent } from "@/lib/infinity/operator-console/types";
+import { formatHydrationSafeTime } from "@/lib/infinity/hq-production-deployment/hydration";
 
 type Props = {
   events: OperatorActivityEvent[];
@@ -28,7 +29,7 @@ export function ActivityFeedPanel({ events, variant = "default" }: Props) {
           <ul className="divide-y divide-zinc-800/40">
             {events.map((e) => (
               <li key={e.id} className="px-3 py-2.5 text-xs">
-                <time className="font-mono text-[10px] text-zinc-600">{new Date(e.timestamp).toLocaleTimeString()}</time>
+                <time className="font-mono text-[10px] text-zinc-600" dateTime={e.timestamp} data-hq-hydration-safe-time="true">{formatHydrationSafeTime(e.timestamp)}</time>
                 <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-500">{e.departmentLabel}</p>
                 <p className="text-zinc-300">{e.displaySummary ?? e.summary}</p>
                 {(e.status || e.provider) && (

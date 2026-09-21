@@ -1,0 +1,216 @@
+{
+  "ok": true,
+  "project": "infinity-hq",
+  "projectId": "prj_AVa1EK79vagoOB8PEtzWAQZTX0xI",
+  "deploymentId": "dpl_4NJUPRcDm5KdpJoYgnP4Lqbz8Fty",
+  "productionUrl": "https://infinity-rb60kzsfo-infinite-media-resources-imr.vercel.app",
+  "customDomain": "hq.imros.io",
+  "domainAttached": true,
+  "domainVerified": true,
+  "dns": {
+    "ok": true,
+    "mode": "DNS_ONLY",
+    "type": "CNAME",
+    "target": "217bb448cfd9bcc0.vercel-dns-016.com",
+    "unchanged": true
+  },
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "SUPABASE_SERVICE_ROLE_KEY",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "INFINITY_RUNTIME_URL",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "CRON_SECRET",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "INFINITY_RUNTIME_TICK_SECRET",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "INFINITY_HQ_SURFACE",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "INFINITY_HQ_PUBLIC_URL",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "NEXT_PUBLIC_INFINITY_HQ_URL",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "FOUNDER_DAILY_REPORT_STORE",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "MERCURY_ENABLED",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "MERCURY_ENV",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "MERCURY_API_TOKEN",
+      "present": true,
+      "upserted": true
+    },
+    {
+      "key": "OPENAI_API_KEY",
+      "present": true,
+      "upserted": true
+    }
+  ],
+  "schemaApplied": false,
+  "reportsMigrated": 0,
+  "anonymous": {
+    "root": {
+      "status": 307,
+      "location": "/login",
+      "robots": "noindex, nofollow, noarchive, nosnippet",
+      "cache": "public, max-age=0, must-revalidate",
+      "csp": null,
+      "xcto": "nosniff",
+      "referrer": "strict-origin-when-cross-origin",
+      "frame": "DENY"
+    },
+    "dashboard": {
+      "status": 307,
+      "location": "/login",
+      "robots": "noindex, nofollow, noarchive, nosnippet",
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://infinity-runtime.vercel.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      "xcto": "nosniff",
+      "referrer": "strict-origin-when-cross-origin",
+      "frame": "DENY"
+    },
+    "daily": {
+      "status": 307,
+      "location": "/login",
+      "robots": "noindex, nofollow, noarchive, nosnippet",
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://infinity-runtime.vercel.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      "xcto": "nosniff",
+      "referrer": "strict-origin-when-cross-origin",
+      "frame": "DENY"
+    },
+    "api": {
+      "status": 401,
+      "location": null,
+      "robots": "noindex, nofollow",
+      "cache": "private, no-store",
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://infinity-runtime.vercel.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      "xcto": "nosniff",
+      "referrer": "strict-origin-when-cross-origin",
+      "frame": "DENY"
+    },
+    "runtime": {
+      "status": 401,
+      "location": null,
+      "robots": "noindex, nofollow",
+      "cache": "private, no-store",
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://infinity-runtime.vercel.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+      "xcto": "nosniff",
+      "referrer": "strict-origin-when-cross-origin",
+      "frame": "DENY"
+    },
+    "publicSite": {
+      "status": 200,
+      "location": null,
+      "robots": null,
+      "cache": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "csp": null,
+      "xcto": null,
+      "referrer": null,
+      "frame": null
+    }
+  },
+  "secrets": {
+    "supabaseUrl": true,
+    "supabasePublishable": true,
+    "serviceRole": true,
+    "cron": true,
+    "mercury": true,
+    "supabaseUrlFingerprint": "851c87340bff"
+  },
+  "existingProjects": [
+    "infinity-hq",
+    "infinity-runtime",
+    "imros-public",
+    "infinity-askreview-founder-preview",
+    "infinity-validation-cre-lease-npv-e72beb7b",
+    "infinity-test-live-verification-gde",
+    "infinity-test-hosting-infinity-live-test-b85cf528",
+    "infinity-test-hosting-infinity-live-retry2-b729bb0d",
+    "infinity-test-hosting-infinity-live-retry2-73d75c74",
+    "infinity-test-hosting-infinity-test-infinity-live-retry2-73d75c74"
+  ],
+  "exit": 0,
+  "logTail": [
+    "├ ƒ /dashboard/missions/[missionId]",
+    "├ ƒ /dashboard/onboarding",
+    "├ ƒ /dashboard/operations",
+    "├ ƒ /dashboard/opportunities",
+    "├ ƒ /dashboard/opportunities/[candidateId]",
+    "├ ƒ /dashboard/portfolio",
+    "├ ƒ /dashboard/production-health",
+    "├ ƒ /dashboard/reasoning",
+    "├ ƒ /dashboard/runtime",
+    "├ ƒ /dashboard/validation",
+    "├ ƒ /dashboard/ventures",
+    "├ ƒ /dashboard/ventures/[ventureId]",
+    "├ ƒ /dashboard/workspace-unavailable",
+    "├ ƒ /dev/hq-live-projection",
+    "├ ○ /icon",
+    "├ ƒ /login",
+    "├ ○ /occupancynpv/affiliates",
+    "├ ○ /occupancynpv/affiliates/apply",
+    "├ ○ /occupancynpv/affiliates/portal",
+    "├ ○ /occupancynpv/affiliates/terms",
+    "├ ○ /occupancynpv/app",
+    "├ ○ /occupancynpv/app/checkout/complete",
+    "├ ○ /occupancynpv/app/login",
+    "├ ƒ /occupancynpv/app/workspaces/[id]",
+    "├ ○ /occupancynpv/icon",
+    "├ ƒ /public/operations",
+    "├ ƒ /public/operations-room",
+    "├ ○ /public/privacy",
+    "├ ○ /public/sitemap.xml",
+    "├ ○ /public/terms",
+    "├ ○ /robots.txt",
+    "└ ○ /signup",
+    "ƒ Proxy (Middleware)",
+    "○  (Static)   prerendered as static content",
+    "ƒ  (Dynamic)  server-rendered on demand",
+    "Build Completed in /vercel/output [2m]",
+    "Deploying outputs...",
+    "\u001b[2K\u001b[1A\u001b[2K\u001b[G  Production      https://infinity-rb60kzsfo-infinite-media-resources-imr.vercel.app",
+    "Completing…",
+    "▲ Aliased         https://hq.imros.io"
+  ]
+}

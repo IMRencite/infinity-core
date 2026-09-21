@@ -12,7 +12,8 @@ async function collectOverflow(page: Page, width: number, height: number) {
     const body = document.body;
     const scrollWidth = Math.max(doc.scrollWidth, body && body.scrollWidth ? body.scrollWidth : 0);
     const clientWidth = doc.clientWidth;
-    const rooms = Array.from(document.querySelectorAll("[data-sales-room]")).map((node) => {
+    const root = document.querySelector("[data-hq-sales-floor='true']") || document;
+    const rooms = Array.from(root.querySelectorAll("[data-sales-room]")).map((node) => {
       const el = node;
       const rect = el.getBoundingClientRect();
       return {
@@ -44,8 +45,14 @@ async function collect(page: Page) {
       id: node.getAttribute("data-sales-room"),
       state: node.getAttribute("data-sales-room-state"),
       priority: node.getAttribute("data-sales-room-priority"),
+      orb: node.getAttribute("data-hq-room-visual-state"),
+      agents: node.querySelectorAll("[data-hq-worker-role]").length,
+      now: (node.querySelector("[data-hq-room-now]") && node.querySelector("[data-hq-room-now]").textContent || "").replace(/\\s+/g, " ").trim(),
       text: (node.textContent || "").replace(/\\s+/g, " ").trim(),
     }));
+    const nowText = text("[data-sales-floor-now]");
+    const visual = attr("[data-hq-sales-floor]", "data-sales-visual");
+    const shells = document.querySelectorAll("[data-hq-sales-room-shell]").length;
     const body = document.body.innerText;
     return {
       href: location.href,
@@ -64,6 +71,9 @@ async function collect(page: Page) {
       outcomes: text("[data-sales-latest-outcomes]"),
       fakeActive: rooms.some((row) => row.state === "ACTIVE"),
       publicLeak: /broker@|pipeline value|deal value/i.test(body),
+      nowText,
+      visual,
+      shells,
     };
   })()`);
 }
@@ -90,22 +100,25 @@ async function main() {
       await page.reload({ waitUntil: "commit", timeout: 90000 });
     }
     await page.waitForSelector("[data-hq-sales-floor='true']", { timeout: 120000 });
-    await page.locator("[data-hq-sales-floor='true']").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(800);
+    const floor = page.locator("[data-hq-sales-floor='true']").first();
+    await floor.waitFor({ state: "visible", timeout: 30000 });
+    await floor.scrollIntoViewIfNeeded().catch(() => undefined);
     await page.waitForTimeout(800);
     const after = await collect(page);
-    await page.locator("[data-hq-sales-floor='true']").click({ timeout: 15000 }).catch(() => undefined);
+    await page.locator("[data-hq-sales-floor='true']").first().click({ timeout: 15000 }).catch(() => undefined);
     await page.waitForTimeout(400);
     const selected = await collect(page);
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.locator("[data-hq-sales-floor='true']").scrollIntoViewIfNeeded();
+    await page.locator("[data-hq-sales-floor='true']").first().scrollIntoViewIfNeeded().catch(() => undefined);
     await page.screenshot({ path: ".qc-runtime/sales-floor-desktop.png", fullPage: false, timeout: 60000 }).catch(() => undefined);
     const desktop = await collectOverflow(page, 1440, 900);
-    await page.locator("[data-hq-sales-floor='true']").scrollIntoViewIfNeeded();
+    await page.locator("[data-hq-sales-floor='true']").first().scrollIntoViewIfNeeded().catch(() => undefined);
     const tablet = await collectOverflow(page, 768, 1024);
-    await page.locator("[data-hq-sales-floor='true']").scrollIntoViewIfNeeded();
+    await page.locator("[data-hq-sales-floor='true']").first().scrollIntoViewIfNeeded().catch(() => undefined);
     await page.screenshot({ path: ".qc-runtime/sales-floor-tablet-768.png", fullPage: false, timeout: 15000 }).catch(() => undefined);
     const mobile = await collectOverflow(page, 390, 844);
-    await page.locator("[data-hq-sales-floor='true']").scrollIntoViewIfNeeded();
+    await page.locator("[data-hq-sales-floor='true']").first().scrollIntoViewIfNeeded().catch(() => undefined);
     await page.screenshot({ path: ".qc-runtime/sales-floor-mobile-390.png", fullPage: false, timeout: 15000 }).catch(() => undefined);
     await page.setViewportSize({ width: 1440, height: 900 });
     const live = await page.evaluate(`(async () => {
@@ -142,7 +155,7 @@ async function main() {
     writeFileSync(".qc-runtime/sales-floor-browser-qc.json", `${JSON.stringify(proof, null, 2)}\n`);
     console.log(JSON.stringify(proof, null, 2));
   } finally {
-    browser.disconnect();
+    await (browser as { disconnect?: () => Promise<void> }).disconnect?.();
   }
 }
 

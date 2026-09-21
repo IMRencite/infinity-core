@@ -1,0 +1,167 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_STRIPE_PRODUCT_PRICE_CONFIGURATION_V1",
+  "authorization": {
+    "founderAuthorized": "YES",
+    "liveStripeWritesAuthorized": "YES",
+    "productsMaximum": 2,
+    "pricesMaximum": 2,
+    "customersAuthorized": "NO",
+    "chargesAuthorized": "NO",
+    "paymentActivationAuthorized": "NO"
+  },
+  "identity": {
+    "apiReachable": "YES",
+    "accountVerified": "YES",
+    "accountId": "acct_18h5CjLdvXKx7R7G",
+    "mode": "LIVE",
+    "providerError": "NONE"
+  },
+  "professional": {
+    "productExistedBefore": "NO",
+    "productCreated": "YES",
+    "productId": "prod_VDIjmRpY19C9HZ",
+    "productReadback": "PASS",
+    "priceExistedBefore": "NO",
+    "priceCreated": "YES",
+    "priceId": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+    "amount": 29000,
+    "currency": "USD",
+    "recurrence": "ANNUAL_RECURRING",
+    "priceReadback": "PASS"
+  },
+  "perDeal": {
+    "productExistedBefore": "NO",
+    "productCreated": "YES",
+    "productId": "prod_VDIju0S2lBO9i5",
+    "productReadback": "PASS",
+    "priceExistedBefore": "NO",
+    "priceCreated": "YES",
+    "priceId": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+    "amount": 14900,
+    "currency": "USD",
+    "recurrence": "ONE_TIME",
+    "priceReadback": "PASS"
+  },
+  "duplicateProtection": {
+    "professionalProducts": 1,
+    "professionalPrices": 1,
+    "perDealProducts": 1,
+    "perDealPrices": 1,
+    "duplicateProductsCreated": 0,
+    "duplicatePricesCreated": 0,
+    "result": "PASS"
+  },
+  "bindings": {
+    "paymentProvider": "PASS",
+    "professionalProduct": "PASS",
+    "professionalPrice": "PASS",
+    "perDealProduct": "PASS",
+    "perDealPrice": "PASS"
+  },
+  "writes": {
+    "productsCreated": 2,
+    "pricesCreated": 2,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "webhookMutations": 0
+  },
+  "checkout": {
+    "professionalMapping": "PASS",
+    "perDealMapping": "PASS",
+    "configuration": "READY_TO_CONFIGURE",
+    "activation": "NO",
+    "productionBaseUrl": "https://occupancynpv.com",
+    "professionalPrice": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+    "perDealPrice": "price_1UCs7iLdvXKx7R7GmikBTGx4"
+  },
+  "webhook": {
+    "configuration": "READY_TO_CONFIGURE",
+    "mutation": "NO",
+    "activation": "NO"
+  },
+  "paymentReadiness": {
+    "legal": "PASS",
+    "productionInfrastructure": "PASS",
+    "stripeIdentity": "YES",
+    "products": "PASS",
+    "prices": "PASS",
+    "checkout": "READY_TO_CONFIGURE",
+    "webhooks": "READY_TO_CONFIGURE",
+    "analytics": "PARTIAL",
+    "paymentActivation": "NOT_AUTHORIZED",
+    "gate": "BLOCKED",
+    "blockingReasons": [
+      "checkout_unconfigured",
+      "webhook_unconfigured",
+      "analytics_unconfigured",
+      "payment_activation_not_authorized"
+    ]
+  },
+  "record": {
+    "canonical": "PASS",
+    "paymentProvider": "stripe",
+    "paymentConfiguration": "CONFIGURED",
+    "professionalProduct": "prod_VDIjmRpY19C9HZ",
+    "professionalPrice": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+    "perDealProduct": "prod_VDIju0S2lBO9i5",
+    "perDealPrice": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+    "publiclyLaunched": "NO"
+  },
+  "commercialization": {
+    "cleared": [
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION",
+      "LEGAL_CONFIGURATION",
+      "PAYMENT_CONFIGURATION"
+    ],
+    "remaining": [
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "vercelMutations": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentLinks": 0,
+    "subscriptions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "refunds": 0,
+    "webhookMutations": 0,
+    "searchSubmissions": 0,
+    "coldOutreach": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "CRE_CANONICAL_STRIPE_CONFIGURATION_COMPLETE",
+  "nextGovernedAction": "CHECKOUT_WEBHOOK_AND_ANALYTICS_CONFIGURATION",
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_STRIPE_PRODUCT_PRICE_CONFIGURATION_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

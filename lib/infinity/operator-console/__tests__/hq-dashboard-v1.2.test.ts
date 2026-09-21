@@ -213,9 +213,11 @@ describe("HQ Dashboard V1.2 — worker nodes", () => {
 
   it("7. shows generic active node when department is running without sessions", () => {
     const nodes = buildWorkerNodes([], [dept("research_department", { state: "RUNNING", isActive: true })]);
-    expect(nodes).toHaveLength(1);
+    expect(nodes).toHaveLength(2);
+    expect(nodes.filter((n) => n.isActive)).toHaveLength(1);
     expect(nodes[0]?.isActive).toBe(true);
     expect(nodes[0]?.departmentId).toBe("research_department");
+    expect(nodes.every((n) => n.departmentId === "research_department")).toBe(true);
   });
 
   it("8. inactive rooms have no active fake nodes", () => {

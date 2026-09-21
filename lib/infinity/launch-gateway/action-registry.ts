@@ -72,6 +72,16 @@ export const ACTION_TYPE_REGISTRY_V1: Record<string, ActionTypeDefinition> = {
     retryable: true,
     credentialScope: "git.provider",
   },
+  "hosting.deploy_source_bundle": {
+    actionType: "hosting.deploy_source_bundle",
+    sideEffectClass: "public_publish",
+    defaultRisk: "high",
+    estimatedCostUsd: 0,
+    requiredPermission: "publish.website",
+    supportsRollback: true,
+    retryable: false,
+    credentialScope: "hosting.provider",
+  },
   "hosting.verify_deployment": {
     actionType: "hosting.verify_deployment",
     sideEffectClass: "read_only",
@@ -80,6 +90,16 @@ export const ACTION_TYPE_REGISTRY_V1: Record<string, ActionTypeDefinition> = {
     requiredPermission: "publish.website",
     supportsRollback: false,
     retryable: true,
+    credentialScope: "hosting.provider",
+  },
+  "hosting.deployment_protection.configure": {
+    actionType: "hosting.deployment_protection.configure",
+    sideEffectClass: "external_account_change",
+    defaultRisk: "high",
+    estimatedCostUsd: 0,
+    requiredPermission: "network.write",
+    supportsRollback: true,
+    retryable: false,
     credentialScope: "hosting.provider",
   },
   "dns.configure": {

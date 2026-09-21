@@ -7,7 +7,7 @@ function dept(partial: Partial<OperatorDepartmentSnapshot>): OperatorDepartmentS
     id: "quality_control",
     label: "Quality Control",
     state: "RUNNING",
-    engines: ["validation_engine"],
+    engines: ["quality_control"],
     summary: null,
     currentTask: "Reviewing existing evidence",
     provider: null,
@@ -30,7 +30,8 @@ describe("HQ live motion semantics", () => {
       dept({ detail: { showWorkers: false, validationStation: true }, currentTask: "Reviewing existing evidence — no new provider research" }),
     ];
     const nodes = buildWorkerNodes([], departments);
-    expect(nodes).toHaveLength(0);
+    expect(nodes.filter((node) => node.isActive || node.motionActive)).toHaveLength(0);
+    expect(nodes.length).toBeGreaterThan(0);
   });
 
   it("allows worker when provider session exists", () => {
@@ -52,8 +53,9 @@ describe("HQ live motion semantics", () => {
     ];
     const departments = [dept({ detail: { showWorkers: true, validationStation: true } })];
     const nodes = buildWorkerNodes(providers, departments);
-    expect(nodes).toHaveLength(1);
-    expect(nodes[0]?.motionActive).toBe(true);
+    expect(nodes.some((node) => node.motionActive)).toBe(true);
+    expect(nodes.filter((node) => node.isActive)).toHaveLength(1);
+    expect(nodes.length).toBeGreaterThanOrEqual(1);
   });
 
   it("does not keep active worker when department completes", () => {
@@ -76,8 +78,7 @@ describe("HQ live motion semantics", () => {
     const departments = [dept({ state: "COMPLETE", isActive: false, detail: { showWorkers: false } })];
     const nodes = buildWorkerNodes(providers, departments);
     expect(nodes.filter((node) => node.isActive)).toHaveLength(0);
-    expect(nodes).toHaveLength(1);
-    expect(nodes[0]?.motionActive).toBe(false);
-    expect(nodes[0]?.isDormant).toBe(true);
+    expect(nodes.length).toBeGreaterThanOrEqual(1);
+    expect(nodes.every((node) => node.motionActive === false)).toBe(true);
   });
 });

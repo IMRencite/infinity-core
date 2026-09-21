@@ -119,6 +119,9 @@ export const DEFAULT_RESOURCE_CONSTRAINTS = {
 
 export const CORRELATION_PENALTY_WEIGHT = 0.08;
 
+/** Max points subtracted from selectionScore when ranking a homogeneous pool. */
+export const CORRELATION_PENALTY_MAX_SCORE_REDUCTION = 15;
+
 export const PRODUCT_TYPE_HINTS = [
   "content_site",
   "saas",

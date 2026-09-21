@@ -1,0 +1,147 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_STRIPE_WEBHOOK_WRITE_RETRY_V2",
+  "authorization": {
+    "founderAuthorized": "YES",
+    "authorizedEndpoint": "https://occupancynpv.com/api/webhooks/stripe",
+    "authorizedEventCount": 6,
+    "paymentActivationAuthorized": "NO"
+  },
+  "identity": {
+    "account": "acct_18h5CjLdvXKx7R7G",
+    "mode": "LIVE",
+    "identity": "PASS",
+    "providerError": "NONE",
+    "webhookRead": "READ_ONLY_VERIFIED",
+    "webhookWrite": "LIVE_WRITE_VERIFIED"
+  },
+  "existingWebhook": {
+    "canonicalEndpointExisted": "NO",
+    "existingEndpointId": "NONE",
+    "duplicateCanonicalEndpoints": 0
+  },
+  "mutation": {
+    "endpointCreated": "YES",
+    "endpointUpdated": "NO",
+    "endpointId": "we_1UCssQLdvXKx7R7GcHonT3rh",
+    "url": "https://occupancynpv.com/api/webhooks/stripe",
+    "enabledEvents": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "payment_intent.payment_failed"
+    ],
+    "providerReadback": "PASS"
+  },
+  "secret": {
+    "webhookSigningSecretReceived": "YES",
+    "serverSideSecretConfigured": "YES",
+    "secretExposed": "NO",
+    "runtimeSecretReference": "STRIPE_WEBHOOK_SECRET"
+  },
+  "application": {
+    "signatureVerification": "PASS",
+    "rawBody": "PASS",
+    "idempotency": "PASS",
+    "duplicateProtection": "PASS",
+    "canonicalEventPersistence": "PASS"
+  },
+  "performanceLineage": {
+    "checkoutCompleted": "PASS",
+    "paymentSucceeded": "PASS",
+    "paymentFailed": "PASS",
+    "subscriptionUpdated": "PASS",
+    "subscriptionCancelled": "PASS",
+    "revenueFabrication": "NO"
+  },
+  "paymentReadiness": {
+    "legal": "PASS",
+    "infrastructure": "PASS",
+    "stripeIdentity": "PASS",
+    "products": "PASS",
+    "prices": "PASS",
+    "checkout": "PASS",
+    "webhook": "PASS",
+    "analytics": "PASS",
+    "wrongAccountProtection": "PASS",
+    "idempotency": "PASS",
+    "traceability": "PASS",
+    "paymentActivation": "NOT_AUTHORIZED",
+    "gate": "READY_FOR_ACTIVATION_AUTHORIZATION",
+    "blockingReasons": [
+      "payment_activation_not_authorized"
+    ]
+  },
+  "commercialization": {
+    "cleared": [
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION",
+      "LEGAL_CONFIGURATION",
+      "PAYMENT_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION"
+    ],
+    "remaining": [
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "autonomy": {
+    "durableProviderMutationAuthority": "MISSING",
+    "followUpRequired": "YES",
+    "followUp": "DURABLE_COMMERCIAL_PROVIDER_MUTATION_AUTHORITY_REQUIRED"
+  },
+  "record": {
+    "webhook": "CONFIGURED",
+    "endpointId": "we_1UCssQLdvXKx7R7GcHonT3rh",
+    "paymentActivation": "NO",
+    "publiclyLaunched": "NO"
+  },
+  "writes": {
+    "webhookEndpointsCreated": 1,
+    "webhookEndpointsUpdated": 0,
+    "products": 0,
+    "prices": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "paymentActivation": 0
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4
+  },
+  "actions": {
+    "dnsWrites": 0,
+    "deployments": 0,
+    "searchSubmissions": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "refunds": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "CRE_WEBHOOK_CONFIGURATION_COMPLETE",
+  "nextGovernedAction": "DURABLE_COMMERCIAL_PROVIDER_MUTATION_AUTHORITY_AND_PAYMENT_ACTIVATION_POLICY",
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_STRIPE_WEBHOOK_WRITE_RETRY_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

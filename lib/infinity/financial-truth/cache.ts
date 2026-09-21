@@ -2,6 +2,7 @@ import "server-only";
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { durableLocalPersistEnabled } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import { emptyFinancialTruthSnapshot } from "./empty-snapshot";
 import type { FinancialTruthSnapshot } from "./types";
 
@@ -12,6 +13,7 @@ export const FINANCIAL_TRUTH_CACHE_PATH = ".infinity/financial-truth/snapshot.js
 let memory: FinancialTruthSnapshot | null = null;
 
 function persistEnabled(): boolean {
+  if (!durableLocalPersistEnabled()) return false;
   if (process.env.VITEST) return false;
   return true;
 }

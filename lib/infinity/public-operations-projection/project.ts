@@ -15,9 +15,12 @@ import {
   mapLoopStateToPublicActivity,
   mapLoopStateToSystemStatus,
   mapPublicActivityReason,
+  occupancyToPublicActivity,
   projectPublicAgents,
   projectPublicDepartments,
+  projectPublicSalesRooms,
 } from "./sanitize";
+import { loadCanonicalPublicOccupancy } from "./persist-occupancy";
 import { loadInternalPublicObservation } from "./sources";
 import {
   PUBLIC_OPERATIONS_PROJECTION,
@@ -27,7 +30,7 @@ import {
   type PublicStatProjection,
   type PublicVentureVisibility,
 } from "./types";
-import { projectPublicVenture, resolvePublicVentureVisibility } from "./visibility";
+import { ensureAllowlistedPublicVentures, projectPublicVenture, resolvePublicVentureVisibility } from "./visibility";
 
 export function emptyUnavailableProjection(now = new Date().toISOString()): PublicOperationsProjection {
   return {
@@ -41,6 +44,7 @@ export function emptyUnavailableProjection(now = new Date().toISOString()): Publ
     active_public_agents: 0,
     idle_public_agents: 0,
     public_departments: [],
+    public_sales_rooms: [],
     public_agents: [],
     ventures_started_count: "UNKNOWN",
     ventures_operating_count: "UNKNOWN",
@@ -60,33 +64,49 @@ export function emptyUnavailableProjection(now = new Date().toISOString()): Publ
 export function projectPublicOperations(input?: {
   now?: string;
   observation?: InternalPublicObservation;
+  occupancy?: import("./occupancy").CanonicalPublicOccupancy | null;
   visibilityOverrides?: Record<string, PublicVentureVisibility>;
   useCache?: boolean;
   forceUnavailable?: boolean;
 }): PublicOperationsProjection {
   const now = input?.now ?? new Date().toISOString();
   if (input?.forceUnavailable) return emptyUnavailableProjection(now);
-  if (input?.useCache !== false && !input?.observation) {
+  if (input?.useCache !== false && !input?.observation && input?.occupancy == null) {
     const cached = readPublicProjectionCache();
     if (cached) return cached;
   }
   try {
     const observation = loadInternalPublicObservation({ now, observation: input?.observation });
+    if (input?.occupancy) observation.occupancy = input.occupancy;
     const projection = constructPublicOperationsProjection(observation, input?.visibilityOverrides);
-    if (input?.useCache !== false && !input?.observation) writePublicProjectionCache(projection);
+    if (input?.useCache !== false && !input?.observation && !input?.occupancy) writePublicProjectionCache(projection);
     return projection;
   } catch {
     return emptyUnavailableProjection(now);
   }
 }
 
+export async function projectPublicOperationsAsync(input?: {
+  now?: string;
+  observation?: InternalPublicObservation;
+  occupancy?: import("./occupancy").CanonicalPublicOccupancy | null;
+  visibilityOverrides?: Record<string, PublicVentureVisibility>;
+  useCache?: boolean;
+  forceUnavailable?: boolean;
+}): Promise<PublicOperationsProjection> {
+  const occupancy = input?.occupancy !== undefined ? input.occupancy : await loadCanonicalPublicOccupancy();
+  return projectPublicOperations({ ...input, occupancy });
+}
+
 export function constructPublicOperationsProjection(
   observation: InternalPublicObservation,
   visibilityOverrides?: Record<string, PublicVentureVisibility>,
 ): PublicOperationsProjection {
+  observation = { ...observation, ventures: ensureAllowlistedPublicVentures(observation.ventures) };
   const loop = observation.loop;
-  const agents = projectPublicAgents(loop, observation.now);
-  const departments = projectPublicDepartments(loop, observation.now);
+  const occupancy = observation.occupancy ?? null;
+  const agents = projectPublicAgents(loop, observation.now, occupancy);
+  const departments = projectPublicDepartments(loop, observation.now, occupancy);
   const publicVentures = observation.ventures
     .map((venture) => {
       const visibility = resolvePublicVentureVisibility(venture, visibilityOverrides);
@@ -116,11 +136,18 @@ export function constructPublicOperationsProjection(
     generated_at: observation.now,
     system_status: mapLoopStateToSystemStatus(loop),
     autonomous_mode: mapAutonomousMode(loop),
-    public_activity_summary: mapLoopStateToPublicActivity(loop),
-    public_activity_reason: mapPublicActivityReason(loop),
+    public_activity_summary: occupancy ? occupancyToPublicActivity(occupancy.summary) : mapLoopStateToPublicActivity(loop),
+    public_activity_reason: occupancy
+      ? occupancy.summary === "ACTIVE"
+        ? "Executing approved operating work"
+        : occupancy.summary === "MONITORING"
+          ? "Monitoring venture performance"
+          : "Monitoring production systems"
+      : mapPublicActivityReason(loop),
     active_public_agents: countActivePublicAgents(agents),
     idle_public_agents: countIdlePublicAgents(agents),
     public_departments: departments,
+    public_sales_rooms: projectPublicSalesRooms(loop, occupancy),
     public_agents: agents,
     ventures_started_count: started,
     ventures_operating_count: operating,
@@ -131,7 +158,7 @@ export function constructPublicOperationsProjection(
     deployments_completed_count: deployments,
     public_assets_created_count: assets,
     research_cycles_completed_count: research,
-    last_public_activity_at: loop?.updated_at ?? observation.now,
+    last_public_activity_at: occupancy?.generated_at ?? loop?.updated_at ?? observation.now,
     public_ventures: publicVentures,
     stats,
   };

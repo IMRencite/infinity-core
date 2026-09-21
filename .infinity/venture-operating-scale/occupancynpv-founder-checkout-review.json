@@ -1,0 +1,10 @@
+{
+  "review": "FOUNDER_OCCUPANCYNPV_CHECKOUT_REVIEW",
+  "status": "PASS",
+  "professional": "PASS",
+  "perDeal": "PASS",
+  "recordedAt": "2026-09-16T08:31:04.086Z",
+  "physicalEvidence": "FOUNDER_CONFIRMED_PRODUCTION_CHECKOUT_BUTTONS_WORK",
+  "closesIncident": true,
+  "automatedMonitoringReplacesFounderAsHealthSystem": true
+}

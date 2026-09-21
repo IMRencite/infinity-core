@@ -11,11 +11,15 @@ import { loadArtifactDetailPayload } from "@/lib/infinity/operator-console/artif
 type RouteContext = { params: Promise<{ artifactId: string }> };
 
 export async function GET(request: Request, context: RouteContext): Promise<NextResponse> {
-  const orgContext = await getOperatorOrgContext();
-  if (!orgContext) {
+  const result = await getOperatorOrgContext();
+  if (result.status === "error") {
+    return NextResponse.json({ error: "Workspace unavailable" }, { status: 503 });
+  }
+  if (result.status !== "ok") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const orgContext = result.context;
   const { artifactId } = await context.params;
   const url = new URL(request.url);
   const ventureId = url.searchParams.get("ventureId");

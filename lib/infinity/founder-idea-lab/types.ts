@@ -7,6 +7,8 @@ import type { MonetizationEvidenceLayers } from "./monetization-levels";
 import type { ScoreProvenanceRow } from "./score-from-evidence";
 import type { ComparableEconomicsModel } from "./comparable-economics/types";
 import type { FounderExplainability } from "./explainability/types";
+import type { RevenueModelResearch } from "./revenue-model-research/types";
+import type { BenchmarkEconomicsResearch } from "./benchmark-economics/types";
 import type {
   ClaimSource,
   FounderAction,
@@ -124,6 +126,8 @@ export type FounderIdeaGrade = {
   monetizationLayers: MonetizationEvidenceLayers | null;
   explainability?: FounderExplainability | null;
   comparableEconomics?: ComparableEconomicsModel | null;
+  revenueModel?: RevenueModelResearch | null;
+  benchmarkEconomics?: BenchmarkEconomicsResearch | null;
 };
 
 export type FounderDecisionOverride = {

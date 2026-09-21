@@ -34,6 +34,7 @@ import { RUNTIME_UNREACHABLE, type HqProductionOperatingState } from "@/lib/infi
 import { financialControlArtifacts } from "@/lib/infinity/venture-financial-governance/projection";
 import { materialQcIncidentsForOperations, projectVentureSystemQcHqSummary } from "@/lib/infinity/universal-venture-system-qc/hq";
 import { ensureOccupancyNpvCanonicalWork, operationsCopyForWork, projectCanonicalWorkHq } from "@/lib/infinity/canonical-work";
+import { projectVentureBlogLiveWork } from "@/lib/infinity/organic-growth-engine/blog-os/live-work";
 
 function isOperatingCycleExecuting(runtime: { last_run_at: string | null; last_outcome: string | null } | null): boolean {
   return Boolean(runtime?.last_run_at) && !runtime?.last_outcome;
@@ -122,6 +123,7 @@ export function projectOperationsRoom(
         ? `Observe until next operating cycle${runtime?.next_run_at ? ` (${runtime.next_run_at})` : ""}`
         : runtime?.last_outcome ?? "Report canonical operating state";
   const occupancyQc = projectVentureSystemQcHqSummary(CRE_VENTURE_ID);
+  const blogWork = projectVentureBlogLiveWork("occupancynpv");
   const workers = [
     worker({
       role: "VENTURE_OPERATOR",
@@ -167,6 +169,17 @@ export function projectOperationsRoom(
       status: fulfillment.fulfillmentGate === "PASS" ? "WAITING" : "BLOCKED",
       task: `Fulfillment ${fulfillment.fulfillment} · gate ${fulfillment.fulfillmentGate}`,
       executing: false,
+    }),
+    worker({
+      role: "CONTENT_PUBLISHER",
+      displayRole: "Content Publisher",
+      status: blogWork.public_occupancy === "ACTIVE"
+        ? "RUNNING"
+        : blogWork.blog === "ACTIVE"
+          ? "WAITING"
+          : "UNKNOWN",
+      task: blogWork.hq_current_work,
+      executing: blogWork.public_occupancy === "ACTIVE",
     }),
     worker({
       role: "GROWTH_OPERATOR",
@@ -217,6 +230,11 @@ export function projectOperationsRoom(
   const artifacts: OperatorRoomArtifact[] = [
     { id: "ops-system", label: `System ${systemState}`, tone: waitingForEvidence ? "pending" : "neutral" },
     { id: "ops-runtime", label: runtime?.last_cycle_id ?? "No cycle yet", tone: "neutral" },
+    {
+      id: "ops-blog",
+      label: `${blogWork.public_name} blog ${blogWork.today} · ${blogWork.latest_article ?? "no live article"}`,
+      tone: blogWork.today === "LIVE_VERIFIED" ? "success" : blogWork.today === "ESCALATED_EXTERNAL_BLOCKER" ? "warning" : "pending",
+    },
   ];
   if (runtime?.last_outcome) {
     artifacts.push({ id: "ops-last-outcome", label: `Operating cycle: ${runtime.last_outcome}`, tone: "neutral" });

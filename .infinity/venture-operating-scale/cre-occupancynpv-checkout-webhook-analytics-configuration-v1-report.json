@@ -1,0 +1,172 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_CHECKOUT_WEBHOOK_ANALYTICS_CONFIGURATION_V1",
+  "checkout": {
+    "professionalPrice": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+    "professionalMode": "subscription",
+    "perDealPrice": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+    "perDealMode": "payment",
+    "startRoute": "/api/checkout/start",
+    "successRoute": "/early-access?checkout=success",
+    "cancelRoute": "/pricing",
+    "canonicalOfferValidation": "PASS",
+    "arbitraryPriceInjectionBlocked": "PASS",
+    "configuration": "PASS",
+    "successHandling": "PENDING_PROVIDER_VERIFICATION",
+    "cancelHandling": "CANCELLED_NO_CONVERSION",
+    "publicCheckoutArmed": "NO"
+  },
+  "execution": {
+    "liveCheckoutSessionsCreated": 0,
+    "customersCreated": 0,
+    "paymentActivation": "NO"
+  },
+  "webhookApplication": {
+    "route": "/api/webhooks/stripe",
+    "stripeSignatureVerification": "PASS",
+    "rawBodyHandling": "PASS",
+    "idempotency": "PASS",
+    "duplicateEventProtection": "PASS",
+    "canonicalEventPersistence": "PASS"
+  },
+  "webhookProvider": {
+    "existingCanonicalEndpoint": "NO",
+    "providerWriteAuthorization": "NO",
+    "endpointCreated": "NO",
+    "endpointUpdated": "NO",
+    "endpointId": "NONE",
+    "url": "https://occupancynpv.com/api/webhooks/stripe",
+    "enabledEvents": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "payment_intent.payment_failed"
+    ],
+    "providerReadback": "NOT_EXECUTED",
+    "webhookSecretConfiguredServerSide": "NOT_CREATED"
+  },
+  "analytics": {
+    "webAnalytics": "PARTIAL",
+    "checkoutStartTracking": "PASS",
+    "checkoutSuccessTracking": "PASS",
+    "revenueAttribution": "PASS",
+    "performanceIntelligenceLineage": "PASS",
+    "provider": "infinity.performance_intelligence",
+    "searchVerification": "NOT_REQUIRED_FOR_PAYMENT_ACTIVATION",
+    "privacyAlignment": "PASS"
+  },
+  "paymentReadiness": {
+    "legal": "PASS",
+    "infrastructure": "PASS",
+    "stripeIdentity": "PASS",
+    "products": "PASS",
+    "prices": "PASS",
+    "checkout": "PASS",
+    "webhook": "FAIL",
+    "analytics": "PASS",
+    "wrongAccountProtection": "PASS",
+    "idempotency": "PASS",
+    "traceability": "PASS",
+    "paymentActivation": "NOT_AUTHORIZED",
+    "gate": "BLOCKED",
+    "blockingReasons": [
+      "webhook_provider_unconfigured",
+      "stripe_webhook_write_authorization_required",
+      "payment_activation_not_authorized"
+    ]
+  },
+  "commercialization": {
+    "cleared": [
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION",
+      "LEGAL_CONFIGURATION",
+      "PAYMENT_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION"
+    ],
+    "remaining": [
+      "WEBHOOK_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "record": {
+    "canonical": "PASS",
+    "checkout": "CONFIGURED",
+    "webhook": "UNCONFIGURED",
+    "analytics": "infinity.performance_intelligence",
+    "paymentActivation": "NO",
+    "publiclyLaunched": "NO"
+  },
+  "routes": {
+    "originalPreserved": "93 / 93 PASS",
+    "newIntentionalApplicationRoutes": [
+      "/api/checkout/start",
+      "/api/webhooks/stripe"
+    ],
+    "notFound": 0,
+    "runtimeFailures": 0,
+    "unexpectedRedirects": 0,
+    "missingRoutes": 0,
+    "https": "PASS",
+    "wwwRedirect": "PASS"
+  },
+  "writes": {
+    "productsCreated": 0,
+    "pricesCreated": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "webhookEndpointsCreated": 0,
+    "webhookEndpointsUpdated": 0
+  },
+  "identity": {
+    "apiReachable": "YES",
+    "accountVerified": "YES",
+    "accountId": "acct_18h5CjLdvXKx7R7G",
+    "mode": "LIVE",
+    "providerError": "NONE"
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "vercelMutations": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentLinks": 0,
+    "subscriptions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "refunds": 0,
+    "webhookMutations": 0,
+    "searchSubmissions": 0,
+    "coldOutreach": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "CRE_STRIPE_WEBHOOK_WRITE_AUTHORIZATION_REQUIRED",
+  "nextGovernedAction": "GOVERNED_STRIPE_WEBHOOK_CONFIGURATION_AUTHORIZATION",
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_CHECKOUT_WEBHOOK_ANALYTICS_CONFIGURATION_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

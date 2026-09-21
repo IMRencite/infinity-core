@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-09-08T06:11:14.660Z",
+  "existingRoutes": "87 / 87 PASS",
+  "checked": 87,
+  "notFound": 0,
+  "runtimeFailures": 0,
+  "unexpectedRedirects": 0,
+  "missingRoutes": 0,
+  "https": "PASS",
+  "wwwRedirect": "PASS",
+  "paidAppRoutes": "PASS",
+  "jsonLdPresent": true
+}

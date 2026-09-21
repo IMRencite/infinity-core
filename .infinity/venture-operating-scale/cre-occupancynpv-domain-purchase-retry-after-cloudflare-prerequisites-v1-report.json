@@ -1,0 +1,138 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_DOMAIN_PURCHASE_RETRY_AFTER_CLOUDFLARE_PREREQUISITES_V1",
+  "prePurchase": {
+    "domain": "occupancynpv.com",
+    "available": "YES",
+    "premium": "NO",
+    "registrationPrice": 10.46,
+    "renewal": 10.46,
+    "tax": "UNKNOWN",
+    "providerFees": "UNKNOWN",
+    "expectedTotal": 10.46,
+    "authorizationCeiling": 15,
+    "withinAuthorization": "YES"
+  },
+  "prerequisites": {
+    "registrarAuthenticated": "YES",
+    "accountVerified": "YES",
+    "billing": "FOUNDER_CONFIRMED_READY",
+    "registrant": "FOUNDER_CONFIRMED_READY",
+    "agreement": "FOUNDER_CONFIRMED_ACCEPTED",
+    "source": "Cloudflare dashboard confirmation by founder",
+    "evidence": "FOUNDER_CONFIRMED_DASHBOARD_PREREQUISITES"
+  },
+  "governance": {
+    "domainAcquisitionPlan": "PASS",
+    "domainPurchaseAuthorization": "PASS",
+    "treasury": "AUTHORIZED_WITHIN_LIMIT",
+    "eag": "AUTHORIZED_WITHIN_LIMIT"
+  },
+  "purchase": {
+    "attempted": "YES",
+    "succeeded": "YES",
+    "domain": "occupancynpv.com",
+    "registrar": "Cloudflare Registrar",
+    "providerStatus": 201,
+    "providerReference": "occupancynpv.com",
+    "actualCharge": 10.46,
+    "currency": "USD",
+    "duplicateProtection": "PASS"
+  },
+  "ownership": {
+    "owned": "YES",
+    "accountBinding": "PASS",
+    "registrationState": "active",
+    "registrationDate": "2026-09-06T06:19:55Z",
+    "expiration": "2027-09-06T06:19:55Z",
+    "renewal": 10.46,
+    "autoRenew": "NO",
+    "nameservers": "UNKNOWN"
+  },
+  "hosting": {
+    "vercelTeam": "infinite-media-resources-imr",
+    "plan": "PRO",
+    "subscription": "ACTIVE",
+    "hostingPurchaseRequired": "NO",
+    "domainBinding": "UNCONFIGURED"
+  },
+  "record": {
+    "domain": "occupancynpv.com",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:26:40.975Z",
+        "evidence": "Selected candidate preserved; not purchased."
+      },
+      {
+        "domain": "leasenpv.com",
+        "event": "RELEASED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Cloudflare domain-check proved leasenpv.com unavailable; no longer preferred."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Selected from Cloudflare Registrar domain-check evidence; not purchased."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "PURCHASED",
+        "at": "2026-09-06T06:19:55Z",
+        "evidence": "Cloudflare Registrar purchase occupancynpv.com; registration 10.46; renewal 10.46; FOUNDER_CONFIRMED_DASHBOARD_PREREQUISITES; DNS not configured."
+      }
+    ],
+    "provider": "cloudflare.registrar_v1",
+    "registration": "ACTIVE",
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "launch": "NO",
+    "authorizations": [],
+    "observer": "RUNNING:4"
+  },
+  "remainingBlockers": [
+    "LEGAL_CONFIGURATION",
+    "DNS_CONFIGURATION",
+    "PRODUCTION_DOMAIN_BINDING",
+    "CHECKOUT_CONFIGURATION",
+    "WEBHOOK_CONFIGURATION",
+    "ANALYTICS_CONFIGURATION",
+    "PAYMENT_ACTIVATION",
+    "PUBLIC_LAUNCH"
+  ],
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "purchases": 1,
+  "registrationPosts": 1,
+  "financialPolicyException": false,
+  "nextState": "CRE_DOMAIN_ACQUIRED",
+  "nextGovernedAction": "CLOUDFLARE_DNS_AND_VERCEL_PRODUCTION_DOMAIN_BINDING",
+  "hq": {
+    "mission": "CRE_OCCUPANCYNPV_DOMAIN_PURCHASE_RETRY_AFTER_CLOUDFLARE_PREREQUISITES_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "PRESENT_IDLE",
+    "researchGrid": "PRESENT_IDLE",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

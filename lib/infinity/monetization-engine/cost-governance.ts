@@ -61,3 +61,21 @@ export function emptyCostSummary(): MonetizationCostSummary {
     costUncertainty: null,
   };
 }
+
+/** When monetization reuses discovery research only, incremental provider spend is known zero. */
+export function finalizeMonetizationCostSummary(
+  summary: MonetizationCostSummary,
+): MonetizationCostSummary & { costKnown: boolean } {
+  if (summary.researchCallCount === 0) {
+    return {
+      ...summary,
+      estimatedCostUsd: 0,
+      costUncertainty: "known_zero_incremental",
+      costKnown: true,
+    };
+  }
+  return {
+    ...summary,
+    costKnown: summary.estimatedCostUsd != null,
+  };
+}

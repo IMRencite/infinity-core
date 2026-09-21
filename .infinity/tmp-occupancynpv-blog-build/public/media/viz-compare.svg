@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 220" role="img" aria-labelledby="cmpTitle cmpDesc">
+  <title id="cmpTitle">Lease A and Lease B on one scale</title>
+  <desc id="cmpDesc">Two bars on one axis. Lease A is a bit lower than Lease B in this teaching sample.</desc>
+  <rect width="720" height="220" fill="#f4f7fb"/>
+  <text x="48" y="36" font-size="16" fill="#102033" font-family="Georgia, serif">Same timeline. Same rate. Two totals.</text>
+  <rect x="160" y="72" width="360" height="36" rx="8" fill="#1d4e89"/>
+  <rect x="160" y="128" width="392" height="36" rx="8" fill="#7aa6d4"/>
+  <text x="48" y="96" font-size="14" fill="#243044" font-family="Georgia, serif">Lease A</text>
+  <text x="48" y="152" font-size="14" fill="#243044" font-family="Georgia, serif">Lease B</text>
+</svg>

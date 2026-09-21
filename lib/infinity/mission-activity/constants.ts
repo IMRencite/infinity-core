@@ -50,6 +50,7 @@ export const HQ_ACTIVITY_ROOMS = [
   "quality_control",
   "launch_operations",
   "intelligence_center",
+  "prospect_intelligence",
   "executive_office",
 ] as const;
 
@@ -67,6 +68,7 @@ export const ACTIVITY_ROOM_LABELS: Record<HqActivityRoomId, string> = {
   quality_control: "Validation Station",
   launch_operations: "Deployment Depot",
   intelligence_center: "Signal Intelligence",
+  prospect_intelligence: "Prospect Intelligence",
   executive_office: "Command",
 };
 
@@ -90,6 +92,7 @@ export const ACTIVITY_ENGINE_ROOM: Record<string, HqActivityRoomId> = {
   hosting: "launch_operations",
   launch_gateway: "launch_operations",
   performance_intelligence: "intelligence_center",
+  prospect_intelligence: "prospect_intelligence",
   executive_decision: "executive_office",
   mission_runtime: "executive_office",
   command: "executive_office",

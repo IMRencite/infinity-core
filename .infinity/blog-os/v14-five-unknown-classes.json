@@ -1,0 +1,12 @@
+{
+  "collected_at": "2026-09-21T09:50:41.597Z",
+  "window_start": "2026-09-20T23:35:31.322Z",
+  "discovered": 6,
+  "counts": {
+    "AUTOMATED_NOTIFICATION": 5,
+    "SYSTEM_SERVICE": 0,
+    "REAL_EXTERNAL_PROSPECT": 0,
+    "OTHER_HUMAN_NON_PROSPECT": 0,
+    "UNKNOWN_EXTERNAL": 1
+  }
+}

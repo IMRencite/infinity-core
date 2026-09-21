@@ -1,0 +1,17 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "13d812386592d44490e271647016ad3f4d8d0d4829e7b78d4d013a79d749fb8a",
+  "previous_deployment_id": "dpl_CoU5DzFZ71eEWn5ZYdtxs1Y2Fcrh",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "13d812386592d44490e271647016ad3f4d8d0d4829e7b78d4d013a79d749fb8a",
+  "deployment_id": "dpl_Fj7DGrfxutF4BjKacYSnrFqUVWF3",
+  "deployed": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "changed_routes": [
+    "/occupancynpv/app/workspaces/:id"
+  ],
+  "safe_error": null,
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+}

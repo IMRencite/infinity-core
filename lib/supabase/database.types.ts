@@ -11230,6 +11230,7 @@ export type Database = {
           mission_id: string
           monetization_package: Json
           operations_package: Json
+          opportunity_candidate_id: string | null
           opportunity_id: string
           organization_id: string
           plan_execution_id: string
@@ -11270,6 +11271,7 @@ export type Database = {
           mission_id: string
           monetization_package?: Json
           operations_package?: Json
+          opportunity_candidate_id?: string | null
           opportunity_id: string
           organization_id: string
           plan_execution_id: string
@@ -11310,6 +11312,7 @@ export type Database = {
           mission_id?: string
           monetization_package?: Json
           operations_package?: Json
+          opportunity_candidate_id?: string | null
           opportunity_id?: string
           organization_id?: string
           plan_execution_id?: string
@@ -11358,6 +11361,13 @@ export type Database = {
             columns: ["mission_id"]
             isOneToOne: false
             referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venture_assemblies_opportunity_candidate_id_fkey"
+            columns: ["opportunity_candidate_id"]
+            isOneToOne: false
+            referencedRelation: "opportunity_candidates"
             referencedColumns: ["id"]
           },
           {

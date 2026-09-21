@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "."),
+      "server-only": path.resolve(__dirname, "lib/infinity/server-client-boundary/server-only-test-stub.ts"),
     },
   },
 });

@@ -1,0 +1,179 @@
+{
+  "mission": "CRE_STRIPE_ACCOUNT_REVERIFICATION_AND_CONFIGURATION_V2",
+  "env": {
+    "updatedKeyLoaded": "YES",
+    "keyPresent": "YES",
+    "keyType": "RESTRICTED",
+    "environment": "LIVE",
+    "confirmed": true,
+    "stopReason": null
+  },
+  "identity": {
+    "verified": "FAIL",
+    "accountId": "UNKNOWN",
+    "livemode": "UNKNOWN",
+    "country": "UNKNOWN",
+    "currency": "UNKNOWN",
+    "display": "UNKNOWN",
+    "type": "UNKNOWN",
+    "wrongAccountProtection": "FAIL"
+  },
+  "reads": {
+    "account.read": "UNAVAILABLE",
+    "product.read": "UNVERIFIED",
+    "price.read": "UNVERIFIED",
+    "balance/revenue.read": "UNVERIFIED",
+    "event.read": "UNVERIFIED",
+    "payment_intent.read": "UNVERIFIED",
+    "charge.read": "UNVERIFIED",
+    "webhook.read": "UNVERIFIED"
+  },
+  "preexisting": {
+    "professionalProduct": "NO",
+    "professionalPrice": "NO",
+    "perDealProduct": "NO",
+    "perDealPrice": "NO",
+    "conflicting": 0,
+    "professionalMatch": "NO_MATCH",
+    "perDealMatch": "NO_MATCH"
+  },
+  "writes": {
+    "authorization": "GOVERNED_CRE_PAYMENT_CONFIGURATION_REQUIRED",
+    "productsCreated": 0,
+    "pricesCreated": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "webhooksCreated": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "stoppedReason": "Permission denied. The provided key '[REDACTED_STRIPE_KEY]' does not have the required permissions for this endpoint on account '[REDACTED_STRIPE_ACCOUNT]'. Enabling Accounts Read ('connected_account_read') permissions on this key would allow this request to continue.",
+    "preWriteProductCreate": "UNVERIFIED",
+    "preWritePriceCreate": "UNVERIFIED",
+    "product.create": "UNVERIFIED",
+    "price.create": "UNVERIFIED",
+    "checkout/session.create": "UNVERIFIED",
+    "webhook.create": "UNVERIFIED"
+  },
+  "professional": {
+    "productId": "NONE",
+    "priceId": "NONE",
+    "amount": "UNKNOWN",
+    "currency": "UNKNOWN",
+    "billing": "RECURRING_ANNUAL",
+    "livemode": null,
+    "active": null,
+    "metadataLinkage": "NONE",
+    "readback": "FAIL",
+    "reused": false,
+    "match": "NO_MATCH"
+  },
+  "perDeal": {
+    "productId": "NONE",
+    "priceId": "NONE",
+    "amount": "UNKNOWN",
+    "currency": "UNKNOWN",
+    "billing": "ONE_TIME",
+    "livemode": null,
+    "active": null,
+    "metadataLinkage": "NONE",
+    "readback": "FAIL",
+    "reused": false,
+    "match": "NO_MATCH"
+  },
+  "idempotency": {
+    "secondReconciliation": "FAIL",
+    "duplicateProducts": 0,
+    "duplicatePrices": 0
+  },
+  "paymentGate": {
+    "gate": "PaymentReadinessGate",
+    "result": "CONFIGURATION_REQUIRED",
+    "paymentsActive": false,
+    "reasons": [
+      "legal_pages_unconfigured",
+      "domain_public_url_unconfigured",
+      "stripe_read_only_does_not_grant_write",
+      "live_payment_objects_not_written",
+      "payment_activation_not_authorized"
+    ]
+  },
+  "configurationComplete": false,
+  "activationReady": false,
+  "remainingBlockers": [
+    "Permission denied. The provided key '[REDACTED_STRIPE_KEY]' does not have the required permissions for this endpoint on account '[REDACTED_STRIPE_ACCOUNT]'. Enabling Accounts Read ('connected_account_read') permissions on this key would allow this request to continue.",
+    "domain_public_url_unconfigured",
+    "legal_configuration_incomplete",
+    "checkout_configuration_unverified",
+    "webhook_domain_dependency",
+    "payment_activation_not_authorized"
+  ],
+  "record": {
+    "paymentProvider": "stripe",
+    "binding": {
+      "kind": "ENV_KEY",
+      "key": "STRIPE_SECRET_KEY",
+      "rawSecretStored": false
+    },
+    "products": [],
+    "prices": [],
+    "domainRegistration": "NAMECHEAP_API_USER_BLOCKED",
+    "legal": "LEGAL_SURFACES_PRESENT",
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4",
+    "launch": "NO",
+    "blocked": [
+      "NAMECHEAP_ACCOUNT_ACTION",
+      "STRIPE_ACCOUNT_ACTION",
+      "DOMAIN_PURCHASE",
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "namecheap": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+  "nextState": "CRE_STRIPE_ACCOUNT_IDENTITY_REPAIR_REQUIRED",
+  "nextAuthorizations": {
+    "DOMAIN_PURCHASE": "BLOCKED:NAMECHEAP_ACCOUNT_ACTION_REQUIRED",
+    "LEGAL_CONFIGURATION": "FOUNDER_LEGAL_CONFIGURATION_REQUIRED",
+    "DNS_CONFIGURATION": "BLOCKED:DOMAIN_NOT_PURCHASED",
+    "PRODUCTION_DOMAIN_BINDING": "BLOCKED:DNS_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "CHECKOUT_CONFIGURATION": "BLOCKED:GOVERNED_CRE_CHECKOUT_CONFIGURATION_REQUIRED",
+    "WEBHOOK_CONFIGURATION": "WEBHOOK_DOMAIN_DEPENDENCY",
+    "PAYMENT_ACTIVATION": "BLOCKED:PAYMENT_ACTIVATION_NOT_AUTHORIZED",
+    "ANALYTICS_CONFIGURATION": "BLOCKED:PRODUCTION_DOMAIN_BINDING_REQUIRED",
+    "PUBLIC_LAUNCH": "BLOCKED:PUBLIC_LAUNCH_AUTHORIZATION_REQUIRED"
+  },
+  "hq": {
+    "mission": "CRE_STRIPE_ACCOUNT_REVERIFICATION_AND_CONFIGURATION_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "ACTIVE_WORK",
+    "researchGrid": "PRESENT_IDLE",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

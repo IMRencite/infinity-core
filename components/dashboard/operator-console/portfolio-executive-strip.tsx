@@ -58,9 +58,19 @@ export function PortfolioExecutiveStrip({ summary }: Props) {
         <MetricCell
           label="Companies built"
           value={String(summary.totalVenturesBuilt)}
-          hint={summary.activeVentures > 0 ? `${summary.activeVentures} currently active` : null}
+          hint={
+            summary.validatingVentures > 0
+              ? `${summary.operatingVentures} operating · ${summary.validatingVentures} in validation`
+              : summary.operatingVentures > 0
+                ? `${summary.operatingVentures} publicly launched / operating`
+                : null
+          }
         />
-        <MetricCell label="Active ventures" value={String(summary.activeVentures)} hint="Running" />
+        <MetricCell
+          label="Operating ventures"
+          value={String(summary.operatingVentures)}
+          hint={summary.validatingVentures > 0 ? `${summary.validatingVentures} in validation` : "Publicly launched / operating"}
+        />
         <MetricCell
           label="Top venture"
           value={

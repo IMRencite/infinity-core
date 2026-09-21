@@ -1,0 +1,37 @@
+{
+  "created_at": "2026-09-21T09:48:00.000Z",
+  "tasks": [
+    {
+      "id": "14A_APPROVAL_PROTECTION",
+      "owner": "IMRencite",
+      "task": "Make founder decision protection independent: either make infinity-core private before dirty-tree recovery is pushed, or configure CODEOWNERS + required reviews with admin bypass disabled. Agent GitHub tokens previously returned 401 and cannot prove separation.",
+      "requested_at": "2026-09-21T09:48:00.000Z",
+      "due_at": "2026-09-21T21:00:00.000Z",
+      "status": "ACTIONABLE"
+    },
+    {
+      "id": "14B_SECOND_PROBE_MAILBOX",
+      "owner": "IMRencite",
+      "task": "Create/authorize an independent probe mailbox on an established domain. Store credentials only in the observer/probe runner, never in infinity-runtime or HQ.",
+      "requested_at": "2026-09-21T09:48:00.000Z",
+      "due_at": "2026-09-22T16:00:00.000Z",
+      "status": "ACTIONABLE"
+    },
+    {
+      "id": "14C_DEAD_MAN_DESTINATION",
+      "owner": "IMRencite",
+      "task": "Configure an independent missed-ping alert destination that does not use Production Gmail.",
+      "requested_at": "2026-09-21T09:48:00.000Z",
+      "due_at": "2026-09-22T16:00:00.000Z",
+      "status": "ACTIONABLE"
+    },
+    {
+      "id": "CURRENT_WORK_BACKUP_COPY",
+      "owner": "IMRencite",
+      "task": "Copy the encrypted CURRENT_WORK_SNAPSHOT archive from USERPROFILE/InfinityForensicV14 onto a second encrypted disk/volume. Do not upload it to GitHub.",
+      "requested_at": "2026-09-21T09:48:00.000Z",
+      "due_at": "2026-09-21T18:00:00.000Z",
+      "status": "ACTIONABLE"
+    }
+  ]
+}

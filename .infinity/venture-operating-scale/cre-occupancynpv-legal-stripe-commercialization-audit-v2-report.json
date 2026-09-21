@@ -1,0 +1,235 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_LEGAL_STRIPE_COMMERCIALIZATION_AUDIT_V2",
+  "infrastructure": {
+    "domain": "occupancynpv.com",
+    "https": "PASS",
+    "tls": "PASS",
+    "wwwRedirect": "PASS",
+    "routes": "93 / 93 PASS",
+    "routeCounts": {
+      "expected": 93,
+      "notFound": 0,
+      "runtimeFailures": 0,
+      "unexpectedRedirects": 0,
+      "missingRoutes": 0,
+      "summary": "93 / 93 PASS"
+    },
+    "dnsConfigured": "YES",
+    "productionDomainBound": "YES",
+    "sslConfigured": "YES",
+    "hostingProvider": "vercel",
+    "hostingPlan": "PRO",
+    "registrar": "cloudflare.registrar_v1",
+    "project": "infinity-validation-cre-lease-npv-e72beb7b"
+  },
+  "legal": {
+    "legalEntity": "UNKNOWN",
+    "companyAddress": "UNKNOWN",
+    "jurisdiction": "UNKNOWN",
+    "supportEmail": "UNKNOWN",
+    "privacyOperator": "UNKNOWN",
+    "termsOperator": "UNKNOWN",
+    "configuration": "INCOMPLETE",
+    "missingFacts": [
+      "legal_entity",
+      "company_address",
+      "jurisdiction",
+      "support_email",
+      "privacy_operator",
+      "terms_operator"
+    ],
+    "privacyRoute": "PASS",
+    "termsRoute": "FAIL",
+    "factualCompleteness": "INCOMPLETE",
+    "footer": "PASS",
+    "invented": false
+  },
+  "stripe": {
+    "credentialPresent": "YES",
+    "mode": "LIVE",
+    "keyType": "RESTRICTED",
+    "apiReachable": "YES",
+    "identityVerified": "YES",
+    "accountId": "acct_18h5CjLdvXKx7R7G",
+    "accountName": "Infinte Media Resources LLC",
+    "country": "US",
+    "chargesEnabled": "YES",
+    "payoutsEnabled": "YES",
+    "providerError": "NONE",
+    "mismatch": false,
+    "reads": {
+      "account.read": "READ_ONLY_VERIFIED",
+      "products.read": "READ_ONLY_VERIFIED",
+      "products.write": "UNVERIFIED",
+      "prices.read": "READ_ONLY_VERIFIED",
+      "prices.write": "UNVERIFIED",
+      "balance.read": "READ_ONLY_VERIFIED",
+      "events.read": "READ_ONLY_VERIFIED",
+      "payment_intents.read": "READ_ONLY_VERIFIED",
+      "charges.read": "READ_ONLY_VERIFIED",
+      "webhook_endpoints.read": "READ_ONLY_VERIFIED"
+    }
+  },
+  "professional": {
+    "productExisting": "NO",
+    "priceExisting": "NO",
+    "exactMatch": "NO",
+    "productId": "NONE",
+    "priceId": "NONE",
+    "amount": 29000,
+    "currency": "USD",
+    "recurrence": "ANNUAL_RECURRING"
+  },
+  "perDeal": {
+    "productExisting": "NO",
+    "priceExisting": "NO",
+    "exactMatch": "NO",
+    "productId": "NONE",
+    "priceId": "NONE",
+    "amount": 14900,
+    "currency": "USD",
+    "recurrence": "ONE_TIME"
+  },
+  "writes": {
+    "existingAuthorization": "NO",
+    "state": "PAYMENT_CONFIGURATION_WRITE_AUTHORIZATION_REQUIRED",
+    "productsCreated": 0,
+    "pricesCreated": 0,
+    "duplicateObjects": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "webhookMutations": 0
+  },
+  "checkout": {
+    "configuration": "BLOCKED",
+    "productionBaseUrl": "https://occupancynpv.com",
+    "professionalPrice": "NONE",
+    "perDealPrice": "NONE",
+    "success": "https://occupancynpv.com/early-access?checkout=success",
+    "cancel": "https://occupancynpv.com/pricing",
+    "customerReturn": "https://occupancynpv.com/early-access",
+    "activation": "NO"
+  },
+  "webhook": {
+    "configuration": "READY_TO_CONFIGURE",
+    "productionHostname": "occupancynpv.com",
+    "events": [
+      "checkout.session.completed",
+      "payment_intent.succeeded",
+      "payment_intent.payment_failed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.created",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "charge.refunded"
+    ],
+    "mutation": "NO",
+    "activation": "NO"
+  },
+  "analytics": {
+    "state": "PARTIAL",
+    "missing": [
+      "web analytics",
+      "revenue attribution",
+      "search verification"
+    ]
+  },
+  "paymentReadiness": {
+    "gate": "BLOCKED",
+    "blockingReasons": [
+      "legal_configuration_incomplete",
+      "canonical_products_or_prices_missing",
+      "payment_configuration_write_authorization_required",
+      "checkout_unconfigured",
+      "analytics_unconfigured",
+      "payment_activation_not_authorized"
+    ],
+    "paymentsActive": false
+  },
+  "record": {
+    "canonical": "PASS",
+    "domain": "occupancynpv.com",
+    "domainAcquired": "YES",
+    "dns": "CONFIGURED",
+    "productionDomain": "BOUND",
+    "ssl": "CONFIGURED",
+    "productionUrl": "https://occupancynpv.com",
+    "paymentProvider": "stripe",
+    "paymentConfiguration": "UNCONFIGURED",
+    "publiclyLaunched": "NO",
+    "remainingBlockers": [
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "commercialization": {
+    "cleared": [
+      "DNS_CONFIGURATION",
+      "PRODUCTION_DOMAIN_BINDING",
+      "SSL_VERIFICATION"
+    ],
+    "remaining": [
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "deployments": 0,
+    "vercelMutations": 0,
+    "stripeProductsCreated": 0,
+    "stripePricesCreated": 0,
+    "customers": 0,
+    "checkoutSessions": 0,
+    "paymentIntents": 0,
+    "charges": 0,
+    "subscriptions": 0,
+    "webhookMutations": 0,
+    "searchSubmissions": 0,
+    "coldOutreach": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "CRE_LEGAL_CONFIGURATION_REQUIRED",
+  "nextGovernedAction": "FOUNDER_LEGAL_CONFIGURATION_REQUIRED",
+  "artifact": {
+    "id": "art_11bd5b74a925257a7319",
+    "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "changed": "NO",
+    "redeployed": "NO"
+  },
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_LEGAL_STRIPE_COMMERCIALIZATION_AUDIT_V2",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

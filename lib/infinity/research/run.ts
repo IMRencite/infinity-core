@@ -303,6 +303,7 @@ export async function runGroundedResearch(
       callTelemetry: directed.telemetry,
       stopReason: directed.stopReason,
       issuedQueries: directed.issuedQueries.map((query) => query.query),
+      phaseLog: directed.phaseLog,
     };
 
     const completedAt = new Date().toISOString();

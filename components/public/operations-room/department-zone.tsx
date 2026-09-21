@@ -1,7 +1,19 @@
 import type { PublicAgentProjection, PublicDepartmentProjection } from "@/lib/infinity/public-operations-projection/types";
 import { departmentMotion } from "@/lib/infinity/public-operations-room/format";
 import { PublicAgentNode } from "./public-agent-node";
-import styles from "./operations-room.module.css";
+import { OverheadRoom } from "./overhead-room";
+
+const DISPLAY: Record<PublicDepartmentProjection["public_name"], string> = {
+  OPERATIONS: "Operations",
+  RESEARCH: "Research",
+  GROWTH: "Growth",
+  VALIDATION: "Validation",
+  SYSTEMS: "Systems",
+  FINANCE: "Finance",
+  PRODUCT: "Product",
+  CREATIVE: "Creative",
+  PROSPECT_INTELLIGENCE: "Prospect Intelligence",
+};
 
 export function DepartmentZone({
   department,
@@ -11,22 +23,18 @@ export function DepartmentZone({
   agents: PublicAgentProjection[];
 }) {
   const motion = departmentMotion(department.public_status);
+  const visibleAgents = agents.length > 0 ? agents : [];
   return (
-    <article
-      className={`${styles.zone} ${styles[motion]}`}
-      data-department-id={department.public_name}
-      data-department-status={department.public_status}
-      data-department-motion={motion}
-    >
-      <h3 className={styles.zoneLabel}>{department.public_name}</h3>
-      <p className={styles.zoneStatus}>{department.public_status}</p>
-      <p className={styles.zoneActivity}>{department.generic_activity_label}</p>
-      <p className={styles.zoneCount}>{`${department.active_agent_count} active`}</p>
-      <div className={styles.agents} aria-label={`${department.public_name} agents`}>
-        {agents.map((agent) => (
-          <PublicAgentNode key={agent.public_agent_id} agent={agent} />
-        ))}
-      </div>
-    </article>
+    <OverheadRoom
+      id={department.public_name}
+      name={DISPLAY[department.public_name]}
+      status={department.public_status}
+      activity={department.generic_activity_label}
+      motion={motion}
+      agentCount={visibleAgents.length || department.active_agent_count}
+      agents={visibleAgents.map((agent) => (
+        <PublicAgentNode key={agent.public_agent_id} agent={agent} />
+      ))}
+    />
   );
 }

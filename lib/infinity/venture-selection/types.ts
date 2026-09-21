@@ -302,6 +302,8 @@ export type VentureSelectionReport = {
     adversarialReviewCount: number;
     tokenUsage: { inputTokens: number; outputTokens: number; totalTokens: number };
     estimatedCostUsd: number | null;
+    costKnown?: boolean;
+    pricingVersion?: string;
   };
   completedAt: string;
 };
@@ -310,6 +312,7 @@ export type RunVentureSelectionInput = {
   organizationId: string;
   idempotencyKey: string;
   opportunityCandidateIds?: string[];
+  discoveryRunId?: string;
   monetizationRunId?: string;
   maxCandidates?: number;
   runPurpose?: string;

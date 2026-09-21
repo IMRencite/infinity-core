@@ -24,6 +24,7 @@ import {
   stepCompleted,
 } from "./state";
 import { loadTranslatedWebsiteModel } from "./ai-planned";
+import { planCustomerPageDepthBeforeBuild } from "@/lib/infinity/customer-page-depth";
 
 function routePath(slug: string): string {
   return slug ? `/${slug}` : "/";
@@ -148,6 +149,14 @@ export async function runWebsiteCapability(
       break;
     }
     case "website.generate_pages": {
+      const depthPlan = planCustomerPageDepthBeforeBuild({
+        routes: ["/", ...website.pageDefinitions.map((page) => routePath(page.slug)).filter((route) => route !== "/")],
+        archetype: website.projectType,
+      });
+      await workspace.writeTextFile(
+        ".infinity/page-information-depth-plan.json",
+        `${JSON.stringify(depthPlan, null, 2)}\n`,
+      );
       const nav = navHtml(website.pageDefinitions);
       if (website.framework === "nextjs") {
         await workspace.writeTextFile(

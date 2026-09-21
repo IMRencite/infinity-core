@@ -1,0 +1,424 @@
+{
+  "fetchedAt": "2026-09-17T10:25:25.833Z",
+  "deploymentsStatus": 200,
+  "latestDeployments": [
+    {
+      "uid": "dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ",
+      "url": "infinity-aoibfwvrf-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "readyState": "READY",
+      "createdAt": 1789639772446,
+      "source": "cli"
+    },
+    {
+      "uid": "dpl_4wJxrhhYSKo8K5ZS8pAGDHzpz1Q7",
+      "url": "infinity-1zu55ylgq-infinite-media-resources-imr.vercel.app",
+      "state": "READY",
+      "readyState": "READY",
+      "createdAt": 1789637852806,
+      "source": "cli"
+    }
+  ],
+  "deploymentId": "dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ",
+  "endpointResults": [
+    {
+      "url": "https://api.vercel.com/v1/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z",
+      "status": 200,
+      "keys": [
+        "message",
+        "messageTruncated",
+        "source",
+        "level",
+        "rowId",
+        "domain",
+        "timestampInMs",
+        "requestMethod",
+        "requestPath",
+        "responseStatusCode"
+      ],
+      "preview": "{\"message\":\"Exceeded query duration limit of 5 minutes\",\"messageTruncated\":false,\"source\":\"delimiter\",\"level\":\"error\",\"rowId\":\"\",\"domain\":\"\",\"timestampInMs\":1789640724578,\"requestMethod\":\"\",\"requestPath\":\"\",\"responseStatusCode\":0}"
+    },
+    {
+      "url": "https://api.vercel.com/v2/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z",
+      "status": 404,
+      "keys": [
+        "error"
+      ],
+      "preview": "{\"error\":{\"code\":\"not_found\",\"message\":\"The requested API endpoint was not found.\"}}"
+    },
+    {
+      "url": "https://api.vercel.com/v3/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&builds=1&direction=backward&limit=100",
+      "status": 200,
+      "keys": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89",
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99"
+      ],
+      "preview": "[{\"created\":1789639907003,\"date\":1789639907003,\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"id\":\"1789639907003696190269100000\",\"text\":\"Build cache uploaded: 2.300s\",\"type\":\"stdout\",\"serial\":\"1789639907003696190269100000\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"}},{\"created\":1789639904702,\"date\":1789639904702,\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"id\":\"1789639904702696190269100001\",\"text\":\"Uploading build cache [129.39 MB]\",\"type\":\"stdout\",\"serial\":\"1789639904702696190269100001\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"}},{\"created\":1789639904702,\"date\":1789639904702,\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"id\":\"1789639904702696190269100000\",\"text\":\"Created build cache: 9s\",\"type\":\"stdout\",\"serial\":\"1789639904702696190269100000\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"}},{\"created\":1789639895825,\"date\":1789639895825,\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"id\":\"1789639895825696190269100000\",\"text\":\"Creating build cache...\",\"type\":\"stdout\",\"serial\":\"1789639895825696190269100000\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"}},{\"created\":1789639895812,\"date\":1789639895812,\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"id\":\"1789639895812696190269100000\",\"text\":\"Deployment completed\",\"type\":\"stdout\",\"serial\":\"1789639895812696190269100000\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"}},{\"created\":1789639878503,\"date\":1789639878503,\"deployment"
+    },
+    {
+      "url": "https://api.vercel.com/v2/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&builds=1&direction=backward&limit=100",
+      "status": 200,
+      "keys": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "87",
+        "88",
+        "89",
+        "90",
+        "91",
+        "92",
+        "93",
+        "94",
+        "95",
+        "96",
+        "97",
+        "98",
+        "99"
+      ],
+      "preview": "[{\"type\":\"stdout\",\"created\":1789639907003,\"payload\":{\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"},\"text\":\"Build cache uploaded: 2.300s\",\"id\":\"1789639907003696190269100000\",\"date\":1789639907003,\"serial\":\"1789639907003696190269100000\"}},{\"type\":\"stdout\",\"created\":1789639904702,\"payload\":{\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"},\"text\":\"Uploading build cache [129.39 MB]\",\"id\":\"1789639904702696190269100001\",\"date\":1789639904702,\"serial\":\"1789639904702696190269100001\"}},{\"type\":\"stdout\",\"created\":1789639904702,\"payload\":{\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"},\"text\":\"Created build cache: 9s\",\"id\":\"1789639904702696190269100000\",\"date\":1789639904702,\"serial\":\"1789639904702696190269100000\"}},{\"type\":\"stdout\",\"created\":1789639895825,\"payload\":{\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"},\"text\":\"Creating build cache...\",\"id\":\"1789639895825696190269100000\",\"date\":1789639895825,\"serial\":\"1789639895825696190269100000\"}},{\"type\":\"stdout\",\"created\":1789639895812,\"payload\":{\"deploymentId\":\"dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ\",\"info\":{\"type\":\"build\",\"name\":\"bld_o1nqhcinp\",\"entrypoint\":\".\"},\"text\":\"Deployment completed\",\"id\":\"1789639895812696190269100000\",\"date\":1789639895812,\"serial\":\"1789639895812696190269100000\""
+    },
+    {
+      "url": "https://api.vercel.com/v1/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&projectId=prj_AVa1EK79vagoOB8PEtzWAQZTX0xI&limit=100",
+      "status": 404,
+      "keys": [
+        "error"
+      ],
+      "preview": "{\"error\":{\"code\":\"not_found\",\"message\":\"The requested API endpoint was not found.\"}}"
+    },
+    {
+      "url": "https://api.vercel.com/v3/logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&projectId=prj_AVa1EK79vagoOB8PEtzWAQZTX0xI&limit=100",
+      "status": 404,
+      "keys": [
+        "error"
+      ],
+      "preview": "{\"error\":{\"code\":\"not_found\",\"message\":\"The requested API endpoint was not found.\"}}"
+    },
+    {
+      "url": "https://api.vercel.com/v1/logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&projectId=prj_AVa1EK79vagoOB8PEtzWAQZTX0xI&limit=50",
+      "status": 404,
+      "keys": [
+        "error"
+      ],
+      "preview": "{\"error\":{\"code\":\"not_found\",\"message\":\"The requested API endpoint was not found.\"}}"
+    }
+  ],
+  "interestingEvents": [
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/workspace-unavailable"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/ventures/[ventureId]"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/ventures"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/validation"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/runtime"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/reasoning"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/production-health"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/portfolio"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/opportunities/[candidateId]"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/opportunities"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/operations"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/onboarding"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/missions/[missionId]"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/missions"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/launch"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/intelligence"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/governance"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/founder-ideas"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/executive"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/dev/hq-motion"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/daily-reports/[date]"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/daily-reports"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/builds/[buildId]"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/builds"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/assets"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/allocations"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard/activity"
+    },
+    {
+      "type": "stdout",
+      "text": "├ ƒ /dashboard"
+    }
+  ],
+  "lastTexts": [
+    "Build cache uploaded: 2.300s",
+    "Uploading build cache [129.39 MB]",
+    "Created build cache: 9s",
+    "Creating build cache...",
+    "Deployment completed",
+    "Deploying outputs...",
+    "Build Completed in /vercel/output [2m]",
+    "[object Object]",
+    "ƒ  (Dynamic)  server-rendered on demand",
+    "○  (Static)   prerendered as static content",
+    "[object Object]",
+    "ƒ Proxy (Middleware)",
+    "[object Object]",
+    "[object Object]",
+    "└ ○ /signup",
+    "├ ○ /robots.txt",
+    "├ ○ /public/terms",
+    "├ ○ /public/sitemap.xml",
+    "├ ○ /public/privacy",
+    "├ ƒ /public/operations-room"
+  ]
+}

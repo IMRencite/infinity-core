@@ -5,22 +5,27 @@ import { loadAutonomousLoopState } from "./persist";
 export function projectAutonomousOperations(input?: { now?: string; cwd?: string }): AutonomousOperationsProjection {
   const state = loadAutonomousLoopState({ now: input?.now, cwd: input?.cwd });
   const decision = state.last_decision;
-  const idle = state.portfolio_state === "IDLE_NO_ACTION" || state.portfolio_state === "WAITING_FOR_EVIDENCE" || !decision?.selected_mission;
+  const continuing = decision?.outcome === "CONTINUE_EXISTING_ACTION";
+  const idle = !continuing && (state.portfolio_state === "IDLE_NO_ACTION" || state.portfolio_state === "WAITING_FOR_EVIDENCE" || state.portfolio_state === "PAUSED" || !decision?.selected_mission);
   return {
     contract: AUTONOMOUS_DAILY_OPERATING_LOOP,
-    loop_state: state.portfolio_state,
+    loop_state: continuing && state.portfolio_state === "PAUSED" ? "IDLE_NO_ACTION" : state.portfolio_state,
     current_venture: decision?.venture_id ?? null,
-    current_mission: idle && state.portfolio_state !== "MISSION_ACTIVE" ? null : decision?.selected_mission ?? null,
+    current_mission: idle && state.portfolio_state !== "MISSION_ACTIVE" ? null : continuing ? "Existing growth continuation" : decision?.selected_mission ?? null,
     why_this_mission: decision?.reason ?? "NO_ACTIVE_CANONICAL_WORK",
     priority: decision?.priority ?? "NONE",
     expected_outcome: decision?.expected_outcome ?? "IDLE — no active canonical work",
-    current_step: state.portfolio_state,
+    current_step: continuing ? "MONITORING" : state.portfolio_state,
     rooms: state.portfolio_state === "MISSION_ACTIVE"
       ? ["Operations", "Growth", "Intelligence", "Validation"]
-      : [],
+      : continuing
+        ? ["Growth", "Operations"]
+        : [],
     agents: state.portfolio_state === "MISSION_ACTIVE"
       ? ["Venture Operator", "Growth Runtime", "Performance Intelligence"]
-      : ["PRESENT_IDLE"],
+      : continuing
+        ? ["Growth Runtime", "Performance Intelligence"]
+        : ["PRESENT_IDLE"],
     financial_exposure: decision?.financial_exposure ?? 0,
     spend_required: decision?.spend_required ?? 0,
     commitment_required: decision?.commitment_required ?? 0,

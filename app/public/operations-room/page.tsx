@@ -1,7 +1,8 @@
-import { LiveOperationsRoom } from "@/components/public/operations-room/live-operations-room";
+import { CanonicalPublicOperationsExperience } from "@/components/public/operations-room/canonical-public-operations-experience";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default function PublicOperationsRoomPage() {
-  return <LiveOperationsRoom />;
+  return <CanonicalPublicOperationsExperience />;
 }

@@ -79,6 +79,7 @@ export { buildTreasuryHqReadModel, emptyTreasuryHqReadModel, formatHqAmount } fr
 export type { TreasuryHqReadModel, TruthfulHqValue, TreasuryHqVentureRow, TreasuryHqBudgetRow } from "./hq/read-model";
 export { buildTreasuryHqArtifacts, mergeTreasuryArtifacts, replaceTreasuryArtifacts } from "./hq/artifacts";
 export type { TreasuryVentureNameLookup } from "./hq/artifacts";
+export { MockFinancialProvider } from "./providers/mock-provider";
 export { loadTreasuryStore, persistTreasuryMutation } from "./persistence";
 export { loadTreasuryHqForOrg } from "./hq/load";
 export {

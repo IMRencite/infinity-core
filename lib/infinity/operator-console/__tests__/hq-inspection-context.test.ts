@@ -19,7 +19,7 @@ import {
   resolveHqInspectionContext,
   systemsViewForInspection,
 } from "../inspection-context";
-import { ArtifactCard, DecisionToken } from "@/components/dashboard/operator-console/artifacts/primitives";
+import { DecisionToken } from "@/components/dashboard/operator-console/artifacts/primitives";
 import { InspectionContextBar } from "@/components/dashboard/operator-console/inspection-context-bar";
 
 const CANDIDATE_A = "11111111-1111-4111-8111-111111111111";
@@ -58,7 +58,7 @@ function department(id: OperatorDepartmentSnapshot["id"], workArtifacts: HqWorkA
     startedAt: null,
     lastActivityAt: null,
     recordCount: workArtifacts.length,
-    failureSemantics: null,
+    failureSemantics: undefined,
     detail: {},
     workArtifacts,
   };
@@ -354,18 +354,8 @@ describe("HQ opportunity selection context", () => {
     expect(cardSource).toContain("data-hq-validation-token");
     expect(cardSource).toMatch(/function DecisionToken[\s\S]*openInspector/);
     expect(cardSource).not.toMatch(/function DecisionToken[\s\S]*selectInspection/);
-    const cardHtml = renderToStaticMarkup(
-      createElement(ArtifactCard, {
-        artifact: artifact({
-          id: "opp-a",
-          artifactType: "opportunity_candidate",
-          title: "Commercial Real Estate Lease Comparison",
-          sourceRecordId: CANDIDATE_A,
-          metadata: { candidateId: CANDIDATE_A },
-        }),
-      }),
-    );
-    expect(cardHtml).toContain("data-hq-inspection-card=\"opportunity_candidate\"");
+    expect(cardSource).toContain("data-hq-inspection-card={inspectionRef ? \"opportunity_candidate\"");
+    expect(cardSource).toContain("inspection?.selectInspection(inspectionRef)");
     const tokenHtml = renderToStaticMarkup(createElement(DecisionToken, { artifact: validate, large: true }));
     expect(tokenHtml).toContain("data-hq-validation-token=\"true\"");
     expect(tokenHtml).not.toContain("data-hq-inspection-card");

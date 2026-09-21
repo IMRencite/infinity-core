@@ -1,0 +1,268 @@
+{
+  "origin": "http://localhost:3000",
+  "authenticated": true,
+  "port": "3000",
+  "afterRepair": {
+    "title": "Infinity OS — HQ",
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "user": true,
+    "treasuryCash": "Treasury CashUNKNOWN",
+    "authorized": "Authorized$50",
+    "allocated": "Allocated$25",
+    "completeness": "PARTIAL",
+    "pulseStatus": "TREASURY DEGRADED",
+    "reconciliation": "Stripe settlement does not have to land in Mercury. Processor cash is not treasury cash.",
+    "sse": "open",
+    "currentWork": "Treasury / capital allocation",
+    "currentMission": "Treasury / capital allocation",
+    "currentTask": "Coordinate operational verification of live projections and affected venture state · Treasury / capital allocation",
+    "currentStep": "Coordinate operational verification of live projections and affected venture state · Treasury / capital allocation",
+    "cursor": "ACTIVE",
+    "connector": "NOT_CONNECTED",
+    "activeRuns": "1",
+    "selectedVenture": "Selected venture: NONE SELECTED",
+    "systems": [
+      "AI BrainREADY",
+      "TreasuryCONNECTED / DEGRADED",
+      "Native CoderREADY",
+      "CursorACTIVE",
+      "CommercializationENGINE VERIFIED · MUTATIONS LOCKED"
+    ],
+    "bodyHasNotConfigured": false,
+    "bodyHasUnavailable": true,
+    "bodyHasNoneSelected": true,
+    "registrar": "",
+    "dns": "",
+    "hosting": "",
+    "payments": "",
+    "revenue": "$0",
+    "learning": "",
+    "communication": "",
+    "nativeCoder": "READY"
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "overflow": false,
+      "offenders": []
+    },
+    "tablet": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false,
+      "offenders": [
+        {
+          "selector": "div.hq-circular-output-host.hq-lineage-accent.hq-lineage-accent--mint",
+          "right": 929,
+          "width": 208,
+          "parentWidth": 631
+        },
+        {
+          "selector": "div.hq-circular-output.hq-opportunity-output",
+          "right": 925,
+          "width": 197,
+          "parentWidth": 208
+        },
+        {
+          "selector": "div.hq-circular-orb.hq-opportunity-orb.hq-opportunity-orb--shortlisted",
+          "right": 915,
+          "width": 176,
+          "parentWidth": 197
+        },
+        {
+          "selector": "span.hq-opportunity-orb__rank",
+          "right": 835,
+          "width": 16,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__score",
+          "right": 846,
+          "width": 40,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__name",
+          "right": 895,
+          "width": 137,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__state",
+          "right": 867,
+          "width": 81,
+          "parentWidth": 176
+        },
+        {
+          "selector": "div.hq-circular-output-detail",
+          "right": 925,
+          "width": 197,
+          "parentWidth": 197
+        },
+        {
+          "selector": "p.font-medium.text-[var(--hq-text-primary)]",
+          "right": 902,
+          "width": 150,
+          "parentWidth": 197
+        },
+        {
+          "selector": "p.mt-1.text-[var(--hq-text-secondary)]",
+          "right": 902,
+          "width": 150,
+          "parentWidth": 197
+        },
+        {
+          "selector": "p.hq-status-badge.mt-2",
+          "right": 846,
+          "width": 95,
+          "parentWidth": 197
+        },
+        {
+          "selector": "div.hq-circular-output-host.hq-lineage-accent.hq-lineage-accent--aqua",
+          "right": 1149,
+          "width": 208,
+          "parentWidth": 631
+        },
+        {
+          "selector": "div.hq-circular-output.hq-opportunity-output",
+          "right": 1145,
+          "width": 197,
+          "parentWidth": 208
+        },
+        {
+          "selector": "div.hq-circular-orb.hq-opportunity-orb.hq-opportunity-orb--selected",
+          "right": 1135,
+          "width": 176,
+          "parentWidth": 197
+        },
+        {
+          "selector": "span.hq-opportunity-orb__rank",
+          "right": 1055,
+          "width": 16,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__score",
+          "right": 1067,
+          "width": 40,
+          "parentWidth": 176
+        }
+      ]
+    },
+    "mobile": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false,
+      "offenders": [
+        {
+          "selector": "div.hq-circular-output-host.hq-lineage-accent.hq-lineage-accent--indigo",
+          "right": 477,
+          "width": 208,
+          "parentWidth": 277
+        },
+        {
+          "selector": "div.hq-circular-output.hq-opportunity-output",
+          "right": 473,
+          "width": 197,
+          "parentWidth": 208
+        },
+        {
+          "selector": "div.hq-circular-orb.hq-opportunity-orb.hq-opportunity-orb--selected",
+          "right": 463,
+          "width": 176,
+          "parentWidth": 197
+        },
+        {
+          "selector": "span.hq-opportunity-orb__rank",
+          "right": 382,
+          "width": 15,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__score",
+          "right": 394,
+          "width": 40,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__name",
+          "right": 443,
+          "width": 137,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__state",
+          "right": 403,
+          "width": 57,
+          "parentWidth": 176
+        },
+        {
+          "selector": "div.hq-circular-output-detail",
+          "right": 473,
+          "width": 197,
+          "parentWidth": 197
+        },
+        {
+          "selector": "p.font-medium.text-[var(--hq-text-primary)]",
+          "right": 450,
+          "width": 150,
+          "parentWidth": 197
+        },
+        {
+          "selector": "p.mt-1.text-[var(--hq-text-secondary)]",
+          "right": 450,
+          "width": 150,
+          "parentWidth": 197
+        },
+        {
+          "selector": "div.hq-circular-output-host.hq-lineage-accent.hq-lineage-accent--violet",
+          "right": 697,
+          "width": 208,
+          "parentWidth": 277
+        },
+        {
+          "selector": "div.hq-circular-output.hq-opportunity-output",
+          "right": 693,
+          "width": 197,
+          "parentWidth": 208
+        },
+        {
+          "selector": "div.hq-circular-orb.hq-opportunity-orb.hq-opportunity-orb--shortlisted",
+          "right": 683,
+          "width": 176,
+          "parentWidth": 197
+        },
+        {
+          "selector": "span.hq-opportunity-orb__rank",
+          "right": 603,
+          "width": 16,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__score",
+          "right": 615,
+          "width": 40,
+          "parentWidth": 176
+        },
+        {
+          "selector": "span.hq-opportunity-orb__name",
+          "right": 663,
+          "width": 137,
+          "parentWidth": 176
+        }
+      ]
+    }
+  },
+  "sse": {
+    "state": "open",
+    "pulsed_description": "Editing lib/infinity/financial-truth/treasury-cash-truth.ts",
+    "pulsed_title": "Treasury / capital allocation",
+    "before_task": "Coordinate operational verification of live projections and affected venture state · Treasury / capital allocation",
+    "after_task": "Coordinate operational verification of live projections and affected venture state · Editing lib/infinity/financial-truth/treasury-cash-truth.ts",
+    "before_mission": "Treasury / capital allocation",
+    "after_mission": "Treasury / capital allocation",
+    "updated_without_refresh": true
+  }
+}

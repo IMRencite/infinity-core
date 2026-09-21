@@ -1,0 +1,107 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_VERCEL_DEPLOYMENT_BINDING_REPAIR_V1",
+  "project": {
+    "exists": "YES",
+    "name": "infinity-validation-cre-lease-npv-e72beb7b",
+    "id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+    "currentProductionDeployment": "dpl_4yVgtVZ1LU8HqrgJa4oyMCasVWK7",
+    "productionDeploymentState": "ERROR"
+  },
+  "historical": {
+    "deployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "exists": "YES",
+    "state": "READY"
+  },
+  "domain": {
+    "apexAttached": "YES",
+    "wwwAttached": "YES",
+    "apexProject": "infinity-validation-cre-lease-npv-e72beb7b",
+    "wwwProject": "infinity-validation-cre-lease-npv-e72beb7b",
+    "productionAlias": "NONE",
+    "wwwRedirect": "occupancynpv.com",
+    "configurationValid": "YES"
+  },
+  "rootCause": {
+    "cause": "STALE_DEPLOYMENT_ALIAS",
+    "explanation": "occupancynpv.com is attached to the correct project, but the production target is not READY, so Vercel serves DEPLOYMENT_NOT_FOUND. The accepted READY deployment still exists and is not aliased to the apex."
+  },
+  "equivalent": {
+    "exists": "YES",
+    "deployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "previewServesAccepted": "YES",
+    "exactRedeploySupported": "YES"
+  },
+  "repair": {
+    "attempted": "YES",
+    "domainRebound": "YES",
+    "deployment": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "cloudflareDnsChanged": "NO"
+  },
+  "https": {
+    "apex": "PASS",
+    "httpStatus": 200,
+    "tls": "PASS",
+    "wwwRedirect": "PASS",
+    "vercel404": "NO"
+  },
+  "artifact": {
+    "id": "art_11bd5b74a925257a7319",
+    "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+    "contentChanged": "NO",
+    "regenerated": "NO",
+    "founderReviewPreserved": "YES"
+  },
+  "productionHost": {
+    "canonical": "occupancynpv.com",
+    "sitemap": "occupancynpv.com",
+    "leakage": "NO",
+    "configuration": "PASS"
+  },
+  "routes": {
+    "expected": 93,
+    "notFound": 0,
+    "runtimeFailures": 0,
+    "unexpectedRedirects": 0,
+    "missingRoutes": 0
+  },
+  "record": {
+    "dnsConfigured": "YES",
+    "productionDomainBound": "YES",
+    "sslConfigured": "YES",
+    "productionUrl": "https://occupancynpv.com",
+    "publiclyLaunched": "NO",
+    "remainingBlockers": [
+      "STRIPE_ACCOUNT_ACTION",
+      "PAYMENT_CONFIGURATION",
+      "LEGAL_CONFIGURATION",
+      "CHECKOUT_CONFIGURATION",
+      "WEBHOOK_CONFIGURATION",
+      "ANALYTICS_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "nextState": "CRE_VERCEL_BINDING_REPAIRED",
+  "actions": {
+    "dnsWrites": 0,
+    "domainPurchases": 0,
+    "vercelPurchases": 0,
+    "vercelUpgrades": 0,
+    "vercelMutations": 1,
+    "deployments": 0,
+    "stripeWrites": 0,
+    "customerCharges": 0,
+    "searchSubmissions": 0,
+    "publiclyLaunched": "NO"
+  },
+  "hqMission": {
+    "mission": "CRE_OCCUPANCYNPV_VERCEL_DEPLOYMENT_BINDING_REPAIR_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

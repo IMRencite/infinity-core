@@ -2,7 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  lookupOrganizationMembership,
+  membershipUnavailableUserMessage,
+} from "@/lib/infinity/operator-console/membership-lookup";
+import { workspaceUnavailablePath } from "@/lib/infinity/operator-console/workspace-unavailable-path";
 
 export type CreateOrganizationState = {
   fieldErrors?: {
@@ -55,23 +59,10 @@ function mapOrganizationError(message: string): string {
   return "Unable to create organization. Please try again.";
 }
 
-export async function userHasOrganization(
-  supabase: SupabaseClient,
-  userId: string,
-) {
-  const { data, error } = await supabase
-    .from("organization_members")
-    .select("id")
-    .eq("user_id", userId)
-    .is("deleted_at", null)
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    throw new Error("Unable to verify organization membership.");
-  }
-
-  return Boolean(data);
+export async function userHasOrganization(userId: string) {
+  const supabase = await createClient();
+  const membership = await lookupOrganizationMembership(supabase, userId);
+  return membership;
 }
 
 export async function createOrganization(
@@ -97,17 +88,15 @@ export async function createOrganization(
     redirect("/login");
   }
 
-  let alreadyHasOrganization = false;
+  const membership = await lookupOrganizationMembership(supabase, user.id);
 
-  try {
-    alreadyHasOrganization = await userHasOrganization(supabase, user.id);
-  } catch {
+  if (membership.status === "error") {
     return {
-      formError: "Unable to verify organization membership. Please try again.",
+      formError: membershipUnavailableUserMessage(membership.code),
     };
   }
 
-  if (alreadyHasOrganization) {
+  if (membership.hasMembership) {
     redirect("/dashboard");
   }
 

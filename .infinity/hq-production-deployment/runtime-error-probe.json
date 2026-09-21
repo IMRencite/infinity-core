@@ -1,0 +1,1212 @@
+{
+  "fetchedAt": "2026-09-17T10:27:17.573Z",
+  "since": 1789597605616,
+  "now": 1789640805616,
+  "attempts": [
+    {
+      "kind": "events",
+      "url": "https://api.vercel.com/v3/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&direction=backward&limit=200&since=1789597605616",
+      "status": 200,
+      "count": 200,
+      "interesting": [
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/workspace-unavailable",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/ventures/[ventureId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/ventures",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/validation",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/runtime",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/reasoning",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/production-health",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/portfolio",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities/[candidateId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/operations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/onboarding",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions/[missionId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/launch",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/intelligence",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/governance",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/founder-ideas",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/executive",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/dev/hq-motion",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/daily-reports/[date]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/daily-reports",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds/[buildId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/assets",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/allocations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/activity",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877919,
+          "text": "├ ƒ /api/operator-console/dev/hq-real-dashboard-live-execution",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639823459,
+          "text": "  [output]/.next/server/app/dashboard/runtime/page.js",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ],
+      "sample": [
+        {
+          "type": "stdout",
+          "created": 1789639907003,
+          "text": "Build cache uploaded: 2.300s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Uploading build cache [129.39 MB]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Created build cache: 9s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895825,
+          "text": "Creating build cache...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895812,
+          "text": "Deployment completed",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639878503,
+          "text": "Deploying outputs...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639878482,
+          "text": "Build Completed in /vercel/output [2m]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877925,
+          "text": "",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ]
+    },
+    {
+      "kind": "events",
+      "url": "https://api.vercel.com/v3/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&direction=backward&limit=200",
+      "status": 200,
+      "count": 200,
+      "interesting": [
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/workspace-unavailable",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/ventures/[ventureId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/ventures",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/validation",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/runtime",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/reasoning",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/production-health",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/portfolio",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities/[candidateId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/operations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/onboarding",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions/[missionId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/launch",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/intelligence",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/governance",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/founder-ideas",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/executive",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/dev/hq-motion",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/daily-reports/[date]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/daily-reports",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds/[buildId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/assets",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/allocations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/activity",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877919,
+          "text": "├ ƒ /api/operator-console/dev/hq-real-dashboard-live-execution",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639823459,
+          "text": "  [output]/.next/server/app/dashboard/runtime/page.js",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ],
+      "sample": [
+        {
+          "type": "stdout",
+          "created": 1789639907003,
+          "text": "Build cache uploaded: 2.300s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Uploading build cache [129.39 MB]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Created build cache: 9s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895825,
+          "text": "Creating build cache...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895812,
+          "text": "Deployment completed",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639878503,
+          "text": "Deploying outputs...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639878482,
+          "text": "Build Completed in /vercel/output [2m]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877925,
+          "text": "",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ]
+    },
+    {
+      "kind": "events",
+      "url": "https://api.vercel.com/v3/deployments/hq.imros.io/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&direction=backward&limit=200&since=1789597605616",
+      "status": 404,
+      "count": 0,
+      "interesting": [],
+      "sample": []
+    },
+    {
+      "kind": "events",
+      "url": "https://api.vercel.com/v2/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/events?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&direction=backward&limit=200&since=1789597605616",
+      "status": 200,
+      "count": 200,
+      "interesting": [
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/workspace-unavailable",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877923,
+          "text": "├ ƒ /dashboard/ventures/[ventureId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/ventures",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/validation",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/runtime",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/reasoning",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/production-health",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/portfolio",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities/[candidateId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/opportunities",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/operations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/onboarding",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions/[missionId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/missions",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/launch",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/intelligence",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/governance",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/founder-ideas",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/executive",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/dev/hq-motion",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877922,
+          "text": "├ ƒ /dashboard/daily-reports/[date]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/daily-reports",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds/[buildId]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/builds",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/assets",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/allocations",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard/activity",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877921,
+          "text": "├ ƒ /dashboard",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877919,
+          "text": "├ ƒ /api/operator-console/dev/hq-real-dashboard-live-execution",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639823459,
+          "text": "  [output]/.next/server/app/dashboard/runtime/page.js",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ],
+      "sample": [
+        {
+          "type": "stdout",
+          "created": 1789639907003,
+          "text": "Build cache uploaded: 2.300s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Uploading build cache [129.39 MB]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639904702,
+          "text": "Created build cache: 9s",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895825,
+          "text": "Creating build cache...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639895812,
+          "text": "Deployment completed",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639878503,
+          "text": "Deploying outputs...",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stderr",
+          "created": 1789639878482,
+          "text": "Build Completed in /vercel/output [2m]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        },
+        {
+          "type": "stdout",
+          "created": 1789639877925,
+          "text": "[object Object]",
+          "info": {
+            "type": "build",
+            "name": "bld_o1nqhcinp",
+            "entrypoint": "."
+          }
+        }
+      ]
+    },
+    {
+      "kind": "runtime-logs",
+      "url": "https://api.vercel.com/v1/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&since=1789597605616&until=1789640805616&source=serverless",
+      "status": 0,
+      "note": "AbortError",
+      "count": 0,
+      "interesting": [],
+      "sample": []
+    },
+    {
+      "kind": "runtime-logs",
+      "url": "https://api.vercel.com/v1/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&startDate=1789597605616&endDate=1789640805616",
+      "status": 0,
+      "note": "AbortError",
+      "count": 0,
+      "interesting": [],
+      "sample": []
+    },
+    {
+      "kind": "runtime-logs",
+      "url": "https://api.vercel.com/v1/projects/prj_AVa1EK79vagoOB8PEtzWAQZTX0xI/deployments/dpl_5da3SmCapCDHfXPE5TkqPXbSYzHQ/runtime-logs?teamId=team_ildi4jRJvHUKWF93cu4XEZ7Z&level=error",
+      "status": 0,
+      "note": "AbortError",
+      "count": 0,
+      "interesting": [],
+      "sample": []
+    }
+  ]
+}

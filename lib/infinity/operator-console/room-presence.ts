@@ -2,6 +2,21 @@ import type { DepartmentUiState, OperatorWorkerNode } from "./types";
 
 export type RoomPresenceState = "ACTIVE_WORK" | "PRESENT_IDLE" | "BLOCKED" | "EMPTY";
 
+export function roomPresenceFromActivityStatus(status?: string | null): RoomPresenceState | null {
+  if (!status || status === "EMPTY") return null;
+  if (status === "ACTIVE_WORK") return "ACTIVE_WORK";
+  if (status === "PRESENT_IDLE" || status === "COMPLETED" || status === "QUEUED") return "PRESENT_IDLE";
+  if (
+    status === "READY_BLOCKED" ||
+    status === "FAILED" ||
+    status === "WAITING_EXTERNAL" ||
+    status === "WAITING_INTERNAL"
+  ) {
+    return "BLOCKED";
+  }
+  return null;
+}
+
 export const HQ_WORKER_PRESENCE_LIMIT = 5;
 
 export type RoomPresenceModel = {
@@ -29,10 +44,16 @@ function capPresence(nodes: OperatorWorkerNode[]): {
   };
 }
 
+export type RoomPresenceContent = {
+  outputCount?: number;
+  currentWorkCount?: number;
+};
+
 export function deriveRoomPresence(
   nodes: OperatorWorkerNode[],
   departmentState: DepartmentUiState,
   _isTerminal = false,
+  content: RoomPresenceContent = {},
 ): RoomPresenceModel {
   const blockedDept = departmentState === "BLOCKED" || departmentState === "FAILED";
   const activeNodes = blockedDept
@@ -61,8 +82,9 @@ export function deriveRoomPresence(
   }
 
   if (idleNodes.length === 0) {
+    const hasCanonicalContent = (content.outputCount ?? 0) + (content.currentWorkCount ?? 0) > 0;
     return {
-      state: "EMPTY",
+      state: hasCanonicalContent ? "PRESENT_IDLE" : "EMPTY",
       activeNodes: [],
       presenceNodes: [],
       overflowWorkerCount: 0,

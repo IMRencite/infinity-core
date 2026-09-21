@@ -73,6 +73,50 @@ export async function probeRegistrarLive(_domains: string[] = []): Promise<{
   };
 }
 
+export function parseNamecheapAvailabilityList(
+  xml: string,
+): Array<Omit<RegistrarProbeRow, "provider" | "normalized" | "checkedAt" | "source">> {
+  const tags = xml.match(/<DomainCheckResult\b[^>]*>/gi) ?? [];
+  return tags.flatMap((tag) => {
+    const domain = /Domain="([^"]+)"/i.exec(tag)?.[1];
+    if (!domain) return [];
+    return [parseNamecheapAvailability(tag, domain)];
+  });
+}
+
+export async function checkRegistrarAvailabilityLive(domains: string[]): Promise<{
+  provider: string;
+  rows: RegistrarProbeRow[];
+  status: ProviderCapabilityStatus;
+  realProviderCall: boolean;
+  mutationOccurred: false;
+  writeHttpCalls: 0;
+  readHttpCalls: number;
+  failureCode: ProviderProbeFailureCode | null;
+  failureReason: string | null;
+}> {
+  const adapter = new NamecheapReadAdapter();
+  const checked = await adapter.checkAvailability(domains);
+  const checkedAt = new Date().toISOString();
+  return {
+    provider: "namecheap.com_v1",
+    rows: checked.rows.map((row) => ({
+      ...row,
+      provider: "namecheap.com_v1",
+      normalized: true,
+      checkedAt,
+      source: "LIVE" as const,
+    })),
+    status: checked.status,
+    realProviderCall: checked.realProviderCall,
+    mutationOccurred: false,
+    writeHttpCalls: 0,
+    readHttpCalls: checked.readHttpCalls,
+    failureCode: checked.failureCode,
+    failureReason: checked.failureReason,
+  };
+}
+
 export function parseNamecheapAvailability(xml: string, domain: string): Omit<RegistrarProbeRow, "provider" | "normalized" | "checkedAt" | "source"> {
   const availableMatch = xml.match(/Available="(true|false)"/i);
   const premiumMatch = xml.match(/IsPremiumName="(true|false)"/i);

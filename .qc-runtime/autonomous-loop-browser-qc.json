@@ -1,0 +1,101 @@
+{
+  "origin": "http://localhost:3000",
+  "port": "3000",
+  "process": "next start",
+  "after": {
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "authenticated": true,
+    "loopVisible": true,
+    "loopState": "IDLE_NO_ACTION",
+    "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+    "mission": "IDLE — no active canonical work",
+    "rooms": "IDLE",
+    "agents": "PRESENT_IDLE",
+    "lastCompleted": "work:occupancynpv:venture-financial-commitment-v1",
+    "currentWork": "Infinity implementation work",
+    "sse": "connecting",
+    "idle": true
+  },
+  "live": {
+    "status": 200,
+    "loop": {
+      "contract": "AutonomousDailyOperatingLoop",
+      "loop_state": "IDLE_NO_ACTION",
+      "current_venture": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "current_mission": null,
+      "why_this_mission": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "current_step": "IDLE_NO_ACTION",
+      "rooms": [],
+      "agents": [
+        "PRESENT_IDLE"
+      ],
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "last_completed_mission": "work:occupancynpv:venture-financial-commitment-v1",
+      "next_review": "2026-09-15T16:00:00.000Z",
+      "waiting_condition": null,
+      "explanation": {
+        "contract": "AutonomousDecisionExplanation",
+        "why_now": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+        "evidence": [
+          "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+          "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+          "SEND_NOT_FORCED"
+        ],
+        "priority_rationale": "EXISTING_GROWTH_CONTINUATION outranks deferred alternatives under profit-before-scale",
+        "alternatives_considered": [
+          "PAID_ACQUISITION",
+          "AUTONOMOUS_FINANCIAL_COMMITMENT",
+          "MONEY_MOVEMENT",
+          "NEW_OUTREACH_BURST",
+          "CREATE_OUTREACH_MISSION",
+          "USE_SPEND_AUTHORITY"
+        ],
+        "why_selected": "Existing campaign tick continues inside caps; no new mission and no spend",
+        "why_others_deferred": [
+          "Paid acquisition remains blocked",
+          "Autonomous commitments stay recommended-only",
+          "Mercury is read-only; money movement disabled",
+          "Do not manufacture outreach busywork or duplicate the existing campaign",
+          "Do not manufacture outreach busywork or duplicate the existing campaign",
+          "Remaining spend authority is a constraint, not a command to spend"
+        ],
+        "financial_exposure": 0,
+        "risk": "OPERATING",
+        "expected_measurement": "GROWTH_TICK_OR_REPLY"
+      },
+      "money_movement_enabled": false,
+      "autonomous_commitment_creation": false
+    },
+    "currentWork": "Infinity implementation work",
+    "activeMissions": 1,
+    "agentStatus": "ACTIVE_WORK",
+    "sse": "TASK DETAIL UNAVAILABLE"
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "overflow": false
+    },
+    "tablet": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false
+    },
+    "mobile": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false
+    }
+  },
+  "runtime": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "material": false
+  }
+}

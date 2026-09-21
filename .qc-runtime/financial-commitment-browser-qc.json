@@ -1,0 +1,60 @@
+{
+  "origin": "http://localhost:3000",
+  "port": "3000",
+  "process": "next start",
+  "after": {
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "authenticated": true,
+    "treasury": true,
+    "commitmentPanel": true,
+    "authorityPanel": true,
+    "ledger": true,
+    "reserveButton": true,
+    "helper": true,
+    "allocation": "$25",
+    "spendAuthority": "$5",
+    "committed": "$0",
+    "available": "$5",
+    "actualSpend": "$0",
+    "paidAcquisition": "$0",
+    "authorityAllocated": "$25",
+    "authorityCeiling": "$5",
+    "authorityCommitted": "$0",
+    "emptyLedger": true,
+    "mercuryReadOnly": true,
+    "missionTitle": true,
+    "sse": "open",
+    "currentWork": "IDLE — no active canonical work",
+    "commandStatus": ""
+  },
+  "live": {
+    "status": 200,
+    "cash": null,
+    "authorized": null,
+    "allocated": null,
+    "write": null,
+    "movement": null,
+    "commitments": null,
+    "occupancy": null,
+    "currentWork": null,
+    "commandStatus": null
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "overflow": false
+    },
+    "tablet": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false
+    },
+    "mobile": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false
+    }
+  }
+}

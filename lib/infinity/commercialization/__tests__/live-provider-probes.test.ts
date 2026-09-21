@@ -5,6 +5,7 @@ import {
   buildProviderInventory,
   generateProbeDomainNames,
   parseNamecheapAvailability,
+  parseNamecheapAvailabilityList,
   probeDnsLive,
   probeHostingLive,
   probePaymentsLive,
@@ -133,6 +134,17 @@ describe("Commercialization live capability verification", () => {
     expect(parsed.renewalPriceUsd).toBeNull();
     expect(parsed.registrationPriceUsd).toBe(12.99);
     expect(parsed.premium).toBe(false);
+  });
+
+  it("parses multiple Namecheap DomainCheckResult tags", () => {
+    const xml = `<ApiResponse><CommandResponse>
+      <DomainCheckResult Domain="leasenpv.com" Available="true" IsPremiumName="false" Price="13.98" RenewalPrice="15.98"/>
+      <DomainCheckResult Domain="leasecomp.com" Available="false" IsPremiumName="false"/>
+    </CommandResponse></ApiResponse>`;
+    const rows = parseNamecheapAvailabilityList(xml);
+    expect(rows).toHaveLength(2);
+    expect(rows[0]?.available).toBe(true);
+    expect(rows[1]?.available).toBe(false);
   });
 
   it("canonical money: unknown is null, actual zero remains zero, invalid is null", () => {

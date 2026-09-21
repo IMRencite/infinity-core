@@ -1,0 +1,40 @@
+{
+  "origin": "http://localhost:3000",
+  "port": "3000",
+  "authenticated": true,
+  "after": {
+    "href": "http://localhost:3000/dashboard",
+    "authenticated": true,
+    "warning": "Mercury · DEGRADEDMercury authentication needs to be refreshed.Last verified: Not availableAuthorized and allocated capital remain unchanged.Access · READ ONLYView source / detailsProviderMercuryProvider stateDEGRADEDError categoryAUTH_FAILEDLast successful verificationNONELast verification attempt2026-09-14T07:40:30.810ZFreshnessPARTIALSourceCanonicalTreasuryProjectionScopePARENT_IMR_OPERATINGAdapter statusREAD_ONLYAccount count0EnvironmentPRODUCTIONFailure stageauth/session/config",
+    "warningPresent": true,
+    "rawDiagnostic": false,
+    "mercuryState": "DEGRADED",
+    "authorized": "$50",
+    "allocated": "$25",
+    "spendAuthority": "$5",
+    "committed": "$0",
+    "actualSpend": "$0",
+    "cash": "UNKNOWN",
+    "policy": true,
+    "detailsHidden": true,
+    "bodyHasSk": false,
+    "currentWork": "Treasury / capital allocation"
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "overflow": false
+    },
+    "tablet": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false
+    },
+    "mobile": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false
+    }
+  }
+}

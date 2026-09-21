@@ -1,0 +1,17 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "b5dacd67a503dcb624ea018260dc618dd4582d5d95ac00ef2dc6bc5fcb5d42b8",
+  "previous_deployment_id": "dpl_CxbVvgwuMREnye4Lq2RHYHi6iKAK",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "aeac78ccd50e925616769802bbce778da18bca2edb18fe16cb4668b29321f54f",
+  "deployment_id": "dpl_rwCYzXkkKzWCypr9rotUbs9kbEvj",
+  "deployed": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "supabase_migrations": 0,
+  "public_launch": 0,
+  "marketing_content_changed": "NO",
+  "safe_error": null,
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+}

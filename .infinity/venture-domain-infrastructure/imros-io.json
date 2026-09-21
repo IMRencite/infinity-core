@@ -1,0 +1,155 @@
+{
+  "record": {
+    "domain": "imros.io",
+    "venture_id": "infinity-os",
+    "registrar": "Squarespace Domains LLC",
+    "registrar_iana": "3827",
+    "registrar_kind": "OTHER",
+    "registrar_verified_at": "2026-09-17T09:59:32.510Z",
+    "authoritative_dns_provider": "CLOUDFLARE",
+    "nameservers": [
+      "dante.ns.cloudflare.com",
+      "poppy.ns.cloudflare.com"
+    ],
+    "dnssec_state": "UNSIGNED",
+    "renewal_state": "expires:2027-07-22T22:31:58.542Z",
+    "expiry_date": "2027-07-22T22:31:58.542Z",
+    "registrar_lock": "LOCKED",
+    "public_site_target": "https://imros.io",
+    "hq_target": "https://hq.imros.io",
+    "runtime_target": "https://infinity-runtime.vercel.app",
+    "last_verified_at": "2026-09-17T09:59:32.510Z",
+    "verification_source": [
+      "https://rdap.identitydigital.services/rdap/domain/imros.io",
+      "live_ns_delegation",
+      "CLOUDFLARE_API"
+    ]
+  },
+  "inventory": [
+    {
+      "hostname": "imros.io",
+      "type": "A",
+      "target": "216.150.1.1",
+      "ttl": 300,
+      "proxied": "DNS_ONLY",
+      "purpose": "public Infinity operations site"
+    },
+    {
+      "hostname": "imros.io",
+      "type": "A",
+      "target": "216.150.16.1",
+      "ttl": null,
+      "proxied": "UNKNOWN",
+      "purpose": "public Infinity operations site"
+    },
+    {
+      "hostname": "www.imros.io",
+      "type": "A",
+      "target": "216.150.1.193",
+      "ttl": null,
+      "proxied": "UNKNOWN",
+      "purpose": "www alias for public site"
+    },
+    {
+      "hostname": "www.imros.io",
+      "type": "A",
+      "target": "216.150.16.193",
+      "ttl": null,
+      "proxied": "UNKNOWN",
+      "purpose": "www alias for public site"
+    },
+    {
+      "hostname": "www.imros.io",
+      "type": "CNAME",
+      "target": "2a632132e8ee228d.vercel-dns-016.com",
+      "ttl": 300,
+      "proxied": "DNS_ONLY",
+      "purpose": "www alias for public site"
+    },
+    {
+      "hostname": "hq.imros.io",
+      "type": "A",
+      "target": "216.150.1.193",
+      "ttl": null,
+      "proxied": "UNKNOWN",
+      "purpose": "private Founder HQ"
+    },
+    {
+      "hostname": "hq.imros.io",
+      "type": "A",
+      "target": "216.150.16.193",
+      "ttl": null,
+      "proxied": "UNKNOWN",
+      "purpose": "private Founder HQ"
+    },
+    {
+      "hostname": "hq.imros.io",
+      "type": "CNAME",
+      "target": "217bb448cfd9bcc0.vercel-dns-016.com",
+      "ttl": 1,
+      "proxied": "DNS_ONLY",
+      "purpose": "private Founder HQ"
+    },
+    {
+      "hostname": "imros.io",
+      "type": "TXT",
+      "target": "v=spf1 -all",
+      "ttl": 300,
+      "proxied": "DNS_ONLY",
+      "purpose": "email/auth/verification"
+    }
+  ],
+  "email": {
+    "mx": "UNKNOWN",
+    "spf": "PASS",
+    "dkim": "UNKNOWN",
+    "dmarc": "UNKNOWN",
+    "notes": [
+      "no_mx_observed_publicly"
+    ]
+  },
+  "cloudflare_zone": "ACTIVE",
+  "cloudflare_zone_nameservers": [
+    "dante.ns.cloudflare.com",
+    "poppy.ns.cloudflare.com"
+  ],
+  "cloudflare_security": {
+    "ssl_mode": "UNKNOWN",
+    "always_use_https": "UNKNOWN",
+    "hsts": "OFF_OR_UNKNOWN",
+    "waf": "UNKNOWN",
+    "bot_protection": "UNKNOWN",
+    "rate_limiting": "UNKNOWN"
+  },
+  "gates": {
+    "registration": {
+      "gate": "DomainRegistrationTruthGate",
+      "result": "PASS",
+      "reasons": [
+        "Squarespace Domains LLC"
+      ]
+    },
+    "authoritative_dns": {
+      "gate": "AuthoritativeDNSGate",
+      "result": "PASS",
+      "reasons": [
+        "dante.ns.cloudflare.com",
+        "poppy.ns.cloudflare.com"
+      ]
+    },
+    "cloudflare_zone": {
+      "gate": "CloudflareZoneTruthGate",
+      "result": "PASS",
+      "reasons": [
+        "zone_matches_delegation"
+      ]
+    },
+    "topology": {
+      "gate": "InfinityDomainTopologyGate",
+      "result": "PASS",
+      "reasons": [
+        "public_hq_runtime_recorded"
+      ]
+    }
+  }
+}

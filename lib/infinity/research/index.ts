@@ -15,3 +15,4 @@ export * from "./persistence";
 export * from "./run";
 export * from "./mock-output";
 export * from "./coverage";
+export * from "./public-web";

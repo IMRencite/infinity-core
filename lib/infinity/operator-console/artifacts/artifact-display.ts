@@ -14,13 +14,27 @@ export function formatArtifactPrimaryDisplay(artifact: HqWorkArtifact): Artifact
 
   switch (artifact.artifactType) {
     case "opportunity_candidate": {
-      const score = meta.score != null ? Number(meta.score).toFixed(1) : null;
+      const numericScore = meta.score != null ? Number(meta.score) : Number.NaN;
+      const score = Number.isFinite(numericScore)
+        ? numericScore.toFixed(1)
+        : meta.score == null
+          ? null
+          : String(meta.score);
       const rank = meta.rank != null ? `#${meta.rank}` : null;
+      if (meta.universe === true) {
+        return {
+          title: artifact.title,
+          subtitle: artifact.subtitle ?? `${meta.topCount ?? 10} currently top-ranked · View all →`,
+          metric: meta.score != null ? String(meta.score) : score,
+          badge: String(meta.viewAll ?? "View all →"),
+          detailTitle,
+        };
+      }
       return {
         title: artifact.title,
-        subtitle: rank,
+        subtitle: artifact.subtitle ?? rank,
         metric: score,
-        badge: null,
+        badge: meta.movement ? String(meta.movement) : meta.status ? String(meta.status) : null,
         detailTitle,
       };
     }
@@ -36,6 +50,23 @@ export function formatArtifactPrimaryDisplay(artifact: HqWorkArtifact): Artifact
         detailTitle,
       };
     }
+    case "learning_decision":
+      return {
+        title: artifact.title,
+        subtitle: artifact.subtitle,
+        metric: typeof meta.status === "string" && String(meta.status).length <= 36 ? String(meta.status) : null,
+        badge: typeof meta.next_tactic === "string" ? String(meta.next_tactic) : null,
+        detailTitle,
+      };
+    case "venture_economics":
+    case "competitor_intelligence":
+      return {
+        title: artifact.title,
+        subtitle: artifact.subtitle,
+        metric: typeof meta.confidence === "string" ? meta.confidence : typeof meta.observed_pricing === "string" ? meta.observed_pricing : null,
+        badge: typeof meta.current_price === "string" ? meta.current_price : typeof meta.type === "string" ? meta.type : null,
+        detailTitle,
+      };
     case "monetization_plan":
     case "unit_economics": {
       const score = meta.monetizationScore != null ? Number(meta.monetizationScore).toFixed(1) : null;

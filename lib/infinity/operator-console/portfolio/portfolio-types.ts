@@ -40,7 +40,10 @@ export type PortfolioTopVenture = {
 export type PortfolioSummary = {
   generatedAt: string;
   totalVenturesBuilt: number;
+  /** Live operating / publicly launched businesses. Does not include ventures in validation. */
   activeVentures: number;
+  operatingVentures: number;
+  validatingVentures: number;
   totalRevenueUsd: number | null;
   knownCostsUsd: number | null;
   totalProfitUsd: number | null;

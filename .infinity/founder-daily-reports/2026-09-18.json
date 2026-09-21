@@ -1,0 +1,300 @@
+{
+  "report_id": "daily:2026-09-18:v1",
+  "report_date": "2026-09-18",
+  "timezone": "America/New_York",
+  "status": "LIVE",
+  "version": 1,
+  "generated_at": "2026-09-18T05:30:57.391Z",
+  "updated_at": "2026-09-18T05:38:18.596Z",
+  "finalized_at": null,
+  "summary": "Infinity recorded 12 completed items, 0 in progress, 1 planned, and 0 blocked or founder-attention items.",
+  "completed_count": 12,
+  "in_progress_count": 0,
+  "planned_count": 1,
+  "blocked_count": 0,
+  "venture_ids": [
+    "occupancynpv"
+  ],
+  "source_event_ids": [
+    "organic-growth",
+    "organic-growth-blog-refresh",
+    "outbound-event:OccupancyNPV Outbound Delivered",
+    "outbound-event:Inbound Reply Detected",
+    "outbound-event:Positive Interest Classified",
+    "outbound-event:Response Sent",
+    "outbound-event:Response Delivered",
+    "outbound-event:Outbound Semantic Defect Detected",
+    "outbound-event:False Opt-Out Invalidated",
+    "outbound-event:Conversation State Repaired",
+    "outbound-event:Positive Reply",
+    "outbound-event:Follow-Up Due",
+    "organic-plan"
+  ],
+  "organic_pages": 1,
+  "blogs": 1,
+  "outreach_sent": 0,
+  "prospects_added": 0,
+  "deployments": 0,
+  "founder_attention": [],
+  "treasury_verification": "UNKNOWN",
+  "sections": [
+    {
+      "id": "completed",
+      "title": "Completed",
+      "items": [
+        {
+          "item_id": "organic:COMPLETED:organic-growth",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Published 1 organic page",
+          "source_ids": [
+            "organic-growth"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:organic-growth-blog-refresh",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Expanded 1 blog resource",
+          "source_ids": [
+            "organic-growth-blog-refresh"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:OccupancyNPV Outbound Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "OccupancyNPV Outbound Delivered",
+          "source_ids": [
+            "outbound-event:OccupancyNPV Outbound Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Inbound Reply Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Inbound Reply Detected",
+          "source_ids": [
+            "outbound-event:Inbound Reply Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Interest Classified",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Interest Classified",
+          "source_ids": [
+            "outbound-event:Positive Interest Classified"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Sent",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Sent",
+          "source_ids": [
+            "outbound-event:Response Sent"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Delivered",
+          "source_ids": [
+            "outbound-event:Response Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Outbound Semantic Defect Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Outbound Semantic Defect Detected",
+          "source_ids": [
+            "outbound-event:Outbound Semantic Defect Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:False Opt-Out Invalidated",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "False Opt-Out Invalidated",
+          "source_ids": [
+            "outbound-event:False Opt-Out Invalidated"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Conversation State Repaired",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Conversation State Repaired",
+          "source_ids": [
+            "outbound-event:Conversation State Repaired"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Reply",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Reply",
+          "source_ids": [
+            "outbound-event:Positive Reply"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Follow-Up Due",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Follow-Up Due",
+          "source_ids": [
+            "outbound-event:Follow-Up Due"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "planned",
+      "title": "Planned Today",
+      "items": [
+        {
+          "item_id": "organic:PLANNED:organic-plan",
+          "status": "PLANNED",
+          "engine": "organic",
+          "title": "Monitor indexation and content quality gates",
+          "source_ids": [
+            "organic-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "organic",
+      "title": "Organic Growth",
+      "items": [
+        {
+          "item_id": "organic:COMPLETED:organic-growth",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Published 1 organic page",
+          "source_ids": [
+            "organic-growth"
+          ]
+        },
+        {
+          "item_id": "organic:COMPLETED:organic-growth-blog-refresh",
+          "status": "COMPLETED",
+          "engine": "organic",
+          "title": "Expanded 1 blog resource",
+          "source_ids": [
+            "organic-growth-blog-refresh"
+          ]
+        },
+        {
+          "item_id": "organic:PLANNED:organic-plan",
+          "status": "PLANNED",
+          "engine": "organic",
+          "title": "Monitor indexation and content quality gates",
+          "source_ids": [
+            "organic-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "title": "Sales / Outreach",
+      "items": [
+        {
+          "item_id": "sales:COMPLETED:outbound-event:OccupancyNPV Outbound Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "OccupancyNPV Outbound Delivered",
+          "source_ids": [
+            "outbound-event:OccupancyNPV Outbound Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Inbound Reply Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Inbound Reply Detected",
+          "source_ids": [
+            "outbound-event:Inbound Reply Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Interest Classified",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Interest Classified",
+          "source_ids": [
+            "outbound-event:Positive Interest Classified"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Sent",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Sent",
+          "source_ids": [
+            "outbound-event:Response Sent"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Response Delivered",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Response Delivered",
+          "source_ids": [
+            "outbound-event:Response Delivered"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Outbound Semantic Defect Detected",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Outbound Semantic Defect Detected",
+          "source_ids": [
+            "outbound-event:Outbound Semantic Defect Detected"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:False Opt-Out Invalidated",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "False Opt-Out Invalidated",
+          "source_ids": [
+            "outbound-event:False Opt-Out Invalidated"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Conversation State Repaired",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Conversation State Repaired",
+          "source_ids": [
+            "outbound-event:Conversation State Repaired"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Positive Reply",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Positive Reply",
+          "source_ids": [
+            "outbound-event:Positive Reply"
+          ]
+        },
+        {
+          "item_id": "sales:COMPLETED:outbound-event:Follow-Up Due",
+          "status": "COMPLETED",
+          "engine": "sales",
+          "title": "Follow-Up Due",
+          "source_ids": [
+            "outbound-event:Follow-Up Due"
+          ]
+        }
+      ]
+    }
+  ]
+}

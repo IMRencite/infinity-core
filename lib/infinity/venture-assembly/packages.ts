@@ -8,6 +8,11 @@ import {
   candidateIdFromLineageSources,
   persistCanonicalVentureAssemblyIdentity,
 } from "./identity";
+import {
+  extractSelectionForCandidate,
+  jsonIdList,
+  selectMonetizationPlan,
+} from "@/lib/infinity/venture-intelligence/lineage";
 
 export type AssemblySourceContext = {
   organizationId: string;
@@ -32,6 +37,10 @@ export type AssemblySourceContext = {
   candidateRank?: number | null;
   origin?: string | null;
   companyBuilderBlueprintId?: string | null;
+  ventureSelectionRunId?: string | null;
+  monetizationPlanId?: string | null;
+  researchRunIds?: string[];
+  selectionDecision?: string | null;
 };
 
 function slugDomainCandidate(name: string): string {
@@ -94,6 +103,13 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
     category: ventureType,
     positioning: valueProposition,
     targetAudience: targetCustomer,
+    canonicalLineage: {
+      opportunityCandidateId: identity.opportunityCandidateId,
+      ventureSelectionRunId: ctx.ventureSelectionRunId ?? null,
+      monetizationPlanId: ctx.monetizationPlanId ?? null,
+      researchRunIds: ctx.researchRunIds ?? [],
+      selectionDecision: ctx.selectionDecision ?? null,
+    },
     primaryProblem: problem,
     primaryPromise: valueProposition,
     brandDirection: "Internal specification — no external design tooling invoked.",
@@ -354,6 +370,68 @@ export function buildAssemblyPackages(ctx: AssemblySourceContext): {
   };
 }
 
+export async function resolveOpportunityCandidateIdFromPlanExecution(
+  admin: AdminSupabaseClient,
+  input: { organizationId: string; missionId: string; planExecutionId: string },
+): Promise<string | null> {
+  const { data: pe } = await admin
+    .from("plan_executions")
+    .select("opportunity_id, executive_decision_id, plan_id")
+    .eq("organization_id", input.organizationId)
+    .eq("id", input.planExecutionId)
+    .maybeSingle();
+  if (!pe) return null;
+  const [{ data: opp }, { data: mission }, { data: decision }, { data: plan }] = await Promise.all([
+    admin.from("opportunities").select("source_snapshot").eq("id", pe.opportunity_id).maybeSingle(),
+    admin.from("missions").select("constraints, objectives").eq("organization_id", input.organizationId).eq("id", input.missionId).maybeSingle(),
+    admin.from("command_decisions").select("payload").eq("organization_id", input.organizationId).eq("id", pe.executive_decision_id ?? "").maybeSingle(),
+    admin.from("plans").select("metadata").eq("organization_id", input.organizationId).eq("id", pe.plan_id ?? "").maybeSingle(),
+  ]);
+  return candidateIdFromLineageSources([
+    opp?.source_snapshot,
+    mission?.constraints,
+    mission?.objectives,
+    decision?.payload,
+    plan?.metadata,
+  ]);
+}
+
+export async function loadAutonomousLineageForCandidate(
+  admin: AdminSupabaseClient,
+  organizationId: string,
+  candidateId: string,
+): Promise<{
+  ventureSelectionRunId: string | null;
+  monetizationPlanId: string | null;
+  researchRunIds: string[];
+  selectionDecision: string | null;
+}> {
+  const [{ data: candidate }, { data: planRows }, { data: selectionRows }] = await Promise.all([
+    admin.from("opportunity_candidates").select("research_run_ids").eq("organization_id", organizationId).eq("id", candidateId).maybeSingle(),
+    admin.from("monetization_plans").select("id, plan_role, monetization_confidence, monetization_score, created_at, opportunity_candidate_id").eq("organization_id", organizationId).eq("opportunity_candidate_id", candidateId),
+    admin
+      .from("venture_selection_runs")
+      .select("id, status, selection_report, opportunity_candidate_ids, created_at")
+      .eq("organization_id", organizationId)
+      .eq("status", "completed")
+      .order("created_at", { ascending: false }),
+  ]);
+  const selection = extractSelectionForCandidate(
+    (selectionRows ?? []).map((row) => row as Record<string, unknown>),
+    candidateId,
+  );
+  const selected = selectMonetizationPlan(
+    (planRows ?? []).map((row) => row as Record<string, unknown>),
+    { candidateId, linkedPlanId: selection?.monetizationPlanId },
+  );
+  return {
+    ventureSelectionRunId: selection?.runId ?? null,
+    monetizationPlanId: selected.plan?.id ?? null,
+    researchRunIds: jsonIdList(candidate?.research_run_ids),
+    selectionDecision: selection?.decision ?? null,
+  };
+}
+
 export async function loadAssemblySourceContext(
   admin: AdminSupabaseClient,
   input: {
@@ -480,5 +558,8 @@ export async function loadAssemblySourceContext(
     candidateRank,
     origin: "venture_assembly",
     companyBuilderBlueprintId: null,
+    ...(opportunityCandidateId
+      ? await loadAutonomousLineageForCandidate(admin, input.organizationId, opportunityCandidateId)
+      : {}),
   };
 }

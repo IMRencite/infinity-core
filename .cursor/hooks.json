@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs prompt",
+        "timeout": 8
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs pulse",
+        "timeout": 8
+      }
+    ],
+    "afterAgentThought": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs thought",
+        "timeout": 8
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs pulse",
+        "timeout": 8
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs pulse",
+        "timeout": 8
+      }
+    ],
+    "stop": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs stop",
+        "timeout": 8
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "node scripts/hq-live-implementation-hook.mjs complete",
+        "timeout": 8
+      }
+    ]
+  }
+}

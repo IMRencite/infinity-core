@@ -1,0 +1,82 @@
+[
+  {
+    "candidateId": "f1336945-3350-4d08-921e-4dcb5bc77b8e",
+    "name": "Affordable Google Review Automation & QR Utility",
+    "rank": 1,
+    "opportunityScore": 85.85,
+    "monetizationScore": 80.65,
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "ba261b68-2511-49a8-832b-43174a14d569",
+    "name": "Bank-Linked Tenant Income & Fraud Verification for Independent Landlords",
+    "rank": 2,
+    "opportunityScore": 84.8,
+    "monetizationScore": 72.7,
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "ce09ed5b-c085-45a2-b9c4-473e37fbf0c1",
+    "name": "Subcontractor COI Compliance & Tracking Utility",
+    "rank": 3,
+    "opportunityScore": 84.3,
+    "monetizationScore": 76.7,
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "7bf2a374-e098-4c87-8866-15e0520b3652",
+    "name": "Specialized Tattoo Studio Booking & Artist Management Platform",
+    "rank": 4,
+    "opportunityScore": 83.4,
+    "monetizationScore": 78.79,
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "30cb084a-aa84-48ce-9895-e76d935494e7",
+    "name": "Platform-Specific Embedded Analytics Utilities",
+    "rank": 5,
+    "opportunityScore": 81.4,
+    "monetizationScore": 74.85,
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "d85407d9-281a-47fe-98b4-c2f1507f5a6c",
+    "name": "Immediate Inbound Lead Router & Auto-Responder",
+    "rank": 6,
+    "opportunityScore": 80.05,
+    "monetizationScore": "UNKNOWN",
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "c86c95dc-4c00-487b-9ff4-763eb8017b7b",
+    "name": "Automated Freight Quote & Warehousing Bid Normalizer",
+    "rank": 7,
+    "opportunityScore": 79.8,
+    "monetizationScore": "UNKNOWN",
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "d8ac4dc8-f753-4e9b-9229-891931a1648b",
+    "name": "Mobile-First Home Inspection Reporting & Administrative Utility",
+    "rank": 8,
+    "opportunityScore": 79.3,
+    "monetizationScore": "UNKNOWN",
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "0b1dfa60-f3a3-407f-876e-4434705e36f2",
+    "name": "Subcontractor Lien Waiver & COI Compliance Tracker",
+    "rank": 9,
+    "opportunityScore": 78.95,
+    "monetizationScore": "UNKNOWN",
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  },
+  {
+    "candidateId": "2f5ade1a-ef5a-4c45-9f8b-be775ff9f3a7",
+    "name": "Low-Touch Spreadsheet AP Automation Utility",
+    "rank": 10,
+    "opportunityScore": 78.85,
+    "monetizationScore": "UNKNOWN",
+    "reason": "Persisted by opportunity_scanner_v1 run cap of 10."
+  }
+]

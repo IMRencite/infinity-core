@@ -1,0 +1,42 @@
+{
+  "env": {
+    "loaded": true,
+    "tokenPresent": "YES",
+    "teamIdPresent": "YES",
+    "confirmed": true
+  },
+  "account": {
+    "team": "infinite-media-resources-imr (team_ildi4jRJvHUKWF93cu4XEZ7Z)",
+    "teamSlug": "infinite-media-resources-imr",
+    "ownershipVerified": "YES"
+  },
+  "plan": {
+    "current": "PRO",
+    "paid": "YES",
+    "subscriptionActive": "YES",
+    "commercialProductionSupport": "YES",
+    "billingConfigured": "YES",
+    "currentBaseSubscription": "pro"
+  },
+  "deployment": {
+    "id": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "covered": "YES",
+    "customDomainSupported": "YES",
+    "sslSupported": "YES"
+  },
+  "governance": {
+    "state": "VERCEL_PRO_ALREADY_ACTIVE",
+    "hostingPurchaseRequired": "NO"
+  },
+  "purchases": 0,
+  "planChanges": 0,
+  "deployments": 0,
+  "domainBindings": 0,
+  "dnsWrites": 0,
+  "publiclyLaunched": "NO",
+  "provider": {
+    "userStatus": 200,
+    "teamStatus": 200,
+    "deploymentStatus": 200
+  }
+}

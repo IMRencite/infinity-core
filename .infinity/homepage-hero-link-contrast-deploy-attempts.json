@@ -1,0 +1,15 @@
+{
+  "mission": "GOVERNED_CRE_HOMEPAGE_LINK_CONTRAST_DEPLOYMENT_V1",
+  "authorization": "GOVERNED_CRE_HOMEPAGE_LINK_CONTRAST_DEPLOYMENT_REQUIRED",
+  "artifactId": "art_dbf624e41599420891e2",
+  "digest": "a8ca8bfa544da21a96c11bab4d0abb0e3926271ab989d2f1924c68c7deba1f97",
+  "deployments": 1,
+  "activations": 1,
+  "maximumDeployments": 1,
+  "maximumActivations": 1,
+  "deploymentId": "dpl_Ehsc274qjUrZTfyCkQ4n3NCBXZV8",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-ofqh1savv.vercel.app",
+  "providerState": "READY",
+  "authorizationConsumed": true,
+  "terminalState": "CRE_HOMEPAGE_LINK_CONTRAST_ACTIVE"
+}

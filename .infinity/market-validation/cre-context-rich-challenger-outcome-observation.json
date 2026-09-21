@@ -1,0 +1,53 @@
+{
+  "mission": "CRE_CONTEXT_RICH_CHALLENGER_OUTCOME_OBSERVATION_V1",
+  "observedAt": "2026-09-05T08:42:59.557Z",
+  "nextState": "CRE_CONTEXT_RICH_CHALLENGER_OBSERVING",
+  "nextBlocker": "CRE_CONTEXT_RICH_CHALLENGER_OUTCOME_OBSERVATION_REQUIRED",
+  "wave2Readiness": "WAIT_FOR_MORE_CHALLENGER_OUTCOMES",
+  "comparison": {
+    "gate": "ConsultativeOutreachOutcomeEvaluation",
+    "evaluation": "INSUFFICIENT_OUTCOME_EVIDENCE",
+    "statisticallyConclusive": false,
+    "evidence": "No human replies observed on either the two-person baseline or the two-person challenger cohort."
+  },
+  "baseline": {
+    "sent": 2,
+    "providerAccepted": 2,
+    "humanReplies": 0,
+    "qualifiedEngagement": 0,
+    "processDisclosures": 0,
+    "frictionDisclosures": 0,
+    "impactDisclosures": 0,
+    "pricing": 0,
+    "meeting": 0,
+    "referrals": 0,
+    "notInterested": 0,
+    "optOuts": 0,
+    "wrongPerson": 0,
+    "bounces": 0,
+    "automatedReplies": 0,
+    "other": 0
+  },
+  "challenger": {
+    "sent": 2,
+    "providerAccepted": 2,
+    "humanReplies": 0,
+    "qualifiedEngagement": 0,
+    "processDisclosures": 0,
+    "frictionDisclosures": 0,
+    "impactDisclosures": 0,
+    "pricing": 0,
+    "meeting": 0,
+    "referrals": 0,
+    "notInterested": 0,
+    "optOuts": 0,
+    "wrongPerson": 0,
+    "bounces": 0,
+    "automatedReplies": 0,
+    "other": 0
+  },
+  "sinceInbound": 0,
+  "details": [],
+  "newColdOutreach": 0,
+  "wave2Started": false
+}

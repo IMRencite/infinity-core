@@ -1,0 +1,14 @@
+{
+  "missionId": "msn_cre_occupancynpv_legal_configuration_v1",
+  "predecessorMission": "CRE_OCCUPANCYNPV_LEGAL_STRIPE_COMMERCIALIZATION_AUDIT_V2",
+  "artifactId": "art_ece7047b3a1e771ca187",
+  "digest": "d779d6796b12b2c4349bdd8f98cd2b9cfa99b9bc382051b21917b83749654aae",
+  "predecessorArtifactId": "art_11bd5b74a925257a7319",
+  "predecessorDigest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+  "routes": 93,
+  "changedPaths": [
+    "app/privacy-policy/page.tsx",
+    "app/terms-of-service/page.tsx"
+  ],
+  "repairReason": "FOUNDER_CONFIRMED_LEGAL_OPERATOR_AND_OHIO_JURISDICTION_SURFACE_REPAIR"
+}

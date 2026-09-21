@@ -1,0 +1,35 @@
+{
+  "redundancy": {
+    "exactFound": 123,
+    "nearFound": 0,
+    "repaired": 123,
+    "retained": 41,
+    "evaluated": 3043,
+    "overall": "FAIL"
+  },
+  "highlights": {
+    "added": 252,
+    "sourcedQuotes": 0
+  },
+  "navigation": {
+    "blocks": 54,
+    "cards": 253,
+    "uniqueDestinations": 38,
+    "duplicateDestinationProblems": 0
+  },
+  "hubsWithNav": 7,
+  "questionNav": 35,
+  "productNav": 7,
+  "graph": {
+    "authorityNodes": 41,
+    "contextualInternalEdges": 409,
+    "hubToSpoke": 34,
+    "spokeToHub": 57,
+    "sameTopicLateral": 184,
+    "crossTopic": 97,
+    "commercialPath": 128,
+    "orphans": 0,
+    "deadEnds": 0
+  },
+  "chunks": 220
+}

@@ -1,0 +1,334 @@
+{
+  "mission": "CRE_CLOUDFLARE_REGISTRAR_SHORTLIST_PRICING_V1",
+  "auth": {
+    "tokenAccepted": "YES",
+    "accountVerified": "YES",
+    "registrarApiReachable": "YES",
+    "providerStatus": 200,
+    "providerError": "NONE"
+  },
+  "capabilities": {
+    "domain.availability": "READ_ONLY_VERIFIED",
+    "domain.pricing": "READ_ONLY_VERIFIED",
+    "domain.registration": "UNVERIFIED"
+  },
+  "checked": [
+    {
+      "domain": "leasenpv.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "leasecomp.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "leasebasis.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "occupancynpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "leasedelta.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "dealnpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "tenantnpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "complease.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "holdcost.com",
+      "available": "NO",
+      "premium": "NO",
+      "firstYear": "UNKNOWN",
+      "renewal": "UNKNOWN",
+      "currency": "USD",
+      "reason": "domain_unavailable",
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    },
+    {
+      "domain": "npvlease.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200
+    }
+  ],
+  "ranked": [
+    {
+      "domain": "occupancynpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200,
+      "strategicScore": 97,
+      "conflict": {
+        "obviousConflict": "NO",
+        "uncertainty": "LOW",
+        "formalTrademarkClearance": "NOT_PERFORMED"
+      },
+      "rank": 1
+    },
+    {
+      "domain": "dealnpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200,
+      "strategicScore": 95,
+      "conflict": {
+        "obviousConflict": "NO",
+        "uncertainty": "LOW",
+        "formalTrademarkClearance": "NOT_PERFORMED"
+      },
+      "rank": 2
+    },
+    {
+      "domain": "tenantnpv.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200,
+      "strategicScore": 94,
+      "conflict": {
+        "obviousConflict": "NO",
+        "uncertainty": "LOW",
+        "formalTrademarkClearance": "NOT_PERFORMED"
+      },
+      "rank": 3
+    },
+    {
+      "domain": "npvlease.com",
+      "available": "YES",
+      "premium": "NO",
+      "firstYear": 10.46,
+      "renewal": 10.46,
+      "currency": "USD",
+      "reason": null,
+      "evidence": "POST /accounts/{account_id}/registrar/domain-check",
+      "timestamp": "2026-09-06T01:57:55.135Z",
+      "evidenceType": "POST /accounts/{account_id}/registrar/domain-check",
+      "providerStatus": 200,
+      "strategicScore": 91,
+      "conflict": {
+        "obviousConflict": "NO",
+        "uncertainty": "LOW",
+        "formalTrademarkClearance": "NOT_PERFORMED"
+      },
+      "rank": 4
+    }
+  ],
+  "preferred": {
+    "domain": "occupancynpv.com",
+    "provider": "Cloudflare Registrar",
+    "availability": "YES",
+    "premium": "NO",
+    "firstYear": 10.46,
+    "renewal": 10.46,
+    "strategicScore": 97,
+    "conflict": {
+      "obviousConflict": "NO",
+      "uncertainty": "LOW",
+      "formalTrademarkClearance": "NOT_PERFORMED"
+    },
+    "reason": "Occupancy-cost NPV analysis for tenant-rep brokers."
+  },
+  "economics": {
+    "knownFirstYear": 10.46,
+    "knownRenewal": 10.46,
+    "knownPremiumAmount": "UNKNOWN",
+    "knownProviderFees": "UNKNOWN",
+    "unknownCosts": [
+      "transaction_fees",
+      "tax",
+      "provider_fees",
+      "provider_charge_until_authorized"
+    ]
+  },
+  "routing": {
+    "cloudflareRegistrar": "LIVE_PROVIDER_VERIFIED",
+    "namecheap": "NAMECHEAP_API_USER_BLOCKED_BY_ADMINISTRATOR",
+    "preferred": "cloudflare.registrar_v1",
+    "fallback": "namecheap.com_v1"
+  },
+  "governance": {
+    "domainAcquisitionPlan": "PASS",
+    "domainPurchaseAuthorization": "PASS",
+    "treasury": "AUTHORIZATION_REQUIRED",
+    "eag": "AUTHORIZATION_REQUIRED",
+    "purchaseReadiness": "DOMAIN_PURCHASE_FINANCIAL_AUTHORIZATION_REQUIRED"
+  },
+  "record": {
+    "domain": "UNCONFIGURED",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T10:26:40.975Z",
+        "evidence": "Selected candidate preserved; not purchased."
+      },
+      {
+        "domain": "leasenpv.com",
+        "event": "RELEASED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Cloudflare domain-check proved leasenpv.com unavailable; no longer preferred."
+      },
+      {
+        "domain": "occupancynpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-06T01:57:55.446Z",
+        "evidence": "Selected from Cloudflare Registrar domain-check evidence; not purchased."
+      }
+    ],
+    "provider": "cloudflare.registrar_v1",
+    "registration": "CLOUDFLARE_REGISTRAR_READ_VERIFIED",
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "launch": "NO",
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4"
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "newInbound": 0,
+    "coldOutreach": 0,
+    "wave2": 0
+  },
+  "purchases": 0,
+  "dnsWrites": 0,
+  "registrationPosts": 0,
+  "nextState": "CRE_CLOUDFLARE_DOMAIN_FINANCIAL_AUTHORIZATION_REQUIRED",
+  "nextAction": "GOVERNED_SINGLE_DOMAIN_PURCHASE_AUTHORIZATION",
+  "hq": {
+    "mission": "CRE_CLOUDFLARE_REGISTRAR_SHORTLIST_PRICING_V1",
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "PRESENT_IDLE",
+    "researchGrid": "ACTIVE_WORK",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernance": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "creationLab": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  }
+}

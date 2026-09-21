@@ -1,5 +1,6 @@
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
+import { ADVERSARIAL_COST_PRICING_VERSION } from "./cost/estimate-adversarial-cost";
 import { VENTURE_SELECTION_LIMITS } from "./constants";
 import type {
   CandidateEvaluationDraft,
@@ -240,6 +241,10 @@ export async function persistCandidateEvaluationBundle(
       confidence: clampRatio(input.evaluation.adversarialReview.confidence, 1),
       token_usage: input.evaluation.adversarialReview.tokenUsage as never,
       estimated_cost_usd: input.evaluation.adversarialReview.estimatedCostUsd,
+      metadata: {
+        pricingVersion: ADVERSARIAL_COST_PRICING_VERSION,
+        costKnown: input.evaluation.adversarialReview.estimatedCostUsd != null,
+      } as never,
     });
   }
 

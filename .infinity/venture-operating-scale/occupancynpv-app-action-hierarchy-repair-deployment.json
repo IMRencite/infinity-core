@@ -1,0 +1,19 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "0d050ae0f4bee3ac6d054efe6658982c8e5f080f282ea3476ae2bb05852944f4",
+  "previous_deployment_id": "dpl_H2t9jNDBnN5ZpoPhHyb1qSGtkvaD",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "9fdde8037346ed084c2effa436c6d87582c5aa792267b4e49b1e798c784e0eaa",
+  "deployment_id": "dpl_EJz4Awry75nD7HyXaDTrLqu86JYe",
+  "deployed": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "changed_routes": [
+    "/occupancynpv/app/workspaces/:id",
+    "/occupancynpv/app/checkout/complete"
+  ],
+  "founder_dirty_tree_deployed": false,
+  "safe_error": null,
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d"
+}

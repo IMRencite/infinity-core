@@ -26,6 +26,7 @@ type Props = {
   footer?: ReactNode;
   corridor?: ReactNode;
   span?: "standard" | "full";
+  dataHq?: Record<string, string>;
 };
 
 function partitionClass(partition: Props["partition"]): string {
@@ -83,6 +84,7 @@ export function InfinityRoomShell({
   footer,
   corridor,
   span = "standard",
+  dataHq = {},
 }: Props) {
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => handleRoomKeyboardActivate(event, onActivate);
 
@@ -99,6 +101,7 @@ export function InfinityRoomShell({
       onKeyDown={onKeyDown}
       aria-label={ariaLabel}
       aria-pressed={isSelected}
+      {...dataHq}
       className={`
         hq-room-shell group relative min-h-0 min-w-0 w-full self-start overflow-x-hidden text-left transition-all duration-300
         focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60

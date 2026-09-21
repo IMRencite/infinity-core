@@ -34,7 +34,14 @@ export {
 } from "./economics-known";
 export { monetizeFromResearchPacket } from "./monetization-from-research";
 export { modelComparableEconomics } from "./comparable-economics";
+export { researchRevenueModel } from "./revenue-model-research";
+export { researchBenchmarkEconomics } from "./benchmark-economics";
 export { composeFounderExplainability, attachFounderIntelligence } from "./explainability";
+export { activateEducatedEstimates, buildEducatedEconomicsModel, presentEducatedEstimates } from "./educated-estimates";
+export { presentVentureBrief, buildProfitBreakdown } from "./venture-brief";
+export { buildFounderVentureBuildPlan } from "./build-plan";
+export { presentVentureCommandDeck } from "./command-deck";
+export { buildProductAdvantage } from "./product-advantage";
 export {
   workflowSaasIntegrityPacket,
   artMarketplaceIntegrityPacket,
@@ -45,6 +52,14 @@ export {
   rejectUnknownEconomicsPacket,
   validateUnknownEconomicsPacket,
   infinityCmsLiveV5ReplayPacket,
+  cmsMoneyResearchAfterPacket,
+  cmsBenchmarkEconomicsAfterPacket,
+  cmsWeakEnterpriseBenchmarkPacket,
+  cmsConflictingBenchmarkPacket,
+  cmsUnknownBenchmarkPacket,
+  cmsLiveV6EconomicReplayPacket,
+  cmsLiveV7EconomicReplayPacket,
+  cmsLiveV8EconomicReplayPacket,
 } from "./integrity-fixtures";
 export { cmsComparableEconomicsPacket, CMS_LIVE_V6_SNAPSHOT } from "./cms-live-v6-fixture";
 export {

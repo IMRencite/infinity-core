@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
-import { runGroundedResearch } from "@/lib/infinity/research/run";
 import { buildResearchSystemInstructions } from "@/lib/infinity/research/prompts";
 import { redactSecrets } from "@/lib/infinity/research/redaction";
 import {
@@ -10,10 +9,9 @@ import {
 import {
   assertScannerResearchBudget,
   emptyCostSummary,
-  mergeCostSummaries,
+  mergeCostSummaryBlocks,
 } from "./cost-governance";
 import { dedupeOpportunityCandidates } from "./dedupe/dedupe";
-import { mapExtractionToCandidateDrafts } from "./extraction/map-candidates";
 import { classifyScannerFailure } from "./failures";
 import {
   buildScannerReport,
@@ -23,15 +21,100 @@ import {
   persistCandidateWithEvidence,
   updateDiscoveryRun,
 } from "./persistence";
-import { buildStrategyResearchUserPrompt } from "./prompts";
-import { runStrategyExtractionResearch } from "./research/strategy-extraction";
+import { executeDiscoveryStrategy } from "./research/execute-strategy";
 import { calculateDeterministicScores, rankCandidates } from "./scoring/calculate";
-import { resolveDiscoveryStrategies } from "./strategies";
+import { resolveDiscoveryStrategies, type DiscoveryStrategyDefinition } from "./strategies";
+import {
+  assessCandidatePoolAdequacy,
+  isTechnicalStrategyFailure,
+  shouldAttemptPoolRecovery,
+} from "./pool-adequacy";
 import type {
   OpportunityCandidateDraft,
   RunOpportunityScannerInput,
   RunOpportunityScannerOutput,
 } from "./types";
+import type { DiscoveryStrategyId } from "./constants";
+
+async function runStrategyBatch(input: {
+  admin: AdminSupabaseClient;
+  organizationId: string;
+  idempotencyKey: string;
+  runPurpose?: string;
+  searchScope: Record<string, unknown>;
+  strategies: DiscoveryStrategyDefinition[];
+  maxResearchCalls: number;
+  researchRunIds: string[];
+  attemptSuffix?: string;
+  requireSourceBackedFindings?: boolean;
+}): Promise<{
+  draftCandidates: Array<
+    OpportunityCandidateDraft & {
+      scoringAssessment: import("./types").ScoringAssessmentInput;
+    }
+  >;
+  strategyFailures: string[];
+  costDelta: ReturnType<typeof emptyCostSummary>;
+}> {
+  const draftCandidates: Array<
+    OpportunityCandidateDraft & {
+      scoringAssessment: import("./types").ScoringAssessmentInput;
+    }
+  > = [];
+  const strategyFailures: string[] = [];
+  let costDelta = emptyCostSummary();
+
+  for (const strategy of input.strategies) {
+    if (input.researchRunIds.length >= input.maxResearchCalls) break;
+
+    const strategyStartedAt = Date.now();
+    console.info("[FAVC1] venture radar strategy start", {
+      strategyId: strategy.id,
+      attempt: input.researchRunIds.length + 1,
+      maxResearchCalls: input.maxResearchCalls,
+      recoveryPass: input.attemptSuffix ?? null,
+    });
+
+    const outcome = await executeDiscoveryStrategy({
+      admin: input.admin,
+      organizationId: input.organizationId,
+      idempotencyKey: input.idempotencyKey,
+      runPurpose: input.runPurpose,
+      strategy,
+      searchScope: input.searchScope,
+      attemptSuffix: input.attemptSuffix,
+      requireSourceBackedFindings: input.requireSourceBackedFindings,
+    });
+
+    costDelta = mergeCostSummaryBlocks(costDelta, outcome.costDelta);
+
+    if (!outcome.ok) {
+      const failureLabel = outcome.degraded ? "DEGRADED" : "FAILED";
+      strategyFailures.push(`${strategy.id}: [${failureLabel}] ${outcome.message}`);
+      if (outcome.researchRunId) {
+        input.researchRunIds.push(outcome.researchRunId);
+      }
+      console.warn("[FAVC1] venture radar strategy failed", {
+        strategyId: strategy.id,
+        classification: outcome.classification,
+        message: outcome.message,
+        degraded: outcome.degraded,
+        durationMs: Date.now() - strategyStartedAt,
+      });
+      continue;
+    }
+
+    input.researchRunIds.push(outcome.researchRunId);
+    draftCandidates.push(...outcome.candidates);
+    console.info("[FAVC1] venture radar strategy complete", {
+      strategyId: strategy.id,
+      extractedCandidates: outcome.candidates.length,
+      durationMs: Date.now() - strategyStartedAt,
+    });
+  }
+
+  return { draftCandidates, strategyFailures, costDelta };
+}
 
 export async function runOpportunityScannerCycle(
   admin: AdminSupabaseClient,
@@ -40,44 +123,46 @@ export async function runOpportunityScannerCycle(
   const config = loadOpportunityScannerConfig();
   assertOpportunityScannerExecutable(config);
 
-  const existing = await findDiscoveryRunByIdempotencyKey(
-    admin,
-    input.organizationId,
-    input.idempotencyKey,
-  );
-  if (existing?.status === "completed" && existing.scanner_report) {
-    return {
-      ok: true,
-      discoveryRunId: existing.id,
-      report: existing.scanner_report as never,
-      candidates: [],
-    };
-  }
-
   const strategyIds = input.strategies ?? config.defaultStrategies;
   const strategies = resolveDiscoveryStrategies(strategyIds.slice(0, config.maxStrategiesPerRun));
   const correlationId = randomUUID();
 
-  const runRow =
-    existing ??
-    (await insertDiscoveryRun(admin, {
-      organizationId: input.organizationId,
-      correlationId,
-      idempotencyKey: input.idempotencyKey,
-      strategies: strategies.map((strategy) => strategy.id),
-      searchScope: input.searchScope ?? { geography: "United States" },
-      constraints: input.constraints ?? {},
-    }));
-
   let costSummary = emptyCostSummary();
   const researchRunIds: string[] = [];
+  const strategyFailures: string[] = [];
   const draftCandidates: Array<
     OpportunityCandidateDraft & {
       scoringAssessment: import("./types").ScoringAssessmentInput;
     }
   > = [];
+  let runRow: Awaited<ReturnType<typeof insertDiscoveryRun>> | null = null;
 
   try {
+    const existing = await findDiscoveryRunByIdempotencyKey(
+      admin,
+      input.organizationId,
+      input.idempotencyKey,
+    );
+    if (existing?.status === "completed" && existing.scanner_report) {
+      return {
+        ok: true,
+        discoveryRunId: existing.id,
+        report: existing.scanner_report as never,
+        candidates: [],
+      };
+    }
+
+    runRow =
+      existing ??
+      (await insertDiscoveryRun(admin, {
+        organizationId: input.organizationId,
+        correlationId,
+        idempotencyKey: input.idempotencyKey,
+        strategies: strategies.map((strategy) => strategy.id),
+        searchScope: input.searchScope ?? { geography: "United States" },
+        constraints: input.constraints ?? {},
+      }));
+
     await updateDiscoveryRun(admin, input.organizationId, runRow.id, {
       status: "researching",
     });
@@ -89,53 +174,66 @@ export async function runOpportunityScannerCycle(
       accumulatedEstimatedCostUsd: costSummary.estimatedCostUsd ?? 0,
     });
 
-    const strategyFailures: string[] = [];
+    const searchScope = input.searchScope ?? { geography: "United States" };
+    const degradedStrategyIds: DiscoveryStrategyId[] = [];
 
-    for (const strategy of strategies) {
-      if (researchRunIds.length >= maxResearchCalls) break;
+    const initialBatch = await runStrategyBatch({
+      admin,
+      organizationId: input.organizationId,
+      idempotencyKey: input.idempotencyKey,
+      runPurpose: input.runPurpose,
+      searchScope,
+      strategies,
+      maxResearchCalls,
+      researchRunIds,
+    });
+    draftCandidates.push(...initialBatch.draftCandidates);
+    strategyFailures.push(...initialBatch.strategyFailures);
+    costSummary = mergeCostSummaryBlocks(costSummary, initialBatch.costDelta);
 
-      try {
-        const researchObjective = strategy.buildResearchObjective(input.searchScope ?? {});
-        const researchOutput = await runGroundedResearch(admin, {
-          organizationId: input.organizationId,
-          researchObjective: buildStrategyResearchUserPrompt(researchObjective),
-          idempotencyKey: `${input.idempotencyKey}:research:${strategy.id}`,
-          providerId: "gemini",
-          runPurpose: input.runPurpose ?? "opportunity_scanner",
-        });
-
-        if (!researchOutput.ok) {
-          strategyFailures.push(`${strategy.id}: ${researchOutput.failure.message}`);
-          continue;
-        }
-
-        researchRunIds.push(researchOutput.result.researchRunId);
-        costSummary = mergeCostSummaries(costSummary, {
-          tokenUsage: researchOutput.result.tokenUsage,
-          groundingUsage: {
-            searchQueryCount: researchOutput.result.groundingUsage.searchQueryCount,
-            groundingChunkCount: researchOutput.result.groundingUsage.groundingChunkCount,
-          },
-          estimatedCostUsd: researchOutput.result.estimatedCostUsd,
-          costUncertainty: researchOutput.result.costUncertainty,
-        });
-
-        const extraction = await runStrategyExtractionResearch({
-          strategyId: strategy.id,
-          researchSummary: researchOutput.result.summary,
-          researchEvidence: researchOutput.result.evidence,
-          researchSources: researchOutput.result.sources,
-          parentResearchGrounded: researchOutput.result.groundedStatus,
-        });
-
-        draftCandidates.push(
-          ...mapExtractionToCandidateDrafts(extraction, researchOutput.result),
-        );
-      } catch (error) {
-        strategyFailures.push(
-          `${strategy.id}: ${error instanceof Error ? error.message : "strategy failed"}`,
-        );
+    for (const failure of initialBatch.strategyFailures) {
+      const [strategyId] = failure.split(":");
+      if (strategyId && isTechnicalStrategyFailure(failure)) {
+        degradedStrategyIds.push(strategyId as DiscoveryStrategyId);
       }
+    }
+
+    const poolLevel = assessCandidatePoolAdequacy(draftCandidates.length);
+    console.info("[FAVC1] venture radar pool adequacy", {
+      candidateCount: draftCandidates.length,
+      poolLevel,
+      degradedStrategies: degradedStrategyIds.length,
+    });
+
+    if (
+      shouldAttemptPoolRecovery({
+        candidateCount: draftCandidates.length,
+        technicalStrategyFailures: initialBatch.strategyFailures.filter(isTechnicalStrategyFailure),
+        researchCallsRemaining: maxResearchCalls - researchRunIds.length,
+        poolRecoveryAttempted: false,
+      })
+    ) {
+      const recoveryStrategies = strategies.filter((strategy) =>
+        degradedStrategyIds.includes(strategy.id),
+      );
+      console.info("[FAVC1] venture radar pool recovery start", {
+        strategies: recoveryStrategies.map((strategy) => strategy.id),
+      });
+      const recoveryBatch = await runStrategyBatch({
+        admin,
+        organizationId: input.organizationId,
+        idempotencyKey: input.idempotencyKey,
+        runPurpose: input.runPurpose,
+        searchScope,
+        strategies: recoveryStrategies,
+        maxResearchCalls,
+        researchRunIds,
+        attemptSuffix: "pool-recovery",
+        requireSourceBackedFindings: true,
+      });
+      draftCandidates.push(...recoveryBatch.draftCandidates);
+      strategyFailures.push(...recoveryBatch.strategyFailures);
+      costSummary = mergeCostSummaryBlocks(costSummary, recoveryBatch.costDelta);
     }
 
     if (draftCandidates.length === 0) {
@@ -241,15 +339,18 @@ export async function runOpportunityScannerCycle(
     };
   } catch (error) {
     const classified = classifyScannerFailure(error);
-    await markDiscoveryRunFailed(admin, input.organizationId, runRow.id, {
-      classification: classified.classification,
-      message: classified.message,
-      status: classified.classification === "budget_exceeded" ? "policy_blocked" : "failed",
-    });
+    if (runRow?.id) {
+      await markDiscoveryRunFailed(admin, input.organizationId, runRow.id, {
+        classification: classified.classification,
+        message: classified.message,
+        status: classified.classification === "budget_exceeded" ? "policy_blocked" : "failed",
+        strategyFailures,
+      });
+    }
 
     return {
       ok: false,
-      discoveryRunId: runRow.id,
+      discoveryRunId: runRow?.id ?? "unknown",
       status: classified.classification === "budget_exceeded" ? "policy_blocked" : "failed",
       failureClassification: classified.classification,
       message: classified.message,

@@ -9,3 +9,7 @@ export * from "./cache";
 export * from "./project";
 export * from "./preview";
 export * from "./fixtures";
+export * from "./occupancy";
+export * from "./derive-occupancy";
+export * from "./persist-occupancy";
+export * from "./publish-occupancy";

@@ -1,0 +1,36 @@
+{
+  "collected_at": "2026-09-21T07:37:59.176Z",
+  "repo": {
+    "full_name": null,
+    "private": null,
+    "visibility": null,
+    "default_branch": null,
+    "permissions": null,
+    "status": 401
+  },
+  "owner": {
+    "type": null,
+    "login": null,
+    "status": 401
+  },
+  "environments": {
+    "status": 401,
+    "names": [],
+    "protection": []
+  },
+  "default_workflows": {
+    "status": 401,
+    "files": []
+  },
+  "remote_workflows": {
+    "status": 401,
+    "names": []
+  },
+  "branches": {
+    "status": 401
+  },
+  "collaborators": {
+    "status": 401,
+    "logins": []
+  }
+}

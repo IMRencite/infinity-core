@@ -1,6 +1,7 @@
 import type { VentureBlueprintTemplate } from "../templates/definitions";
 import type { VentureBlueprint } from "../types/blueprint";
 import type { ApprovedOpportunityInput } from "../types/opportunity-input";
+import { inheritRequiredBlogContent } from "@/lib/infinity/organic-growth-engine/blog-os";
 import { buildBlueprintId } from "./select-template";
 
 function clampPriority(score: number | null, confidence: number | null): number {
@@ -58,7 +59,7 @@ export function generateVentureBlueprint(
     marketingChannels: [...template.marketingChannels],
     requiredAssets: [...template.requiredAssets],
     requiredWorkers: [...template.requiredWorkers],
-    requiredContent: [...template.requiredContent],
+    requiredContent: inheritRequiredBlogContent([...template.requiredContent]),
     requiredProducts: [...template.requiredProducts],
     requiredServices: [...template.requiredServices],
     estimatedTimeline: formatTimeline(template.baseTimelineWeeks, opportunity.overallScore),

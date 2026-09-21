@@ -76,15 +76,36 @@ function projectRoom(room: SalesRoomId, evidence: SalesFloorEvidence): SalesRoom
   if (room === "PARTNERSHIPS_CHANNEL") {
     const active = evidence.partners.filter((row) => row.relationship === "ACTIVE_PARTNER").length;
     const sourced = evidence.partners.length;
-    const state: SalesRoomState = active > 0 ? "ACTIVE" : sourced > 0 ? "MONITORING" : "PRESENT_IDLE";
+    const affiliateBuilding = Boolean(evidence.affiliate_program?.building || evidence.affiliate_program?.present);
+    const state: SalesRoomState = active > 0
+      ? "ACTIVE"
+      : sourced > 0 || affiliateBuilding
+        ? "MONITORING"
+        : "PRESENT_IDLE";
     return base(room, evidence, {
       state,
       priority: active > 0 ? "HIGH" : "MEDIUM",
       queue_count: sourced,
-      contribution: sourced > 0 ? "Develop partner-sourced pipeline" : "Identify channel leverage",
-      latest_result: sourced > 0 ? `${sourced} partner records` : "No partners yet",
-      next_action: sourced > 0 ? "Advance the highest-fit partner relationship" : "Research partners who already reach buyers",
-      reason: sourced > 0 ? "Partner records exist" : "No partner evidence",
+      contribution: affiliateBuilding
+        ? "Building OccupancyNPV affiliate-program capability"
+        : sourced > 0
+          ? "Develop partner-sourced pipeline"
+          : "Identify channel leverage",
+      latest_result: affiliateBuilding
+        ? "Affiliate program provisioned; commissions not activated"
+        : sourced > 0
+          ? `${sourced} partner records`
+          : "No partners yet",
+      next_action: affiliateBuilding
+        ? "Keep affiliate capability built without sending recruitment outreach"
+        : sourced > 0
+          ? "Advance the highest-fit partner relationship"
+          : "Research partners who already reach buyers",
+      reason: affiliateBuilding
+        ? "Affiliate & Referral capability is being built under Partnerships"
+        : sourced > 0
+          ? "Partner records exist"
+          : "No partner evidence",
       kpi_summary: unknownSafeKpis({
         partners_sourced: sourced,
         active_partners: active,

@@ -15,5 +15,6 @@ export { WorkspaceMutationEngine } from "./mutation/workspace-mutation-engine";
 export { buildRepositoryContext, formatContextForPrompt } from "./context/repository-context-engine";
 export { decomposeCollectionsFeature, createCreatorCollectionsContract } from "./coding/task-decomposer";
 export { executeCodingTask } from "./coding/ai-coder";
+export { executePabCodingTaskWithAgents, pabTaskToCanonical } from "@/lib/infinity/coding-agents/pab-adapter";
 export { routeCodingTask as routeCodingTaskV21 } from "./routing/coding-router";
 export { isPabV21Enabled, isPabV21LiveMode, getV21Budget } from "./config";

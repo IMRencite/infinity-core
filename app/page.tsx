@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isHqProductionRuntime } from "@/lib/infinity/hq-production-deployment/surface";
 
 const sidebarItems = [
   { label: "Command Center", icon: "command", active: true },
@@ -80,7 +81,7 @@ const statusDot = {
   offline: "bg-zinc-600/65",
   online: "bg-emerald-400/80",
 };
-
+  
 const activityBadge = {
   success: "border-emerald-500/20 bg-emerald-500/10 text-emerald-400/90",
   queued: "border-zinc-500/20 bg-zinc-500/10 text-zinc-400",
@@ -214,6 +215,10 @@ export default async function Home() {
 
   if (user) {
     redirect("/dashboard");
+  }
+
+  if (isHqProductionRuntime()) {
+    redirect("/login");
   }
 
   return (

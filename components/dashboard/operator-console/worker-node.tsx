@@ -1,6 +1,7 @@
 "use client";
 
-import type { DepartmentUiState, OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
+import type { OperatorWorkerNode } from "@/lib/infinity/operator-console/types";
+import { projectWorkerVisualState, type HqWorkerVisualState } from "@/lib/infinity/hq-live-activity";
 
 type Props = {
   node: OperatorWorkerNode;
@@ -10,39 +11,28 @@ type Props = {
   blocked?: boolean;
 };
 
-function nodeClasses(
-  status: DepartmentUiState,
-  isActive: boolean,
-  isDormant: boolean,
-  prominent: boolean,
-  idle: boolean,
-  blocked: boolean,
-): string {
-  if (blocked || status === "BLOCKED" || status === "FAILED") {
-    return "hq-worker-orb--blocked border-amber-500/50 bg-amber-500/10";
-  }
-  if (idle) {
-    return "hq-worker-orb--idle border-cyan-500/25 bg-cyan-950/20";
-  }
-  if (isDormant) {
-    return "hq-worker-orb--idle border-zinc-700/40 bg-zinc-900/40";
-  }
-  const glow = prominent && isActive
-    ? "shadow-[0_0_32px_rgba(34,211,238,0.5),0_0_14px_rgba(167,139,250,0.35)]"
-    : isActive
-      ? "shadow-[0_0_20px_rgba(34,211,238,0.38)]"
-      : "";
-  switch (status) {
-    case "RUNNING":
-      return isActive
-        ? `border-sky-400/60 bg-sky-500/20 ${glow}`
-        : "border-sky-500/30 bg-sky-950/30";
-    case "COMPLETE":
-      return "border-emerald-500/40 bg-emerald-500/10 shadow-[0_0_8px_rgba(52,211,153,0.15)]";
+const VISUAL_BADGE: Record<HqWorkerVisualState, string> = {
+  ACTIVE: "ACTIVE",
+  WAITING: "WAITING",
+  BLOCKED: "BLOCKED",
+  AUTHORIZATION_REQUIRED: "AUTHORIZATION",
+  IDLE: "IDLE",
+};
+
+function visualClasses(visual: HqWorkerVisualState, prominent: boolean): string {
+  switch (visual) {
+    case "ACTIVE":
+      return prominent
+        ? "hq-worker-orb--visual-active hq-worker-orb--active-work border-[#e879f9]/70 bg-[#e879f9]/20 shadow-[0_0_32px_rgba(232,121,249,0.5),0_0_14px_rgba(167,139,250,0.28)]"
+        : "hq-worker-orb--visual-active hq-worker-orb--active-work border-[#e879f9]/60 bg-[#e879f9]/16 shadow-[0_0_20px_rgba(232,121,249,0.42)]";
     case "WAITING":
-      return "border-zinc-600/40 bg-zinc-800/30";
-    default:
-      return "border-zinc-700/40 bg-zinc-900/30 opacity-60";
+      return "hq-worker-orb--visual-waiting border-[#3dffb0]/55 bg-[#3dffb0]/10";
+    case "BLOCKED":
+      return "hq-worker-orb--visual-blocked hq-worker-orb--blocked border-amber-500/55 bg-amber-500/10";
+    case "AUTHORIZATION_REQUIRED":
+      return "hq-worker-orb--visual-authorization border-violet-400/60 bg-violet-500/15";
+    case "IDLE":
+      return "hq-worker-orb--visual-idle hq-worker-orb--idle border-[#7dd3fc]/40 bg-[#38bdf8]/10";
   }
 }
 
@@ -58,62 +48,87 @@ function coreSizeClasses(compact: boolean, prominent: boolean): string {
   return "h-3 w-3";
 }
 
-export function WorkerNode({ node, compact = false, prominent = false, idle = false, blocked = false }: Props) {
-  const isIdle = idle || (!node.motionActive && !node.isActive && node.status !== "BLOCKED" && node.status !== "FAILED");
-  const isBlocked = blocked || node.status === "BLOCKED" || node.status === "FAILED";
-  const isProminent = !isIdle && !isBlocked && (prominent || (node.motionActive && node.isActive));
-  const showPulse = !isIdle && !isBlocked && node.isActive && node.status === "RUNNING";
+export function WorkerNode({ node, compact = false, prominent = false }: Props) {
+  const visual = projectWorkerVisualState(node);
+  const isActive = visual.visualState === "ACTIVE";
+  const isBlocked = visual.visualState === "BLOCKED";
+  const isAuth = visual.visualState === "AUTHORIZATION_REQUIRED";
+  const isWaiting = visual.visualState === "WAITING";
+  const isIdle = visual.visualState === "IDLE";
+  const isProminent = isActive && prominent;
+  const badge = VISUAL_BADGE[visual.visualState];
 
   return (
     <div
       className={`relative flex flex-col items-center ${compact && !isProminent ? "gap-0.5" : "gap-1"}`}
-      title={[node.displayRole, node.displayTask, node.provider, node.model, isBlocked ? "BLOCKED" : isIdle ? "PRESENT_IDLE" : node.status].filter(Boolean).join(" · ")}
+      title={[node.displayRole, node.displayTask, node.provider, node.model, visual.accessibleState].filter(Boolean).join(" · ")}
+      aria-label={`${node.displayRole} · ${visual.accessibleState}`}
+      data-hq-worker-visual-state={visual.visualState}
+      data-hq-worker-glow={visual.glow ? "true" : "false"}
+      data-state={visual.visualState}
     >
       <div className="relative">
-        {showPulse ? (
+        {visual.glow ? (
           <>
             <span
-              className={`absolute inset-0 rounded-full bg-sky-400/25 ${isProminent ? "hq-orb-pulse" : "animate-ping"}`}
-              style={isProminent ? undefined : { animationDuration: "2.5s" }}
+              className={`absolute inset-0 rounded-full bg-[#e879f9]/25 hq-worker-orb--motion ${isProminent ? "hq-orb-pulse" : ""}`}
               aria-hidden
             />
             {isProminent ? (
-              <span className="absolute -inset-2 rounded-full bg-sky-400/10 blur-md" aria-hidden />
+              <span className="absolute -inset-2 rounded-full bg-[#e879f9]/12 blur-md" aria-hidden />
             ) : null}
           </>
         ) : null}
         <div
+          data-hq-worker-glow={visual.glow ? "true" : "false"}
+          data-hq-worker-motion={visual.glow ? "true" : "false"}
           className={`
             relative flex items-center justify-center rounded-full border
             ${sizeClasses(compact, isProminent)}
-            ${nodeClasses(node.status, node.isActive, node.isDormant, isProminent, isIdle, isBlocked)}
+            ${visual.glow ? "hq-worker-orb--active-work" : "hq-worker-orb--static"}
+            ${visualClasses(visual.visualState, isProminent)}
           `}
         >
           <span
             className={`rounded-full ${coreSizeClasses(compact, isProminent)} ${
-              showPulse
-                ? "bg-sky-200 shadow-[0_0_8px_rgba(186,230,253,0.8)]"
+              visual.glow
+                ? "bg-[#f5d0fe] shadow-[0_0_8px_rgba(232,121,249,0.85)]"
                 : isBlocked
                   ? "bg-amber-400/80"
-                  : node.status === "COMPLETE" || isIdle
-                    ? "bg-cyan-300/50"
-                    : "bg-zinc-500"
+                  : isAuth
+                    ? "bg-violet-300/80"
+                    : isWaiting
+                      ? "bg-[#3dffb0]/80"
+                      : "bg-[#7dd3fc]"
             }`}
             aria-hidden
           />
         </div>
-        {isBlocked ? (
+        {isBlocked || isAuth ? (
           <span
-            className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-zinc-900 bg-amber-400"
+            className={`absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-zinc-900 ${isAuth ? "bg-violet-300" : "bg-amber-400"}`}
             aria-hidden
           />
         ) : null}
       </div>
-      {!compact || isProminent || isIdle || isBlocked ? (
-        <span className={`max-w-[96px] truncate text-center text-[9px] font-medium uppercase tracking-wide ${isIdle ? "text-zinc-500" : isBlocked ? "text-amber-200/80" : "text-zinc-300"}`}>
-          {isBlocked ? "Blocked" : isIdle ? node.displayRole : node.displayRole}
-        </span>
-      ) : null}
+      <span
+        className={`max-w-[96px] truncate text-center text-[8px] font-semibold uppercase tracking-wide ${
+          isActive
+            ? "text-[#f5d0fe]"
+            : isAuth
+              ? "text-violet-200/85"
+              : isBlocked
+                ? "text-amber-200/80"
+                : isWaiting
+                  ? "text-[#3dffb0]"
+                  : "text-[#7dd3fc]"
+        }`}
+      >
+        {badge}
+      </span>
+      <span className={`max-w-[96px] truncate text-center text-[9px] font-medium uppercase tracking-wide ${isIdle ? "text-[#7dd3fc]/80" : isBlocked ? "text-amber-200/80" : isAuth ? "text-violet-200/80" : isWaiting ? "text-[#3dffb0]/85" : "text-zinc-300"}`}>
+        {node.displayRole}
+      </span>
     </div>
   );
 }
@@ -122,9 +137,9 @@ export function WorkerNodeCluster({ nodes, compact = false }: { nodes: OperatorW
   if (nodes.length === 0) return null;
 
   return (
-    <div className={`flex items-end justify-center ${compact ? "gap-2" : "gap-3"}`} aria-label="Active agents">
+    <div className={`flex items-end justify-center ${compact ? "gap-2" : "gap-3"}`} aria-label="Agents">
       {nodes.map((node) => (
-        <WorkerNode key={node.nodeId} node={node} compact={compact} prominent={node.motionActive} />
+        <WorkerNode key={node.nodeId} node={node} compact={compact} prominent={projectWorkerVisualState(node).glow} />
       ))}
     </div>
   );

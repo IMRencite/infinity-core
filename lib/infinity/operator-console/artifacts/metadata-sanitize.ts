@@ -29,6 +29,14 @@ const ALLOWED_METADATA_KEYS = new Set([
   "artifactRole",
   "estimatedCac",
   "priceLabel",
+  "href",
+  "universe",
+  "topCount",
+  "viewAll",
+  "movement",
+  "lifecycle",
+  "selectionState",
+  "shortlisted",
 ]);
 
 const SECRET_PATTERN =

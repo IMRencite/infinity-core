@@ -1,6 +1,5 @@
 import { ReadOnlyMutationBlockedError } from "../../probes/mode";
 import type { ProviderCapabilityStatus, ProviderProbeFailureCode } from "../../probes/status";
-import { classifyHttpFailure } from "../../probes/status";
 import {
   NAMECHEAP_DETAIL_CAP,
   NAMECHEAP_MAX_PAGES,
@@ -22,6 +21,8 @@ import {
   parseNamecheapPaging,
   type NormalizedRegistrarDomain,
 } from "./normalize";
+import { normalizePremiumFlag, normalizeUsdAmount } from "../money";
+import { classifyNamecheapProviderError } from "./classify";
 
 const READ_COMMAND_SET = new Set(NAMECHEAP_READ_COMMANDS.map((command) => command.toLowerCase()));
 const WRITE_COMMAND_SET = new Set(NAMECHEAP_WRITE_COMMANDS.map((command) => command.toLowerCase()));
@@ -108,23 +109,8 @@ export class NamecheapReadAdapter {
     const message = error instanceof Error ? this.config.credentials?.redact(error.message) ?? error.message : String(error);
     const status = typeof error === "object" && error && "status" in error ? Number((error as { status?: number }).status) : null;
     const code = typeof error === "object" && error && "namecheapCode" in error ? String((error as { namecheapCode?: string }).namecheapCode ?? "") : "";
-    if (/not whitelisted|IP is not|1011150/i.test(message) || code === "1011150") {
-      return { status: "FAILED", failureCode: "PERMISSION_DENIED", reason: "NAMECHEAP_CLIENT_IP_WHITELIST_REQUIRED" };
-    }
-    if (/API Key is invalid|1011102|1011101|Authentication|AUTH/i.test(message) || status === 401 || status === 403) {
-      return { status: "FAILED", failureCode: status ? classifyHttpFailure(status) : "AUTH_FAILED", reason: "AUTH_FAILED" };
-    }
-    if (/429|rate limit/i.test(message) || status === 429) {
-      return { status: "UNAVAILABLE", failureCode: "RATE_LIMITED", reason: "RATE_LIMITED" };
-    }
-    if (/TIMEOUT|ECONN|ETIMEDOUT|network|AbortError/i.test(message) || (error instanceof Error && error.name === "AbortError")) {
-      return { status: "UNAVAILABLE", failureCode: "NETWORK_ERROR", reason: "NETWORK_ERROR" };
-    }
-    if (status && status >= 500) return { status: "UNAVAILABLE", failureCode: "PROVIDER_ERROR", reason: "PROVIDER_ERROR" };
-    if (/INVALID_RESPONSE|malformed/i.test(message)) {
-      return { status: "FAILED", failureCode: "INVALID_RESPONSE", reason: "INVALID_RESPONSE" };
-    }
-    return { status: "FAILED", failureCode: "PROVIDER_ERROR", reason: message.slice(0, 80) };
+    const classified = classifyNamecheapProviderError({ message, code, status });
+    return { status: classified.status, failureCode: classified.failureCode, reason: classified.reason };
   }
 
   async verifyReadOnly(): Promise<NamecheapReadReport> {
@@ -223,4 +209,167 @@ export class NamecheapReadAdapter {
       };
     }
   }
+
+  async checkAvailability(domains: string[]): Promise<{
+    rows: Array<{
+      domain: string;
+      available: boolean | null;
+      registrationPriceUsd: number | null;
+      renewalPriceUsd: number | null;
+      currency: "USD";
+      premium: boolean | null;
+      priceTruth: "UNKNOWN" | "ESTIMATE";
+      status: "AVAILABLE" | "UNAVAILABLE" | "PREMIUM" | "UNKNOWN";
+    }>;
+    mutationOccurred: false;
+    writeHttpCalls: 0;
+    readHttpCalls: number;
+    status: ProviderCapabilityStatus;
+    realProviderCall: boolean;
+    failureCode: ProviderProbeFailureCode | null;
+    failureReason: string | null;
+  }> {
+    const empty = {
+      rows: [] as Array<{
+        domain: string;
+        available: boolean | null;
+        registrationPriceUsd: number | null;
+        renewalPriceUsd: number | null;
+        currency: "USD";
+        premium: boolean | null;
+        priceTruth: "UNKNOWN" | "ESTIMATE";
+        status: "AVAILABLE" | "UNAVAILABLE" | "PREMIUM" | "UNKNOWN";
+      }>,
+      mutationOccurred: false as const,
+      writeHttpCalls: 0 as const,
+      readHttpCalls: 0,
+      status: "NOT_CONFIGURED" as const,
+      realProviderCall: false,
+      failureCode: "NOT_CONFIGURED" as const,
+      failureReason: "NOT_CONFIGURED",
+    };
+    if (!this.config.credentials) return empty;
+    const unique = [...new Set(domains.map((row) => row.trim().toLowerCase()).filter(Boolean))];
+    if (unique.length === 0) return { ...empty, status: "FAILED", failureCode: "INVALID_RESPONSE", failureReason: "NO_DOMAINS" };
+    try {
+      const xml = await this.getXml(this.config.credentials, "namecheap.domains.check", {
+        DomainList: unique.join(","),
+      });
+      const tags = xml.match(/<DomainCheckResult\b[^>]*>/gi) ?? [];
+      const rows = tags.flatMap((tag) => {
+        const domain = /Domain="([^"]+)"/i.exec(tag)?.[1];
+        if (!domain) return [];
+        const availableMatch = tag.match(/Available="(true|false)"/i);
+        const premiumMatch = tag.match(/IsPremiumName="(true|false)"/i);
+        const regPriceMatch = tag.match(/PremiumRegistrationPrice="([^"]+)"/i) ?? tag.match(/Price="([^"]+)"/i);
+        const renewPriceMatch = tag.match(/PremiumRenewalPrice="([^"]+)"/i) ?? tag.match(/RenewalPrice="([^"]+)"/i);
+        const available = availableMatch ? availableMatch[1]!.toLowerCase() === "true" : null;
+        const premium = normalizePremiumFlag(premiumMatch?.[1] ?? null);
+        const registrationPriceUsd = normalizeUsdAmount(regPriceMatch?.[1] ?? null);
+        const renewalPriceUsd = normalizeUsdAmount(renewPriceMatch?.[1] ?? null);
+        const status =
+          premium === true ? "PREMIUM" : available === true ? "AVAILABLE" : available === false ? "UNAVAILABLE" : "UNKNOWN";
+        return [
+          {
+            domain: domain.toLowerCase(),
+            available,
+            registrationPriceUsd,
+            renewalPriceUsd,
+            currency: "USD" as const,
+            premium,
+            priceTruth: registrationPriceUsd == null && renewalPriceUsd == null ? ("UNKNOWN" as const) : ("ESTIMATE" as const),
+            status: status as "AVAILABLE" | "UNAVAILABLE" | "PREMIUM" | "UNKNOWN",
+          },
+        ];
+      });
+      return {
+        rows,
+        mutationOccurred: false,
+        writeHttpCalls: 0,
+        readHttpCalls: this.readHttpCalls,
+        status: rows.length > 0 ? "READ_ONLY_VERIFIED" : "FAILED",
+        realProviderCall: true,
+        failureCode: rows.length > 0 ? null : "INVALID_RESPONSE",
+        failureReason: rows.length > 0 ? null : "NO_DOMAIN_CHECK_RESULTS",
+      };
+    } catch (error) {
+      const classified = this.classifyError(error);
+      return {
+        ...empty,
+        readHttpCalls: this.readHttpCalls,
+        status: classified.status,
+        realProviderCall: this.readHttpCalls > 0,
+        failureCode: classified.failureCode,
+        failureReason: classified.reason,
+      };
+    }
+  }
+
+  async getStandardTldPricing(tld: string): Promise<{
+    registrationPriceUsd: number | null;
+    renewalPriceUsd: number | null;
+    currency: "USD";
+    status: ProviderCapabilityStatus;
+    realProviderCall: boolean;
+    mutationOccurred: false;
+    writeHttpCalls: 0;
+    failureCode: ProviderProbeFailureCode | null;
+    failureReason: string | null;
+  }> {
+    const skipped = {
+      registrationPriceUsd: null as number | null,
+      renewalPriceUsd: null as number | null,
+      currency: "USD" as const,
+      status: "NOT_CONFIGURED" as const,
+      realProviderCall: false,
+      mutationOccurred: false as const,
+      writeHttpCalls: 0 as const,
+      failureCode: "NOT_CONFIGURED" as const,
+      failureReason: "NOT_CONFIGURED",
+    };
+    if (!this.config.credentials) return skipped;
+    const productName = tld.replace(/^\./, "").toUpperCase();
+    try {
+      const registerXml = await this.getXml(this.config.credentials, "namecheap.users.getPricing", {
+        ProductType: "DOMAIN",
+        ActionName: "REGISTER",
+        ProductName: productName,
+      });
+      const renewXml = await this.getXml(this.config.credentials, "namecheap.users.getPricing", {
+        ProductType: "DOMAIN",
+        ActionName: "RENEW",
+        ProductName: productName,
+      });
+      const registrationPriceUsd = firstNamecheapPrice(registerXml);
+      const renewalPriceUsd = firstNamecheapPrice(renewXml);
+      return {
+        registrationPriceUsd,
+        renewalPriceUsd,
+        currency: "USD",
+        status: registrationPriceUsd != null || renewalPriceUsd != null ? "READ_ONLY_VERIFIED" : "FAILED",
+        realProviderCall: true,
+        mutationOccurred: false,
+        writeHttpCalls: 0,
+        failureCode: registrationPriceUsd == null && renewalPriceUsd == null ? "INVALID_RESPONSE" : null,
+        failureReason: registrationPriceUsd == null && renewalPriceUsd == null ? "NO_PRICING_RESULTS" : null,
+      };
+    } catch (error) {
+      const classified = this.classifyError(error);
+      return {
+        ...skipped,
+        status: classified.status,
+        realProviderCall: this.readHttpCalls > 0,
+        failureCode: classified.failureCode,
+        failureReason: classified.reason,
+      };
+    }
+  }
+}
+
+function firstNamecheapPrice(xml: string): number | null {
+  const match =
+    xml.match(/YourPrice="([^"]+)"/i) ??
+    xml.match(/RegularPrice="([^"]+)"/i) ??
+    xml.match(/Price="([^"]+)"/i);
+  return normalizeUsdAmount(match?.[1] ?? null);
 }

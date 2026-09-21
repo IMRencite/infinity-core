@@ -21,6 +21,11 @@ import { projectCanonicalHQLive } from "@/lib/infinity/hq-live-truth/projection"
 import type { CanonicalHQLiveProjection } from "@/lib/infinity/hq-live-truth/types";
 import { projectAutonomousOperations } from "@/lib/infinity/autonomous-operating-loop/project";
 import type { AutonomousOperationsProjection } from "@/lib/infinity/autonomous-operating-loop/types";
+import type { CloudRuntimeHqProjection } from "@/lib/infinity/cloud-runtime/types";
+import { unreachableCloudRuntimeHq } from "@/lib/infinity/cloud-runtime/hq";
+import type { OrganicGrowthHqView } from "@/lib/infinity/organic-growth-engine/continuous/hq";
+import type { CommunicationSchedulerHqProjection } from "@/lib/infinity/production-outbound/communication-runtime";
+import type { SalesCommandCenterView } from "@/lib/infinity/always-closing-sales/hq";
 
 export type HqCanonicalLiveState = {
   generatedAt: string;
@@ -36,6 +41,10 @@ export type HqCanonicalLiveState = {
   capabilityArtifacts?: HqRoomArtifactMap;
   canonicalLive?: CanonicalHQLiveProjection;
   autonomousOperating?: AutonomousOperationsProjection;
+  cloudRuntime?: CloudRuntimeHqProjection;
+  organicGrowth?: OrganicGrowthHqView;
+  communicationScheduler?: CommunicationSchedulerHqProjection;
+  salesCommandCenter?: SalesCommandCenterView;
 };
 
 export function hqCanonicalVersionFromActivity(
@@ -120,6 +129,7 @@ export function loadHqCanonicalLiveState(organizationId: string, selectedVenture
       selectedVentureId,
     }),
     autonomousOperating,
+    cloudRuntime: unreachableCloudRuntimeHq(),
   };
 }
 
@@ -159,6 +169,7 @@ export function attachHqCanonicalLiveState(
       ventureOperatingScale: live.ventureOperatingScale ?? snapshot.ventureOperatingScale,
       canonicalLive: live.canonicalLive ?? snapshot.canonicalLive,
       autonomousOperating: live.autonomousOperating ?? snapshot.autonomousOperating,
+      cloudRuntime: live.cloudRuntime ?? snapshot.cloudRuntime,
       roomArtifacts: live.capabilityArtifacts
         ? replaceProviderReadinessArtifacts(snapshot.roomArtifacts, live.capabilityArtifacts)
         : snapshot.roomArtifacts,

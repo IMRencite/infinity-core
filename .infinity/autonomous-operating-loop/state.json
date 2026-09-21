@@ -1,0 +1,2462 @@
+{
+  "contract": "AutonomousDailyOperatingLoop",
+  "portfolio_state": "IDLE_NO_ACTION",
+  "venture_states": {
+    "candidate:7e7e924e-0741-4155-a729-8d529da77ea9": "IDLE_NO_ACTION"
+  },
+  "last_decision": {
+    "contract": "AutonomousNextMissionResolver",
+    "outcome": "CONTINUE_EXISTING_ACTION",
+    "selected_mission": null,
+    "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+    "priority": "EXISTING_GROWTH_CONTINUATION",
+    "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+    "evidence": [
+      "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+      "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+      "SEND_NOT_FORCED"
+    ],
+    "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+    "capability_required": "GROWTH_RUNTIME",
+    "financial_exposure": 0,
+    "spend_required": 0,
+    "commitment_required": 0,
+    "authorization_class": "NONE",
+    "review_condition": "GROWTH_TICK_OR_REPLY",
+    "fallback": "IDLE_NO_ACTION",
+    "alternatives_considered": [
+      "PAID_ACQUISITION",
+      "AUTONOMOUS_FINANCIAL_COMMITMENT",
+      "MONEY_MOVEMENT",
+      "NEW_OUTREACH_BURST",
+      "CREATE_OUTREACH_MISSION",
+      "USE_SPEND_AUTHORITY"
+    ],
+    "founder_approval_required": false,
+    "recommended_commitment": {
+      "amount": 0,
+      "category": "OPERATIONS",
+      "reason": "Authority exists but campaign continuation is zero-cost",
+      "evidence": [
+        "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+      ],
+      "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+      "risk": "HIGH",
+      "authority_available": 5,
+      "created": false
+    },
+    "learning_applied": []
+  },
+  "last_explanation": {
+    "contract": "AutonomousDecisionExplanation",
+    "why_now": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+    "evidence": [
+      "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+      "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+      "SEND_NOT_FORCED"
+    ],
+    "priority_rationale": "EXISTING_GROWTH_CONTINUATION outranks deferred alternatives under profit-before-scale",
+    "alternatives_considered": [
+      "PAID_ACQUISITION",
+      "AUTONOMOUS_FINANCIAL_COMMITMENT",
+      "MONEY_MOVEMENT",
+      "NEW_OUTREACH_BURST",
+      "CREATE_OUTREACH_MISSION",
+      "USE_SPEND_AUTHORITY"
+    ],
+    "why_selected": "Existing campaign tick continues inside caps; no new mission and no spend",
+    "why_others_deferred": [
+      "Paid acquisition remains blocked",
+      "Autonomous commitments stay recommended-only",
+      "Mercury is read-only; money movement disabled",
+      "Do not manufacture outreach busywork or duplicate the existing campaign",
+      "Do not manufacture outreach busywork or duplicate the existing campaign",
+      "Remaining spend authority is a constraint, not a command to spend"
+    ],
+    "financial_exposure": 0,
+    "risk": "OPERATING",
+    "expected_measurement": "GROWTH_TICK_OR_REPLY"
+  },
+  "last_mission_id": null,
+  "last_completed_mission_id": "work:occupancynpv:venture-financial-commitment-v1",
+  "last_action_idempotency_key": "CONTINUE_EXISTING_ACTION:none:candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+  "last_external_action_key": null,
+  "last_action_at": null,
+  "last_action_kind": null,
+  "waiting_dependency": null,
+  "last_daily_review_at": "2026-09-21T05:36:19.367Z",
+  "next_daily_review_at": "2026-09-21T16:00:00.000Z",
+  "next_run_at": "2026-09-21T16:00:00.000Z",
+  "daily_reviews": [
+    {
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "display_name": "OccupancyNPV",
+      "eligible": true,
+      "paused": false,
+      "healthy": true,
+      "growth_action_active": true,
+      "customer_response_pending": false,
+      "revenue_status": "NO_REVENUE_OBSERVED",
+      "actual_costs": 0,
+      "contribution": null,
+      "conversion_evidence": "INSUFFICIENT",
+      "provider_health": "HEALTHY",
+      "fulfillment_health": "HEALTHY",
+      "capital_state": "UNCONFIGURED",
+      "highest_value_next_action": "CONTINUE_EXISTING_GROWTH_OR_WAIT"
+    },
+    {
+      "venture_id": "candidate:f1336945-3350-4d08-921e-4dcb5bc77b8e",
+      "display_name": "AskReview",
+      "eligible": false,
+      "paused": true,
+      "healthy": false,
+      "growth_action_active": false,
+      "customer_response_pending": false,
+      "revenue_status": "NO_REVENUE_OBSERVED",
+      "actual_costs": 0,
+      "contribution": null,
+      "conversion_evidence": "INSUFFICIENT",
+      "provider_health": "HEALTHY",
+      "fulfillment_health": "PAUSED",
+      "capital_state": "RESERVE_ONLY",
+      "highest_value_next_action": "HOLD_PAUSED_VENTURE"
+    }
+  ],
+  "pending_events": [],
+  "consecutive_failures": 0,
+  "same_decision_streak": 107,
+  "learning": [],
+  "decision_history": [
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    },
+    {
+      "contract": "AutonomousNextMissionResolver",
+      "outcome": "CONTINUE_EXISTING_ACTION",
+      "selected_mission": null,
+      "reason": "EXISTING_GROWTH_CAMPAIGN_CONTINUES_WITHOUT_NEW_MISSION",
+      "priority": "EXISTING_GROWTH_CONTINUATION",
+      "expected_outcome": "Existing campaign tick continues inside caps; no new mission and no spend",
+      "evidence": [
+        "CAMPAIGN:campaign:candidate:7e7e924e-0741-4155-a729-8d529da77ea9:first-outbound-validation",
+        "CAMPAIGN_STATE:GROWTH_EXPERIMENT_ACTIVE",
+        "SEND_NOT_FORCED"
+      ],
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "capability_required": "GROWTH_RUNTIME",
+      "financial_exposure": 0,
+      "spend_required": 0,
+      "commitment_required": 0,
+      "authorization_class": "NONE",
+      "review_condition": "GROWTH_TICK_OR_REPLY",
+      "fallback": "IDLE_NO_ACTION",
+      "alternatives_considered": [
+        "PAID_ACQUISITION",
+        "AUTONOMOUS_FINANCIAL_COMMITMENT",
+        "MONEY_MOVEMENT",
+        "NEW_OUTREACH_BURST",
+        "CREATE_OUTREACH_MISSION",
+        "USE_SPEND_AUTHORITY"
+      ],
+      "founder_approval_required": false,
+      "recommended_commitment": {
+        "amount": 0,
+        "category": "OPERATIONS",
+        "reason": "Authority exists but campaign continuation is zero-cost",
+        "evidence": [
+          "SPEND_AUTHORITY_EXISTS_IS_NOT_A_COMMAND"
+        ],
+        "expected_benefit": "NONE_WITHOUT_EVIDENCE",
+        "risk": "HIGH",
+        "authority_available": 5,
+        "created": false
+      },
+      "learning_applied": []
+    }
+  ],
+  "action_history": [],
+  "mission_history": [
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1",
+    "work:occupancynpv:venture-financial-commitment-v1"
+  ],
+  "updated_at": "2026-09-21T05:36:19.367Z"
+}

@@ -43,7 +43,7 @@ describe("Executive planner handoff plan QA", () => {
         canonical_executive_selection_decision_id: "dec-canonical",
         build_factory: false,
       },
-    } as Plan;
+    } as unknown as Plan;
 
     const steps = [
       {
@@ -63,7 +63,7 @@ describe("Executive planner handoff plan QA", () => {
         opportunity_id: "opp-1",
         canonical_executive_selection_decision_id: "dec-canonical",
       },
-    } as Plan;
+    } as unknown as Plan;
 
     const steps = [{ capability_key: "build.factory.start", step_order: 1 }] as PlanStep[];
 

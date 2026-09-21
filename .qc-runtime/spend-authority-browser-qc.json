@@ -1,0 +1,69 @@
+{
+  "origin": "http://localhost:3000",
+  "authenticated": true,
+  "port": "3000",
+  "after": {
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "authenticated": true,
+    "pulseCash": "UNKNOWN",
+    "pulseAuthorized": "$50",
+    "pulseAllocated": "$25",
+    "pulseSpend": "$0",
+    "pulseStatus": "TREASURY DEGRADED",
+    "completeness": "PARTIAL",
+    "allocated": "$25Source: CAPITAL ALLOCATION LEDGER · Sync: Sep 14, 2026, 7:40 AM UTC",
+    "spendAuthority": "$5",
+    "effective": "$5",
+    "committed": "$0",
+    "actualSpend": "$0Source: CANONICAL ECONOMIC LEDGER · Sync: Sep 14, 2026, 7:40 AM UTC",
+    "remaining": "$5",
+    "unused": "$20",
+    "paidAcquisition": "$0",
+    "status": "ACTIVE",
+    "source": "FOUNDER_DIRECT",
+    "freshness": "2026-09-13T10:05:55.108Z",
+    "verifiedCash": "UNKNOWNSource: MERCURY",
+    "authorizedCapital": "$50Source: FOUNDER CAPITAL POLICY · Sync: Sep 14, 2026, 7:40 AM UTC",
+    "panel": true,
+    "treasury": true,
+    "setAuthority": true,
+    "sse": "open",
+    "currentWork": "Treasury / capital allocation",
+    "missionVisible": false,
+    "bodyHasNotConfigured": false,
+    "mercuryReadOnly": true,
+    "mercuryLive": true,
+    "stripeLive": true,
+    "executeDisabled": true,
+    "labeledInputs": 5
+  },
+  "live": {
+    "status": 200,
+    "cash": null,
+    "authorized": null,
+    "allocated": null,
+    "mercury": null,
+    "stripe": null,
+    "write": null,
+    "movement": null,
+    "authorities": null
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false
+    },
+    "tablet": {
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "overflow": false
+    },
+    "mobile": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false
+    }
+  }
+}

@@ -1,0 +1,326 @@
+{
+  "captured_at": "2026-09-12T06:28:03.468Z",
+  "environment": "LIVE_PRODUCTION",
+  "desktop_screenshots": 11,
+  "mobile_screenshots": 11,
+  "console_errors": [
+    "desktop:Failed to load resource: the server responded with a status of 401 ()",
+    "desktop:Failed to load resource: the server responded with a status of 401 ()",
+    "mobile:Failed to load resource: the server responded with a status of 401 ()",
+    "mobile:Failed to load resource: the server responded with a status of 401 ()"
+  ],
+  "failed_requests": [
+    "desktop:https://occupancynpv.com/occupancynpv/app/checkout/complete",
+    "mobile:https://occupancynpv.com/occupancynpv/app/checkout/complete"
+  ],
+  "computed": [
+    {
+      "name": "submit",
+      "tag": "button",
+      "class_name": "vg-cta vg-cta--primary",
+      "required": true,
+      "computed": {
+        "fontFamily": "\"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+        "fontSize": "17.64px",
+        "fontWeight": "400",
+        "lineHeight": "28.224px",
+        "padding": "12.6px 20.16px",
+        "margin": "0px",
+        "borderRadius": "6px",
+        "border": "1px solid rgba(0, 0, 0, 0)",
+        "background": "rgb(29, 78, 120)",
+        "width": "201.594px",
+        "minHeight": "46.2px",
+        "display": "flex",
+        "appearance": "none"
+      }
+    },
+    {
+      "name": "message",
+      "tag": "textarea",
+      "class_name": "vg-textarea",
+      "required": true,
+      "computed": {
+        "fontFamily": "\"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+        "fontSize": "17.64px",
+        "fontWeight": "400",
+        "lineHeight": "25.578px",
+        "padding": "10.92px 12.6px",
+        "margin": "0px",
+        "borderRadius": "6px",
+        "border": "1px solid rgb(213, 219, 227)",
+        "background": "rgb(255, 255, 255)",
+        "width": "648.156px",
+        "minHeight": "126px",
+        "display": "block",
+        "appearance": "none"
+      }
+    },
+    {
+      "name": "email",
+      "tag": "input",
+      "class_name": "vg-input",
+      "required": true,
+      "computed": {
+        "fontFamily": "\"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+        "fontSize": "17.64px",
+        "fontWeight": "400",
+        "lineHeight": "25.578px",
+        "padding": "10.92px 12.6px",
+        "margin": "0px",
+        "borderRadius": "6px",
+        "border": "1px solid rgb(213, 219, 227)",
+        "background": "rgb(255, 255, 255)",
+        "width": "648.156px",
+        "minHeight": "43.68px",
+        "display": "block",
+        "appearance": "none"
+      }
+    }
+  ],
+  "gates": {
+    "DefaultBrowserStyleDetectionGate": {
+      "gate": "DefaultBrowserStyleDetectionGate",
+      "result": "PASS",
+      "reasons": [],
+      "unstyled": []
+    },
+    "RenderedStyleApplicationGate": {
+      "gate": "RenderedStyleApplicationGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "VentureDesignSystemConformanceGate": {
+      "gate": "VentureDesignSystemConformanceGate",
+      "result": "PASS",
+      "reasons": []
+    },
+    "RenderedVisualQualityGate": {
+      "gate": "RenderedVisualQualityGate",
+      "result": "PASS",
+      "reasons": []
+    }
+  },
+  "routes": [
+    {
+      "venture": "OccupancyNPV",
+      "route": "/",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/pricing",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_pricing.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/how-it-works",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_how-it-works.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/faq",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_faq.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/suggest-improvement",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_suggest-improvement.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/privacy-policy",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_privacy-policy.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/terms-of-service",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_terms-of-service.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/sitemap.xml",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_sitemap.xml.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app/login",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_occupancynpv_app_login.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_occupancynpv_app.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app/checkout/complete",
+      "viewport": "desktop",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/desktop_occupancynpv_app_checkout_complete.png",
+      "status": null,
+      "visual_result": "HTTP_FAIL"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/pricing",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_pricing.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/how-it-works",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_how-it-works.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/faq",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_faq.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/suggest-improvement",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_suggest-improvement.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/privacy-policy",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_privacy-policy.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/terms-of-service",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_terms-of-service.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/sitemap.xml",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_sitemap.xml.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app/login",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_occupancynpv_app_login.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_occupancynpv_app.png",
+      "status": 200,
+      "visual_result": "CAPTURED"
+    },
+    {
+      "venture": "OccupancyNPV",
+      "route": "/occupancynpv/app/checkout/complete",
+      "viewport": "mobile",
+      "deployment": "LIVE_PRODUCTION",
+      "timestamp": "2026-09-12T06:28:03.468Z",
+      "screenshot": ".infinity/venture-operating-scale/occupancynpv-live-screenshots/mobile_occupancynpv_app_checkout_complete.png",
+      "status": null,
+      "visual_result": "HTTP_FAIL"
+    }
+  ]
+}

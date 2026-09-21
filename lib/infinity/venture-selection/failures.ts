@@ -27,5 +27,8 @@ export function classifyVentureSelectionFailure(error: unknown): VentureSelectio
   if (/candidate|monetization/i.test(message)) {
     return new VentureSelectionError(message, "data_load_failure");
   }
+  if (/SELECTION_POOL_LINEAGE_ERROR|selection pool lineage/i.test(message)) {
+    return new VentureSelectionError(message, "selection_pool_lineage_error");
+  }
   return new VentureSelectionError(message, "selection_failure");
 }

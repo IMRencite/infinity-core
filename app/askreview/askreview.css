@@ -1,0 +1,40 @@
+:root {
+  --cf-page-gutter-applied: 1;
+  --pv-gutter-page: 2rem;
+  --pv-gutter-tablet: 1.5rem;
+  --pv-gutter-mobile: 1.25rem;
+}
+@media (max-width: 960px) {
+  :root { --pv-gutter-page: var(--pv-gutter-tablet); }
+}
+@media (max-width: 640px) {
+  :root { --pv-gutter-page: var(--pv-gutter-mobile); }
+}
+.askreview-shell { min-height: 100vh; background: #f6f1e8; color: #1f1a14; }
+.askreview-shell a { color: #1f4d3a; }
+.askreview-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem var(--pv-gutter-page); border-bottom: 1px solid #d8cfc0; background: #fffaf2; gap: 1rem; flex-wrap: wrap; }
+.askreview-nav ul { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; }
+.askreview-nav-mobile { display: none; }
+@media (max-width: 640px) {
+  .askreview-nav-mobile { display: block; }
+}
+.askreview-main { width: min(960px, calc(100% - (2 * var(--pv-gutter-page)))); margin: 0 auto; padding: 2rem 0 4rem; }
+.askreview-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; margin: 0 0 1rem; }
+.askreview-card { background: #fff; border: 1px solid #d8cfc0; border-radius: 16px; padding: 1.25rem; }
+.askreview-btn { display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 999px; padding: 0.7rem 1.1rem; background: #1f4d3a; color: #fff; font-weight: 600; cursor: pointer; min-height: 2.75rem; text-decoration: none; }
+.askreview-btn--ghost { background: transparent; color: #1f4d3a; border: 1px solid #1f4d3a; }
+.askreview-footer { padding: 2rem var(--pv-gutter-page); border-top: 1px solid #d8cfc0; }
+.askreview-footer nav { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.askreview-list { display: grid; gap: 0.75rem; list-style: none; padding: 0; }
+.askreview-item { border: 1px solid #d8cfc0; border-radius: 12px; padding: 0.9rem 1rem; background: #fff; }
+.askreview-item--active { border: 3px solid #1f4d3a; background: #eef5f1; box-shadow: inset 6px 0 0 #1f4d3a; }
+.askreview-badge { display: inline-block; margin-left: 0.5rem; padding: 0.1rem 0.45rem; border-radius: 999px; background: #1f4d3a; color: #fff; font-size: 0.75rem; }
+.askreview-kit { display: grid; gap: 1rem; }
+.askreview-kit svg { width: min(240px, 100%); height: auto; background: #fff; }
+.askreview-empty { padding: 1.5rem; border: 1px dashed #b9ad97; border-radius: 12px; }
+.askreview-error { color: #8a1f1f; }
+.askreview-input { width: 100%; padding: 0.65rem 0.75rem; border: 1px solid #c8bdaa; border-radius: 10px; }
+.askreview-card label { display: grid; gap: 0.35rem; margin-top: 0.75rem; }
+@media print {
+  .askreview-nav, .askreview-footer, .askreview-btn { display: none !important; }
+}

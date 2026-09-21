@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "activated": true,
+  "visualPassed": true,
+  "seoGeoPassed": true,
+  "hubDiscovery": "PASS",
+  "authoritySectionWidth": "PASS",
+  "shellConsistency": "PASS",
+  "semanticNavBreakout": "PASS",
+  "sources": "PASS",
+  "heroIntersection": 0,
+  "heroSeparationGate": "PASS",
+  "readback": {
+    "activeArtifactId": "art_e6d2a3a1f46d117d61c9",
+    "activeDigest": "4e19a831bee0da0263ea0a90d037aaae3d5edc3fcb6f8f49f7b763fecdd1d367",
+    "activeDeploymentId": "dpl_5zWCLA1rQLVLXed4Wi2ypvk9tfFj",
+    "activeUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-kd9ktl3qy.vercel.app"
+  }
+}

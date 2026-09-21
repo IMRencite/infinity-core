@@ -1,6 +1,7 @@
 "use client";
 
 import type { OperatorCurrentActivity } from "@/lib/infinity/operator-console/types";
+import { formatHydrationSafeTime } from "@/lib/infinity/hq-production-deployment/hydration";
 
 type Props = {
   activity: OperatorCurrentActivity;
@@ -51,7 +52,7 @@ export function CurrentActivityBar({ activity, compact = false }: Props) {
         {activity.latestActivityAt ? (
           <div>
             <dt className="text-zinc-600">Updated</dt>
-            <dd className="text-zinc-500">{new Date(activity.latestActivityAt).toLocaleTimeString()}</dd>
+            <dd className="text-zinc-500" data-hq-hydration-safe-time="true">{formatHydrationSafeTime(activity.latestActivityAt)}</dd>
           </div>
         ) : null}
       </dl>

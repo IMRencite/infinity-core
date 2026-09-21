@@ -14,6 +14,9 @@ import {
   mapOpportunityRow,
 } from "../validation/validate-opportunity";
 import type { VentureFactoryPipelineContext, VentureFactoryPipelineResult } from "../types/pipeline";
+import { generateFactoryVentureBackend } from "@/lib/infinity/venture-backend-architecture";
+import { factoryInheritedUniversalVentureSystemQc } from "@/lib/infinity/universal-venture-system-qc/factory";
+import { inheritVentureBlogBlueprintDefaults } from "@/lib/infinity/organic-growth-engine/blog-os";
 
 export async function runVentureFactoryPipeline(
   admin: AdminSupabaseClient,
@@ -57,8 +60,22 @@ export async function runVentureFactoryPipeline(
     created,
   });
 
+  const backend = generateFactoryVentureBackend({
+    ventureId: record.id,
+    templateType: record.ventureType,
+    customerAuth: /saas|marketplace|subscription/i.test(record.ventureType),
+    paidOffer: true,
+    durableFulfillment: true,
+  });
+  const ventureSystemQc = factoryInheritedUniversalVentureSystemQc();
+  const ventureBlogOs = inheritVentureBlogBlueprintDefaults();
+
   return {
     alreadyExists: !created,
     blueprint: record,
+    backendContract: backend.backendContract,
+    backendImplementationMission: backend.backendImplementationMission,
+    ventureSystemQc,
+    ventureBlogOs,
   };
 }

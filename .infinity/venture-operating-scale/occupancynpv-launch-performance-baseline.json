@@ -1,0 +1,25 @@
+{
+  "launch_timestamp": "2026-09-08T07:38:01.064Z",
+  "venture": "OccupancyNPV",
+  "observations": 0,
+  "fabricated_observations": 0,
+  "metrics": [
+    "traffic",
+    "source_channel",
+    "pricing_views",
+    "checkout_starts",
+    "checkout_completion",
+    "payments",
+    "revenue",
+    "subscriptions",
+    "entitlements",
+    "fulfillment_completion",
+    "fulfillment_failures",
+    "workspace_creation",
+    "workspace_usage",
+    "scenario_completion",
+    "orphaned_paid_customers",
+    "support_recovery_issues"
+  ],
+  "initial_values": "ZERO_VALID"
+}

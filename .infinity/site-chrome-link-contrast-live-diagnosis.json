@@ -1,0 +1,51 @@
+{
+  "routes": 87,
+  "visible": 3876,
+  "wcag": 4,
+  "failing": [
+    {
+      "route": "/",
+      "text": "Compare two leases",
+      "href": "/lease-comparison",
+      "role": "inline_link",
+      "color": "rgb(244, 247, 251)",
+      "background": "rgb(178, 182, 186)",
+      "contrast": 1.8987209880380636,
+      "floor": 4.5,
+      "gateOverall": "FAIL"
+    },
+    {
+      "route": "/",
+      "text": "See the workflow",
+      "href": "/how-it-works",
+      "role": "inline_link",
+      "color": "rgb(244, 247, 251)",
+      "background": "rgb(178, 182, 186)",
+      "contrast": 1.8987209880380636,
+      "floor": 4.5,
+      "gateOverall": "FAIL"
+    },
+    {
+      "route": "/",
+      "text": "Compare two leases",
+      "href": "/lease-comparison",
+      "role": "inline_link",
+      "color": "rgb(244, 247, 251)",
+      "background": "rgb(178, 182, 186)",
+      "contrast": 1.8987209880380636,
+      "floor": 4.5,
+      "gateOverall": "FAIL"
+    },
+    {
+      "route": "/",
+      "text": "See the workflow",
+      "href": "/how-it-works",
+      "role": "inline_link",
+      "color": "rgb(244, 247, 251)",
+      "background": "rgb(178, 182, 186)",
+      "contrast": 1.8987209880380636,
+      "floor": 4.5,
+      "gateOverall": "FAIL"
+    }
+  ]
+}

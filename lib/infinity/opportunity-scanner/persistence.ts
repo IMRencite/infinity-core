@@ -1,5 +1,6 @@
 import type { AdminSupabaseClient } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
+import { classifyScannerFailure } from "./failures";
 import type { DiscoveryRunStatus } from "./constants";
 import type {
   NormalizedCandidateScores,
@@ -21,7 +22,7 @@ export async function findDiscoveryRunByIdempotencyKey(
     .eq("idempotency_key", idempotencyKey)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw classifyScannerFailure(error);
   return data;
 }
 
@@ -53,7 +54,7 @@ export async function insertDiscoveryRun(
     .select("*")
     .single();
 
-  if (error) throw error;
+  if (error) throw classifyScannerFailure(error);
   return data;
 }
 
@@ -69,7 +70,7 @@ export async function updateDiscoveryRun(
     .eq("organization_id", organizationId)
     .eq("id", runId);
 
-  if (error) throw error;
+  if (error) throw classifyScannerFailure(error);
 }
 
 export async function persistCandidateWithEvidence(
@@ -118,7 +119,7 @@ export async function persistCandidateWithEvidence(
     .select("*")
     .single();
 
-  if (candidateError) throw candidateError;
+  if (candidateError) throw classifyScannerFailure(candidateError);
 
   const evidenceRows = buildEvidenceRows(input.candidate, {
     organizationId: input.organizationId,
@@ -127,10 +128,14 @@ export async function persistCandidateWithEvidence(
   });
 
   if (evidenceRows.length > 0) {
-    const { error: evidenceError } = await admin
-      .from("opportunity_candidate_evidence")
-      .insert(evidenceRows);
-    if (evidenceError) throw evidenceError;
+    const chunkSize = Number(process.env.OPPORTUNITY_SCANNER_EVIDENCE_INSERT_CHUNK ?? 25);
+    for (let offset = 0; offset < evidenceRows.length; offset += chunkSize) {
+      const chunk = evidenceRows.slice(offset, offset + chunkSize);
+      const { error: evidenceError } = await admin
+        .from("opportunity_candidate_evidence")
+        .insert(chunk);
+      if (evidenceError) throw classifyScannerFailure(evidenceError);
+    }
   }
 
   const { error: scoreError } = await admin.from("opportunity_candidate_scores").upsert(
@@ -156,7 +161,7 @@ export async function persistCandidateWithEvidence(
     { onConflict: "candidate_id,scoring_version" },
   );
 
-  if (scoreError) throw scoreError;
+  if (scoreError) throw classifyScannerFailure(scoreError);
 
   return {
     id: candidateRow.id,
@@ -263,12 +268,20 @@ export async function markDiscoveryRunFailed(
   admin: AdminSupabaseClient,
   organizationId: string,
   runId: string,
-  input: { classification: string; message: string; status?: DiscoveryRunStatus },
+  input: {
+    classification: string;
+    message: string;
+    status?: DiscoveryRunStatus;
+    strategyFailures?: string[];
+  },
 ) {
   await updateDiscoveryRun(admin, organizationId, runId, {
     status: input.status ?? "failed",
     failure_classification: input.classification,
     error_message: input.message,
     failed_at: new Date().toISOString(),
+    scanner_report: input.strategyFailures?.length
+      ? ({ strategyFailures: input.strategyFailures } as never)
+      : undefined,
   });
 }

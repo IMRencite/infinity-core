@@ -1,32 +1,37 @@
 import { NextResponse } from "next/server";
 import { authorizeRuntimeTickRequest } from "@/lib/infinity/growth-engine/runtime-tick-auth";
-import { executeOccupancynpvGrowthRuntimeCycle } from "@/lib/infinity/growth-engine/runtime-cycle";
+import { executeOccupancynpvGrowthRuntimeCycleDurable } from "@/lib/infinity/growth-engine/runtime-cycle";
 import { executePostLaunchOperatingCycle } from "@/lib/infinity/venture-operating-scale/post-launch-operating-runtime";
-import { executeAutonomousDailyOperatingLoop } from "@/lib/infinity/autonomous-operating-loop/loop";
+import { createProductionCloudRuntimeStore, executeCloudRuntimeWake } from "@/lib/infinity/cloud-runtime";
 
 export async function GET(request: Request): Promise<NextResponse> {
   const auth = authorizeRuntimeTickRequest(request);
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized", reason: auth.reason }, { status: 401 });
   }
-  const cycle = executeOccupancynpvGrowthRuntimeCycle({ persist: true });
+  const cycle = await executeOccupancynpvGrowthRuntimeCycleDurable({ persist: true });
   const postLaunch = executePostLaunchOperatingCycle({ persist: true });
-  const loop = executeAutonomousDailyOperatingLoop({ persist: true, createMission: true });
+  const cloud = await executeCloudRuntimeWake({
+    source: "CRON_DAILY",
+    store: createProductionCloudRuntimeStore(),
+    createMission: false,
+  });
   return NextResponse.json({
     host: "vercel-cron",
     cadence: "0 12 * * *",
     cycleId: cycle.cycleId,
-    outcome: loop.decision.outcome,
-    nextRunAt: loop.state.next_daily_review_at ?? cycle.nextRunAt,
+    outcome: cloud.decision,
+    nextRunAt: cloud.state.heartbeat.next_review_at ?? cycle.nextRunAt,
     improvementMissionCreated: false,
     postLaunchOutcome: postLaunch.daily.snapshot.dailyResult,
     autonomousLoop: {
-      state: loop.portfolio_state,
-      decision: loop.decision.outcome,
-      reason: loop.decision.reason,
-      dailyReview: loop.daily_review_ran,
-      missionCreated: loop.mission_created,
+      state: cloud.state.loop.portfolio_state,
+      decision: cloud.decision,
+      reason: cloud.state.heartbeat.last_meaningful_action,
+      dailyReview: Boolean(cloud.state.loop.last_daily_review_at),
+      missionCreated: cloud.mission_created,
     },
+    cloudRuntime: cloud.hq,
   });
 }
 

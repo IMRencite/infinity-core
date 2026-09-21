@@ -1,0 +1,19 @@
+{
+  "previous_artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "previous_digest": "0d050ae0f4bee3ac6d054efe6658982c8e5f080f282ea3476ae2bb05852944f4",
+  "previous_deployment_id": "dpl_H2t9jNDBnN5ZpoPhHyb1qSGtkvaD",
+  "artifact_id": "art_5eb5eeb74bfd2a300b85",
+  "digest": "5be7976bb97ddb9cc96a409a4964ed3fbb8ca0197896f9ba49491dd4ab53d2c2",
+  "deployment_id": "dpl_AEfAHxgzRAxiAweearQJwGLPzJbW",
+  "preview_url": "https://infinity-validation-cre-lease-npv-e72beb7b-d0ypun0ua.vercel.app",
+  "deployed": true,
+  "aliased": true,
+  "predeploy_visible": true,
+  "live_visible": true,
+  "payment_activation_changed": 0,
+  "stripe_writes": 0,
+  "dns_writes": 0,
+  "founder_dirty_tree_deployed": "NO",
+  "vercel_project_id": "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+  "safe_error": null
+}

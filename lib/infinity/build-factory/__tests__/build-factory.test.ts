@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   createLocalSandboxAdapter,
   rejectPathTraversalAttempt,
@@ -163,14 +163,13 @@ describe("Build Factory Foundation v1", () => {
   });
 
   it("validate e2e guard pattern exists for build script", () => {
-    const prev = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    vi.stubEnv("NODE_ENV", "production");
     delete process.env.ALLOW_BUILD_FACTORY_E2E;
     expect(() => {
       if (process.env.NODE_ENV === "production" && process.env.ALLOW_BUILD_FACTORY_E2E !== "true") {
         throw new Error("development-only");
       }
     }).toThrow();
-    process.env.NODE_ENV = prev;
+    vi.unstubAllEnvs();
   });
 });

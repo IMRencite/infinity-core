@@ -1,0 +1,91 @@
+{
+  "mission": "CRE_SEMANTIC_NAV_WIDTH_UTILIZATION_REPAIR_V1",
+  "artifactId": "art_11bd5b74a925257a7319",
+  "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+  "predecessorArtifactId": "art_dbf624e41599420891e2",
+  "routes": 93,
+  "pageLoop": "PASS",
+  "muted": {
+    "gate": "RenderedMutedTextContrastGate",
+    "overall": "PASS",
+    "samples": [
+      {
+        "role": "workflow_kicker",
+        "surfaceRole": "DARK_MODULE",
+        "componentRole": "kicker",
+        "color": "#c9d6e6",
+        "background": "#0f1c2e",
+        "contrast": 11.62,
+        "opacity": 1,
+        "fontSizePx": 11.5,
+        "fontWeight": 500
+      },
+      {
+        "role": "sample_caption",
+        "surfaceRole": "DEFAULT",
+        "componentRole": "table_caption",
+        "color": "#5a6573",
+        "background": "#f7f9fc",
+        "contrast": 5.62,
+        "opacity": 1,
+        "fontSizePx": 11.5,
+        "fontWeight": 500
+      },
+      {
+        "role": "bottom_caption",
+        "surfaceRole": "DARK_MODULE",
+        "componentRole": "caption",
+        "color": "#c9d6e6",
+        "background": "#0f1c2e",
+        "contrast": 11.62,
+        "opacity": 1,
+        "fontSizePx": 11.5,
+        "fontWeight": 500
+      },
+      {
+        "role": "kicker",
+        "surfaceRole": "DEFAULT",
+        "componentRole": "kicker",
+        "color": "#1d4e89",
+        "background": "#ffffff",
+        "contrast": 8.39,
+        "opacity": 1,
+        "fontSizePx": 12,
+        "fontWeight": 600
+      }
+    ],
+    "darkSurfaceFailures": 0,
+    "lightSurfaceFailures": 0,
+    "missingMutedSamples": 0,
+    "applicableDarkModules": 84,
+    "validated": 107,
+    "failed": 0
+  },
+  "contrast": "PASS",
+  "hubLayout": "PASS",
+  "humanFirst": "PASS",
+  "heroLinks": "PASS",
+  "ready": "FOUNDER_VISUAL_REVIEW_READY",
+  "deployed": false,
+  "publiclyLaunched": false,
+  "hqAfter": {
+    "active": 0,
+    "latestCompleted": "CRE_SEMANTIC_NAV_WIDTH_UTILIZATION_REPAIR_V1",
+    "infinityDecisionCore": "PRESENT_IDLE"
+  },
+  "experiment": "COLLECTING",
+  "clockRestarted": false,
+  "observer": {
+    "status": "RUNNING",
+    "provider": "gmail.com_v1",
+    "lastCheckpoint": "14931562",
+    "lastSuccessfulObservation": "2026-09-05T04:12:19.751Z",
+    "trackedConversations": 2,
+    "lastInboundProcessed": null,
+    "lastProviderError": null,
+    "cadenceMs": 300000,
+    "runtimeDurability": "LOCAL_RUNTIME_ONLY",
+    "mode": "GMAIL_HISTORY_BOUNDED_POLL"
+  },
+  "instrumentedMission": "CRE_SEMANTIC_NAV_WIDTH_UTILIZATION_REPAIR_V1"
+}

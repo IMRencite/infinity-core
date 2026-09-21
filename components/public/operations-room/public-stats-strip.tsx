@@ -15,8 +15,8 @@ function Stat({ label, value, testId }: { label: string; value: PublicCount; tes
 
 export function PublicStatsStrip({ projection }: { projection: PublicOperationsProjection }) {
   return (
-    <section className={styles.statsStrip} aria-label="Public operating statistics">
-      <h2 className={styles.roomTitle}>Public Stats</h2>
+    <section className={styles.statsStrip} aria-label="Building telemetry">
+      <h2 className={styles.roomTitle}>Building Telemetry</h2>
       <div className={styles.statGrid}>
         <Stat label="Agents Active" value={projection.active_public_agents} testId="active_public_agents" />
         <Stat label="Agents Idle" value={projection.idle_public_agents} testId="idle_public_agents" />

@@ -15,6 +15,7 @@ import {
 } from "../model-registry";
 import { executeProviderRuntime, executeProviderRuntimeSync } from "../runtime";
 import { createReasoningSession } from "@/lib/infinity/reasoning/sessions";
+import type { ReasoningSession } from "@/lib/infinity/reasoning/types";
 import { composePrompts, getPromptTemplate } from "@/lib/infinity/reasoning/prompts";
 import {
   parseStructuredAdvisoryJson,
@@ -28,7 +29,7 @@ import {
 } from "../observability";
 import { withProviderRetry, defaultRetryPolicy } from "../retry";
 
-function sessionWithPrompt() {
+function sessionWithPrompt(): ReasoningSession {
   const session = createReasoningSession({
     organizationId: "org-1",
     missionId: "m-1",
@@ -48,8 +49,15 @@ function sessionWithPrompt() {
   return {
     ...session,
     composedPrompts: composed,
-    selectedProviderId: "mock",
-    selectedModel: { providerId: "mock", modelId: "mock-advisory-v1" },
+    selectedProviderId: "openai",
+    selectedModel: {
+      providerId: "openai",
+      modelId: "mock-advisory-v1",
+      displayName: "Mock Advisory",
+      version: "1.0.0",
+      contextWindowTokens: 8192,
+      maxOutputTokens: 2048,
+    },
   };
 }
 
@@ -131,9 +139,10 @@ describe("AI Provider Integration Foundation v1", () => {
       session: { ...sessionWithPrompt(), selectedProviderId: "openai" },
       preferredProviderId: "openai",
       env: {
+        NODE_ENV: "test",
         OPENAI_API_KEY: "test-key",
         AI_PROVIDER_ALLOW_LIVE_EXECUTION: "false",
-      },
+      } as NodeJS.ProcessEnv,
     });
 
     expect(result.status).toBe("completed");
@@ -164,9 +173,10 @@ describe("AI Provider Integration Foundation v1", () => {
     bootstrapAiProviders({
       registerReasoning: false,
       env: {
+        NODE_ENV: "test",
         OPENAI_API_KEY: "test-key",
         AI_PROVIDER_ALLOW_LIVE_EXECUTION: "false",
-      },
+      } as NodeJS.ProcessEnv,
     });
 
     const configuredOpenAi = getAiProvider("openai");
@@ -234,9 +244,10 @@ describe("AI Provider Integration Foundation v1", () => {
       session: sessionWithPrompt(),
       preferredProviderId: "openai",
       env: {
+        NODE_ENV: "test",
         OPENAI_API_KEY: "key",
         AI_PROVIDER_ALLOW_LIVE_EXECUTION: "true",
-      },
+      } as NodeJS.ProcessEnv,
     });
 
     expect(result.status).toBe("completed");

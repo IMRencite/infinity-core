@@ -292,6 +292,9 @@ describe("Grounded research coverage planning + bounded gap-fill v1", () => {
       initialResearchCallCount: 1,
       transportRetryCount: 1,
       gapFillCallCount: 0,
+      revenueGapFillCallCount: 0,
+      benchmarkGapFillCallCount: 0,
+      qualityReplacementCallCount: 0,
       totalProviderCalls: 2,
     });
   });
@@ -320,6 +323,7 @@ describe("Grounded research coverage planning + bounded gap-fill v1", () => {
     expect(calls).toBe(2);
     expect(directed.telemetry.initialResearchCallCount).toBe(1);
     expect(directed.telemetry.gapFillCallCount).toBe(1);
+    expect(directed.telemetry.revenueGapFillCallCount).toBe(0);
     expect(directed.telemetry.transportRetryCount).toBe(0);
     expect(directed.telemetry.totalProviderCalls).toBe(2);
   });

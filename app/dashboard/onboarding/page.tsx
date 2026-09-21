@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { userHasOrganization } from "@/app/dashboard/onboarding/actions";
+import {
+  lookupOrganizationMembership,
+  membershipUnavailableUserMessage,
+} from "@/lib/infinity/operator-console/membership-lookup";
 import { CreateOrganizationForm } from "@/components/dashboard/create-organization-form";
+import { OnboardingUnavailableState } from "@/components/dashboard/onboarding-unavailable-state";
 
 export default async function OnboardingPage() {
   const supabase = await createClient();
@@ -13,9 +17,20 @@ export default async function OnboardingPage() {
     redirect("/login");
   }
 
-  const hasOrganization = await userHasOrganization(supabase, user.id);
+  const membership = await lookupOrganizationMembership(supabase, user.id);
 
-  if (hasOrganization) {
+  if (membership.status === "error") {
+    return (
+      <OnboardingUnavailableState
+        message={membershipUnavailableUserMessage(membership.code)}
+        debugCode={
+          process.env.NODE_ENV === "development" ? membership.code : undefined
+        }
+      />
+    );
+  }
+
+  if (membership.hasMembership) {
     redirect("/dashboard");
   }
 

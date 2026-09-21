@@ -1,7 +1,11 @@
 export const ECONOMIC_EVIDENCE_CLASSES = [
   "OBSERVED",
   "VALIDATION_ESTIMATE",
+  "COMPANY_COMPARABLE",
+  "CATEGORY_BENCHMARK",
+  "ADJACENT_BENCHMARK",
   "COMPARABLE_MODELED",
+  "SCENARIO_MODEL",
   "FOUNDER_HYPOTHESIS",
   "UNKNOWN",
 ] as const;
@@ -20,8 +24,30 @@ export function provenanceMaySatisfyBuildEconomics(cls: EconomicEvidenceClass): 
 }
 
 export function provenanceMaySatisfyDecisionPlanning(cls: EconomicEvidenceClass): boolean {
-  return cls === "OBSERVED" || cls === "VALIDATION_ESTIMATE" || cls === "COMPARABLE_MODELED";
+  return (
+    cls === "OBSERVED" ||
+    cls === "VALIDATION_ESTIMATE" ||
+    cls === "COMPANY_COMPARABLE" ||
+    cls === "CATEGORY_BENCHMARK" ||
+    cls === "ADJACENT_BENCHMARK" ||
+    cls === "COMPARABLE_MODELED"
+  );
 }
+
+export function provenanceGrantsBuild(cls: EconomicEvidenceClass): boolean {
+  return provenanceMaySatisfyBuildEconomics(cls);
+}
+
+export const NON_BUILD_PROVENANCE: EconomicEvidenceClass[] = [
+  "VALIDATION_ESTIMATE",
+  "COMPANY_COMPARABLE",
+  "CATEGORY_BENCHMARK",
+  "ADJACENT_BENCHMARK",
+  "COMPARABLE_MODELED",
+  "SCENARIO_MODEL",
+  "FOUNDER_HYPOTHESIS",
+  "UNKNOWN",
+];
 
 export type EconomicRange = {
   low: number | null;

@@ -32,7 +32,7 @@ describe("Prepare Autonomous Live Launch Retry #2.2", () => {
       const { data: assemblyRow } = await admin
         .from("venture_assemblies")
         .select("organization_id")
-        .eq("id", report.assembly.assemblyId)
+        .eq("id", String(report.assembly.assemblyId))
         .single();
       const orgId = String(assemblyRow!.organization_id);
 

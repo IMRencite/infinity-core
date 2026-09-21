@@ -45,8 +45,6 @@ describe("HQ staggered operating floor layout", () => {
     expect(HQ_FLOOR_CANONICAL_ROOMS).toEqual(LIFECYCLE_ROOM_SEQUENCE);
     expect(HQ_FLOOR_LEFT_ROOMS).toEqual([
       "opportunity_lab",
-      "strategy_finance",
-      "systems_architect",
       "creative_studio",
       "launch_operations",
     ]);
@@ -55,23 +53,27 @@ describe("HQ staggered operating floor layout", () => {
       "company_operations",
       "growth_department",
       "product_lab",
+      "strategy_finance",
+      "systems_architect",
       "intelligence_center",
+      "prospect_intelligence",
     ]);
     expect(HQ_FLOOR_FULL_WIDTH_ROOMS).toEqual(["quality_control"]);
     expect(assembleCanonicalFloorOrder()).toEqual(HQ_FLOOR_CANONICAL_ROOMS);
-    expect(new Set([...HQ_FLOOR_LEFT_ROOMS, ...HQ_FLOOR_RIGHT_ROOMS, ...HQ_FLOOR_FULL_WIDTH_ROOMS]).size).toBe(11);
+    expect(new Set([...HQ_FLOOR_LEFT_ROOMS, ...HQ_FLOOR_RIGHT_ROOMS, ...HQ_FLOOR_FULL_WIDTH_ROOMS]).size).toBe(12);
     expect(hqFloorDesktopColumns().left).toEqual(HQ_FLOOR_LEFT_ROOMS);
     expect(hqFloorSpan("quality_control")).toBe("full");
-    expect(interleaveFloorColumns(HQ_FLOOR_LAYOUT_SECTIONS.above.left, HQ_FLOOR_LAYOUT_SECTIONS.above.right)).toEqual([
-      "opportunity_lab",
-      "research_department",
-      "strategy_finance",
-      "company_operations",
-      "systems_architect",
-      "growth_department",
-      "creative_studio",
+    expect(HQ_FLOOR_LAYOUT_SECTIONS.above.right.slice(3, 6)).toEqual([
       "product_lab",
+      "strategy_finance",
+      "systems_architect",
     ]);
+    expect(interleaveFloorColumns(HQ_FLOOR_LAYOUT_SECTIONS.above.left, HQ_FLOOR_LAYOUT_SECTIONS.above.right)[0]).toBe(
+      "opportunity_lab",
+    );
+    expect(interleaveFloorColumns(HQ_FLOOR_LAYOUT_SECTIONS.above.left, HQ_FLOOR_LAYOUT_SECTIONS.above.right)[1]).toBe(
+      "research_department",
+    );
   });
 
   it("does not let a tall right room delay the next left room", () => {
@@ -84,15 +86,15 @@ describe("HQ staggered operating floor layout", () => {
       },
       16,
     );
-    const profit = packed.left.find((room) => room.id === "strategy_finance");
+    const radar = packed.left.find((room) => room.id === "opportunity_lab");
     const research = packed.right.find((room) => room.id === "research_department");
     const blueprint = packed.right.find((room) => room.id === "company_operations");
-    expect(nextRoomInColumn("opportunity_lab")).toBe("strategy_finance");
-    expect(profit?.top).toBe(416);
-    expect(profit?.top).toBeLessThan(900);
+    expect(nextRoomInColumn("opportunity_lab")).toBe("creative_studio");
+    expect(nextRoomInColumn("product_lab")).toBe("strategy_finance");
+    expect(radar?.top).toBe(0);
+    expect(radar?.top).toBeLessThan(900);
     expect(research?.height).toBe(900);
     expect(blueprint?.top).toBe(916);
-    expect(blueprint?.top).not.toBe(profit?.top);
   });
 
   it("keeps full artifact visibility while changing only floor geometry", () => {

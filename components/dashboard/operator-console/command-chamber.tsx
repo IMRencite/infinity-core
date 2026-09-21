@@ -105,11 +105,13 @@ export function CommandChamber({
   const openCommandWork = inspecting?.status === "ACTIVE_WORK";
   const liveExecution = oversight.commandState === "ACTIVE_OVERSIGHT" || inspecting?.status === "ACTIVE_WORK";
   const missionHeadline = openCommandWork
-    ? (inspecting?.currentMission ??
-      currentActivity.displayTask ??
-      inspecting?.currentTask ??
-      snapshot?.displayHeadline ??
-      "Executing current mission")
+    ? (activity.presence === "ACTIVE_WORK" && activity.sentence
+      ? activity.sentence
+      : inspecting?.currentTask ??
+        inspecting?.currentMission ??
+        currentActivity.displayTask ??
+        snapshot?.displayHeadline ??
+        "Executing current mission")
     : "IDLE — no active canonical work";
   const decisionText = liveExecution
     ? snapshot?.displaySummary ??

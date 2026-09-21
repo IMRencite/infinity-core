@@ -246,6 +246,22 @@ export async function buildHqCopilotContext(input: {
       if (feed) {
         facts.push(`Latest recorded activity: ${feed.displaySummary ?? feed.summary} (${feed.displayStatus ?? feed.status ?? "UNKNOWN"}).`);
       }
+      const commandActivity = currentVenture.commandActivity;
+      if (commandActivity) {
+        const inspecting = commandActivity.nowInspecting;
+        facts.push(
+          `Canonical mission activity: ${commandActivity.counts.activeMissions} active, ${commandActivity.counts.blockedMissions} blocked, ${commandActivity.counts.waitingMissions} waiting.`,
+        );
+        if (inspecting.currentMission) {
+          facts.push(
+            `Infinity is doing ${inspecting.currentMission}${inspecting.currentStep ? ` / ${inspecting.currentStep}` : ""}${inspecting.why ? ` because ${inspecting.why}` : ""}.`,
+          );
+        } else if (commandActivity.counts.activeMissions === 0) {
+          facts.push("No persisted Infinity runtime mission is currently ACTIVE_WORK.");
+        }
+        if (inspecting.blocker) facts.push(`Recorded mission blocker: ${inspecting.blocker}.`);
+        sources.push(sourceRef("MISSION", "Command activity"));
+      }
 
       const room = currentRoom ? currentVenture.departments.find((d) => d.id === currentRoom) : null;
       if (room) {

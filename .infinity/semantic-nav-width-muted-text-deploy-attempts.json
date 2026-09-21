@@ -1,0 +1,15 @@
+{
+  "mission": "GOVERNED_CRE_SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOYMENT_V1",
+  "authorization": "GOVERNED_CRE_SEMANTIC_NAV_WIDTH_REPAIR_DEPLOYMENT_REQUIRED",
+  "artifactId": "art_11bd5b74a925257a7319",
+  "digest": "e86b02b7f4371535a94d7dfe1ca051e7e875bba95d7bea4f66629fe0c02fc51e",
+  "deployments": 1,
+  "activations": 1,
+  "maximumDeployments": 1,
+  "maximumActivations": 1,
+  "deploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+  "publicUrl": "https://infinity-validation-cre-lease-npv-e72beb7b-br9xupk59.vercel.app",
+  "providerState": "READY",
+  "authorizationConsumed": true,
+  "terminalState": "CRE_SEMANTIC_NAV_WIDTH_MUTED_TEXT_ACTIVE"
+}

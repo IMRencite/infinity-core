@@ -3,7 +3,7 @@ import type { ProviderEnvironment } from "@/lib/infinity/commercialization/probe
 import type { ConnectWriteReadinessReport } from "./types";
 
 export function resolveConnectWriteReadiness(input: {
-  stripeVerification?: ProviderCapabilityStatus | null;
+  stripeVerification?: ProviderCapabilityStatus | "UNVERIFIED" | "LIVE_WRITE_VERIFIED" | "UNKNOWN" | null;
   stripeEnvironment?: ProviderEnvironment | null;
 }): ConnectWriteReadinessReport {
   const stripeVerification = input.stripeVerification ?? "UNKNOWN";

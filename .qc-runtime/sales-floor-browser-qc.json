@@ -1,0 +1,293 @@
+{
+  "origin": "http://localhost:3000",
+  "port": "3000",
+  "process": "localhost:3000 via Chrome CDP 9222",
+  "after": {
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "authenticated": true,
+    "salesFloorVisible": true,
+    "roomCount": 5,
+    "rooms": [
+      {
+        "id": "OUTBOUND_ACQUISITION",
+        "state": "MONITORING",
+        "priority": "HIGH",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.",
+        "text": "Outbound AcquisitionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGProspect ResearchWAITINGQualificationWAITINGOutreachWAITINGFollow-UpLatest: Existing outbound campaign recognizedNext: Do not send; monitor campaign eligibility"
+      },
+      {
+        "id": "INBOUND_CONVERSION",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 3,
+        "now": "NOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.",
+        "text": "Inbound ConversionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGInbound LeadWAITINGTrial ConversionWAITINGIntent AnalysisLatest: No inbound intent yetNext: Wait for legally available inbound signals"
+      },
+      {
+        "id": "EXPANSION_RETENTION",
+        "state": "PRESENT_IDLE",
+        "priority": "LOW",
+        "orb": "PRESENT_IDLE",
+        "agents": 3,
+        "now": "NOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.",
+        "text": "Expansion & RetentionOccupancyNPVPRESENT_IDLENow / current workNOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.Assigned agents remain present · PRESENT_IDLEAgents in roomAGENTS WAITINGWAITINGRetentionWAITINGExpansionWAITINGReactivationLatest: No customer contextNext: Do not treat prospects as customers"
+      },
+      {
+        "id": "PARTNERSHIPS_CHANNEL",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.",
+        "text": "Partnerships & ChannelOccupancyNPVPRESENT_IDLENow / current workNOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGPartner DiscoveryWAITINGAffiliate RecruitmentWAITINGAffiliate OperationsWAITINGChannel DevelopmentAffiliate & ReferralProgram PENDING_ECONOMICSApplications 0 · approved 0Clicks 0 · verified 0Commissions pending 0 · payable 0 · paid 0Attributed revenue UNKNOWNLatest: Affiliate program provisioned; commissions not activatedNext: Keep affiliate capability built without sending recruitment outreach"
+      },
+      {
+        "id": "OFFER_CLOSING",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.",
+        "text": "Offer & ClosingOccupancyNPVPRESENT_IDLENow / current workNOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGClosingWAITINGObjectionWAITINGProposalWAITINGDeal ProgressionLatest: No qualified close path yetNext: Do not manufacture urgency"
+      }
+    ],
+    "status": "MONITORING",
+    "highest": "OUTBOUND_ACQUISITION",
+    "summary": "",
+    "motion": "",
+    "campaign": "",
+    "intelligence": "",
+    "priorities": "",
+    "outcomes": "",
+    "fakeActive": false,
+    "publicLeak": false,
+    "nowText": "Building the affiliate-program capability that every future commercial venture will receive.",
+    "visual": "hq-floor",
+    "shells": 5
+  },
+  "selected": {
+    "href": "http://localhost:3000/dashboard",
+    "origin": "http://localhost:3000",
+    "authenticated": true,
+    "salesFloorVisible": true,
+    "roomCount": 10,
+    "rooms": [
+      {
+        "id": "OUTBOUND_ACQUISITION",
+        "state": "MONITORING",
+        "priority": "HIGH",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.",
+        "text": "Outbound AcquisitionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGProspect ResearchWAITINGQualificationWAITINGOutreachWAITINGFollow-UpLatest: Existing outbound campaign recognizedNext: Do not send; monitor campaign eligibility"
+      },
+      {
+        "id": "INBOUND_CONVERSION",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 3,
+        "now": "NOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.",
+        "text": "Inbound ConversionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGInbound LeadWAITINGTrial ConversionWAITINGIntent AnalysisLatest: No inbound intent yetNext: Wait for legally available inbound signals"
+      },
+      {
+        "id": "EXPANSION_RETENTION",
+        "state": "PRESENT_IDLE",
+        "priority": "LOW",
+        "orb": "PRESENT_IDLE",
+        "agents": 3,
+        "now": "NOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.",
+        "text": "Expansion & RetentionOccupancyNPVPRESENT_IDLENow / current workNOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.Assigned agents remain present · PRESENT_IDLEAgents in roomAGENTS WAITINGWAITINGRetentionWAITINGExpansionWAITINGReactivationLatest: No customer contextNext: Do not treat prospects as customers"
+      },
+      {
+        "id": "PARTNERSHIPS_CHANNEL",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.",
+        "text": "Partnerships & ChannelOccupancyNPVPRESENT_IDLENow / current workNOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGPartner DiscoveryWAITINGAffiliate RecruitmentWAITINGAffiliate OperationsWAITINGChannel DevelopmentAffiliate & ReferralProgram PENDING_ECONOMICSApplications 0 · approved 0Clicks 0 · verified 0Commissions pending 0 · payable 0 · paid 0Attributed revenue UNKNOWNLatest: Affiliate program provisioned; commissions not activatedNext: Keep affiliate capability built without sending recruitment outreach"
+      },
+      {
+        "id": "OFFER_CLOSING",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.",
+        "text": "Offer & ClosingOccupancyNPVPRESENT_IDLENow / current workNOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGClosingWAITINGObjectionWAITINGProposalWAITINGDeal ProgressionLatest: No qualified close path yetNext: Do not manufacture urgency"
+      },
+      {
+        "id": "OUTBOUND_ACQUISITION",
+        "state": "MONITORING",
+        "priority": "HIGH",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.",
+        "text": "Outbound AcquisitionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV's existing outbound campaign and preparing tenant-rep qualification without sending outreach.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGProspect ResearchWAITINGQualificationWAITINGOutreachWAITINGFollow-UpLatest: Existing outbound campaign recognizedNext: Do not send; monitor campaign eligibility"
+      },
+      {
+        "id": "INBOUND_CONVERSION",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 3,
+        "now": "NOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.",
+        "text": "Inbound ConversionOccupancyNPVPRESENT_IDLENow / current workNOWMonitoring OccupancyNPV trial starts, demo requests, and inbound sales questions.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGInbound LeadWAITINGTrial ConversionWAITINGIntent AnalysisLatest: No inbound intent yetNext: Wait for legally available inbound signals"
+      },
+      {
+        "id": "EXPANSION_RETENTION",
+        "state": "PRESENT_IDLE",
+        "priority": "LOW",
+        "orb": "PRESENT_IDLE",
+        "agents": 3,
+        "now": "NOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.",
+        "text": "Expansion & RetentionOccupancyNPVPRESENT_IDLENow / current workNOWWaiting for active customer evidence before starting retention or expansion work on OccupancyNPV.Assigned agents remain present · PRESENT_IDLEAgents in roomAGENTS WAITINGWAITINGRetentionWAITINGExpansionWAITINGReactivationLatest: No customer contextNext: Do not treat prospects as customers"
+      },
+      {
+        "id": "PARTNERSHIPS_CHANNEL",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.",
+        "text": "Partnerships & ChannelOccupancyNPVPRESENT_IDLENow / current workNOWBuilding OccupancyNPV's affiliate program and preparing qualified affiliate recruitment channels.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGPartner DiscoveryWAITINGAffiliate RecruitmentWAITINGAffiliate OperationsWAITINGChannel DevelopmentAffiliate & ReferralProgram PENDING_ECONOMICSApplications 0 · approved 0Clicks 0 · verified 0Commissions pending 0 · payable 0 · paid 0Attributed revenue UNKNOWNLatest: Affiliate program provisioned; commissions not activatedNext: Keep affiliate capability built without sending recruitment outreach"
+      },
+      {
+        "id": "OFFER_CLOSING",
+        "state": "MONITORING",
+        "priority": "MEDIUM",
+        "orb": "MONITORING",
+        "agents": 4,
+        "now": "NOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.",
+        "text": "Offer & ClosingOccupancyNPVPRESENT_IDLENow / current workNOWPreparing to take ownership when a qualified OccupancyNPV prospect reaches commercial intent.Assigned agents remain present · MONITORINGAgents in roomAGENTS WAITINGWAITINGClosingWAITINGObjectionWAITINGProposalWAITINGDeal ProgressionLatest: No qualified close path yetNext: Do not manufacture urgency"
+      }
+    ],
+    "status": "MONITORING",
+    "highest": "OUTBOUND_ACQUISITION",
+    "summary": "",
+    "motion": "",
+    "campaign": "",
+    "intelligence": "",
+    "priorities": "",
+    "outcomes": "",
+    "fakeActive": false,
+    "publicLeak": false,
+    "nowText": "Building the affiliate-program capability that every future commercial venture will receive.",
+    "visual": "hq-floor",
+    "shells": 10
+  },
+  "live": {
+    "status": 200,
+    "salesId": null,
+    "salesState": null,
+    "view": null
+  },
+  "overflow": {
+    "desktop": {
+      "scrollWidth": 1425,
+      "clientWidth": 1425,
+      "overflow": false,
+      "rooms": [
+        {
+          "room": "OUTBOUND_ACQUISITION",
+          "clipped": false,
+          "right": 449
+        },
+        {
+          "room": "INBOUND_CONVERSION",
+          "clipped": false,
+          "right": 681
+        },
+        {
+          "room": "EXPANSION_RETENTION",
+          "clipped": false,
+          "right": 912
+        },
+        {
+          "room": "PARTNERSHIPS_CHANNEL",
+          "clipped": false,
+          "right": 1144
+        },
+        {
+          "room": "OFFER_CLOSING",
+          "clipped": false,
+          "right": 1375
+        }
+      ]
+    },
+    "tablet": {
+      "scrollWidth": 753,
+      "clientWidth": 753,
+      "overflow": false,
+      "rooms": [
+        {
+          "room": "OUTBOUND_ACQUISITION",
+          "clipped": false,
+          "right": 373
+        },
+        {
+          "room": "INBOUND_CONVERSION",
+          "clipped": false,
+          "right": 703
+        },
+        {
+          "room": "EXPANSION_RETENTION",
+          "clipped": false,
+          "right": 373
+        },
+        {
+          "room": "PARTNERSHIPS_CHANNEL",
+          "clipped": false,
+          "right": 703
+        },
+        {
+          "room": "OFFER_CLOSING",
+          "clipped": false,
+          "right": 373
+        }
+      ]
+    },
+    "mobile": {
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false,
+      "rooms": [
+        {
+          "room": "OUTBOUND_ACQUISITION",
+          "clipped": false,
+          "right": 337
+        },
+        {
+          "room": "INBOUND_CONVERSION",
+          "clipped": false,
+          "right": 337
+        },
+        {
+          "room": "EXPANSION_RETENTION",
+          "clipped": false,
+          "right": 337
+        },
+        {
+          "room": "PARTNERSHIPS_CHANNEL",
+          "clipped": false,
+          "right": 337
+        },
+        {
+          "room": "OFFER_CLOSING",
+          "clipped": false,
+          "right": 337
+        }
+      ]
+    }
+  },
+  "runtime": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "material": false
+  }
+}

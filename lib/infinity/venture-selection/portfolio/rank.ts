@@ -1,4 +1,4 @@
-import { CORRELATION_PENALTY_WEIGHT } from "../constants";
+import { CORRELATION_PENALTY_MAX_SCORE_REDUCTION, CORRELATION_PENALTY_WEIGHT } from "../constants";
 import type { CandidateEvaluationDraft } from "../types";
 
 export function inferDependencyTags(candidate: import("../types").LoadedCandidateBundle): string[] {
@@ -54,9 +54,10 @@ export function applyPortfolioCorrelationPenalties(
       }));
 
     const totalPenalty = correlationPenalties.reduce((sum, item) => sum + item.penalty, 0);
+    const scoreReduction = Math.min(totalPenalty * 100, CORRELATION_PENALTY_MAX_SCORE_REDUCTION);
     const portfolioAdjustedScore = Math.max(
       0,
-      Math.round((evaluation.selectionScore - totalPenalty * 100) * 100) / 100,
+      Math.round((evaluation.selectionScore - scoreReduction) * 100) / 100,
     );
 
     return {
@@ -91,7 +92,7 @@ export function generateQueueReason(
   total: number,
 ): string {
   if (evaluation.decision === "BUILD") {
-    return `Rank ${rank}/${total}: Passed build gate with selection score ${evaluation.portfolioAdjustedScore}.`;
+    return `Rank ${rank}/${total}: Passed build gate with selection score ${evaluation.selectionScore}.`;
   }
   if (evaluation.decision === "VALIDATE") {
     return `Rank ${rank}/${total}: Promising but blocked by assumptions or build gate — validation recommended.`;

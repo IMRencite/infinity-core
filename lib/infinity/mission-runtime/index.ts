@@ -36,6 +36,7 @@ export {
   runMissionRuntimeTick,
 } from "./lifecycle";
 
+export { authorizeRuntimeTickRequest } from "./tick-auth";
 export { buildMissionRuntimeDiagnostics } from "./diagnostics";
 export { evaluateStage } from "./stage-handlers";
 export {

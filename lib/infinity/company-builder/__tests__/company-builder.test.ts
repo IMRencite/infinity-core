@@ -96,7 +96,7 @@ describe("Company Builder v1", () => {
     const blueprint = assembleVentureBlueprint({
       handoff: buildComplexityTestSimulationHandoff("org-1"),
       simulationOnly: true,
-      sourceLineage: { opportunityCandidateId: null, validationState: "simulation_capability_test" },
+      sourceLineage: { opportunityCandidateId: null, capabilityTest: true, inputMode: "simulation" },
       useComplexMarketplaceCapabilityTest: true,
     });
 

@@ -120,9 +120,14 @@ export async function loadHqCanonicalOperatingProjection(
   let opportunityCount = 0;
   let liveTop10Count = 0;
   if (admin && organizationId) {
-    const universe = await loadCanonicalOpportunityUniverse(admin, organizationId);
-    opportunityCount = universe.counts.total;
-    liveTop10Count = universe.counts.currentTop10;
+    try {
+      const universe = await loadCanonicalOpportunityUniverse(admin, organizationId);
+      opportunityCount = universe.counts.total;
+      liveTop10Count = universe.counts.currentTop10;
+    } catch (error) {
+      const code = error && typeof error === "object" && "code" in error ? String(error.code) : "THROW";
+      console.error("[hq-dashboard] opportunity_universe_unavailable", { code, route: "/dashboard" });
+    }
   }
   const runtime = readDailyVentureOperatingRuntime();
   const observations = readPostLaunchObservationBaseline();

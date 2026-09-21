@@ -30,13 +30,15 @@ const EXPECTED_SHORT: Record<string, string> = {
   launch_operations: "Handles the technical steps needed to put the venture online.",
   intelligence_center: "Watches performance, learns what is working, and finds what should improve next.",
   executive_office: "Coordinates the whole venture and decides what should happen next.",
+  operations: "Reports what Infinity and its ventures are doing operationally right now.",
   sales_floor: "Converts qualified demand into revenue across five specialized sales rooms.",
+  prospect_intelligence: "Builds and refreshes Infinity's shared commercial prospect memory for every venture.",
 };
 
 describe("HQ room job descriptions v1", () => {
   it("keeps one canonical metadata source for every HQ room", () => {
-    expect(ALL_HQ_ROOM_IDS).toHaveLength(13);
-    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(13);
+    expect(ALL_HQ_ROOM_IDS).toHaveLength(15);
+    expect(Object.keys(ROOM_DISPLAY_NAMES)).toHaveLength(15);
     for (const id of ALL_HQ_ROOM_IDS) {
       const names = getRoomDisplayNames(id);
       expect(names.shortDescription.trim().length).toBeGreaterThan(20);
@@ -102,6 +104,7 @@ describe("HQ room job descriptions v1", () => {
       "quality_control",
       "launch_operations",
       "intelligence_center",
+      "prospect_intelligence",
     ]);
     expect(FINAL_ROOM_DISPLAY_NAMES).toEqual([
       "Venture Radar",
@@ -115,6 +118,7 @@ describe("HQ room job descriptions v1", () => {
       "Validation Station",
       "Deployment Depot",
       "Signal Intelligence",
+      "Prospect Intelligence",
       "Command",
     ]);
     expect(readComponent("hq-spatial-floor.tsx")).toContain("LIFECYCLE_ROOM_SEQUENCE");

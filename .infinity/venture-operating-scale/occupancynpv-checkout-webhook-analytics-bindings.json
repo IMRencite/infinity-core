@@ -1,0 +1,46 @@
+{
+  "checkout": {
+    "professional": {
+      "offer": "PROFESSIONAL",
+      "productId": "prod_VDIjmRpY19C9HZ",
+      "priceId": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+      "mode": "subscription",
+      "amount": 29000,
+      "currency": "usd",
+      "recurrence": "ANNUAL_RECURRING"
+    },
+    "perDeal": {
+      "offer": "PER_DEAL",
+      "productId": "prod_VDIju0S2lBO9i5",
+      "priceId": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+      "mode": "payment",
+      "amount": 14900,
+      "currency": "usd",
+      "recurrence": "ONE_TIME"
+    },
+    "start": "https://occupancynpv.com/api/checkout/start",
+    "success": "https://occupancynpv.com/early-access?checkout=success",
+    "cancel": "https://occupancynpv.com/pricing",
+    "activation": "NO"
+  },
+  "webhook": {
+    "route": "/api/webhooks/stripe",
+    "url": "https://occupancynpv.com/api/webhooks/stripe",
+    "events": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "payment_intent.payment_failed"
+    ],
+    "endpointId": "NONE",
+    "writeAuthorized": "NO"
+  },
+  "analytics": {
+    "provider": "infinity.performance_intelligence",
+    "searchVerification": "NOT_REQUIRED_FOR_PAYMENT_ACTIVATION",
+    "privacyAlignment": "PASS"
+  },
+  "readbackAt": "2026-09-07T06:42:41.395Z"
+}

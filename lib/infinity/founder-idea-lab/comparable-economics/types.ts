@@ -35,6 +35,11 @@ export type ComparableBusiness = {
   distributionEvidence: string[];
   economicBenchmarkEvidence: string[];
   confidence: EconomicConfidenceLevel;
+  strategicComparable?: boolean;
+  economicComparable?: boolean;
+  revenueModelComparable?: boolean;
+  revenueModelRole?: "YES" | "PARTIAL" | "NO";
+  numericPricingContribution?: boolean;
 };
 
 export type NormalizedPrice = {

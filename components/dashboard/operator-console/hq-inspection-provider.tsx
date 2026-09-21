@@ -8,11 +8,12 @@ import {
   INSPECTION_QUERY_PARAM,
   formatInspectionQuery,
   parseInspectionQuery,
-  resolveHqInspectionContext,
-  systemsViewForInspection,
   type HqInspectionContext,
   type HqInspectionRef,
-} from "@/lib/infinity/operator-console/inspection-context";
+} from "@/lib/infinity/operator-console/inspection-model";
+import { resolveHqInspectionContext, systemsViewForInspection } from "@/lib/infinity/operator-console/inspection-resolve";
+import { canonicalizeInspectionRef } from "@/lib/infinity/hq-inspection-identity/aliases";
+import { buildHqClearInspectionHref, buildHqVentureInspectionHref } from "@/lib/infinity/hq-venture-selection/navigate";
 
 type HqInspectionValue = {
   context: HqInspectionContext;
@@ -50,25 +51,43 @@ export function HqInspectionProvider({
   useEffect(() => {
     if (workspaceEntityKey && workspaceEntityKey !== lastWorkspaceEntityKey.current) {
       lastWorkspaceEntityKey.current = workspaceEntityKey;
-      setWorkspaceOpen(true);
+      if (context.entityType !== "VENTURE") {
+        setWorkspaceOpen(true);
+      }
       return;
     }
     if (!workspaceEntityKey) {
       lastWorkspaceEntityKey.current = null;
       setWorkspaceOpen(false);
     }
-  }, [workspaceEntityKey]);
+  }, [context.entityType, workspaceEntityKey]);
 
   const writeInspect = useCallback(
     (ref: HqInspectionRef | null) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (ref) params.set(INSPECTION_QUERY_PARAM, formatInspectionQuery(ref));
-      else params.delete(INSPECTION_QUERY_PARAM);
-      const query = params.toString();
-      router.replace(query ? `?${query}` : "?", { scroll: false });
+      const currentSearch = searchParams.toString();
+      const canonical = ref ? canonicalizeInspectionRef(ref) ?? ref : null;
+      const href = canonical
+        ? buildHqVentureInspectionHref(canonical, currentSearch)
+        : buildHqClearInspectionHref(currentSearch);
+      if (canonical && searchParams.get(INSPECTION_QUERY_PARAM) !== formatInspectionQuery(canonical)) {
+        router.push(href, { scroll: false });
+        return;
+      }
+      router.replace(href, { scroll: false });
     },
     [router, searchParams],
   );
+
+  useEffect(() => {
+    const canonical = canonicalizeInspectionRef(explicit);
+    if (
+      explicit &&
+      canonical &&
+      (canonical.entityType !== explicit.entityType || canonical.entityId !== explicit.entityId)
+    ) {
+      writeInspect(canonical);
+    }
+  }, [explicit, writeInspect]);
 
   const value = useMemo<HqInspectionValue>(
     () => ({
@@ -76,7 +95,7 @@ export function HqInspectionProvider({
       systemsArchitectView,
       workspaceOpen,
       selectInspection: (ref) => {
-        setWorkspaceOpen(true);
+        if (ref.entityType !== "VENTURE") setWorkspaceOpen(true);
         writeInspect(ref);
       },
       clearInspection: () => {

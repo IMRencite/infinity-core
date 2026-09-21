@@ -1,0 +1,142 @@
+{
+  "mission": "CRE_OCCUPANCYNPV_FIRST_PAYMENT_ACTIVATION_V1",
+  "founderFirstActivation": "YES",
+  "paymentActivationAuthorized": "YES",
+  "publicLaunchAuthorized": "NO",
+  "stripe": {
+    "account": "acct_18h5CjLdvXKx7R7G",
+    "mode": "LIVE",
+    "identity": "PASS",
+    "chargesEnabled": "YES",
+    "payoutsEnabled": "YES"
+  },
+  "offers": {
+    "professional": {
+      "product": "prod_VDIjmRpY19C9HZ",
+      "price": "price_1UCs7hLdvXKx7R7GF2TPmwGL",
+      "amount": 29000,
+      "currency": "usd",
+      "recurrence": "year",
+      "readback": "PASS"
+    },
+    "perDeal": {
+      "product": "prod_VDIju0S2lBO9i5",
+      "price": "price_1UCs7iLdvXKx7R7GmikBTGx4",
+      "amount": 14900,
+      "currency": "usd",
+      "recurrence": "NONE",
+      "readback": "PASS"
+    }
+  },
+  "webhook": {
+    "endpoint": "we_1UCssQLdvXKx7R7GcHonT3rh",
+    "url": "https://occupancynpv.com/api/webhooks/stripe",
+    "eventSet": "PASS",
+    "secretConfiguration": "PASS",
+    "signatureVerification": "PASS",
+    "idempotency": "PASS",
+    "events": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_failed",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "payment_intent.payment_failed"
+    ]
+  },
+  "checkoutSafety": {
+    "professionalMapping": "PASS",
+    "perDealMapping": "PASS",
+    "arbitraryPrice": "BLOCKED",
+    "arbitraryAmount": "BLOCKED",
+    "unknownOffer": "BLOCKED",
+    "successSpoof": "PASS",
+    "cancelConversion": "PASS"
+  },
+  "gates": {
+    "legal": "PASS",
+    "infrastructure": "PASS",
+    "stripeIdentity": "PASS",
+    "products": "PASS",
+    "prices": "PASS",
+    "checkout": "PASS",
+    "webhook": "FAIL",
+    "analytics": "PASS",
+    "wrongAccount": "PASS",
+    "traceability": "PASS",
+    "founder": "PASS",
+    "paymentReadinessGate": "CONFIGURATION_COMPLETE"
+  },
+  "activation": {
+    "attempted": "NO",
+    "succeeded": "NO",
+    "paymentActivation": "NO",
+    "timestamp": "NONE",
+    "authority": "Founder-approved first production activation",
+    "policyVersion": "payment_activation_policy_v1",
+    "productionCheckoutEnabled": "NO"
+  },
+  "runtime": {
+    "validatedCheckout": "BLOCK",
+    "checkoutSession": "BLOCK",
+    "oneTimePayment": "BLOCK",
+    "professionalSubscription": "BLOCK",
+    "renewal": "BLOCK",
+    "webhook": "BLOCK",
+    "perCustomerFounderApproval": "NO"
+  },
+  "commercialization": {
+    "cleared": [],
+    "remaining": [
+      "FULFILLMENT_CONFIGURATION",
+      "PAYMENT_ACTIVATION",
+      "PUBLIC_LAUNCH"
+    ]
+  },
+  "production": {
+    "https": "PASS",
+    "wwwRedirect": "PASS",
+    "routes": "93 / 93 PASS",
+    "pricing": "PASS",
+    "checkout": "FAIL",
+    "webhook": "FAIL"
+  },
+  "writes": {
+    "productsCreated": 0,
+    "pricesCreated": 0,
+    "customersManuallyCreated": 0,
+    "checkoutSessionsManuallyCreated": 0,
+    "paymentIntentsManuallyCreated": 0,
+    "chargesManuallyCreated": 0,
+    "subscriptionsManuallyCreated": 0,
+    "webhookEndpointsCreated": 0,
+    "dnsWrites": 0,
+    "searchSubmissions": 0,
+    "outreach": 0,
+    "publicLaunch": 0
+  },
+  "deployment": {
+    "attempted": "NO",
+    "ok": false,
+    "deploymentId": "dpl_4gmigcyVLKS1X6HxZDCupdd3Ti7H",
+    "safeError": "NOT_ATTEMPTED",
+    "envUpserts": 0
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4
+  },
+  "record": {
+    "canonical": "PASS",
+    "paymentConfiguration": "CONFIGURED",
+    "paymentActivation": "NO",
+    "productionUrl": "https://occupancynpv.com",
+    "publiclyLaunched": "NO"
+  },
+  "nextState": "WEBHOOK_ACTIVATION_BLOCKED",
+  "nextGovernedAction": "WEBHOOK_ACTIVATION_BLOCKED"
+}

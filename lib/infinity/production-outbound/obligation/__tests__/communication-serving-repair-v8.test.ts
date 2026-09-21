@@ -10,10 +10,17 @@ import { acquireInboundOwnershipKeysAtomic, ensureOwnershipRow, resetOwnershipCl
 import {
   computeIndependentBuildGraphHash,
   evaluateBadPromotionCoverageGate,
+  evaluateCommunicationBusinessLoopHealthGate,
+  evaluateCronHostParityGate,
   evaluateCronRouteExistsGate,
+  evaluateEnvScopeParityGate,
+  evaluateFullRuntimeRollbackGate,
+  evaluatePlatformCronTriggerEvidenceGate,
+  evaluateProviderTokenDurabilityGate,
   evaluateServingEvidenceBindingGate,
   evaluateTrackedRuntimeSourceGate,
 } from "../release-gates-v8";
+import { supersedeUnreachableHumanRequests } from "../human-attestation";
 import { evaluateProvisionalSuppressionGate, resolveStopSuppression } from "../provisional-suppression";
 import { evaluateSendUncertaintyGate, resolveUncertainSend } from "../send-uncertain";
 import { dryRunCutoverAssertions, evaluateCommunicationCutoverDryRunGate } from "../cutover-v8";
@@ -177,5 +184,47 @@ describe("communication serving repair v8", () => {
     expect(assertions.find((row) => row.name === "Rollback")?.result).toBe("PASS");
     expect(evaluateCommunicationCutoverDryRunGate(assertions).result).toBe("FAIL");
     expect(evaluateBadPromotionCoverageGate({ scanned: true, uncovered: 0 }).result).toBe("PASS");
+  });
+
+  it("fails CronHostParityGate when domain and cron hosts diverge", () => {
+    expect(evaluateCronHostParityGate({
+      domain_deployment: "dpl_6saL",
+      production_current: "dpl_5iC51",
+      cron_configuration: "dpl_5iC51",
+      cron_invocation_reached_expected_route: false,
+      heartbeat_committed: false,
+    }).result).toBe("FAIL");
+    expect(evaluateFullRuntimeRollbackGate({
+      domain_restored: true,
+      production_current_restored: false,
+      cron_state_verified: false,
+      real_cron_invocation: false,
+      heartbeat_restored: false,
+      provider_read_restored: false,
+    }).result).toBe("FAIL");
+    expect(evaluateEnvScopeParityGate({
+      preview_names: ["CRON_SECRET"],
+      production_names: ["CRON_SECRET"],
+      required: ["CRON_SECRET"],
+    }).result).toBe("PASS");
+    expect(evaluateCommunicationBusinessLoopHealthGate({
+      scheduler: "PASS",
+      provider_auth: "PASS",
+      discovery: "NOT_IMPLEMENTED",
+      worker: "NOT_IMPLEMENTED",
+      watchdog: "NOT_IMPLEMENTED",
+    }).result).toBe("FAIL");
+    expect(evaluatePlatformCronTriggerEvidenceGate({
+      platform_record_found: false,
+      deployment_matches: false,
+      schedule_window_matches: false,
+      auth_valid: false,
+      no_manual_correlation: true,
+      user_agent_compatible: false,
+    }).reasons).toContain("NOT_PROVEN");
+    expect(evaluateProviderTokenDurabilityGate({ publishing_status: "NOT_PROVEN", last_invalid_grant_at: null }).reasons).toContain("NOT_PROVEN");
+    const superseded = supersedeUnreachableHumanRequests(createHumanAttestationRequests(NOW), NOW);
+    expect(superseded.every((row) => row.status === "SUPERSEDED_PATH_UNREACHABLE")).toBe(true);
+    expect(superseded.every((row) => row.founder_penalized_for_expiry === false)).toBe(true);
   });
 });

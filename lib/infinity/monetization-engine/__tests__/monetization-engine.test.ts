@@ -198,7 +198,7 @@ describe("Monetization Engine v1", () => {
       estimatedVariableCosts: 10000,
       estimatedFixedCosts: 20000,
       estimatedCAC: 100,
-      estimatedLTV: null,
+      estimatedLTV: null as number | null,
       marginScore: 70,
     });
 

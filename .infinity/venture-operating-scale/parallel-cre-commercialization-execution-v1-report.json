@@ -1,0 +1,407 @@
+{
+  "mission": "PARALLEL_CRE_COMMERCIALIZATION_EXECUTION_V1",
+  "concurrency": "PASS",
+  "parallelExecution": "PASS",
+  "naming": {
+    "existingDurableVentureName": "Commercial lease NPV comparison",
+    "confidence": "MEDIUM",
+    "productIdentity": "Commercial lease NPV comparison",
+    "operatingRecordName": "CRE Lease NPV Validation",
+    "offer": "Lease-scenario NPV comparison for tenant-representation brokers",
+    "durablePurchasedBrand": false
+  },
+  "finalists": [
+    {
+      "name": "LeaseNPV",
+      "domain": "leasenpv.com",
+      "tld": "com",
+      "meaning": "Lease net-present-value comparison for commercial occupancy decisions.",
+      "brandability": 8,
+      "relevance": 9,
+      "expansionFlexibility": 7,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 88,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "LeaseComp",
+      "domain": "leasecomp.com",
+      "tld": "com",
+      "meaning": "Commercial lease comparison workspace.",
+      "brandability": 8,
+      "relevance": 8,
+      "expansionFlexibility": 8,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "MEDIUM",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 82,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "OccupancyNPV",
+      "domain": "occupancynpv.com",
+      "tld": "com",
+      "meaning": "Occupancy-cost NPV analysis for tenant-rep brokers.",
+      "brandability": 6,
+      "relevance": 9,
+      "expansionFlexibility": 6,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 78,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "DealNPV",
+      "domain": "dealnpv.com",
+      "tld": "com",
+      "meaning": "Per-deal NPV comparison for lease alternatives.",
+      "brandability": 7,
+      "relevance": 8,
+      "expansionFlexibility": 7,
+      "ambiguityRisk": "MEDIUM",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 76,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "LeaseBasis",
+      "domain": "leasebasis.com",
+      "tld": "com",
+      "meaning": "A professional basis for comparing commercial lease economics.",
+      "brandability": 8,
+      "relevance": 7,
+      "expansionFlexibility": 8,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 80,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "TenantNPV",
+      "domain": "tenantnpv.com",
+      "tld": "com",
+      "meaning": "Tenant-representation NPV comparison.",
+      "brandability": 7,
+      "relevance": 8,
+      "expansionFlexibility": 6,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 75,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "CompLease",
+      "domain": "complease.com",
+      "tld": "com",
+      "meaning": "Compare commercial leases without rebuilding the spreadsheet.",
+      "brandability": 7,
+      "relevance": 8,
+      "expansionFlexibility": 7,
+      "ambiguityRisk": "MEDIUM",
+      "knownConflictRisk": "MEDIUM",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 74,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "NPVLease",
+      "domain": "npvlease.com",
+      "tld": "com",
+      "meaning": "NPV-first commercial lease comparison.",
+      "brandability": 6,
+      "relevance": 8,
+      "expansionFlexibility": 6,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 72,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "LeaseDelta",
+      "domain": "leasedelta.com",
+      "tld": "com",
+      "meaning": "The economic difference between lease alternatives.",
+      "brandability": 8,
+      "relevance": 7,
+      "expansionFlexibility": 8,
+      "ambiguityRisk": "LOW",
+      "knownConflictRisk": "MEDIUM",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 77,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    },
+    {
+      "name": "HoldCost",
+      "domain": "holdcost.com",
+      "tld": "com",
+      "meaning": "Occupancy and holding-cost comparison for commercial leases.",
+      "brandability": 7,
+      "relevance": 7,
+      "expansionFlexibility": 8,
+      "ambiguityRisk": "MEDIUM",
+      "knownConflictRisk": "LOW",
+      "available": "UNKNOWN",
+      "provider": "namecheap.com_v1",
+      "firstYearCost": "UNKNOWN",
+      "renewalCost": "UNKNOWN",
+      "premium": "UNKNOWN",
+      "strategicScore": 73,
+      "evidenceTimestamp": "2026-09-05T09:51:07.689Z"
+    }
+  ],
+  "providers": {
+    "Namecheap": "UNVERIFIED",
+    "Cloudflare": "READ_ONLY_VERIFIED",
+    "other": null,
+    "availabilityVerification": "FAIL",
+    "registrationCapability": "UNVERIFIED",
+    "capabilities": {
+      "Namecheap": {
+        "domain.search": "UNVERIFIED",
+        "domain.availability": "UNVERIFIED",
+        "domain.registration": "UNVERIFIED",
+        "domain.readback": "UNVERIFIED",
+        "domain.ownership": "UNVERIFIED"
+      },
+      "Cloudflare": {
+        "domain.search": "UNAVAILABLE",
+        "domain.availability": "UNAVAILABLE",
+        "domain.registration": "UNAVAILABLE",
+        "domain.readback": "UNAVAILABLE",
+        "domain.ownership": "UNAVAILABLE"
+      }
+    }
+  },
+  "decision": {
+    "gate": "DomainAcquisitionDecision",
+    "candidate": "leasenpv.com",
+    "firstYearCost": "UNKNOWN",
+    "renewalCost": "UNKNOWN",
+    "premiumCost": "UNKNOWN",
+    "transactionFees": "UNKNOWN",
+    "expectedHoldingCost": "UNKNOWN",
+    "switchingCost": "UNKNOWN",
+    "risk": [
+      "no_live_write_registrar",
+      "no_autonomous_spend_ceiling",
+      "preferred_not_available",
+      "unknown_first_year_cost",
+      "unknown_renewal_cost",
+      "unknown_transaction_fees",
+      "unknown_switching_cost",
+      "unknown_premium_cost"
+    ],
+    "strategicFit": 88,
+    "unknownCosts": [
+      "first_year_cost",
+      "renewal_cost",
+      "transaction_fees",
+      "switching_cost",
+      "premium_cost"
+    ]
+  },
+  "treasury": "PASS",
+  "eag": "AUTHORIZATION_REQUIRED",
+  "purchase": {
+    "authorized": false,
+    "attempted": false,
+    "count": 0,
+    "domain": "NONE",
+    "nextState": "DOMAIN_PROVIDER_VERIFICATION_REQUIRED",
+    "dnsWrites": 0,
+    "dnsNext": "DOMAIN_PROVIDER_VERIFICATION_REQUIRED"
+  },
+  "stripe": {
+    "connected": "YES",
+    "environment": "LIVE",
+    "safeAccountIdentity": "NOT_CONNECTED",
+    "providerVerification": "PASS",
+    "capabilities": {
+      "account.read": "UNVERIFIED",
+      "product.read": "UNVERIFIED",
+      "product.create": "UNVERIFIED",
+      "price.read": "UNVERIFIED",
+      "price.create": "UNVERIFIED",
+      "checkout/session.create": "UNVERIFIED",
+      "payment_link.create": "UNAVAILABLE",
+      "webhook_endpoint.read": "UNVERIFIED",
+      "webhook_endpoint.create": "UNVERIFIED",
+      "payment_intent.read": "UNVERIFIED",
+      "charge.read": "UNVERIFIED",
+      "refund.read": "UNVERIFIED",
+      "event.read": "UNVERIFIED",
+      "transaction/balance.read": "READ_ONLY_VERIFIED"
+    },
+    "offers": [
+      {
+        "offer": "Professional",
+        "price": "$290 / year",
+        "amountUsd": 290,
+        "billingModel": "RECURRING_ANNUAL",
+        "source": "creSiteArchitectureInput.pricing + accepted artifact pricing copy"
+      },
+      {
+        "offer": "Per-deal",
+        "price": "$149 / deal",
+        "amountUsd": 149,
+        "billingModel": "ONE_TIME_PER_DEAL",
+        "source": "creSiteArchitectureInput.pricing + accepted artifact pricing copy"
+      }
+    ],
+    "offerConsistency": "PASS",
+    "planStatus": "BUILT",
+    "configurationReady": true,
+    "activationReady": false,
+    "blockers": [
+      "legal_pages_unconfigured",
+      "domain_public_url_unconfigured",
+      "stripe_read_only_does_not_grant_write",
+      "live_payment_objects_not_written",
+      "payment_activation_not_authorized"
+    ],
+    "writes": 0,
+    "nextAuthorization": "GOVERNED_CRE_PAYMENT_CONFIGURATION_REQUIRED"
+  },
+  "record": {
+    "domain": "UNCONFIGURED",
+    "dns": "UNCONFIGURED",
+    "ssl": "UNCONFIGURED",
+    "payments": "UNCONFIGURED",
+    "revenue": "UNCONFIGURED",
+    "experiment": "exp_e72beb7b6d35e7b20acf",
+    "observer": "RUNNING:4",
+    "launch": "NO",
+    "history": [
+      {
+        "domain": "leasenpv.com",
+        "event": "SELECTED",
+        "at": "2026-09-05T09:51:09.353Z",
+        "evidence": "Selected by PARALLEL_CRE_COMMERCIALIZATION_EXECUTION_V1; not purchased."
+      }
+    ]
+  },
+  "daily": {
+    "result": "NO_ACTION_REQUIRED",
+    "commercialization": true,
+    "external": true,
+    "signals": [
+      "experiment_waiting_externally",
+      "domain_acquisition_status",
+      "payment_verification_status",
+      "commercialization_blockers_present"
+    ]
+  },
+  "readiness": {
+    "gate": "VentureCommercializationReadinessGate",
+    "result": "MULTIPLE_ACTIONS_REQUIRED",
+    "reasons": [
+      "domain_unconfigured",
+      "dns_unconfigured",
+      "ssl_unconfigured",
+      "legal_pages_unconfigured",
+      "analytics_unconfigured",
+      "payments_unconfigured",
+      "revenue_telemetry_unconfigured"
+    ]
+  },
+  "hq": {
+    "projection": "PASS",
+    "command": "ACTIVE_WORK",
+    "systemsArchitect": "ACTIVE_WORK",
+    "researchGrid": "ACTIVE_WORK",
+    "validationStation": "ACTIVE_WORK",
+    "financialGovernanceRoom": "ACTIVE_WORK",
+    "signalIntelligence": "PRESENT_IDLE",
+    "growthNexus": "PRESENT_IDLE",
+    "deploymentDepot": "PRESENT_IDLE",
+    "infinityDecisionCoreDuring": "ACTIVE_WORK",
+    "fakeSerialization": "NO",
+    "during": {
+      "command": "ACTIVE_WORK",
+      "researchGrid": "ACTIVE_WORK",
+      "validationStation": "ACTIVE_WORK",
+      "financialGovernanceRoom": "ACTIVE_WORK",
+      "systemsArchitect": "ACTIVE_WORK",
+      "signalIntelligence": "ACTIVE_WORK",
+      "infinityDecisionCore": "ACTIVE_WORK"
+    },
+    "after": {
+      "active": 0,
+      "infinityDecisionCore": "PRESENT_IDLE",
+      "fakeContinuousActiveWork": false
+    }
+  },
+  "experiment": {
+    "id": "exp_e72beb7b6d35e7b20acf",
+    "state": "COLLECTING",
+    "clockRestarted": false,
+    "evidenceStart": "2026-08-29T15:18:52.131Z",
+    "observer": "RUNNING",
+    "tracked": 4,
+    "newInbound": 0,
+    "newColdOutreach": 0,
+    "wave2": 0
+  },
+  "external": {
+    "domainPurchases": 0,
+    "dnsWrites": 0,
+    "stripeConfigurationWrites": 0,
+    "paymentActivations": 0,
+    "realCharges": 0,
+    "websiteDeployments": 0,
+    "coldOutreach": 0,
+    "wave2": 0,
+    "publiclyLaunched": "NO"
+  },
+  "nextAuthorizations": {
+    "DNS_CONFIGURATION": "BLOCKED:DOMAIN_NOT_PURCHASED",
+    "PRODUCTION_DOMAIN_BINDING": "BLOCKED:DNS_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "PAYMENT_CONFIGURATION": "GOVERNED_CRE_PAYMENT_CONFIGURATION_REQUIRED",
+    "PAYMENT_ACTIVATION": "BLOCKED:PAYMENT_CONFIGURATION_AUTHORIZATION_REQUIRED",
+    "PUBLIC_LAUNCH": "BLOCKED:PUBLIC_LAUNCH_AUTHORIZATION_REQUIRED"
+  },
+  "nextState": "CRE_DOMAIN_PROVIDER_VERIFICATION_REQUIRED"
+}

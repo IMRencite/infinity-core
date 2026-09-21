@@ -1,0 +1,85 @@
+/* HQ live-activity visuals only. Keep out of public OccupancyNPV globals digest. */
+
+.hq-infinity-core[data-hq-infinity-symbol="ACTIVE"] .hq-infinity-scale {
+  filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.35));
+}
+
+.hq-infinity-core[data-hq-infinity-symbol="STANDBY"] .hq-infinity-stroke {
+  filter: drop-shadow(0 0 10px rgba(196, 181, 253, 0.28));
+}
+
+.hq-infinity-core[data-hq-infinity-symbol="STANDBY"] .hq-infinity-energy {
+  opacity: 0.4;
+  stroke: var(--hq-infinity-inner-standby);
+  animation: none;
+}
+
+.hq-infinity-core[data-hq-infinity-symbol="AUTHORIZATION"] .hq-infinity-stroke {
+  stroke: #ddd6fe;
+  filter: drop-shadow(0 0 12px rgba(167, 139, 250, 0.45));
+}
+
+.hq-infinity-core[data-hq-infinity-symbol="BLOCKED"] .hq-infinity-stroke {
+  stroke: #f3d19a;
+}
+
+.hq-infinity-core[data-hq-infinity-symbol="IDLE"] .hq-infinity-glow {
+  opacity: 0.45;
+}
+
+.hq-worker-orb--visual-active {
+  border-color: rgba(232, 121, 249, 0.62);
+  background: rgba(232, 121, 249, 0.16);
+  box-shadow: 0 0 20px rgba(232, 121, 249, 0.42);
+}
+
+.hq-worker-orb--visual-waiting {
+  border-color: rgba(61, 255, 176, 0.55);
+  background: rgba(61, 255, 176, 0.1);
+  box-shadow: 0 0 14px rgba(61, 255, 176, 0.32);
+}
+
+.hq-worker-orb--visual-authorization {
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.55);
+}
+
+.hq-worker-orb--visual-idle {
+  border-color: rgba(125, 211, 252, 0.45);
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 12px rgba(125, 211, 252, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hq-infinity-core[data-hq-infinity-symbol="ACTIVE"] .hq-infinity-glow,
+  .hq-infinity-core[data-hq-infinity-symbol="ACTIVE"] .hq-infinity-stroke {
+    opacity: 1;
+    filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.55));
+  }
+
+  .hq-infinity-core[data-hq-infinity-symbol="ACTIVE"] .hq-infinity-energy {
+    opacity: 1;
+    animation: none;
+    stroke: var(--hq-infinity-inner-active);
+    filter: drop-shadow(0 0 8px rgba(224, 64, 251, 0.6));
+  }
+
+  .hq-infinity-core[data-hq-infinity-symbol="STANDBY"] .hq-infinity-energy {
+    opacity: 0.45;
+    animation: none;
+    stroke: var(--hq-infinity-inner-standby);
+  }
+
+  .hq-infinity-core[data-hq-infinity-symbol="ACTIVE"] .hq-infinity-halo--near {
+    opacity: 0.45;
+  }
+
+  .hq-worker-orb--motion,
+  .hq-worker-orb--active-work.hq-orb-pulse {
+    animation: none;
+  }
+
+  .hq-worker-orb--visual-active,
+  .hq-worker-orb--active-work {
+    box-shadow: 0 0 16px rgba(232, 121, 249, 0.55);
+  }
+}

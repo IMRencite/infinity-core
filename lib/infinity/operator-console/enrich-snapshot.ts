@@ -26,7 +26,9 @@ import { projectVentureOperatingScaleHq } from "@/lib/infinity/venture-operating
 import { projectOperationsRoom } from "@/lib/infinity/hq-information-architecture/operations-room";
 import { attachProfitLabToDepartment } from "@/lib/infinity/venture-economics/hq";
 import { OPERATIONS_ROOM_ID, SALES_FLOOR_ROOM_ID, getRoomDisplayNames } from "./room-naming";
-import { salesFloorDepartmentSnapshot } from "@/lib/infinity/venture-sales-floor/hq";
+import { salesFloorDepartmentSnapshot, salesFloorWorkerNodes } from "@/lib/infinity/venture-sales-floor/hq";
+import type { SalesFloorHqView } from "@/lib/infinity/venture-sales-floor/types";
+import { isGenericWorkerOnlyNow } from "@/lib/infinity/current-work-narrative";
 
 function firstRecord(value: unknown): Record<string, unknown> | null {
   if (Array.isArray(value) && value[0] && typeof value[0] === "object") {
@@ -114,38 +116,57 @@ export function enrichOperatorSnapshot(snapshot: OperatorVentureSnapshot): Opera
     ? getRoomDisplayNames(currentActivityBase.departmentId).displayName
     : null;
 
+  const salesFloor = salesFloorDepartmentSnapshot();
+  const salesNow = salesFloor.currentTask;
+  const rawNarration = humanizeCurrentActivityNarration({
+    ...currentActivityBase,
+    departmentDisplayName,
+  });
   const currentActivity = {
     ...currentActivityBase,
     departmentDisplayName,
-    displayNarration: humanizeCurrentActivityNarration({
-      ...currentActivityBase,
-      departmentDisplayName,
-    }),
-    displayTask: humanizeTask(currentActivityBase.task),
+    displayNarration:
+      isGenericWorkerOnlyNow(rawNarration) && salesNow
+        ? salesNow
+        : rawNarration,
+    displayTask: isGenericWorkerOnlyNow(humanizeTask(currentActivityBase.task)) && salesNow
+      ? salesNow
+      : humanizeTask(currentActivityBase.task),
   };
 
-  const operations = projectOperationsRoom();
-  const salesFloor = salesFloorDepartmentSnapshot();
+  let operations: ReturnType<typeof projectOperationsRoom> | null = null;
+  try {
+    operations = projectOperationsRoom();
+  } catch {
+    console.error("[hq-dashboard] operations_room_unavailable", { code: "THROW", route: "/dashboard" });
+  }
+  const operationsDepartment = operations
+    ? {
+        ...operations.department,
+        displayName: getRoomDisplayNames(OPERATIONS_ROOM_ID).displayName,
+        supportingLabel: getRoomDisplayNames(OPERATIONS_ROOM_ID).supportingLabel,
+        displayHeadline: humanizeDepartmentHeadline(OPERATIONS_ROOM_ID, operations.department.state, operations.department.failureSemantics),
+        displayTask: humanizeTask(operations.department.currentTask),
+        displaySummary: humanizeDepartmentSummary(operations.department),
+      }
+    : departments.find((dept) => dept.id === OPERATIONS_ROOM_ID);
   const departmentsWithOperations = [
     ...departments.filter((dept) => dept.id !== OPERATIONS_ROOM_ID && dept.id !== SALES_FLOOR_ROOM_ID),
-    {
-      ...operations.department,
-      displayName: getRoomDisplayNames(OPERATIONS_ROOM_ID).displayName,
-      supportingLabel: getRoomDisplayNames(OPERATIONS_ROOM_ID).supportingLabel,
-      displayHeadline: humanizeDepartmentHeadline(OPERATIONS_ROOM_ID, operations.department.state, operations.department.failureSemantics),
-      displayTask: humanizeTask(operations.department.currentTask),
-      displaySummary: humanizeDepartmentSummary(operations.department),
-    },
+    ...(operationsDepartment ? [operationsDepartment] : []),
     {
       ...salesFloor,
       displayName: getRoomDisplayNames(SALES_FLOOR_ROOM_ID).displayName,
       supportingLabel: getRoomDisplayNames(SALES_FLOOR_ROOM_ID).supportingLabel,
-      displayHeadline: humanizeDepartmentHeadline(SALES_FLOOR_ROOM_ID, salesFloor.state),
-      displayTask: humanizeTask(salesFloor.currentTask),
-      displaySummary: humanizeDepartmentSummary(salesFloor),
+      displayHeadline: salesFloor.displayHeadline ?? salesFloor.currentTask ?? undefined,
+      displayTask: salesFloor.currentTask ?? undefined,
+      displaySummary: salesFloor.displaySummary ?? undefined,
     },
   ];
-  const workerNodes = [...buildWorkerNodes(providers, departments), ...operations.workers];
+  const workerNodes = [
+    ...buildWorkerNodes(providers, departments),
+    ...(operations?.workers ?? []),
+    ...salesFloorWorkerNodes(salesFloor.detail.salesFloorView as SalesFloorHqView),
+  ];
   const departmentsWithActivity = departmentsWithOperations.map((dept) => ({
     ...dept,
     activityExplanation: explainSnapshotDepartmentActivity(

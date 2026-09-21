@@ -4,7 +4,7 @@ export const HUMAN_ATTESTATION_SCOPE = "communication-human-attestation-v7" as c
 export const HUMAN_ATTESTATION_DUE_MS = 4 * 60 * 60 * 1000;
 export const HUMAN_ATTESTATION_RENOTIFY_MS = 2 * 60 * 60 * 1000;
 
-export type HumanAttestationStatus = "AWAITING_HUMAN" | "ATTESTED" | "REJECTED" | "EXPIRED" | "BLOCKED_BY_UNAVAILABLE_ACTION_PATH" | "NOT_ACTIONABLE";
+export type HumanAttestationStatus = "AWAITING_HUMAN" | "ATTESTED" | "REJECTED" | "EXPIRED" | "BLOCKED_BY_UNAVAILABLE_ACTION_PATH" | "NOT_ACTIONABLE" | "SUPERSEDED_PATH_UNREACHABLE";
 
 export type CommunicationHumanAttestationRequest = {
   id: string;
@@ -25,6 +25,7 @@ export type CommunicationHumanAttestationRequest = {
   answers: Record<string, string> | null;
   created_at: string;
   updated_at: string;
+  founder_penalized_for_expiry?: boolean;
 };
 
 function named(gate: string, result: NamedOutboundLoopGate["result"], reasons: string[]): NamedOutboundLoopGate {
@@ -102,6 +103,23 @@ export function applyHumanAttestationExpiry(request: CommunicationHumanAttestati
     next_action: request.escalation_count + 1 >= 2 ? "RAISE_OPERATIONAL_ALERT_AND_RENOTIFY" : "RENOTIFY_FOUNDER",
     updated_at: now,
   };
+}
+
+export function supersedeUnreachableHumanRequests(
+  requests: CommunicationHumanAttestationRequest[],
+  now: string,
+): CommunicationHumanAttestationRequest[] {
+  return requests.map((row) => {
+    if (row.status === "ATTESTED" || row.status === "REJECTED" || row.status === "SUPERSEDED_PATH_UNREACHABLE") return row;
+    return {
+      ...row,
+      status: "SUPERSEDED_PATH_UNREACHABLE",
+      reason: "PATH_UNREACHABLE",
+      next_action: "NONE",
+      founder_penalized_for_expiry: false,
+      updated_at: now,
+    };
+  });
 }
 
 export function blockHumanRequestsByUnavailableActionPath(
