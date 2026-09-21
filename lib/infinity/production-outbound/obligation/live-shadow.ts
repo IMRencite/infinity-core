@@ -74,7 +74,7 @@ export function executeRealMessageShadow(input: {
     inbound,
     generated: body,
     suppressed: false,
-    authorship: input.authorship,
+    authorship: input.authorship === "PROVISIONAL_TEST_PROSPECT" ? "PROSPECT" : input.authorship,
     ownership_free: true,
     prior_outbound: input.prior_infinity_outbound_count,
     next_action: plan.next_action as CommercialAction,

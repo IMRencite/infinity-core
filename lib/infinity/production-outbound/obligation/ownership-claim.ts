@@ -30,7 +30,7 @@ export function resetOwnershipClaims(): void {
   memory.clear();
 }
 
-export function ensureOwnershipRow(input: Omit<OutboundOwnershipClaim, "state" | "owner_path" | "owner_id" | "attempt_id" | "version" | "lease_expires_at"> & { now: string }): OutboundOwnershipClaim {
+export function ensureOwnershipRow(input: Omit<OutboundOwnershipClaim, "state" | "owner_path" | "owner_id" | "attempt_id" | "version" | "lease_expires_at" | "updated_at"> & { now: string }): OutboundOwnershipClaim {
   const id = key(input);
   const existing = memory.get(id);
   if (existing) return existing;

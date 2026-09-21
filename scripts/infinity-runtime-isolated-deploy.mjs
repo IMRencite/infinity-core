@@ -125,6 +125,22 @@ for (const drop of [
   const dropPath = join(dest, drop);
   if (existsSync(dropPath)) rmSync(dropPath, { recursive: true, force: true });
 }
+const destStubs = [
+  ["lib/infinity/provider-capabilities/email-send-capability.ts", `export const EMAIL_SEND_CAPABILITY = "communication.email.send" as const;\nexport type EmailSendCapability = typeof EMAIL_SEND_CAPABILITY;\n`],
+  ["lib/infinity/sales-learning/method.ts", `export function classifyObjection(text: string): string {\n  return /stop|unsubscribe/.test(text.toLowerCase()) ? "NOT_INTERESTED" : "UNKNOWN";\n}\n`],
+  ["lib/infinity/market-validation-experiment/constants.ts", `export const CRE_CANDIDATE_ID = "isolated-runtime";\nexport const LIVE_ORG = "isolated-runtime";\nexport const LOCKED_CRE_EXPERIMENT_ID = "isolated-runtime";\n`],
+  ["lib/infinity/market-validation-acquisition-runtime/first-send-authorization.ts", `export const FIRST_REAL_COHORT_ID = "isolated-runtime";\n`],
+  ["lib/infinity/autonomous-sales-execution/contract.ts", `export const OCCUPANCYNPV_FIRST_OUTBOUND_CAMPAIGN_ID = "campaign:occupancynpv:isolated";\n`],
+  ["lib/infinity/autonomous-sales-execution/types.ts", `export type SalesProspectCandidate = {\n  prospect_id: string;\n  venture_id: string;\n  campaign_id: string;\n  business_name: string;\n  person_name: string | null;\n  role: string | null;\n  industry: string | null;\n  geography: string | null;\n  public_context: string;\n  source_url: string;\n  source_provider: string;\n  published_email: string | null;\n  timezone: string | null;\n  timezone_basis: string | null;\n};\n`],
+  ["lib/infinity/autonomous-sales-execution/engines.ts", `export function classifySalesReply(text: string): string {\n  const value = text.toLowerCase();\n  if (/^\\s*stop\\s*$/im.test(text) || /unsubscribe|opt[-\s]?out/.test(value)) return "UNSUBSCRIBE";\n  if (/out of office/.test(value)) return "OUT_OF_OFFICE";\n  return "OTHER";\n}\n`],
+];
+for (const [rel, body] of destStubs) {
+  const full = join(dest, rel);
+  if (!existsSync(full)) {
+    mkdirSync(join(full, ".."), { recursive: true });
+    writeFileSync(full, body);
+  }
+}
 const destIsolation = readFileSync(join(dest, "lib/infinity/production-outbound/obligation/isolation.ts"), "utf8");
 if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
   console.log(JSON.stringify({ ok: false, reason: "DIRTY_SHARED_RELEASE_SOURCE", gate: "CleanReleaseSourceGate" }));

@@ -87,7 +87,7 @@ export type ClosedLoopSuppressionRecord = {
   reason: "OPT_OUT";
   source_message_id: string;
   timestamp: string;
-  status: "ACTIVE" | "INVALIDATED";
+  status: "ACTIVE" | "INVALIDATED" | "PROVISIONAL";
   source_role?: "PROSPECT" | "INFINITY" | "SYSTEM" | "UNKNOWN";
   valid?: boolean;
   valid_prospect_opt_out?: boolean;
@@ -359,6 +359,26 @@ export function persistSuppressionRecord(input: {
     };
     return memory.suppression;
   }
+  if (role === "UNKNOWN") {
+    memory.suppression = {
+      id: `suppression:email:${recipientFingerprint(input.recipient)}:occupancynpv`,
+      recipient_fingerprint: recipientFingerprint(input.recipient),
+      venture: "OccupancyNPV",
+      venture_id: DEFAULT_CANARY_VENTURE_ID,
+      channel: "EMAIL",
+      reason: "OPT_OUT",
+      source_message_id: input.source_message_id,
+      timestamp,
+      status: "PROVISIONAL",
+      source_role: "UNKNOWN",
+      valid: false,
+      valid_prospect_opt_out: false,
+      prospect_id: input.prospect_id ?? APPROVED_CANARY_PROSPECT_ID,
+      thread_id: input.thread_id ?? CANONICAL_OCCUPANCYNPV_THREAD_ID,
+      contact_identifier: recipientFingerprint(input.recipient),
+    };
+    return memory.suppression;
+  }
   if (memory.suppression?.status === "ACTIVE" && memory.suppression.reason === "OPT_OUT" && memory.suppression.valid !== false) {
     return memory.suppression;
   }
@@ -375,7 +395,7 @@ export function persistSuppressionRecord(input: {
     status: "ACTIVE",
     source_role: role,
     valid: true,
-    valid_prospect_opt_out: role !== "INFINITY" && role !== "SYSTEM",
+    valid_prospect_opt_out: true,
     prospect_id: input.prospect_id ?? APPROVED_CANARY_PROSPECT_ID,
     thread_id: input.thread_id ?? CANONICAL_OCCUPANCYNPV_THREAD_ID,
     contact_identifier: fingerprint,
@@ -391,7 +411,17 @@ export function isValidProspectSuppression(record: ClosedLoopSuppressionRecord |
   return true;
 }
 
+export function isSendBlockingSuppression(record: ClosedLoopSuppressionRecord | null): boolean {
+  if (!record) return false;
+  if (record.status === "PROVISIONAL") return true;
+  return isValidProspectSuppression(record);
+}
+
 export function lookupSuppression(recipient?: string | null): ClosedLoopSuppressionRecord | null {
+  if (memory.suppression?.status === "PROVISIONAL") {
+    if (recipient && memory.suppression.recipient_fingerprint !== recipientFingerprint(recipient)) return null;
+    return memory.suppression;
+  }
   if (!isValidProspectSuppression(memory.suppression)) return null;
   if (recipient && memory.suppression && memory.suppression.recipient_fingerprint !== recipientFingerprint(recipient)) return null;
   return memory.suppression;
