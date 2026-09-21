@@ -2,7 +2,8 @@ import { composeOccupancyNpvAlwaysClosingReply } from "@/lib/infinity/always-clo
 import { evaluateConsultativeSalesLanguageGate, evaluateSalesOverExplanationGate, evaluateSalesQuestionQualityGate } from "@/lib/infinity/always-closing-sales/consultative-sales";
 import { evaluateNaturalSalesConversationGate, rewriteNaturalSalesReply } from "@/lib/infinity/always-closing-sales/natural-sales-conversation";
 import { evaluateOfferDrivenSalesAdvancementGate, loadVentureOfferProfile } from "@/lib/infinity/always-closing-sales/venture-offer-profile";
-import { evaluateSalesAdvancementQualityGate, parseCommercialAction } from "@/lib/infinity/always-closing-sales/doctrine";
+import { evaluateSalesAdvancementQualityGate } from "@/lib/infinity/always-closing-sales/doctrine";
+import { parseCommercialAction } from "@/lib/infinity/always-closing-sales/commercial-action";
 import type { NamedOutboundLoopGate } from "../closed-loop";
 import { evaluateResponseContentQualityGate } from "../conversation-semantics";
 import { FOUNDER_TRIAL_INBOUND_TEXT } from "./canary";

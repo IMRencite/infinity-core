@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { COMMERCIAL_ACTIONS, parseCommercialAction } from "../doctrine";
+import { COMMERCIAL_ACTIONS, parseCommercialAction } from "../commercial-action";
 
 describe("parseCommercialAction", () => {
   it("accepts every valid CommercialAction", () => {
