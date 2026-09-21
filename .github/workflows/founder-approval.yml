@@ -1,0 +1,135 @@
+name: founder-approval
+
+on:
+  workflow_dispatch:
+    inputs:
+      decision_type:
+        description: "ORGANIC_QC_HOLD or COMMUNICATION_ATTESTATION"
+        required: true
+        type: choice
+        options:
+          - ORGANIC_QC_HOLD
+          - COMMUNICATION_ATTESTATION
+      subject:
+        description: "Hold id, message id, or mailbox-purpose subject"
+        required: true
+        type: string
+      statement:
+        description: "Exact decision statement being approved or rejected"
+        required: true
+        type: string
+      evidence_hash:
+        description: "SHA-256 of the evidence pack"
+        required: true
+        type: string
+      decision:
+        description: "Requested decision"
+        required: true
+        type: choice
+        options:
+          - CLEAR_HOLD
+          - KEEP_HOLD
+          - TEST_ONLY
+          - REAL_PROSPECT_TRAFFIC
+          - BOTH
+          - UNKNOWN
+          - ABANDON_OLD_TEST_MESSAGE
+          - KEEP_OLD_TEST_MESSAGE
+          - REJECT
+
+jobs:
+  request:
+    runs-on: ubuntu-latest
+    outputs:
+      decision_id: ${{ steps.record.outputs.decision_id }}
+      statement_hash: ${{ steps.record.outputs.statement_hash }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: record
+        env:
+          DECISION_TYPE: ${{ inputs.decision_type }}
+          SUBJECT: ${{ inputs.subject }}
+          STATEMENT: ${{ inputs.statement }}
+          EVIDENCE_HASH: ${{ inputs.evidence_hash }}
+          DECISION: ${{ inputs.decision }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, uuid
+          from datetime import datetime, timezone
+          statement = os.environ["STATEMENT"]
+          payload = {
+            "decision_id": f"fd:{uuid.uuid4()}",
+            "decision_type": os.environ["DECISION_TYPE"],
+            "subject": os.environ["SUBJECT"],
+            "statement_hash": hashlib.sha256(statement.encode()).hexdigest(),
+            "evidence_hash": os.environ["EVIDENCE_HASH"],
+            "actor_identity": "PENDING_FOUNDER",
+            "auth_method": "GITHUB_ENVIRONMENT",
+            "requested_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
+            "acted_at": None,
+            "decision": os.environ["DECISION"],
+            "expires_at": None,
+            "superseded_by": None,
+          }
+          print(json.dumps(payload))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write(f"decision_id={payload['decision_id']}\n")
+              fh.write(f"statement_hash={payload['statement_hash']}\n")
+          PY
+
+  founder_review:
+    needs: request
+    runs-on: ubuntu-latest
+    environment: founder-approval
+    steps:
+      - name: Founder-protected review
+        run: |
+          echo "Decision ${{ needs.request.outputs.decision_id }} is waiting in the founder-approval environment."
+          echo "This job cannot complete until the founder account reviews the environment."
+
+  persist:
+    needs: [request, founder_review]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Append decision record
+        env:
+          DECISION_ID: ${{ needs.request.outputs.decision_id }}
+          STATEMENT_HASH: ${{ needs.request.outputs.statement_hash }}
+          DECISION_TYPE: ${{ inputs.decision_type }}
+          SUBJECT: ${{ inputs.subject }}
+          EVIDENCE_HASH: ${{ inputs.evidence_hash }}
+          DECISION: ${{ inputs.decision }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          mkdir -p .infinity/founder-decisions
+          python - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+          row = {
+            "decision_id": os.environ["DECISION_ID"],
+            "decision_type": os.environ["DECISION_TYPE"],
+            "subject": os.environ["SUBJECT"],
+            "statement_hash": os.environ["STATEMENT_HASH"],
+            "evidence_hash": os.environ["EVIDENCE_HASH"],
+            "actor_identity": os.environ["ACTOR"],
+            "auth_method": "GITHUB_ENVIRONMENT",
+            "requested_at": now,
+            "acted_at": now,
+            "decision": os.environ["DECISION"],
+            "expires_at": None,
+            "superseded_by": None,
+          }
+          path = f".infinity/founder-decisions/{row['decision_id']}.json"
+          with open(path, "w", encoding="utf-8") as fh:
+              json.dump(row, fh, indent=2)
+              fh.write("\n")
+          PY
+          git config user.name "infinity-founder-approval"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .infinity/founder-decisions
+          git commit -m "Record founder decision ${DECISION_ID}."
+          git push

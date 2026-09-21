@@ -1,0 +1,50 @@
+{
+  "created_at": "2026-09-21T07:45:00.000Z",
+  "black_box_mailbox": {
+    "status": "BLOCKED_SETUP",
+    "owner": "FOUNDER",
+    "due_at": "2026-09-22T16:00:00.000Z",
+    "reason": "Dedicated second mailbox and probe credentials do not exist. The Production Gmail identity must not own both sides of the test.",
+    "credential_location": "GitHub Actions secrets on an independent observer/probe runner only: COMMUNICATION_PROBE_MAILBOX, COMMUNICATION_PROBE_GMAIL_CLIENT_ID, COMMUNICATION_PROBE_GMAIL_CLIENT_SECRET, COMMUNICATION_PROBE_GMAIL_REFRESH_TOKEN",
+    "forbidden_locations": [
+      "infinity-runtime Vercel env",
+      "Infinity production agent credentials",
+      "Blog/HQ runtime"
+    ],
+    "setup_instructions": [
+      "Create a dedicated mailbox that is not infinitemediaresources@gmail.com and not hello@imros.io.",
+      "Grant that mailbox stable mail access approved by the founder.",
+      "Store credentials only in the independent probe runner secret store.",
+      "Do not add probe special-cases to the Communication business path."
+    ],
+    "initial_cadence": "ONE_SCENARIO_EVERY_60_MINUTES"
+  },
+  "alert_destination": {
+    "status": "NOT_CONFIGURED",
+    "inspected": [
+      "COMMUNICATION_PAGE_WEBHOOK workflow secret referenced but not proven populated",
+      "No Healthchecks.io, Better Stack, PagerDuty, or equivalent provider configured in-repo"
+    ]
+  },
+  "external_dead_man": {
+    "status": "NOT_CONFIGURED",
+    "owner": "FOUNDER",
+    "due_at": "2026-09-22T16:00:00.000Z",
+    "required_service": "External dead-man heartbeat provider (Healthchecks.io or equivalent) plus an independent alert destination",
+    "reason": "GitHub schedule and the application Postgres cannot be the only observer self-health path."
+  },
+  "founder_approval": {
+    "mechanism": "GITHUB_ENVIRONMENT",
+    "location": "IMRencite/infinity-core .github/workflows/founder-approval.yml environment founder-approval",
+    "status": "NOT_READY",
+    "owner": "FOUNDER",
+    "required_action": "Create GitHub Environment founder-approval with required reviewers = founder account, enable Prevent self-review, and confirm the founder can see the review request. Agent GitHub token currently returns 401 so the agent cannot configure or verify this.",
+    "agent_can_approve": "NO"
+  },
+  "observer_db_role": {
+    "required": "READ_ONLY",
+    "current_workflows_use": "SUPABASE_SERVICE_ROLE_KEY",
+    "status": "FAIL",
+    "reason": "Existing observer workflows use the service role, which is not a read-only observer credential."
+  }
+}
