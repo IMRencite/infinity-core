@@ -1,0 +1,41 @@
+{
+  "policy": {
+    "MAX_TOTAL_PUBLICATIONS_PER_DAY": 2,
+    "MAX_CATCHUP_PUBLICATIONS_PER_DAY": 1
+  },
+  "frozen_at": "2026-09-21T05:10:00.000Z",
+  "scoring": "still_useful + non_cannibalizing + already_prepared + authority_opportunity",
+  "days": [
+    {
+      "operating_date": "2026-09-18",
+      "status": "MISSED",
+      "decision": "MISSED_RECORDED",
+      "reason": "NO_CANDIDATE_PREPARED_RECOVERY_WOULD_BE_FILLER"
+    },
+    {
+      "operating_date": "2026-09-19",
+      "status": "MISSED",
+      "decision": "MISSED_RECORDED",
+      "reason": "NO_CANDIDATE_PREPARED_RECOVERY_WOULD_BE_FILLER"
+    },
+    {
+      "operating_date": "2026-09-20",
+      "status": "MISSED",
+      "decision": "RECOVER_AND_PUBLISH",
+      "candidate_id": "cand:cam-operating-year",
+      "expected_url": "https://occupancynpv.com/blog/occupancy-costs/cam-first-year/",
+      "reason": "DISTINCT_CAM_FIRST_YEAR_INTENT"
+    },
+    {
+      "operating_date": "2026-09-21",
+      "status": "DUE",
+      "decision": "NOT_YET_APPLICABLE",
+      "qc_version": null,
+      "future_if_missed": "NOT_YET_APPLICABLE"
+    }
+  ],
+  "recovery_order": [
+    "1. current operating-day required article",
+    "2. 2026-09-20 CAM first-year catch-up"
+  ]
+}

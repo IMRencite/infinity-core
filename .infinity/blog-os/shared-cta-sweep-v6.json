@@ -1,0 +1,19 @@
+{
+  "collected_at": "2026-09-21T06:28:51.784Z",
+  "exit_condition_version": "second-qc-escape-v2",
+  "discovered": 85,
+  "checked": 85,
+  "passed": 84,
+  "failed": 1,
+  "errors": 0,
+  "sampling_policy": "all discovered files containing vg-cta or pv-cta-panel; shared CSS #102033 on #f4f7fb unless local override",
+  "failures": [
+    {
+      "file": "lib/infinity/organic-growth-engine/continuous/blog-ux.ts",
+      "local_override": true,
+      "uses_panel_and_cta": true,
+      "verdict": "FAIL",
+      "class": "page-specific"
+    }
+  ]
+}

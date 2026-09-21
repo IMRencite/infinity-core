@@ -1,0 +1,28 @@
+{
+  "crons": [
+    {
+      "path": "/api/runtime/communication-tick",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/runtime/communication-observer",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/runtime/organic-tick",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/runtime/tick",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/runtime/venture-operating-cycle",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/runtime/daily-improvement",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

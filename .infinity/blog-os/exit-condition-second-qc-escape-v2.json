@@ -1,0 +1,8 @@
+{
+  "exit_condition_version": "second-qc-escape-v2",
+  "replaces": "second-qc-escape-v1",
+  "reason": "SERVING_QC_IDENTITY_REQUIREMENT_ADDED",
+  "frozen_at": "2026-09-21T06:33:49.414Z",
+  "exit_condition_hash": "ddaab46c0ddfb7c94bdd511562f151954629bca06d6701248fc6e9019bf7749a",
+  "criteria_text": "1. known-bad fixture rejected\n2. known-good fixture accepted\n3. live canary accepted\n4. full shared-component automated sweep passes\n5. human visual residual approved\n6. PRE_PUBLISH integration present\n7. LIVE_POST_PUBLISH integration present\n8. takedown path exercised\n9. blog-render-qc-v3 or newer required QC is present in the NAMED SERVING publication deployment\n10. serving runtime can report that QC version from code/artifact identity\n11. Blog Production Build passes\n12. founder approval path is valid"
+}

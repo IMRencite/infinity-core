@@ -1,0 +1,34 @@
+{
+  "hold_id": "hold:occupancynpv:second-qc-escape-v1",
+  "exit_condition_version": "second-qc-escape-v1",
+  "exit_condition_hash": "103760634bb567c674d7b7dfab7b8bc016d3049e6bd2af3b23c292b934dcecd8",
+  "exit_condition_frozen_at": "2026-09-21T04:53:00.000Z",
+  "evidence_collected_at": "2026-09-21T05:29:05.580Z",
+  "stale": false,
+  "live_canary_url": "https://occupancynpv.com/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/",
+  "exact_question": "Review the before/after render for the affected CTA treatment (a.vg-cta inside .pv-cta-panel). Confirm whether the remaining text-over-background / spacing / visual treatment defect is resolved across the supplied breakpoints. Decision: CLEAR HOLD or KEEP HOLD.",
+  "screenshots": {
+    "known_bad": ".infinity/blog-os/evidence/known-bad-cta-desktop.png",
+    "fixed_live_desktop": ".infinity/blog-os/evidence/canary-live-desktop.png",
+    "fixed_live_tablet": ".infinity/blog-os/evidence/canary-live-tablet.png",
+    "fixed_live_mobile": ".infinity/blog-os/evidence/canary-live-mobile.png"
+  },
+  "desktop_result": "CAPTURED",
+  "tablet_result": "CAPTURED",
+  "mobile_result": "CAPTURED",
+  "automated_check_table": {
+    "live_canary_http": { "result": "PASS", "evidence": "LIVE_PUBLIC_URL", "status": 200 },
+    "intended_content_h1": { "result": "PASS", "evidence": "LIVE_PUBLIC_URL" },
+    "vg_cta_present": { "result": "PASS", "evidence": "LIVE_PUBLIC_URL" },
+    "known_bad_rejected": { "result": "PASS", "evidence": "FIXTURE" },
+    "known_good_accepted": { "result": "PASS", "evidence": "FIXTURE" },
+    "shared_sweep_fixture": { "result": "PASS", "pages_using_component": 81, "pages_checked": 3, "desktop_checked": 2, "tablet_checked": 1, "mobile_checked": 1, "failures": 0, "sampling_policy": "bounded: fixture lease-comparison + blog-article + one live canary; not 81 live pixel pages" }
+  },
+  "residual_human_only_visual_questions": [
+    "Is remaining CTA text-over-background / spacing / visual treatment resolved at desktop, tablet, and mobile?"
+  ],
+  "takedown_readiness": "CODE_ONLY",
+  "founder_review_url": "http://localhost:3000/dashboard/organic-hold",
+  "founder_review_reachable": true,
+  "authentication": "FOUNDER_HQ_SESSION"
+}

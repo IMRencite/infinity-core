@@ -1,0 +1,26 @@
+{
+  "exit_condition_version": "second-qc-escape-v1",
+  "frozen_at": "2026-09-21T04:53:00.000Z",
+  "exit_condition_hash": "103760634bb567c674d7b7dfab7b8bc016d3049e6bd2af3b23c292b934dcecd8",
+  "hold_id": "hold:occupancynpv:second-qc-escape-v1",
+  "criteria": [
+    "A_LIVE_CANARY_HTTP",
+    "B_INTENDED_CONTENT",
+    "C_CANONICAL_URL",
+    "D_NO_PLACEHOLDER",
+    "E_LINKS_RESOLVE",
+    "F_ESCAPED_DEFECT_ABSENT",
+    "G_KNOWN_BAD_REJECTED",
+    "H_KNOWN_GOOD_ACCEPTED",
+    "I_SHARED_SWEEP",
+    "J_PRE_PUBLISH",
+    "K_LIVE_VERIFIER",
+    "L_SCREENSHOTS",
+    "M_HUMAN_VISUAL_RESIDUAL",
+    "N_TAKEDOWN_TESTED",
+    "O_BLOG_BUILD_HEALTHY",
+    "P_FOUNDER_PATH_REACHABLE",
+    "Q_FOUNDER_CLEARS"
+  ],
+  "note": "Do not change this version to make the canary pass. Create second-qc-escape-v2 and invalidate prior evidence if criteria must change."
+}

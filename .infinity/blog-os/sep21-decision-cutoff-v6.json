@@ -1,0 +1,46 @@
+{
+  "operating_date": "2026-09-21",
+  "due_at": "2026-09-22T03:59:59.000Z",
+  "Sep21DecisionCutoff": "2026-09-21T16:00:00.000Z",
+  "working_backward": {
+    "founder_approval_receipt": "2h",
+    "draft_generation": "2h",
+    "qc_v3": "1h",
+    "pre_publish": "30m",
+    "publication": "30m",
+    "live_post_publish": "30m",
+    "bounded_propagation": "1h",
+    "safety_margin": "2h"
+  },
+  "if_missed": {
+    "status": "MISSED",
+    "reason_candidates": ["PUBLISHING_HOLD_UNRESOLVED", "ENGINEERING_RELEASE_NOT_READY"],
+    "conditional_decision": "RECOVER_AND_PUBLISH",
+    "candidate": "cand:cam-operating-year",
+    "cannibalization": "PASS"
+  },
+  "sep18": {
+    "status": "MISSED_RECORDED",
+    "decision_owner": "OrganicRelease",
+    "decided_at": "2026-09-21T06:20:00.000Z",
+    "reason": "NO_CANDIDATE_PREPARED_RECOVERY_WOULD_BE_FILLER",
+    "candidate": null
+  },
+  "sep19": {
+    "status": "MISSED_RECORDED",
+    "decision_owner": "OrganicRelease",
+    "decided_at": "2026-09-21T06:20:00.000Z",
+    "reason": "NO_CANDIDATE_PREPARED_RECOVERY_WOULD_BE_FILLER",
+    "candidate": null
+  },
+  "sep20": {
+    "status": "MISSED",
+    "decision": "RECOVER_AND_PUBLISH",
+    "candidate": "cand:cam-operating-year"
+  },
+  "backlog_order": [
+    "1. current operating-day required article",
+    "2. 2026-09-20 CAM first-year catch-up",
+    "3. 2026-09-21 if missed: RECOVER_AND_PUBLISH (conditional, CAM-class candidate remains valuable/non-cannibalizing)"
+  ]
+}

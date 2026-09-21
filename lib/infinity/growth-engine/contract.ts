@@ -214,8 +214,8 @@ export type GrowthNexusFloorView = {
   senderIdentity: typeof INFINITY_BRAND_NAME;
   identityPolicy: "BRAND_FIRST / TRUTHFUL_ON_INQUIRY";
   humanImpersonation: "PROHIBITED";
-  organic?: unknown;
-  organicRuntime?: unknown;
-  blogOs?: unknown;
-  systemBlog?: unknown;
+  organic?: Record<string, unknown>;
+  organicRuntime?: Record<string, unknown>;
+  blogOs?: { latest_article?: string | null } | null;
+  systemBlog?: { current_work?: string | null } | null;
 };
