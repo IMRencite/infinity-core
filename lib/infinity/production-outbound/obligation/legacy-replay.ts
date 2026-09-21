@@ -2,7 +2,7 @@ import { composeOccupancyNpvAlwaysClosingReply } from "@/lib/infinity/always-clo
 import { evaluateConsultativeSalesLanguageGate, evaluateSalesOverExplanationGate, evaluateSalesQuestionQualityGate } from "@/lib/infinity/always-closing-sales/consultative-sales";
 import { evaluateNaturalSalesConversationGate, rewriteNaturalSalesReply } from "@/lib/infinity/always-closing-sales/natural-sales-conversation";
 import { evaluateOfferDrivenSalesAdvancementGate, loadVentureOfferProfile } from "@/lib/infinity/always-closing-sales/venture-offer-profile";
-import { evaluateSalesAdvancementQualityGate } from "@/lib/infinity/always-closing-sales/doctrine";
+import { evaluateSalesAdvancementQualityGate, parseCommercialAction } from "@/lib/infinity/always-closing-sales/doctrine";
 import type { NamedOutboundLoopGate } from "../closed-loop";
 import { evaluateResponseContentQualityGate } from "../conversation-semantics";
 import { FOUNDER_TRIAL_INBOUND_TEXT } from "./canary";
@@ -26,6 +26,10 @@ function verdict(gate: string, expected: string, actual: string, result: "PASS" 
   return { gate, expected_rule: expected, actual_condition: actual, result, rejection_reason: reason };
 }
 
+function provenResult(result: string): "PASS" | "FAIL" {
+  return result === "PASS" ? "PASS" : "FAIL";
+}
+
 export function composeLegacyTrialDraft(attempt: 1 | 2): { body: string; stage: string; next_action: string } {
   const composed = composeOccupancyNpvAlwaysClosingReply({
     inbound: LEGACY_TRIAL_INBOUND,
@@ -43,39 +47,43 @@ export function replayLegacyDraftGates(attempt: 1 | 2): {
   first_reason: string | null;
 } {
   const draft = composeLegacyTrialDraft(attempt);
+  const parsedAction = parseCommercialAction(draft.next_action);
+  if (!parsedAction.ok) {
+    const invalid = [verdict("CommercialActionParse", "recognized CommercialAction", parsedAction.raw, "FAIL", parsedAction.reason)];
+    return { draft: draft.body, verdicts: invalid, first_failing_gate: invalid[0].gate, first_reason: parsedAction.reason };
+  }
+  const next_action = parsedAction.value;
   const profile = loadVentureOfferProfile("occupancynpv");
   const quality = evaluateResponseContentQualityGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, latest_question: LEGACY_TRIAL_INBOUND });
-  const natural = evaluateNaturalSalesConversationGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, next_action: draft.next_action });
-  const advancement = evaluateSalesAdvancementQualityGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, next_action: draft.next_action });
+  const natural = evaluateNaturalSalesConversationGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, next_action });
+  const advancement = evaluateSalesAdvancementQualityGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, next_action });
   const offer = evaluateOfferDrivenSalesAdvancementGate({
     stage: "QUALIFIED",
     profile,
     generated: draft.body,
-    next_action: draft.next_action,
+    next_action,
     inbound: LEGACY_TRIAL_INBOUND,
   });
   const consultative = evaluateConsultativeSalesLanguageGate({
     inbound: LEGACY_TRIAL_INBOUND,
     generated: draft.body,
     stage: "QUALIFIED",
-    next_action: draft.next_action,
+    next_action,
     turn: 4,
   });
   const over = evaluateSalesOverExplanationGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body });
   const question = evaluateSalesQuestionQualityGate({ inbound: LEGACY_TRIAL_INBOUND, generated: draft.body, stage: "QUALIFIED" });
   const legacyPainRequired = !/spreadsheet|rebuild|manual|changing|two models|messy|guessing/i.test(draft.body);
-  const consultativeLegacy = {
-    result: (legacyPainRequired ? "FAIL" : consultative.result) as "PASS" | "FAIL",
-    reasons: legacyPainRequired ? ["NO_PAIN", ...consultative.reasons.filter((row) => row !== "NO_PAIN")] : consultative.reasons,
-  };
+  const consultativeLegacyResult = legacyPainRequired ? "FAIL" : provenResult(consultative.result);
+  const consultativeLegacyReasons = legacyPainRequired ? ["NO_PAIN", ...consultative.reasons.filter((row) => row !== "NO_PAIN")] : consultative.reasons;
   const verdicts: LegacyGateVerdict[] = [
-    verdict("ResponseContentQualityGate", "answers inbound", quality.reasons.join(","), quality.result, quality.result === "FAIL" ? quality.reasons[0] : null),
-    verdict("NaturalSalesConversationGate", "natural customer language", natural.reasons.join(","), natural.result, natural.result === "FAIL" ? natural.reasons[0] : null),
-    verdict("ConsultativeSalesLanguageGate", "LEGACY QUALIFIED turn<5 required pain+consequence+contrast as HARD", consultativeLegacy.reasons.join(","), consultativeLegacy.result, consultativeLegacy.result === "FAIL" ? consultativeLegacy.reasons[0] : null),
-    verdict("SalesOverExplanationGate", "not over-explained", over.reasons.join(","), over.result, over.result === "FAIL" ? over.reasons[0] : null),
-    verdict("SalesQuestionQualityGate", "<=2 questions", question.reasons.join(","), question.result, question.result === "FAIL" ? question.reasons[0] : null),
-    verdict("SalesAdvancementQualityGate", "advances next action", advancement.reasons.join(","), advancement.result, advancement.result === "FAIL" ? advancement.reasons[0] : null),
-    verdict("OfferDrivenSalesAdvancementGate", "trial CTA + offer truth", offer.reasons.join(","), offer.result, offer.result === "FAIL" ? offer.reasons[0] : null),
+    verdict("ResponseContentQualityGate", "answers inbound", quality.reasons.join(","), provenResult(quality.result), quality.result === "FAIL" ? quality.reasons[0] : null),
+    verdict("NaturalSalesConversationGate", "natural customer language", natural.reasons.join(","), provenResult(natural.result), natural.result === "FAIL" ? natural.reasons[0] : null),
+    verdict("ConsultativeSalesLanguageGate", "LEGACY QUALIFIED turn<5 required pain+consequence+contrast as HARD", consultativeLegacyReasons.join(","), consultativeLegacyResult, consultativeLegacyResult === "FAIL" ? consultativeLegacyReasons[0] : null),
+    verdict("SalesOverExplanationGate", "not over-explained", over.reasons.join(","), provenResult(over.result), over.result === "FAIL" ? over.reasons[0] : null),
+    verdict("SalesQuestionQualityGate", "<=2 questions", question.reasons.join(","), provenResult(question.result), question.result === "FAIL" ? question.reasons[0] : null),
+    verdict("SalesAdvancementQualityGate", "advances next action", advancement.reasons.join(","), provenResult(advancement.result), advancement.result === "FAIL" ? advancement.reasons[0] : null),
+    verdict("OfferDrivenSalesAdvancementGate", "trial CTA + offer truth", offer.reasons.join(","), provenResult(offer.result), offer.result === "FAIL" ? offer.reasons[0] : null),
   ];
   const first = verdicts.find((row) => row.result === "FAIL") ?? null;
   return { draft: draft.body, verdicts, first_failing_gate: first?.gate ?? null, first_reason: first?.rejection_reason ?? null };
