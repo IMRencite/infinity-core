@@ -30,7 +30,9 @@ const fresh = age != null && age <= 11 * 60 * 1000;
 const intendedSha = intended.payload?.intended_git_sha ?? intended.payload?.release_sha ?? null;
 const observedSha = scheduler.release_sha ?? scheduler.git_sha ?? null;
 const schemaSeen = scheduler.schema_version_seen ?? null;
-const schemaRequired = "communication-incident-recovery-v4";
+const schemaRequired = "communication-recovery-release-v8";
+const staleRuntime = age == null || age > 11 * 60 * 1000;
+const missingCronClass = !scheduler.last_success_at || String(scheduler.deployment_id || scheduler.active_deployment_id || "") === "";
 
 const snapshot = {
   observer: "github-actions-communication-observer",
@@ -46,6 +48,8 @@ const snapshot = {
   oldest_open_obligation: "ABSENT",
   canary_first_failure: canary.payload?.first_failure_stage ?? "ABSENT",
   cutover_epoch: scheduler.cutover_epoch_seen ?? "ABSENT",
+  stale_runtime: staleRuntime,
+  detects_bad_promotion_class: staleRuntime || missingCronClass,
 };
 
 await client.from("cloud_runtime_state").upsert({
@@ -56,6 +60,6 @@ await client.from("cloud_runtime_state").upsert({
   updated_at: now,
 });
 
-const pass = fresh && snapshot.release_match && snapshot.schema_match && snapshot.provider_coverage === "PASS";
+const pass = fresh && !staleRuntime && !missingCronClass && snapshot.release_match && snapshot.schema_match && snapshot.provider_coverage === "PASS";
 console.log(JSON.stringify({ ok: pass, snapshot }, null, 2));
 process.exit(pass ? 0 : 2);

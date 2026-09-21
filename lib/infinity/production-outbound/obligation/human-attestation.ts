@@ -4,7 +4,7 @@ export const HUMAN_ATTESTATION_SCOPE = "communication-human-attestation-v7" as c
 export const HUMAN_ATTESTATION_DUE_MS = 4 * 60 * 60 * 1000;
 export const HUMAN_ATTESTATION_RENOTIFY_MS = 2 * 60 * 60 * 1000;
 
-export type HumanAttestationStatus = "AWAITING_HUMAN" | "ATTESTED" | "REJECTED" | "EXPIRED";
+export type HumanAttestationStatus = "AWAITING_HUMAN" | "ATTESTED" | "REJECTED" | "EXPIRED" | "BLOCKED_BY_UNAVAILABLE_ACTION_PATH" | "NOT_ACTIONABLE";
 
 export type CommunicationHumanAttestationRequest = {
   id: string;
@@ -104,6 +104,42 @@ export function applyHumanAttestationExpiry(request: CommunicationHumanAttestati
   };
 }
 
+export function blockHumanRequestsByUnavailableActionPath(
+  requests: CommunicationHumanAttestationRequest[],
+  now: string,
+): CommunicationHumanAttestationRequest[] {
+  return requests.map((row) => {
+    if (row.status === "ATTESTED" || row.status === "REJECTED") return row;
+    return {
+      ...row,
+      status: "BLOCKED_BY_UNAVAILABLE_ACTION_PATH",
+      next_action: "WAIT_FOR_REACHABLE_ATTEST_PATH",
+      updated_at: now,
+    };
+  });
+}
+
+export function armHumanAttestationClock(
+  requests: CommunicationHumanAttestationRequest[],
+  now: string,
+): CommunicationHumanAttestationRequest[] {
+  const due = new Date(Date.parse(now) + HUMAN_ATTESTATION_DUE_MS).toISOString();
+  const renotify = new Date(Date.parse(now) + HUMAN_ATTESTATION_RENOTIFY_MS).toISOString();
+  return requests.map((row) => {
+    if (row.status === "ATTESTED" || row.status === "REJECTED") return row;
+    return {
+      ...row,
+      status: "AWAITING_HUMAN",
+      requested_at: now,
+      due_at: due,
+      renotify_at: renotify,
+      next_action: "FOUNDER_ATTEST_VIA_HQ_SESSION",
+      escalation_count: 0,
+      updated_at: now,
+    };
+  });
+}
+
 export function evaluateAttestationPathGate(input: {
   endpoint_exists: boolean;
   rejects_unauthenticated: boolean;
@@ -113,5 +149,22 @@ export function evaluateAttestationPathGate(input: {
   return named("AttestationPathGate", pass ? "PASS" : "FAIL", [
     input.endpoint_exists ? "ENDPOINT" : "NO_ENDPOINT",
     input.rejects_unauthenticated ? "AUTH_REQUIRED" : "UNAUTH_ACCEPTED",
+  ]);
+}
+
+export function evaluateHumanClockStartGate(input: {
+  attest_route_serving: boolean;
+  externally_reachable: boolean;
+  authentication_action_proven: boolean;
+  working_link: boolean;
+  notification_delivered: boolean;
+}): NamedOutboundLoopGate {
+  const pass = input.attest_route_serving
+    && input.externally_reachable
+    && input.authentication_action_proven
+    && input.working_link
+    && input.notification_delivered;
+  return named("HumanClockStartGate", pass ? "PASS" : "FAIL", [
+    pass ? "HUMAN_CAN_ACT" : "ACTION_PATH_NOT_READY",
   ]);
 }

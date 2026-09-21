@@ -58,6 +58,17 @@ export function evaluateImmutableAdmissionBoundaryGate(results: Record<string, s
   return named("ImmutableAdmissionBoundaryGate", fail.length ? "FAIL" : "PASS", fail.length ? fail.map(([key]) => key) : ["ALL_FIXTURES"]);
 }
 
+export function evaluateDenyListRecoveryPrecedenceGate(input: {
+  deny_without_admission: string;
+  deny_with_active_admission: string;
+}): NamedOutboundLoopGate {
+  const pass = input.deny_without_admission === "REJECTED_SNAPSHOT" && input.deny_with_active_admission === "ADMITTED";
+  return named("ExplicitAdmissionOverridesDenyListGate", pass ? "PASS" : "FAIL", [
+    input.deny_without_admission,
+    input.deny_with_active_admission,
+  ]);
+}
+
 export function recoveryAdmissionForTarget(now: string): RecoveryAdmission {
   return {
     mailbox_id: "occupancynpv-canary",

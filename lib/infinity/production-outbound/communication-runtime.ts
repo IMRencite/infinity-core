@@ -1684,7 +1684,7 @@ export async function executeCommunicationRuntimeTick(input: {
           const shadow = executeRealMessageShadow({
             provider_message_id: STRANDED_FOUNDER_TRIAL_INBOUND_ID,
             visible_body: founder.message.bodyText || founder.message.snippet || "",
-            authorship: "PROSPECT",
+            authorship: "PROVISIONAL_TEST_PROSPECT",
             prior_infinity_outbound_count: 4,
             rfc_message_id: founder.message.inReplyTo,
             thread_id: CANONICAL_OCCUPANCYNPV_THREAD_ID,
@@ -1713,7 +1713,7 @@ export async function executeCommunicationRuntimeTick(input: {
               planner_version: "conversation-planner-v1",
               offer_truth_version: "occupancynpv-offer-truth-v1",
               draft_hash: shadow.draft_hash,
-              authorship: "PROSPECT",
+              authorship: "PROVISIONAL_TEST_PROSPECT",
               intent: shadow.intent,
               first_touch: shadow.first_touch,
               hard_gates: shadow.hard,

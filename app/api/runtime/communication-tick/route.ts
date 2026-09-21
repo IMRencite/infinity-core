@@ -21,6 +21,8 @@ import {
   evaluateCommunicationRuntimeSchedulerAuthGate,
   executeCommunicationRuntimeTick,
 } from "@/lib/infinity/production-outbound/communication-runtime";
+import { runtimeReleaseIdentity } from "@/lib/infinity/production-outbound/obligation/release-identity";
+import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -31,6 +33,17 @@ export async function GET(request: Request): Promise<NextResponse> {
   const authGate = evaluateCommunicationRuntimeSchedulerAuthGate(request);
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized", reason: auth.reason, authGate }, { status: 401 });
+  }
+  const url = new URL(request.url);
+  if (url.searchParams.get("mode") === "safe") {
+    return NextResponse.json({
+      mode: "safe",
+      business_send: false,
+      execute_jobs: false,
+      auth: auth.reason,
+      identity: vercelRuntimeIdentity(),
+      release: runtimeReleaseIdentity(),
+    });
   }
   const trigger = classifyCommunicationTickSource(request);
   const gmailContext = resolveGmailInvocationContext({

@@ -8,10 +8,21 @@ export const runtime = "nodejs";
 const SCOPE = "communication-human-attestation-v7";
 
 function authorizeFounderAttestation(request: Request): { ok: boolean; reason: string } {
-  const expected = process.env.FOUNDER_ATTESTATION_TOKEN || process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET;
-  if (!expected) return { ok: false, reason: "FOUNDER_ATTESTATION_SECRET_REQUIRED" };
-  const header = request.headers.get("authorization");
-  if (header === `Bearer ${expected}`) return { ok: true, reason: "AUTHORIZED" };
+  const cron = process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET || "";
+  const founderToken = process.env.FOUNDER_ATTESTATION_TOKEN || "";
+  const header = request.headers.get("authorization") ?? "";
+  const presented = header.startsWith("Bearer ") ? header.slice(7) : "";
+  if (presented && cron && presented === cron) {
+    return { ok: false, reason: "CRON_SECRET_IS_NOT_FOUNDER_ATTESTATION" };
+  }
+  if (founderToken && founderToken !== cron && presented === founderToken) {
+    return { ok: true, reason: "FOUNDER_HELD_TOKEN" };
+  }
+  const hqSession = request.headers.get("x-infinity-founder-hq-session");
+  if (hqSession === "1" && request.headers.get("x-infinity-founder-user")) {
+    return { ok: true, reason: "FOUNDER_HQ_SESSION" };
+  }
+  if (!founderToken || founderToken === cron) return { ok: false, reason: "FOUNDER_ATTESTATION_FACTOR_REQUIRED" };
   return { ok: false, reason: "UNAUTHORIZED" };
 }
 

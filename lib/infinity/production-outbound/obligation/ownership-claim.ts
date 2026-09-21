@@ -1,6 +1,6 @@
 import type { NamedOutboundLoopGate } from "../closed-loop";
 
-export const OWNERSHIP_STATES = ["AVAILABLE", "CLAIMED", "SENDING", "SENT", "RELEASED", "SUPERSEDED"] as const;
+export const OWNERSHIP_STATES = ["AVAILABLE", "CLAIMED", "SENDING", "SEND_UNCERTAIN", "SENT", "CONFIRMED", "RELEASED", "SUPERSEDED"] as const;
 export type OwnershipState = (typeof OWNERSHIP_STATES)[number];
 
 export type OutboundOwnershipClaim = {
@@ -91,8 +91,41 @@ export function casOwnership(input: {
   return { ok: true, reason: "CAS_OK", row: next };
 }
 
+export function acquireInboundOwnershipKeysAtomic(input: {
+  keys: Array<{ mailbox_id: string; thread_id: string; answered_inbound_provider_message_id: string }>;
+  owner_path: "LEGACY" | "OBLIGATION";
+  owner_id: string;
+  now: string;
+}): { ok: boolean; claimed: number; reason: string } {
+  const rows = input.keys.map((key) => getOwnershipClaim(key));
+  if (rows.some((row) => !row)) return { ok: false, claimed: 0, reason: "MISSING_OWNERSHIP_FAIL_CLOSED" };
+  if (rows.some((row) => row && row.state !== "AVAILABLE")) return { ok: false, claimed: 0, reason: "NOT_ALL_AVAILABLE" };
+  const applied: OutboundOwnershipClaim[] = [];
+  for (const item of input.keys) {
+    const current = getOwnershipClaim(item)!;
+    const next = casOwnership({
+      ...item,
+      from: ["AVAILABLE"],
+      to: "CLAIMED",
+      owner_path: input.owner_path,
+      owner_id: input.owner_id,
+      expected_version: current.version,
+      now: input.now,
+      fenced: true,
+    });
+    if (!next.ok || !next.row) {
+      for (const prior of applied) {
+        memory.set(key(prior), { ...prior, state: "AVAILABLE", owner_path: null, owner_id: null, version: prior.version + 1, updated_at: input.now });
+      }
+      return { ok: false, claimed: 0, reason: "ATOMIC_CLAIM_FAILED" };
+    }
+    applied.push(next.row);
+  }
+  return { ok: true, claimed: applied.length, reason: "ATOMIC_CLAIM_OK" };
+}
+
 export function cutoverMayTakeOwnership(row: OutboundOwnershipClaim | null): boolean {
-  return !row || row.state !== "SENDING";
+  return !row || (row.state !== "SENDING" && row.state !== "SEND_UNCERTAIN");
 }
 
 export function evaluateCrossPathOwnershipGateV7(input: {

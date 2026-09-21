@@ -37,7 +37,7 @@ if (!typecheckOnly && (!token || !team)) {
 }
 
 const root = process.cwd();
-const dest = join(tmpdir(), "infinity-runtime-isolated-v7");
+const dest = join(tmpdir(), "infinity-runtime-isolated-v8");
 const emergency = process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1";
 const gitStatus = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
 const dirtyEntries = (gitStatus.stdout || "").split(/\r?\n/).map((row) => row.trim()).filter(Boolean);
@@ -129,9 +129,28 @@ if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || exist
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const runtimeRoutes = ["communication-tick", "communication-attest"];
+const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
+const requiredTracked = [
+  "app/api/runtime/communication-tick/route.ts",
+  "app/api/runtime/communication-attest/route.ts",
+];
+const untrackedRequired = requiredTracked.filter((file) => !tracked.has(file) || !existsSync(join(root, file)));
+if (untrackedRequired.length) {
+  console.log(JSON.stringify({ ok: false, reason: "REQUIRED_ROUTE_UNTRACKED", gate: "TrackedRuntimeSourceGate", untrackedRequired }));
+  process.exit(1);
+}
 for (const route of runtimeRoutes) {
   const from = join(root, "app/api/runtime", route);
   if (existsSync(from)) cpSync(from, join(dest, "app/api/runtime", route), { recursive: true });
+}
+const destRoutes = runtimeRoutes
+  .filter((route) => existsSync(join(dest, "app/api/runtime", route, "route.ts")))
+  .map((route) => `/api/runtime/${route}`);
+const cronPaths = ["/api/runtime/communication-tick"];
+const missingCron = cronPaths.filter((path) => !destRoutes.includes(path));
+if (missingCron.length) {
+  console.log(JSON.stringify({ ok: false, reason: "CRON_ROUTE_ABSENT_FROM_DEST", gate: "CronRouteExistsGate", missingCron, destRoutes }));
+  process.exit(1);
 }
 writeFileSync(
   join(dest, "tsconfig.json"),
@@ -249,9 +268,11 @@ const envKeys = {
   COMMUNICATION_RELEASE_TREE_HASH: "",
   COMMUNICATION_RELEASE_DIRTY: "false",
   COMMUNICATION_BUILD_GRAPH_HASH: "",
-  COMMUNICATION_SCHEMA_VERSION_SEEN: "communication-recovery-release-v7",
-  COMMUNICATION_RELEASE_SEQUENCE: "v7",
-  FOUNDER_ATTESTATION_TOKEN: process.env.FOUNDER_ATTESTATION_TOKEN || process.env.CRON_SECRET,
+  COMMUNICATION_SCHEMA_VERSION_SEEN: "communication-recovery-release-v8",
+  COMMUNICATION_RELEASE_SEQUENCE: "v8",
+  FOUNDER_ATTESTATION_TOKEN: process.env.FOUNDER_ATTESTATION_TOKEN && process.env.FOUNDER_ATTESTATION_TOKEN !== process.env.CRON_SECRET
+    ? process.env.FOUNDER_ATTESTATION_TOKEN
+    : createHash("sha256").update(`founder-attest-v8:${Date.now()}:${Math.random()}`).digest("hex"),
 };
 
 try {
@@ -279,7 +300,22 @@ const gitTree = (spawnSync("git", ["log", "-1", "--format=%T"], { cwd: root, enc
 const destTree = hashDestTree(dest);
 const sha = parentSha;
 const treeHash = gitTree;
-const buildGraphHash = destTree.slice(0, 16);
+const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const graph = createHash("sha256");
+graph.update("communication-runtime-build-graph-v8\n");
+graph.update(cronPaths.join("\n"));
+graph.update("\n");
+graph.update(String(pkg.name || ""));
+graph.update("\n");
+graph.update(Object.keys(pkg.dependencies || {}).sort().join("\n"));
+graph.update("\n");
+for (const file of requiredTracked) {
+  graph.update(file);
+  graph.update("\n");
+  graph.update(createHash("sha256").update(readFileSync(join(root, file))).digest("hex"));
+  graph.update("\n");
+}
+const buildGraphHash = graph.digest("hex");
 const identity = {
   deployable_unit: "infinity-runtime",
   release_sha: sha,
@@ -287,13 +323,15 @@ const identity = {
   release_content_hash: destTree,
   release_dirty: false,
   build_graph_hash: buildGraphHash,
-  schema_version_required: "communication-recovery-release-v7",
+  schema_version_required: "communication-recovery-release-v8",
   build_timestamp: new Date().toISOString(),
-  release_sequence: "v7",
+  release_sequence: "v8",
   parent_git_sha: parentSha,
   parent_dirty: dirtyEntries.length > 0,
 };
 writeFileSync(join(dest, "release-identity.json"), `${JSON.stringify(identity, null, 2)}\n`);
+mkdirSync(join(dest, "public"), { recursive: true });
+writeFileSync(join(dest, "public", "release-identity.json"), `${JSON.stringify(identity, null, 2)}\n`);
 envKeys.COMMUNICATION_INTENDED_GIT_SHA = sha;
 envKeys.COMMUNICATION_RELEASE_SHA = sha;
 envKeys.COMMUNICATION_RELEASE_TREE_HASH = treeHash;
@@ -347,11 +385,12 @@ if (prebuiltSupported) {
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
   if (built.status === 0) prebuiltUsed = true;
 }
+const stageOnly = process.env.INFINITY_RUNTIME_STAGE_ONLY === "1" || process.env.INFINITY_RUNTIME_PROMOTE !== "1";
 const deploy = spawnSync(
   "npx",
   prebuiltUsed
-    ? ["vercel@latest", "deploy", "--prebuilt", "--prod", "--yes", `--token=${token}`, `--scope=${team}`]
-    : ["vercel@latest", "deploy", "--prod", "--yes", `--token=${token}`, `--scope=${team}`],
+    ? ["vercel@latest", "deploy", "--prebuilt", "--yes", `--token=${token}`, `--scope=${team}`]
+    : ["vercel@latest", "deploy", "--yes", `--token=${token}`, `--scope=${team}`],
   {
     cwd: dest,
     encoding: "utf8",
@@ -363,9 +402,55 @@ const deploy = spawnSync(
 const combined = `${deploy.stdout || ""}\n${deploy.stderr || ""}`.replace(/Bearer\s+[A-Za-z0-9._-]+/g, "Bearer [redacted]");
 writeFileSync(join(dest, "vercel-deploy.log"), combined);
 const urls = combined.match(/https:\/\/[a-z0-9.-]+\.vercel\.app/gi) ?? [];
-const productionUrl = urls.find((row) => row.includes("infinity-runtime.vercel.app")) ?? "https://infinity-runtime.vercel.app";
+const candidateUrl = urls.find((row) => /infinity-runtime-/.test(row) && !row.includes("infinity-runtime.vercel.app")) ?? urls[0] ?? null;
 const inspect = await api(`/v6/deployments?projectId=${encodeURIComponent(PROJECT_ID)}&limit=3`);
 const latest = inspect.ok ? (await inspect.json()).deployments?.[0] : null;
+const candidateId = latest?.uid ?? latest?.id ?? null;
+const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "";
+const cronSecret = process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET || "";
+async function smoke(path, extraHeaders = {}, method = "GET") {
+  if (!candidateUrl) return { path, status: 0, ok: false, body: null };
+  const headers = { ...extraHeaders };
+  if (bypass) {
+    headers["x-vercel-protection-bypass"] = bypass;
+    headers["x-vercel-set-bypass-cookie"] = "true";
+  }
+  const res = await fetch(`${candidateUrl}${path}`, { method, headers }).catch(() => null);
+  const body = res ? await res.json().catch(() => null) : null;
+  return { path, status: res?.status ?? 0, ok: Boolean(res && res.status > 0 && res.status !== 404), body };
+}
+const tickExists = await smoke("/api/runtime/communication-tick");
+const tickSafe = cronSecret
+  ? await smoke("/api/runtime/communication-tick?mode=safe", { authorization: `Bearer ${cronSecret}` })
+  : { path: "/api/runtime/communication-tick?mode=safe", status: 0, ok: false, body: null };
+const attestGet = await smoke("/api/runtime/communication-attest");
+const attestUnauth = await smoke("/api/runtime/communication-attest", {}, "POST");
+const tickSmoke = { exists: tickExists, safe: tickSafe, ok: tickExists.ok && tickSafe.status === 200 && tickSafe.body?.business_send === false };
+const attestSmoke = { get: attestGet, unauth: attestUnauth, ok: attestGet.ok && attestUnauth.status === 401 };
+const identityMatch = tickSafe.body?.release?.release_sha === sha || tickSafe.body?.identity?.release_sha === sha;
+const smokePass = tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch);
+let promoted = false;
+let productionUrl = "https://infinity-runtime.vercel.app";
+if (smokePass && process.env.INFINITY_RUNTIME_PROMOTE === "1" && candidateId) {
+  const alias = spawnSync("npx", ["vercel@latest", "alias", candidateId, "infinity-runtime.vercel.app", `--token=${token}`, `--scope=${team}`], {
+    encoding: "utf8",
+    shell: true,
+  });
+  promoted = alias.status === 0;
+}
+if (!smokePass) {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "STAGED_SMOKE_FAILED",
+    gate: "StagedSmokeGate",
+    candidateUrl,
+    candidateId,
+    tickSmoke,
+    attestSmoke,
+    promoted: false,
+  }, null, 2));
+  process.exit(1);
+}
 
 const report = {
   ok: deploy.status === 0,
@@ -377,8 +462,13 @@ const report = {
   project: PROJECT,
   projectId: PROJECT_ID,
   productionUrl,
-  deploymentId: latest?.uid ?? latest?.id ?? null,
-  url: latest?.url ? `https://${latest.url}` : productionUrl,
+  candidateUrl,
+  candidateId,
+  stagedSmoke: { tick: tickSmoke, attest: attestSmoke, pass: smokePass },
+  promoted,
+  stageOnly,
+  deploymentId: candidateId,
+  url: candidateUrl,
   envConfigured: Object.fromEntries(Object.entries(envOk).map(([key, value]) => [key, Boolean(value)])),
   gmailCredentialFingerprint: process.env.GMAIL_OAUTH_REFRESH_TOKEN
     ? createHash("sha256").update(process.env.GMAIL_OAUTH_REFRESH_TOKEN).digest("hex").slice(0, 12)

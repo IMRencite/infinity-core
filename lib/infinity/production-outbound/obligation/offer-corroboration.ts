@@ -5,6 +5,18 @@ function named(gate: string, result: NamedOutboundLoopGate["result"], reasons: s
 }
 
 export type PublicPresence = "PASS" | "FAIL" | "RENDER_NOT_PROVEN" | "NOT_PROVEN";
+export type CommercialClaimEvidence = "STATED_ON_PAGE" | "CORROBORATED_BY_FLOW" | "CONFLICT" | "NOT_PROVEN";
+
+export function classifyPageCopyClaim(input: {
+  stated_on_page: boolean;
+  flow_corroborated: boolean | null;
+  conflict: boolean;
+}): CommercialClaimEvidence {
+  if (input.conflict) return "CONFLICT";
+  if (input.flow_corroborated === true) return "CORROBORATED_BY_FLOW";
+  if (input.stated_on_page) return "STATED_ON_PAGE";
+  return "NOT_PROVEN";
+}
 
 export function classifyPublicPresence(input: {
   html_contains: boolean;

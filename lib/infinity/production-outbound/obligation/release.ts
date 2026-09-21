@@ -15,7 +15,7 @@ import { COMMUNICATION_STALE_HEARTBEAT_MS } from "./pacing";
 
 export const COMMUNICATION_INTENDED_RELEASE_SCOPE = "communication-intended-release-v1" as const;
 export const COMMUNICATION_CUTOVER_EPOCH_SCOPE = "communication-cutover-epoch-v1" as const;
-export const COMMUNICATION_SCHEMA_VERSION = "communication-recovery-release-v7" as const;
+export const COMMUNICATION_SCHEMA_VERSION = "communication-recovery-release-v8" as const;
 export type { CommunicationCutoverEpoch };
 
 export type CommunicationIntendedRelease = {

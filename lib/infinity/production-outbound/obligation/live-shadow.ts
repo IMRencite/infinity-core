@@ -32,7 +32,7 @@ export function evaluateCommunicationThreadContinuityGate(input: {
 export function executeRealMessageShadow(input: {
   provider_message_id: string;
   visible_body: string;
-  authorship: "PROSPECT" | "SYSTEM" | "UNKNOWN";
+  authorship: "PROSPECT" | "PROVISIONAL_TEST_PROSPECT" | "SYSTEM" | "UNKNOWN";
   prior_infinity_outbound_count: number;
   rfc_message_id?: string | null;
   thread_id: string;
@@ -105,7 +105,7 @@ export function executeRealMessageShadow(input: {
     named("ShadowNoSend", "PASS", ["NO_PROVIDER_SEND"]),
   ];
   const pass = input.provider_message_id === STRANDED_FOUNDER_TRIAL_INBOUND_ID
-    && input.authorship === "PROSPECT"
+    && (input.authorship === "PROSPECT" || input.authorship === "PROVISIONAL_TEST_PROSPECT")
     && plan.stage !== "FIRST_TOUCH"
     && hard.result === "PASS"
     && offer.result === "PASS"
