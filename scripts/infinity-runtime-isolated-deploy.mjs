@@ -57,6 +57,9 @@ const files = [
 for (const file of files) {
   if (existsSync(join(root, file))) cpSync(join(root, file), join(dest, file));
 }
+if (!existsSync(join(dest, "next-env.d.ts"))) {
+  writeFileSync(join(dest, "next-env.d.ts"), `/// <reference types="next" />\n/// <reference types="next/image-types/global" />\n`);
+}
 writeFileSync(
   join(dest, "vercel.json"),
   `${JSON.stringify({
@@ -275,12 +278,33 @@ const envKeys = {
     : createHash("sha256").update(`founder-attest-v8:${Date.now()}:${Math.random()}`).digest("hex"),
 };
 
-try {
-  if (!existsSync(join(dest, "node_modules")) && existsSync(join(root, "node_modules"))) {
-    spawnSync("cmd", ["/c", "mklink", "/J", join(dest, "node_modules"), join(root, "node_modules")], { encoding: "utf8" });
+const moduleCandidates = [
+  process.env.INFINITY_RUNTIME_NODE_MODULES,
+  join(root, "node_modules"),
+  join(root, "..", "infinity-core", "node_modules"),
+].filter(Boolean);
+const moduleSource = moduleCandidates.find((dir) => existsSync(dir));
+if (moduleSource && !existsSync(join(dest, "node_modules"))) {
+  const linked = spawnSync("cmd", ["/c", "mklink", "/J", join(dest, "node_modules"), moduleSource], { encoding: "utf8" });
+  if (linked.status !== 0 && !existsSync(join(dest, "node_modules"))) {
+    console.log(JSON.stringify({
+      ok: false,
+      reason: "NODE_MODULES_LINK_FAILED",
+      gate: "DeployableSourceHealthGate",
+      moduleSource,
+      stderr: (linked.stderr || "").slice(0, 500),
+    }, null, 2));
+    process.exit(1);
   }
-} catch {
-  // typecheck will fail closed if modules are missing
+}
+if (!existsSync(join(dest, "node_modules"))) {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "NODE_MODULES_MISSING",
+    gate: "DeployableSourceHealthGate",
+    tried: moduleCandidates,
+  }, null, 2));
+  process.exit(1);
 }
 function hashDestTree(dir, rel = "") {
   const entries = readdirSync(dir).sort();
@@ -351,6 +375,8 @@ if (tsc.status !== 0) {
     gate: "DeployableSourceHealthGate",
     errorCount: tscErrors.length,
     errors: tscErrors.slice(0, 80),
+    logTail: tscOut.split(/\r?\n/).filter(Boolean).slice(-40),
+    status: tsc.status,
   }, null, 2));
   process.exit(1);
 }
