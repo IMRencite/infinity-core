@@ -37,8 +37,30 @@ function unknownCost(): CommunicationProviderResult["cost"] {
   return { classification: "UNKNOWN", amountUsd: null, treatedAsZero: false };
 }
 
+function escapeFreshReplyHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export function composeFreshReplyHtml(body: string): string {
+  const blocks = body
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+  if (!blocks.length) return `<p>${escapeFreshReplyHtml(body.trim())}</p>`;
+  return blocks
+    .map((block) => `<p>${escapeFreshReplyHtml(block).replace(/\n/g, "<br>\r\n")}</p>`)
+    .join("\r\n");
+}
+
 export function translateEnvelopeToGmailRequest(envelope: CommunicationEmailEnvelope): GmailProviderRequest {
   const from = envelope.fromIdentity ?? "me";
+  const boundary = "infinity-fresh-alt";
+  const html = composeFreshReplyHtml(envelope.body);
   const lines = [
     `From: ${from}`,
     `To: ${envelope.toAddress}`,
@@ -47,9 +69,17 @@ export function translateEnvelopeToGmailRequest(envelope: CommunicationEmailEnve
     envelope.inReplyTo ? `References: ${envelope.inReplyTo}` : null,
     `Subject: ${envelope.subject}`,
     "MIME-Version: 1.0",
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
     "Content-Type: text/plain; charset=utf-8",
     "",
     envelope.body,
+    `--${boundary}`,
+    "Content-Type: text/html; charset=utf-8",
+    "",
+    html,
+    `--${boundary}--`,
   ].filter((line): line is string => line !== null);
   return {
     raw: Buffer.from(lines.join("\r\n")).toString("base64url"),

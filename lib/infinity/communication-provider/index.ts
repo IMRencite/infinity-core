@@ -56,6 +56,7 @@ export {
 } from "./governance";
 export {
   classifyGmailFailure,
+  composeFreshReplyHtml,
   exchangeGmailAccessToken,
   gmailAdapterContract,
   gmailReadOnlyProfile,
