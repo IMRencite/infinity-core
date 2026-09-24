@@ -278,10 +278,15 @@ export async function executeOrganicScheduledWorkflow(input: {
   }
 
   if (current.pipeline_state === "QC_PASSED") {
-    const live = await input.adapters.publishLive({
-      obligation: current,
-      html: preHtml,
-    });
+    let live: OrganicLivePublishResult;
+    try {
+      live = await input.adapters.publishLive({
+        obligation: current,
+        html: preHtml,
+      });
+    } catch {
+      return fail(input.store, current, input.now, "PUBLISH_FAILED", ["PUBLISH_THREW"]);
+    }
     if (!live.ok || live.public_mutation === false) {
       return fail(input.store, current, input.now, live.reason === "BLOCKED_AUTHORIZATION" ? "BLOCKED_AUTHORIZATION" : "PUBLISH_FAILED", [live.reason ?? "PUBLISH_FAILED"], {
         authorization: live.reason === "BLOCKED_AUTHORIZATION" ? "BLOCKED_HOLD" : "AUTHORIZED",

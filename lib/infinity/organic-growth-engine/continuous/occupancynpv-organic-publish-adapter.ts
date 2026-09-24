@@ -22,8 +22,8 @@ export async function publishOccupancyNpvCamFirstYearLive(input: {
   }
   const deployed = await deployOccupancyNpvOrganicLivePage({
     deploy: input.deploy,
-    pollAttempts: input.pollAttempts ?? 8,
-    pollDelayMs: input.pollDelayMs ?? 4000,
+    pollAttempts: input.pollAttempts ?? 3,
+    pollDelayMs: input.pollDelayMs ?? 3000,
   });
   if (deployed.safe_error && !deployed.deployed) {
     return {

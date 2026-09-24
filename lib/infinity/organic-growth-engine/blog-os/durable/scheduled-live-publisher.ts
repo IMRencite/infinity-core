@@ -6,7 +6,16 @@ import { publishOccupancyNpvCamFirstYearLive } from "@/lib/infinity/organic-grow
 import type { OrganicLivePublishResult } from "./scheduled-execution";
 
 export async function publishOrganicScheduledLivePage(): Promise<OrganicLivePublishResult> {
-  return publishOccupancyNpvCamFirstYearLive();
+  try {
+    return await publishOccupancyNpvCamFirstYearLive();
+  } catch {
+    return {
+      ok: false,
+      public_url: `https://occupancynpv.com${OCCUPANCYNPV_CAM_FIRST_YEAR_PATH}`,
+      public_mutation: false,
+      reason: "PUBLISH_THREW",
+    };
+  }
 }
 
 export function publicCamUrl(): string {
