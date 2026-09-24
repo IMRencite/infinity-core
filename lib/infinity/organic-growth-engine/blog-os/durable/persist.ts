@@ -1,7 +1,7 @@
 import { currentSecondQcHold, persistDurableHold, getDurableHold } from "./hold";
 import { DurableBlogStore } from "./store";
 import type { DurableBlogHold, DurableBlogObligation } from "./types";
-import { evaluatePublishAuthorization, isIsolatedTestAuthorization, readPublishHoldFromKnownSources } from "./publish-hold-contract";
+import { isIsolatedTestAuthorization, readPublishHoldFromKnownSources } from "./publish-hold-contract";
 import {
   CANONICAL_ORGANIC_HOLD_KEY,
   deriveEffectiveOrganicExecutionState,
@@ -113,20 +113,11 @@ export async function hydrateDurableBlogOs(store: DurableBlogStore): Promise<Dur
     runtime_error: json.error?.message ?? scheduler.error?.message ?? null,
   });
   const productionHold = resolved.hold && isIsolatedTestAuthorization(resolved.hold) ? null : resolved.hold;
-  const authorization = evaluatePublishAuthorization({
-    hold: productionHold,
-    source: productionHold ? resolved.source : (resolved.hold ? "MISSING" : resolved.source),
-    db_available: !(holdRow.error && /unavailable|network|timeout/i.test(holdRow.error.message)) && !(json.error && /unavailable|network|timeout/i.test(json.error.message)),
-    production_runtime: true,
-  });
   const hold = productionHold ?? fallbackHold;
-  if (authorization.result !== "ALLOW_NEXT_GATE" || effective.result !== "AUTHORIZED") {
-    return persistDurableHold({
-      ...hold,
-      execute_publish: false,
-      hold_state: "ACTIVE",
-      resolved_at: null,
-    });
-  }
-  return persistDurableHold(hold);
+  return persistDurableHold({
+    ...hold,
+    execute_publish: false,
+    hold_state: "ACTIVE",
+    resolved_at: null,
+  });
 }
