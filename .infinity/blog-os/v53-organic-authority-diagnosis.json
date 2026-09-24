@@ -1,0 +1,27 @@
+{
+  "phase": "1_READ_ONLY_THEN_FIX",
+  "architecture_class": "LEGACY_DUPLICATE_STATE",
+  "intended_fix": "LIVE_CANONICAL_READ",
+  "answers": {
+    "1_tick_path": "GET/POST /api/runtime/organic-tick → hydrateOrganicGrowthSchedulerState → executeOrganicGrowthSchedulerTick → hydrateDurableBlogOs → persist",
+    "2_effective_state": "executeOrganicGrowthSchedulerTick previously used memory.publishing_hold copied from cloud_runtime_state. Now deriveEffectiveOrganicExecutionState(canonical organic_publication_authorization, scheduler projection).",
+    "3_record": "Canonical: public.organic_publication_authorization hold_key=organic-growth-scheduler-v1.publishing_hold. Projection: public.cloud_runtime_state scope=organic-growth-scheduler-v1 payload.publishing_hold.",
+    "4_live_canonical_query": "Serving production hydrate did not query organic_publication_authorization. Local overlay was undeployed and one-directional.",
+    "5_copied_hold": "Yes. cloud_runtime_state.payload.publishing_hold is a copied hold field used as authority.",
+    "6_payload_kind": "persisted scheduler configuration / runtime snapshot (legacy duplicated state), not a cache with invalidation.",
+    "7_writer": "organic_runtime persistOrganicGrowthSchedulerState via authorizationFieldsFromPrior / freezeSchedulerAuthorizationProjection. SQL trigger protect_organic_authorization_payload blocks organic_runtime from changing publishing_hold/execute_publish.",
+    "8_refresh": "On each tick persist of last_tick_at/obligations. Hold fields are frozen from prior payload and never refreshed by apply_organic_hold_transition.",
+    "9_canonical_writer": "apply_organic_hold_transition SECURITY DEFINER as approval_transition/postgres only.",
+    "10_transition_updated": "organic_publication_authorization only (hold_state, execute_publish, decision/evidence hashes, resolved_at, updated_at).",
+    "11_why_invisible": "Serving tick never live-read the authorization table; it re-forced PAUSED from second_canary_status and treated payload.publishing_hold as authority.",
+    "12_stale_value": "Persisted in Postgres cloud_runtime_state.payload.publishing_hold. Not Vercel config, not process-only memory.",
+    "13_refresh_cadence": "Payload loaded at each tick start. Authorization decision used the copied field, not a live canonical read.",
+    "14_bidirectional_drift": "Yes. Stale PAUSED blocks after CLEAR. Stale CLEAR + V3_REPAIRED_PASS would not re-block after a later PAUSE."
+  },
+  "do_not": [
+    "manual scheduler payload rewrite",
+    "OccupancyNPV-specific exception",
+    "second founder CLEAR",
+    "manual publish as proof"
+  ]
+}

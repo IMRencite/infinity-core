@@ -1,46 +1,53 @@
-import { createClient } from "@supabase/supabase-js";
 import { currentSecondQcHold, persistDurableHold, getDurableHold } from "./hold";
 import { DurableBlogStore } from "./store";
 import type { DurableBlogHold, DurableBlogObligation } from "./types";
+import { evaluatePublishAuthorization, isIsolatedTestAuthorization, readPublishHoldFromKnownSources } from "./publish-hold-contract";
+import {
+  CANONICAL_ORGANIC_HOLD_KEY,
+  deriveEffectiveOrganicExecutionState,
+} from "./effective-execution-state";
+import { createOrganicRuntimeClient } from "@/lib/infinity/organic-growth-engine/runtime-principal";
+import { assertOrganicPersistWrite } from "@/lib/infinity/organic-growth-engine/obligation/tick-result";
 
 const SCOPE = "blog-os-durable-v3";
 
 function adminClient() {
-  if (process.env.VITEST) return null;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return createOrganicRuntimeClient();
+}
+
+function freezeAuthorizationHold(existing: DurableBlogHold | undefined, hold: DurableBlogHold): DurableBlogHold {
+  if (existing?.hold_id) {
+    return {
+      ...hold,
+      hold_id: existing.hold_id,
+      reason: existing.reason,
+      hold_state: existing.hold_state,
+      hold_version: existing.hold_version,
+      execute_publish: existing.execute_publish,
+      resolved_at: existing.resolved_at,
+      founder_review_status: existing.founder_review_status,
+      exit_condition_hash: existing.exit_condition_hash,
+      exit_condition_version: existing.exit_condition_version,
+    };
+  }
+  return {
+    ...hold,
+    execute_publish: false,
+    hold_state: hold.hold_state === "CLEARED" ? "ACTIVE" : hold.hold_state,
+    resolved_at: null,
+  };
 }
 
 export async function persistDurableBlogOs(store: DurableBlogStore, hold: DurableBlogHold): Promise<"POSTGRES" | "RUNTIME_JSON" | "MEMORY"> {
   persistDurableHold(hold);
   const client = adminClient();
   if (!client) return "MEMORY";
+  const existingJson = await client.from("cloud_runtime_state").select("payload").eq("scope", SCOPE).maybeSingle();
+  const existingHold = (existingJson.data?.payload as { hold?: DurableBlogHold } | undefined)?.hold;
+  const frozenHold = freezeAuthorizationHold(existingHold, hold);
+  persistDurableHold(frozenHold);
   const rows = store.list();
   let tableOk = true;
-  const holdWrite = await client.from("blog_publishing_holds").upsert({
-    hold_id: hold.hold_id,
-    venture_id: hold.venture_id,
-    reason: hold.reason,
-    created_at: hold.created_at,
-    owner: hold.owner,
-    engineering_owner: hold.engineering_owner,
-    founder_decision_owner: hold.founder_decision_owner,
-    due_at: hold.due_at,
-    next_review_at: hold.next_review_at,
-    requested_at: hold.requested_at,
-    renotify_at: hold.renotify_at,
-    escalation_count: hold.escalation_count,
-    exit_condition_version: hold.exit_condition_version,
-    exit_condition_frozen_at: hold.exit_condition_frozen_at,
-    exit_condition_hash: hold.exit_condition_hash,
-    evidence_required: hold.evidence_required,
-    evidence_pack_url: hold.evidence_pack_url,
-    founder_review_status: hold.founder_review_status,
-    resolved_at: hold.resolved_at,
-  });
-  if (holdWrite.error) tableOk = false;
   for (const row of rows) {
     const written = await client.from("blog_daily_obligations").upsert(row);
     if (written.error) tableOk = false;
@@ -51,15 +58,17 @@ export async function persistDurableBlogOs(store: DurableBlogStore, hold: Durabl
   for (const event of store.schedulerEvents()) {
     await client.from("blog_scheduler_events").upsert(event);
   }
-  const fallback = await client.from("cloud_runtime_state").upsert({
-    scope: SCOPE,
-    version: 1,
-    instance_id: "blog-os-durable",
-    payload: { hold, obligations: rows, events: rows.flatMap((row) => store.eventsFor(row.id)), scheduler: store.schedulerEvents() },
+  const fallback = await client.from("cloud_runtime_state").update({
+    payload: { hold: frozenHold, obligations: rows, events: rows.flatMap((row) => store.eventsFor(row.id)), scheduler: store.schedulerEvents() },
     updated_at: new Date().toISOString(),
+  }).eq("scope", SCOPE).select("scope");
+  assertOrganicPersistWrite({
+    error: fallback.error,
+    rowCount: fallback.data?.length ?? 0,
+    stage: "persist_durable",
   });
-  if (tableOk && !holdWrite.error) return "POSTGRES";
-  return fallback.error ? "MEMORY" : "RUNTIME_JSON";
+  if (tableOk && !fallback.error) return "POSTGRES";
+  return "RUNTIME_JSON";
 }
 
 export async function hydrateDurableBlogOs(store: DurableBlogStore): Promise<DurableBlogHold> {
@@ -68,18 +77,56 @@ export async function hydrateDurableBlogOs(store: DurableBlogStore): Promise<Dur
   if (!client) return fallbackHold;
   const table = await client.from("blog_daily_obligations").select("*").eq("venture_id", "occupancynpv");
   const holdRow = await client.from("blog_publishing_holds").select("*").eq("hold_id", fallbackHold.hold_id).maybeSingle();
+  const json = await client.from("cloud_runtime_state").select("payload").eq("scope", SCOPE).maybeSingle();
+  const scheduler = await client.from("cloud_runtime_state").select("payload").eq("scope", "organic-growth-scheduler-v1").maybeSingle();
+  const payload = json.data?.payload as { hold?: DurableBlogHold; obligations?: DurableBlogObligation[] } | undefined;
+  const schedulerPayload = scheduler.data?.payload as { publishing_hold?: string | null; execute_publish?: boolean | null } | undefined;
+  const canonical = await client
+    .from("organic_publication_authorization")
+    .select("hold_state,execute_publish,hold_version,updated_at,authorized_decision_id,resolved_at")
+    .eq("hold_key", CANONICAL_ORGANIC_HOLD_KEY)
+    .maybeSingle();
   if (!table.error && table.data?.length) {
     for (const row of table.data as DurableBlogObligation[]) store.insertDailyObligation(row, { silent: true });
+  } else {
+    for (const row of payload?.obligations ?? []) store.insertDailyObligation(row, { silent: true });
+  }
+  const effective = deriveEffectiveOrganicExecutionState({
+    canonical: canonical.error ? null : canonical.data,
+    scheduler: schedulerPayload,
+    canonical_readable: !canonical.error,
+  });
+  if (effective.result === "AUTHORIZED") {
     return persistDurableHold({
       ...fallbackHold,
-      ...((holdRow.data as DurableBlogHold | null) ?? {}),
-      engineering_owner: (holdRow.data as DurableBlogHold | null)?.engineering_owner || fallbackHold.engineering_owner,
-      founder_decision_owner: (holdRow.data as DurableBlogHold | null)?.founder_decision_owner || fallbackHold.founder_decision_owner,
-      exit_condition_hash: (holdRow.data as DurableBlogHold | null)?.exit_condition_hash || fallbackHold.exit_condition_hash,
+      hold_state: "CLEARED",
+      execute_publish: true,
+      resolved_at: canonical.data?.resolved_at ?? canonical.data?.updated_at ?? new Date().toISOString(),
+      founder_review_status: "CLEAR",
     });
   }
-  const json = await client.from("cloud_runtime_state").select("payload").eq("scope", SCOPE).maybeSingle();
-  const payload = json.data?.payload as { hold?: DurableBlogHold; obligations?: DurableBlogObligation[] } | undefined;
-  for (const row of payload?.obligations ?? []) store.insertDailyObligation(row, { silent: true });
-  return persistDurableHold(payload?.hold ?? fallbackHold);
+  const resolved = readPublishHoldFromKnownSources({
+    table_hold: holdRow.error ? null : (holdRow.data as DurableBlogHold | null),
+    runtime_hold: payload?.hold ?? null,
+    scheduler_publishing_hold: schedulerPayload?.publishing_hold ?? null,
+    table_error: holdRow.error?.message ?? null,
+    runtime_error: json.error?.message ?? scheduler.error?.message ?? null,
+  });
+  const productionHold = resolved.hold && isIsolatedTestAuthorization(resolved.hold) ? null : resolved.hold;
+  const authorization = evaluatePublishAuthorization({
+    hold: productionHold,
+    source: productionHold ? resolved.source : (resolved.hold ? "MISSING" : resolved.source),
+    db_available: !(holdRow.error && /unavailable|network|timeout/i.test(holdRow.error.message)) && !(json.error && /unavailable|network|timeout/i.test(json.error.message)),
+    production_runtime: true,
+  });
+  const hold = productionHold ?? fallbackHold;
+  if (authorization.result !== "ALLOW_NEXT_GATE" || effective.result !== "AUTHORIZED") {
+    return persistDurableHold({
+      ...hold,
+      execute_publish: false,
+      hold_state: "ACTIVE",
+      resolved_at: null,
+    });
+  }
+  return persistDurableHold(hold);
 }

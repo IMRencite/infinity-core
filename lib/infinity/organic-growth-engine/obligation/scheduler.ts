@@ -6,6 +6,7 @@ import {
 import { evaluateOrganicWorkLivenessInvariant, transitionOrganicWork } from "./transition";
 import { selectFirstOccupancyNpvOrganicOpportunity } from "./opportunity";
 import type { OrganicContentOpportunity, OrganicTransitionLog, OrganicWorkObligation } from "./types";
+import type { EffectiveOrganicExecutionState } from "@/lib/infinity/organic-growth-engine/blog-os/durable/effective-execution-state";
 
 export type OrganicPublishingHold = "PAUSED_FOR_QC_REPAIR" | "PAUSED_FOR_SECOND_QC_ESCAPE" | null;
 
@@ -97,6 +98,7 @@ export function executeOrganicGrowthSchedulerTick(input: {
   cursor_triggered?: boolean;
   founder_triggered?: boolean;
   execute_publish?: boolean;
+  effective?: EffectiveOrganicExecutionState;
 }): {
   state: OrganicGrowthSchedulerState;
   opportunity: OrganicContentOpportunity;
@@ -161,8 +163,11 @@ export function executeOrganicGrowthSchedulerTick(input: {
   }
   const overdue = memory.obligations.some((row) => evaluateOrganicWorkLivenessInvariant(row, now).result === "FAIL");
   memory.business_loop = overdue ? "DEGRADED" : "HEALTHY";
+  const authorized = input.effective
+    ? input.effective.result === "AUTHORIZED"
+    : !memory.publishing_hold;
   const execute = Boolean(input.execute_publish)
-    && !memory.publishing_hold
+    && authorized
     && memory.published_today < MAX_NEW_ORGANIC_ASSETS_PER_DAY;
   return { state: memory, opportunity, obligation, execute_publish: execute };
 }

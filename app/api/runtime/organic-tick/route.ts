@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { authorizeRuntimeTickRequest } from "@/lib/infinity/growth-engine/runtime-tick-auth";
 import { executeOrganicGrowthSchedulerTick } from "@/lib/infinity/organic-growth-engine/obligation/scheduler";
-import { hydrateOrganicGrowthSchedulerState, persistOrganicGrowthSchedulerState } from "@/lib/infinity/organic-growth-engine/obligation/persist";
+import { deriveEffectiveOrganicExecutionState } from "@/lib/infinity/organic-growth-engine/blog-os/durable/effective-execution-state";
+import { getLastOrganicEffectiveExecutionState, hydrateOrganicGrowthSchedulerState, persistOrganicGrowthSchedulerState, recordOrganicTickFailure } from "@/lib/infinity/organic-growth-engine/obligation/persist";
+import { assembleOrganicTickReport, safePersistFailure } from "@/lib/infinity/organic-growth-engine/obligation/tick-result";
 import { productionCrossSystemIsolationEvidence } from "@/lib/infinity/organic-growth-engine/obligation/gates";
 import { advanceVentureBlogOperatingSystem } from "@/lib/infinity/organic-growth-engine/blog-os";
 import { projectVentureBlogLiveWork } from "@/lib/infinity/organic-growth-engine/blog-os/live-work";
@@ -20,12 +22,17 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
   const cron = request.headers.get("x-vercel-cron") === "1" || /vercel-cron/i.test(request.headers.get("user-agent") ?? "");
   const isolation = productionCrossSystemIsolationEvidence();
-  await hydrateOrganicGrowthSchedulerState().catch(() => undefined);
+  const prior = await hydrateOrganicGrowthSchedulerState().catch(() => null);
+  const effective = prior
+    ? getLastOrganicEffectiveExecutionState()
+    : deriveEffectiveOrganicExecutionState({ canonical: null, canonical_readable: false });
+  const durableLastTick = prior?.last_tick_at ?? null;
   const result = executeOrganicGrowthSchedulerTick({
     trigger_source: cron ? "VERCEL_CRON" : "HTTP",
     cursor_triggered: !cron,
     founder_triggered: false,
     execute_publish: cron && isolation.result === "PASS",
+    effective: effective ?? undefined,
   });
   // Discovery continues. New pages do not publish while publishing_hold is set.
   const blog = advanceVentureBlogOperatingSystem({
@@ -36,6 +43,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const blogWork = projectVentureBlogLiveWork("occupancynpv");
   const durable = new DurableBlogStore();
   const hold = await hydrateDurableBlogOs(durable).catch(() => null);
+  let persistDurableError = null;
   if (hold) {
     const now = new Date().toISOString();
     if (!durable.get("occupancynpv", "2026-09-18")) {
@@ -76,17 +84,45 @@ export async function GET(request: Request): Promise<NextResponse> {
       deployment_id: process.env.VERCEL_DEPLOYMENT_ID ?? null,
       actor: cron ? "VERCEL_CRON" : "HTTP",
     });
-    await persistDurableBlogOs(durable, hold).catch(() => undefined);
+    try {
+      await persistDurableBlogOs(durable, hold);
+    } catch (error) {
+      persistDurableError = safePersistFailure(error, "persist_durable");
+    }
   }
-  await persistOrganicGrowthSchedulerState(result.state).catch(() => undefined);
+  let persistSchedulerError = null;
+  try {
+    await persistOrganicGrowthSchedulerState(result.state);
+  } catch (error) {
+    persistSchedulerError = safePersistFailure(error, "persist_scheduler");
+  }
+  const report = assembleOrganicTickReport({
+    persistSchedulerError,
+    persistDurableError,
+    durableLastTick,
+    inMemoryLastTick: result.state.last_tick_at,
+    publishingHold: effective?.result === "AUTHORIZED" ? null : (effective?.scheduler_projection ?? result.state.publishing_hold),
+  });
+  if (report.business_execution === "FAIL" && report.failure) {
+    await recordOrganicTickFailure({
+      failure: report.failure,
+      requestId: request.headers.get("x-vercel-id"),
+      deploymentId: process.env.VERCEL_DEPLOYMENT_ID ?? null,
+    }).catch(() => undefined);
+  }
   return NextResponse.json({
     host: "vercel-cron",
-    cadence: "0 7 * * *",
+    cadence: "*/15 * * * *",
     system: "OrganicGrowth",
+    business_execution: report.business_execution,
+    last_tick_advanced: report.last_tick_advanced,
+    error_surfaced: report.error_surfaced,
+    persist_failure: report.failure,
     lease_namespace: result.state.lease_namespace,
     health_scope: result.state.scope,
     CrossSystemRuntimeIsolationGate: isolation,
     execute_publish: result.execute_publish,
+    effective_execution: effective,
     opportunity: result.opportunity.opportunity_id,
     decision: result.opportunity.decision,
     obligation: result.obligation
@@ -99,7 +135,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       }
       : null,
     scheduler: {
-      last_tick_at: result.state.last_tick_at,
+      last_tick_at: report.last_tick_at,
       next_run_at: result.state.next_run_at,
       published_today: result.state.published_today,
       business_loop: result.state.business_loop,
