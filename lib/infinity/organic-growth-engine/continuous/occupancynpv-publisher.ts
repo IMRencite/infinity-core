@@ -28,6 +28,7 @@ import {
 import { occupancynpvActiveTags, occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
 import { occupancynpvLiveCapRatePageSource, occupancynpvLiveCapRateSchema } from "./occupancynpv-live-page";
 import { occupancynpvLeaseInputsPageSource, occupancynpvLeaseInputsSchema } from "./occupancynpv-lease-inputs-page";
+import { occupancynpvCamFirstYearPageSource, occupancynpvCamFirstYearSchema, OCCUPANCYNPV_CAM_FIRST_YEAR_PATH } from "./occupancynpv-cam-first-year-page";
 import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "./blog-ux";
 import { occupancynpvUniqueCreativeSvg } from "./occupancynpv-blog-creative";
 import { OCCUPANCYNPV_LIVE_CAP_RATE_PATH } from "./urls";
@@ -79,6 +80,8 @@ export function injectOccupancyNpvOrganicPage(files: ArtifactFile[], input: {
   if (hub && !hub.content.includes(input.route)) {
     const label = input.route.includes("what-numbers")
       ? "What numbers do you need to compare two commercial leases?"
+      : input.route.includes("cam-first-year")
+        ? "How should a tenant treat CAM in the first operating year?"
       : "How is cap rate calculated?";
     const link = `<p className="pv-surface"><a href="${input.route}">${label}</a></p>`;
     const patched = hub.content.includes("className=\"pv-related\"")
@@ -100,6 +103,11 @@ export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; 
     route: FIRST_LEASE_INPUTS_ROUTE,
     source: occupancynpvLeaseInputsPageSource(),
     schema: occupancynpvLeaseInputsSchema(),
+  });
+  files = injectOccupancyNpvOrganicPage(files, {
+    route: OCCUPANCYNPV_CAM_FIRST_YEAR_PATH,
+    source: occupancynpvCamFirstYearPageSource(),
+    schema: occupancynpvCamFirstYearSchema(),
   });
   files = injectOccupancyNpvOrganicPage(files, {
     route: OCCUPANCYNPV_BLOG_INDEX_PATH,

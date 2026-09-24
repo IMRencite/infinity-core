@@ -175,10 +175,13 @@ export async function executeOccupancynpvGrowthRuntimeCycleDurable(input: {
   } catch {
     // Cloud persist failures must not discard inbound observation or grant proof.
   }
+  let prospectPersist: "PASS" | "FAIL" = "PASS";
+  let prospectPersistError: string | null = null;
   try {
     await persistProspectGraph();
-  } catch {
-    // Prospect identifier upsert collisions must not block sales-learning durability.
+  } catch (error) {
+    prospectPersist = "FAIL";
+    prospectPersistError = error instanceof Error ? error.message.slice(0, 240) : "PROSPECT_PERSIST_FAILED";
   }
   const now = input.now ?? new Date().toISOString();
   const observation = loadInternalPublicObservation({ now });
@@ -193,7 +196,7 @@ export async function executeOccupancynpvGrowthRuntimeCycleDurable(input: {
     prospect: { activity: result.prospect.activity },
     sales,
     organic: { occupancy: projectPublicOrganicActivity(getOrganicContinuousState("occupancynpv"), {
-      publishing_hold: null,
+      effective_result: "AUTHORIZED",
     }).occupancy },
   }).catch(() => undefined);
   await generateAndPersistFounderDailyReportDurable({
@@ -203,5 +206,29 @@ export async function executeOccupancynpvGrowthRuntimeCycleDurable(input: {
     outbound_events: founderDailyOutboundEventTitles(getClosedLoopDurableState()),
     treasury_verification: "UNKNOWN",
   }).catch(() => undefined);
-  return result;
+  const child = {
+    prospect_intelligence: prospectPersist,
+    prospect_persist_error: prospectPersistError,
+    performance_intelligence: result.performance.events >= 0 ? "PASS" : "FAIL",
+    sales_learning: "PASS",
+    observed_at: now,
+  };
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (url && key) {
+      const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+      await db.from("cloud_runtime_state").upsert({
+        scope: "hq-tick-child-status",
+        version: 1,
+        instance_id: "hq-tick-child-status",
+        payload: child,
+        updated_at: now,
+      });
+    }
+  } catch {
+    // Child-status visibility must not block the parent tick.
+  }
+  return { ...result, child_status: child };
 }

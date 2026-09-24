@@ -4,13 +4,14 @@ import type { OrganicContinuousState } from "./types";
 
 export function projectPublicOrganicActivity(
   state: OrganicContinuousState | null,
-  extras?: { publishing_hold?: string | null },
+  extras?: { effective_result?: string | null; publishing_hold?: string | null },
 ): {
   activity: (typeof PUBLIC_ORGANIC_ACTIVITY)[number];
   occupancy: "ACTIVE" | "MONITORING" | "IDLE";
 } {
-  const blog = extras?.publishing_hold ? null : projectPublicBlogOccupancy();
-  if (extras?.publishing_hold === "PAUSED_FOR_QC_REPAIR") {
+  const blocked = extras?.effective_result != null && extras.effective_result !== "AUTHORIZED";
+  const blog = blocked ? null : projectPublicBlogOccupancy();
+  if (blocked) {
     return { activity: "Improving published resources", occupancy: "MONITORING" };
   }
   if (blog?.occupancy === "ACTIVE") {

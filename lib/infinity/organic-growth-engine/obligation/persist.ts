@@ -20,6 +20,10 @@ export function getLastOrganicEffectiveExecutionState(): EffectiveOrganicExecuti
   return lastEffective;
 }
 
+export function replaceLastOrganicEffectiveExecutionState(next: EffectiveOrganicExecutionState | null): void {
+  lastEffective = next;
+}
+
 export async function persistOrganicGrowthSchedulerState(state: OrganicGrowthSchedulerState = getOrganicGrowthSchedulerState()): Promise<void> {
   const client = adminClient();
   let next = state;

@@ -1,0 +1,132 @@
+{
+  "collected_at": "2026-09-24T08:30:00.000Z",
+  "policy": {
+    "legacy_field": "STILL_REQUIRED_NONAUTHORITATIVE",
+    "classification": ["LEGACY_PROJECTION", "NON_AUTHORITATIVE", "DEPRECATED"],
+    "may_determine_hold": false,
+    "may_determine_authorization": false,
+    "may_determine_execute_publish": false,
+    "may_determine_effective_state": false
+  },
+  "readers": [
+    {
+      "path": "lib/infinity/organic-growth-engine/blog-os/durable/effective-execution-state.ts",
+      "kind": "MIGRATION",
+      "authoritative": false,
+      "notes": "Classifies scheduler.publishing_hold as STALE/CURRENT projection only."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/obligation/persist.ts",
+      "kind": "MIGRATION",
+      "authoritative": false,
+      "notes": "Overlays in-memory hold from deriveEffectiveOrganicExecutionState; persist freezes prior projection."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/obligation/scheduler.ts",
+      "kind": "AUTHORIZATION_DECISION",
+      "authoritative": true,
+      "fix": "Production uses input.effective only; VITEST may use in-memory hold."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/obligation/hq.ts",
+      "kind": "AUTHORIZATION_DECISION",
+      "authoritative": true,
+      "fix": "Use last effective execution state, not publishing_hold."
+    },
+    {
+      "path": "app/api/operator-console/hq-live-state/route.ts",
+      "kind": "HQ_STATUS",
+      "authoritative": true,
+      "fix": "Pass effective_result into public occupancy, not publishing_hold."
+    },
+    {
+      "path": "lib/infinity/growth-engine/hq.ts",
+      "kind": "HQ_STATUS",
+      "authoritative": false,
+      "notes": "Calls projectOrganicRuntimeHq; fixed at source."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/continuous/public.ts",
+      "kind": "HQ_STATUS",
+      "authoritative": true,
+      "fix": "Ignore publishing_hold for occupancy; use effective_result."
+    },
+    {
+      "path": "lib/infinity/growth-engine/runtime-cycle.ts",
+      "kind": "HQ_STATUS",
+      "authoritative": true,
+      "fix": "Stop passing publishing_hold:null as occupancy authority."
+    },
+    {
+      "path": "app/api/runtime/organic-tick/route.ts",
+      "kind": "OBSERVER",
+      "authoritative": false,
+      "notes": "Report already uses effective.result."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/blog-os/durable/persist.ts",
+      "kind": "MIGRATION",
+      "authoritative": false,
+      "notes": "Live-reads organic_publication_authorization; scheduler hold is fallback only when unauthorized."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/blog-os/durable/publish-hold-contract.ts",
+      "kind": "MIGRATION",
+      "authoritative": false,
+      "notes": "Historical source ranking; production hydrate prefers canonical."
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/blog-os/isolation-snapshot.ts",
+      "kind": "HEALTH_STATUS",
+      "authoritative": false,
+      "notes": "Isolation digest copies in-memory hold after overlay; not used to authorize publish."
+    },
+    {
+      "path": "lib/infinity/production-outbound/obligation/isolation-core.ts",
+      "kind": "HEALTH_STATUS",
+      "authoritative": false,
+      "notes": "Cross-system drift compare only."
+    },
+    {
+      "path": "lib/infinity/production-outbound/obligation/isolation.ts",
+      "kind": "TEST_FIXTURE",
+      "authoritative": false
+    },
+    {
+      "path": "scripts/v53-organic-effective-observe.mjs",
+      "kind": "OBSERVER",
+      "authoritative": false,
+      "notes": "Detects stale projection vs canonical; does not authorize."
+    },
+    {
+      "path": "scripts/v53-organic-tick-wait.mjs",
+      "kind": "OBSERVER",
+      "authoritative": false
+    },
+    {
+      "path": "scripts/v48-*.mjs",
+      "kind": "EVIDENCE_PACK",
+      "authoritative": false
+    },
+    {
+      "path": "lib/infinity/organic-growth-engine/obligation/__tests__/*",
+      "kind": "TEST_FIXTURE",
+      "authoritative": false
+    },
+    {
+      "path": "lib/infinity/public-operations-room",
+      "kind": "DEAD_CODE",
+      "authoritative": false,
+      "notes": "No publishing_hold readers."
+    },
+    {
+      "path": "second_canary_status",
+      "kind": "HQ_STATUS",
+      "authoritative": false,
+      "notes": "Canary history only; hydrate no longer re-forces hold from it."
+    }
+  ],
+  "authoritative_readers_before_fix": 4,
+  "authoritative_readers_after_fix": 0,
+  "hq_status_consumers_corrected": 4
+}

@@ -10,10 +10,12 @@ import { projectVentureBlogLiveWork } from "@/lib/infinity/organic-growth-engine
 import { DurableBlogStore } from "@/lib/infinity/organic-growth-engine/blog-os/durable/store";
 import { backfillKnownDay, createDailyBlogObligation } from "@/lib/infinity/organic-growth-engine/blog-os/durable/creator";
 import { hydrateDurableBlogOs, persistDurableBlogOs } from "@/lib/infinity/organic-growth-engine/blog-os/durable/persist";
+import { executeOrganicScheduledWorkflow } from "@/lib/infinity/organic-growth-engine/blog-os/durable/scheduled-execution";
+import { fetchPublicCamPage, publishOrganicScheduledLivePage } from "@/lib/infinity/organic-growth-engine/blog-os/durable/scheduled-live-publisher";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function GET(request: Request): Promise<NextResponse> {
   const auth = authorizeRuntimeTickRequest(request);
@@ -34,7 +36,6 @@ export async function GET(request: Request): Promise<NextResponse> {
     execute_publish: cron && isolation.result === "PASS",
     effective: effective ?? undefined,
   });
-  // Discovery continues. New pages do not publish while publishing_hold is set.
   const blog = advanceVentureBlogOperatingSystem({
     venture_id: "occupancynpv",
     public_name: "OccupancyNPV",
@@ -44,6 +45,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const durable = new DurableBlogStore();
   const hold = await hydrateDurableBlogOs(durable).catch(() => null);
   let persistDurableError = null;
+  let workflow = null;
   if (hold) {
     const now = new Date().toISOString();
     if (!durable.get("occupancynpv", "2026-09-18")) {
@@ -84,6 +86,24 @@ export async function GET(request: Request): Promise<NextResponse> {
       deployment_id: process.env.VERCEL_DEPLOYMENT_ID ?? null,
       actor: cron ? "VERCEL_CRON" : "HTTP",
     });
+    if (cron && result.execute_publish && effective?.result === "AUTHORIZED") {
+      workflow = await executeOrganicScheduledWorkflow({
+        store: durable,
+        hold,
+        effective,
+        now: new Date().toISOString(),
+        owner: `vercel-cron:${process.env.VERCEL_DEPLOYMENT_ID ?? "organic"}`,
+        execute_publish: true,
+        adapters: {
+          readCanonical: async () => {
+            await hydrateOrganicGrowthSchedulerState().catch(() => undefined);
+            return getLastOrganicEffectiveExecutionState() ?? effective;
+          },
+          publishLive: publishOrganicScheduledLivePage,
+          fetchPublic: fetchPublicCamPage,
+        },
+      }).catch(() => null);
+    }
     try {
       await persistDurableBlogOs(durable, hold);
     } catch (error) {
@@ -162,7 +182,22 @@ export async function GET(request: Request): Promise<NextResponse> {
           pipeline_state: row.pipeline_state,
           candidate_id: row.candidate_id,
           hold_id: row.hold_id,
+          failure_reason: row.failure_reason,
+          live_url: row.live_url,
         })),
+      }
+      : null,
+    workflow: workflow
+      ? {
+        stage: workflow.stage,
+        claimed: workflow.claimed,
+        public_mutation: workflow.public_mutation,
+        public_url: workflow.public_url,
+        live_verified: workflow.live_verified,
+        authorization: workflow.authorization,
+        reasons: workflow.reasons,
+        obligation_id: workflow.obligation?.id ?? null,
+        pipeline_state: workflow.obligation?.pipeline_state ?? null,
       }
       : null,
   });

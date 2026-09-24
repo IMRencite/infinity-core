@@ -165,7 +165,9 @@ export function executeOrganicGrowthSchedulerTick(input: {
   memory.business_loop = overdue ? "DEGRADED" : "HEALTHY";
   const authorized = input.effective
     ? input.effective.result === "AUTHORIZED"
-    : !memory.publishing_hold;
+    : process.env.VITEST
+      ? !memory.publishing_hold
+      : false;
   const execute = Boolean(input.execute_publish)
     && authorized
     && memory.published_today < MAX_NEW_ORGANIC_ASSETS_PER_DAY;

@@ -22,8 +22,7 @@ import { getOrganicContinuousState } from "@/lib/infinity/organic-growth-engine/
 import { projectPublicOrganicActivity } from "@/lib/infinity/organic-growth-engine/continuous/public";
 import { projectOrganicGrowthHq } from "@/lib/infinity/organic-growth-engine/continuous/hq";
 import { projectOrganicRuntimeHq } from "@/lib/infinity/organic-growth-engine/obligation/hq";
-import { hydrateOrganicGrowthSchedulerState } from "@/lib/infinity/organic-growth-engine/obligation/persist";
-import { getOrganicGrowthSchedulerState } from "@/lib/infinity/organic-growth-engine/obligation/scheduler";
+import { getLastOrganicEffectiveExecutionState, hydrateOrganicGrowthSchedulerState } from "@/lib/infinity/organic-growth-engine/obligation/persist";
 import { hydrateRemoteCurrentImplementationWork } from "@/lib/infinity/canonical-work/remote-persist";
 import {
   getCommunicationSchedulerState,
@@ -112,7 +111,7 @@ function publishPublicOccupancyFromHq(live: HqCanonicalLiveState) {
   return publishCanonicalPublicOccupancy({
     now: live.generatedAt,
     hqRooms,
-    organic: { occupancy: projectPublicOrganicActivity(getOrganicContinuousState("occupancynpv"), { publishing_hold: getOrganicGrowthSchedulerState().publishing_hold }).occupancy },
+    organic: { occupancy: projectPublicOrganicActivity(getOrganicContinuousState("occupancynpv"), { effective_result: getLastOrganicEffectiveExecutionState()?.result ?? null }).occupancy },
     loop: {
       portfolio_state: live.autonomousOperating?.loop_state ?? "IDLE_NO_ACTION",
       last_outcome: live.autonomousOperating?.priority === "EXISTING_GROWTH_CONTINUATION" ? "CONTINUE_EXISTING_ACTION" : null,

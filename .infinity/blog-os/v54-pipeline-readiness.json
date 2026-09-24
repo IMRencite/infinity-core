@@ -1,0 +1,85 @@
+{
+  "collected_at": "2026-09-24T12:00:00.000Z",
+  "reuse": "canonical durable pipeline + occupancynpv publisher + blog quality gates",
+  "new_pipeline": false,
+  "stages": {
+    "opportunity_discovery": {
+      "implementation": "lib/infinity/organic-growth-engine/obligation/opportunity.ts",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_SCHEMA_COMPATIBLE": "YES",
+      "CURRENT_CREDENTIALS_VALID": "YES",
+      "CURRENT_PROVIDER_CONTRACT": "PASS",
+      "CURRENT_QC_VERSION_COMPATIBLE": "PASS",
+      "CURRENT_BRAND_CONTEXT": "PASS",
+      "PRODUCTION_SAFE": "YES",
+      "LAST_REAL_EXECUTION": "2026-09-24T08:15:05.794Z scheduler opportunity lease-inputs"
+    },
+    "obligation_selection": {
+      "implementation": "blog-os/durable/creator.ts + scheduled-execution.selectActionableDailyObligation",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_SCHEMA_COMPATIBLE": "YES",
+      "CURRENT_CREDENTIALS_VALID": "YES",
+      "CURRENT_PROVIDER_CONTRACT": "PASS",
+      "CURRENT_QC_VERSION_COMPATIBLE": "PASS",
+      "CURRENT_BRAND_CONTEXT": "PASS",
+      "PRODUCTION_SAFE": "YES",
+      "LAST_REAL_EXECUTION": "daily blog:occupancynpv:2026-09-24 remains PLANNED until first wired cron"
+    },
+    "draft_generation": {
+      "implementation": "occupancynpv-cam-first-year-page.ts OrganicDraft, same shape as lease-inputs/cap-rate drafts",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_SCHEMA_COMPATIBLE": "YES",
+      "CURRENT_CREDENTIALS_VALID": "YES",
+      "CURRENT_PROVIDER_CONTRACT": "PASS",
+      "CURRENT_QC_VERSION_COMPATIBLE": "PASS",
+      "CURRENT_BRAND_CONTEXT": "PASS",
+      "PRODUCTION_SAFE": "YES",
+      "LAST_REAL_EXECUTION": "unit/shared-service; generateOrganicDraft remains cap-rate fixture and is not used for CAM"
+    },
+    "BlogContentQualityGate": {
+      "implementation": "continuous/blog-quality-core.ts",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_SCHEMA_COMPATIBLE": "YES",
+      "CURRENT_QC_VERSION_COMPATIBLE": "PASS",
+      "PRODUCTION_SAFE": "YES",
+      "LAST_REAL_EXECUTION": "v54 scheduled-execution tests"
+    },
+    "BrandContentFit": {
+      "implementation": "evaluateOccupancyNpvBrandContentFit + OccupancyNPV BrandTruth copy",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_BRAND_CONTEXT": "PASS",
+      "PRODUCTION_SAFE": "YES"
+    },
+    "visual_qc": {
+      "implementation": "BlogVisualAssetGate + RenderedPageVerificationCheck PRE_PUBLISH",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_QC_VERSION_COMPATIBLE": "PASS",
+      "PRODUCTION_SAFE": "YES"
+    },
+    "PRE_PUBLISH": {
+      "implementation": "durable/verifier.ts evaluateRenderedPageVerificationCheck mode PRE_PUBLISH",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "scheduler_integration": "NOW_WIRED via executeOrganicScheduledWorkflow",
+      "PRODUCTION_SAFE": "YES",
+      "LAST_REAL_EXECUTION": "implemented and tested; not previously called by scheduler"
+    },
+    "publish": {
+      "implementation": "durable/pipeline.attemptPublish + occupancynpv-publisher.deployOccupancyNpvOrganicLivePage",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "CURRENT_PROVIDER_CONTRACT": "PASS",
+      "PRODUCTION_SAFE": "YES",
+      "legacy_publishing_hold": "NOT_CONSULTED"
+    },
+    "deploy": {
+      "implementation": "VercelDomainBindingAdapter OccupancyNPV project prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "lifecycle": "DEPLOYED -> ALIAS_ASSIGNED -> PROPAGATING -> LIVE_VERIFIED",
+      "PRODUCTION_SAFE": "YES"
+    },
+    "public_verify": {
+      "implementation": "attemptLiveVerify + fetchPublicHtml of expected CAM URL",
+      "IMPLEMENTATION_PRESENT": "YES",
+      "PRODUCTION_SAFE": "YES"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { DAILY_BLOG_TARGET, MAX_OTHER_NEW_HIGH_VALUE_ASSETS_PER_DAY } from "../blog-os/contract";
 import { projectSystemBlogHq, projectVentureBlogLiveWork } from "../blog-os/live-work";
 import { productionCrossSystemIsolationEvidence } from "./gates";
+import { projectOrganicAuthorizationForSurfaces } from "./authorization-projection";
 import { getOrganicGrowthSchedulerState } from "./scheduler";
 
 export function projectOrganicRuntimeHq(now = new Date().toISOString()) {
@@ -19,11 +20,11 @@ export function projectOrganicRuntimeHq(now = new Date().toISOString()) {
   const oldest = state.obligations
     .filter((row) => row.state !== "VERIFIED" && row.state !== "DO_NOT_PUBLISH" && row.state !== "CANCELLED" && row.state !== "SUPERSEDED")
     .sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))[0];
-  const hold = state.publishing_hold;
-  const paused = Boolean(hold);
+  const authorization = projectOrganicAuthorizationForSurfaces();
+  const paused = !authorization.authorized;
   return {
     organic_growth: "ACTIVE",
-    publishing: hold ?? "LIVE",
+    publishing: authorization.publishing,
     first_autonomous_canary: state.first_canary_status,
     second_autonomous_canary: state.second_canary_status,
     qc_escapes: state.qc_escape_count,
@@ -33,7 +34,9 @@ export function projectOrganicRuntimeHq(now = new Date().toISOString()) {
     watchdog: state.business_loop,
     business_loop: paused ? "DEGRADED" : state.business_loop,
     qc_health: paused ? "DEGRADED" : "HEALTHY",
-    publishing_health: hold ?? "HEALTHY",
+    publishing_health: authorization.authorized ? "HEALTHY" : "BLOCKED",
+    authorization_source: "organic_publication_authorization",
+    scheduler_hold_field: "LEGACY_PROJECTION_NON_AUTHORITATIVE",
     runtime_isolation: isolation.result,
     todays_run: state.last_tick_at ? "RAN" : "PENDING",
     opportunities_evaluated: state.obligations.length,
@@ -42,11 +45,11 @@ export function projectOrganicRuntimeHq(now = new Date().toISOString()) {
     latest_published_title: latest?.title ?? null,
     latest_url: latest ? `https://occupancynpv.com${latest.route}` : null,
     next_run: state.next_run_at,
-    next_publish: paused ? "BLOCKED_QC_REPAIR" : state.next_run_at,
+    next_publish: paused ? "BLOCKED_AUTHORIZATION" : state.next_run_at,
     cursor_required: false,
     founder_required: false,
-    execute_publish_authorized: true,
-    execute_publish: !paused,
+    execute_publish_authorized: authorization.authorized,
+    execute_publish: authorization.execute_publish,
     daily_new_asset_ceiling: 2,
     daily_blog_target: DAILY_BLOG_TARGET,
     max_other_new_high_value_assets: MAX_OTHER_NEW_HIGH_VALUE_ASSETS_PER_DAY,
