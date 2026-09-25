@@ -19,8 +19,10 @@ import {
   latestBlogPosts,
   occupancynpvInterestRateQuestionCluster,
   profileBlogContentQuality,
+  renderFeaturedBlogsCarouselHtml,
   renderLatestBlogsCarouselHtml,
   sequentialBlogNeighbors,
+  evaluateFeaturedBlogsFunctionalGate,
 } from "../blog-ux";
 import { evaluateBlogIndexReadinessGate } from "../blog-quality";
 import { occupancynpvBlogArticleSource, occupancynpvBlogIndexSource, occupancynpvBlogSequentialNavHtml, occupancynpvInterestRateDraft } from "../occupancynpv-blog";
@@ -49,7 +51,7 @@ describe("Blog hero and editorial design", () => {
 });
 
 describe("Blog section spacing", () => {
-  it("keeps Latest Blogs heading separated from the carousel track", () => {
+  it("keeps Featured Reads heading separated from the carousel track", () => {
     const html = occupancynpvBlogIndexSource();
     expect(html).toContain("data-blog-section-heading");
     expect(html).toContain("data-blog-carousel-top-gap");
@@ -68,7 +70,7 @@ describe("Blog carousel contrast", () => {
 
 describe("Blog carousel controls", () => {
   it("uses flanking arrow controls instead of default Previous/Next buttons", () => {
-    const html = occupancynpvBlogIndexSource();
+    const html = renderLatestBlogsCarouselHtml({ posts: fixturePosts().filter((row) => !row.draft), surface: "index" });
     expect(html).toContain('data-blog-carousel-control="arrow"');
     expect(html).toContain('data-carousel-controls="flanking"');
     expect(html).toContain('aria-label="Previous blogs"');
@@ -78,9 +80,17 @@ describe("Blog carousel controls", () => {
     expect(evaluateBlogCarouselControlQualityGate(html).result).toBe("PASS");
   });
 
+  it("hides arrows and tightens density when only one Featured Reads card exists", () => {
+    const html = occupancynpvBlogIndexSource();
+    expect(html).toContain('data-carousel-density="single"');
+    expect(html).toContain('data-carousel-arrows="hidden"');
+    expect(html).not.toContain("single_card_fake_carousel");
+    expect(evaluateBlogLatestCarouselGate({ html, published: occupancynpvPublishedBlogPosts(), viewport: 1440 }).result).toBe("PASS");
+  });
+
   it("keeps 3/2/1 visible columns and shared carousel markup", () => {
     const html = occupancynpvBlogIndexSource();
-    expect(html).toContain('data-blog-carousel-shared="LatestBlogsCarousel"');
+    expect(html).toContain('data-blog-carousel-shared="FeaturedBlogsCarousel"');
     expect(html).toContain('data-carousel-desktop="3"');
     expect(evaluateBlogLatestCarouselGate({ html, published: occupancynpvPublishedBlogPosts(), viewport: 1440 }).result).toBe("PASS");
     expect(carouselVisibleColumns(1440)).toBe(3);
@@ -89,20 +99,41 @@ describe("Blog carousel controls", () => {
     expect(carouselVisibleColumns(768)).toBe(1);
     expect(carouselVisibleColumns(390)).toBe(1);
   });
+
+  it("proves Featured Blogs is a functional carousel, not a deleted Latest Blogs assertion", () => {
+    const posts = occupancynpvPublishedBlogPosts();
+    const html = occupancynpvBlogIndexSource();
+    const featured = posts.filter((row) => row.featured && !row.draft);
+    expect(html).toContain("Featured Blogs");
+    expect(html).not.toContain("Latest Blogs");
+    expect(evaluateFeaturedBlogsFunctionalGate({ html, featured_count: featured.length }).result).toBe("PASS");
+    const crowded = renderFeaturedBlogsCarouselHtml([
+      ...featured,
+      { ...posts[0]!, slug: "d", path: "/blog/d/", title: "Fourth featured", featured: true, published: "2026-09-20" },
+      { ...posts[0]!, slug: "e", path: "/blog/e/", title: "Fifth featured", featured: true, published: "2026-09-21" },
+      { ...posts[0]!, slug: "f", path: "/blog/f/", title: "Sixth featured", featured: true, published: "2026-09-22" },
+    ]);
+    expect(crowded).toContain('data-carousel-arrows="visible"');
+    expect(crowded).toContain("data-blog-carousel-prev");
+    expect(crowded).toContain("data-blog-carousel-scroller");
+    expect(evaluateFeaturedBlogsFunctionalGate({ html: crowded, featured_count: 4 }).result).toBe("PASS");
+  });
 });
 
 describe("Article discovery", () => {
-  it("hides Latest Blogs on a solo article and keeps previous/next separate", () => {
+  it("shows Featured Reads for the other published article and keeps previous/next separate", () => {
     const html = occupancynpvBlogArticleSource();
     const posts = occupancynpvPublishedBlogPosts();
+    const current = posts.find((row) => row.path.includes("interest-rates")) ?? posts[1]!;
     expect(html).toContain("data-blog-article-discovery");
-    expect(html).toContain("data-blog-discovery-empty");
+    expect(html).toContain("/blog/occupancy-costs/cam-first-year/");
+    expect(html).not.toContain("data-blog-discovery-empty");
     expect(html).toContain("data-blog-sequential-nav");
     expect(html).toContain("Related resources");
     expect(html).toContain("data-blog-article-sidebar");
     expect(html).toContain('data-blog-sidebar-shared="BlogSidebar"');
     expect(evaluateBlogArticleSidebarGate(html).result).toBe("PASS");
-    expect(evaluateBlogArticleDiscoveryGate({ article_html: html, published: posts, current_path: posts[0]!.path }).result).toBe("PASS");
+    expect(evaluateBlogArticleDiscoveryGate({ article_html: html, published: posts, current_path: current.path }).result).toBe("PASS");
   });
 
   it("excludes the current article when enough published posts exist", () => {
@@ -164,7 +195,7 @@ describe("Editorial design and sequential navigation", () => {
   it("passes featured, sidebar, editorial, and responsive layout contracts on the OccupancyNPV index", () => {
     const html = occupancynpvBlogIndexSource();
     const posts = occupancynpvPublishedBlogPosts();
-    expect(html).toContain("Latest Blogs");
+    expect(html).toContain("Featured Reads");
     expect(html).not.toContain("Latest notes");
     expect(evaluateBlogFeaturedCardQualityGate(html).result).toBe("PASS");
     expect(evaluateBlogSidebarUXGate(html).result).toBe("PASS");
@@ -195,7 +226,7 @@ describe("Editorial design and sequential navigation", () => {
       surface: { ...defaultVentureBlogSurface("x"), article_latest_blogs: false, carousel_arrow_controls: false },
     }).result).toBe("FAIL");
     const files = provisionBuildFactoryBlogFiles();
-    expect(files["app/blog/page.tsx"]).toContain("Latest Blogs");
+    expect(files["app/blog/page.tsx"]).toContain("Featured Reads");
     expect(files["app/blog/page.tsx"]).toContain("data-blog-carousel-control");
     expect(files["app/blog/[category]/[slug]/page.tsx"]).toContain("data-blog-article-discovery");
     expect(files["app/blog/[category]/[slug]/page.tsx"]).toContain("data-blog-sequential-nav");

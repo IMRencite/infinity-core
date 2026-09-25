@@ -6,9 +6,13 @@ import {
   LATEST_BLOGS_CAROUSEL_SCRIPT,
   renderBlogHeroHtml,
   renderBlogSidebarHtml,
+  renderFeaturedBlogsCarouselHtml,
+  renderFeaturedReadsBottomHtml,
   renderLatestBlogsCarouselHtml,
+  renderMainBlogRollHtml,
   sequentialBlogNeighbors,
 } from "./blog-ux";
+import { selectPopularOrFeaturedBlogs } from "@/lib/infinity/performance-intelligence-engine/popular-blogs";
 import {
   blogCategoryArchivePath,
   blogTagArchivePath,
@@ -133,31 +137,10 @@ export function occupancynpvBlogTagArchivePage(tag: string): PlannedPage {
 export function occupancynpvBlogIndexSource(): string {
   const page = occupancynpvBlogIndexPage();
   const posts = occupancynpvPublishedBlogPosts();
-  const featured = posts.find((post) => post.featured) ?? posts[0];
-  const latestCarousel = renderLatestBlogsCarouselHtml({
-    posts,
-    excludePath: posts.length > 1 ? featured?.path : undefined,
-    surface: "index",
-  });
   const crumbs = [
     { href: "/", label: "Home" },
     { href: "/blog", label: "Blog" },
   ];
-  const featuredCard = featured
-    ? `<article className="onpv-blog-featured" data-blog-featured-card="true" data-featured-image-size="editorial">
-              <div className="onpv-blog-featured__media">
-                <img src="${featured.image}" alt=${JSON.stringify(featured.image_alt)} width={640} height={400} />
-              </div>
-              <div className="onpv-blog-featured__copy">
-                <p className="pv-eyebrow" data-blog-featured-eyebrow="true">${taxonomyChipHtml("category", featured.primaryCategory ?? featured.category)}</p>
-                <h2>${featured.title}</h2>
-                <p>${featured.excerpt}</p>
-                <p><time dateTime="${featured.published}">${featured.published}</time>${featured.reading_time ? ` · ${featured.reading_time}` : ""}</p>
-                <p>${featured.tags.map((tag) => taxonomyChipHtml("tag", tag)).join(" ")}</p>
-                <a className="onpv-blog-featured__cta" data-blog-featured-cta="true" href="${featured.path}">Read article</a>
-              </div>
-            </article>`
-    : "<p>No published posts yet.</p>";
   const body = `
         ${renderBlogHeroHtml({
           eyebrow: "Editorial",
@@ -169,12 +152,11 @@ export function occupancynpvBlogIndexSource(): string {
         <section className="pv-section" data-section-type="INDEX">
           <div className="vg-container onpv-blog-layout" data-blog-layout="editorial">
             <div className="onpv-blog-main">
-              <section data-blog-featured="true">
-                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured</h2>
-                ${featuredCard}
-              </section>
-              ${latestCarousel}
-              ${posts.length <= 6 ? "" : '<p data-blog-pagination="true">Load more when the archive grows.</p>'}
+              ${renderMainBlogRollHtml(posts)}
+              ${(() => {
+                const selection = selectPopularOrFeaturedBlogs({ posts });
+                return renderFeaturedBlogsCarouselHtml(selection.posts, { public_label: selection.public_label, mode: selection.mode });
+              })()}
               <section data-section-type="RELATED_CONTENT">
                 <RelatedContent items={[
                   { href: "/resources", label: "Resource library" },
@@ -183,6 +165,7 @@ export function occupancynpvBlogIndexSource(): string {
                   { href: "/compare-commercial-leases", label: "Compare commercial leases" },
                 ]} />
               </section>
+              ${renderFeaturedReadsBottomHtml()}
             </div>
             ${renderBlogSidebarHtml(posts)}
           </div>
@@ -294,7 +277,8 @@ export function occupancynpvBlogTagCrumbs(tag: string) {
 
 export function occupancynpvBlogArticleSchema() {
   const page = occupancynpvBlogArticlePage();
-  const post = occupancynpvPublishedBlogPosts()[0]!;
+  const post = occupancynpvPublishedBlogPosts().find((row) => row.asset_id === OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID)
+    ?? occupancynpvPublishedBlogPosts()[0]!;
   return buildConnectedSchemaGraph({
     origin: "https://occupancynpv.com",
     organization: occupancynpvOrganization(),
@@ -385,7 +369,7 @@ export function occupancynpvBlogTagArchiveSchema(tag: string) {
 export function occupancynpvBlogArticleSource(): string {
   const page = occupancynpvBlogArticlePage();
   const posts = occupancynpvPublishedBlogPosts();
-  const post = posts[0]!;
+  const post = posts.find((row) => row.asset_id === OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID) ?? posts[0]!;
   const crumbs = [
     { href: "/", label: "Home" },
     { href: "/blog", label: "Blog" },
@@ -706,6 +690,13 @@ export function occupancynpvInterestRateDraft(): OrganicDraft {
         published_at: "2024-01-01",
         retrieved_at: "2026-09-17",
         claim: "Cap rate relates income to property value",
+      },
+      {
+        source: "https://www.sba.gov/business-guide/manage-your-business/rent-commercial-space",
+        source_type: "authority",
+        published_at: "2024-01-01",
+        retrieved_at: "2026-09-17",
+        claim: "Commercial occupancy and financing terms belong in the documented deal, not an invented average",
       },
     ],
     schema: ["Organization", "WebSite", "WebPage", "BlogPosting", "BreadcrumbList", "SpeakableSpecification", "FAQPage"],

@@ -1,7 +1,8 @@
 import { VercelDomainBindingAdapter } from "@/lib/infinity/commercialization/providers/vercel/domain-binding-adapter";
 import { loadServerEnvFromLocalFile, reloadVercelFromLocalFile } from "@/lib/infinity/communication-provider/load-local-env";
+import { activateVercelTokenForProject } from "@/lib/infinity/commercialization/providers/vercel/token-select";
 import { sitemapSource } from "@/lib/infinity/public-venture-template";
-import { CRE_VERCEL_PROJECT_LIVE_NAME, OCCUPANCYNPV_DOMAIN } from "@/lib/infinity/venture-operating-scale/constants";
+import { CRE_VERCEL_PROJECT_ID, CRE_VERCEL_PROJECT_LIVE_NAME, OCCUPANCYNPV_DOMAIN } from "@/lib/infinity/venture-operating-scale/constants";
 import { composeOccupancynpvPaymentReactivationFiles } from "@/lib/infinity/venture-operating-scale/occupancynpv-payment-reactivation-surface";
 import type { OrganicAsset, OrganicPublisherAdapter } from "./types";
 import {
@@ -20,19 +21,27 @@ import {
   occupancynpvBlogTagArchiveSource,
   occupancynpvBlogTagHubSchema,
   occupancynpvBlogTagHubSource,
+  occupancynpvInterestRateDraft,
   OCCUPANCYNPV_BLOG_ARTICLE_LEGACY_PATH,
   OCCUPANCYNPV_BLOG_ARTICLE_PATH,
   OCCUPANCYNPV_BLOG_INDEX_PATH,
-  OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY,
 } from "./occupancynpv-blog";
-import { occupancynpvActiveTags, occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
+import { occupancynpvActiveCategories, occupancynpvActiveTags, occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
+import {
+  occupancynpvCamFirstYearPublishedRecord,
+  occupancynpvInterestRatePublishedRecord,
+  registerPublishedBlogRecord,
+} from "./published-blog-inventory";
+import { blogCategoryArchivePath, blogTagArchivePath } from "./blog-taxonomy";
 import { occupancynpvLiveCapRatePageSource, occupancynpvLiveCapRateSchema } from "./occupancynpv-live-page";
 import { occupancynpvLeaseInputsPageSource, occupancynpvLeaseInputsSchema } from "./occupancynpv-lease-inputs-page";
-import { occupancynpvCamFirstYearPageSource, occupancynpvCamFirstYearSchema, OCCUPANCYNPV_CAM_FIRST_YEAR_PATH } from "./occupancynpv-cam-first-year-page";
+import { occupancynpvCamFirstYearDraft, occupancynpvCamFirstYearPageSource, occupancynpvCamFirstYearSchema, OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER, OCCUPANCYNPV_CAM_FIRST_YEAR_PATH } from "./occupancynpv-cam-first-year-page";
 import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "./blog-ux";
 import { occupancynpvUniqueCreativeSvg } from "./occupancynpv-blog-creative";
 import { OCCUPANCYNPV_LIVE_CAP_RATE_PATH } from "./urls";
+import { evaluateContentQualityFramework } from "./content-quality-framework";
 import { FIRST_LEASE_INPUTS_ROUTE } from "../obligation/opportunity";
+import { classifyPublishThrow } from "./destination-source-pack";
 
 type ArtifactFile = { path: string; content: string; encoding?: "utf8" | "base64" };
 
@@ -92,7 +101,35 @@ export function injectOccupancyNpvOrganicPage(files: ArtifactFile[], input: {
   return next;
 }
 
+export function composeOccupancyNpvOrganicLiveFilesSafe(): {
+  ok: boolean;
+  files: ArtifactFile[];
+  pagePath: string;
+  reason: string | null;
+  exception?: ReturnType<typeof classifyPublishThrow>["exception"];
+} {
+  try {
+    const composed = composeOccupancyNpvOrganicLiveFiles();
+    return { ok: true, files: composed.files, pagePath: composed.pagePath, reason: null };
+  } catch (error) {
+    const classified = classifyPublishThrow(error);
+    return {
+      ok: false,
+      files: [],
+      pagePath: filePathForRoute(OCCUPANCYNPV_LIVE_CAP_RATE_PATH),
+      reason: classified.reason,
+      exception: classified.exception,
+    };
+  }
+}
+
 export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; pagePath: string } {
+  const blogs = [occupancynpvInterestRateDraft(), occupancynpvCamFirstYearDraft()];
+  if (blogs.some((draft) => evaluateContentQualityFramework(draft).result === "FAIL")) {
+    throw new Error("CONTENT_QUALITY_FRAMEWORK_FAIL");
+  }
+  registerPublishedBlogRecord(occupancynpvInterestRatePublishedRecord());
+  registerPublishedBlogRecord(occupancynpvCamFirstYearPublishedRecord());
   const composed = composeOccupancynpvPaymentReactivationFiles();
   let files = injectOccupancyNpvOrganicPage(composed.files, {
     route: OCCUPANCYNPV_LIVE_CAP_RATE_PATH,
@@ -119,11 +156,13 @@ export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; 
     source: occupancynpvBlogArticleSource(),
     schema: occupancynpvBlogArticleSchema(),
   });
-  files = injectOccupancyNpvOrganicPage(files, {
-    route: `/blog/category/${OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY.toLowerCase()}/`,
-    source: occupancynpvBlogCategoryArchiveSource(OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY),
-    schema: occupancynpvBlogCategoryArchiveSchema(OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY),
-  });
+  for (const category of occupancynpvActiveCategories()) {
+    files = injectOccupancyNpvOrganicPage(files, {
+      route: blogCategoryArchivePath(category),
+      source: occupancynpvBlogCategoryArchiveSource(category),
+      schema: occupancynpvBlogCategoryArchiveSchema(category),
+    });
+  }
   files = injectOccupancyNpvOrganicPage(files, {
     route: "/blog/tag/",
     source: occupancynpvBlogTagHubSource(),
@@ -131,7 +170,7 @@ export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; 
   });
   for (const row of occupancynpvActiveTags()) {
     files = injectOccupancyNpvOrganicPage(files, {
-      route: `/blog/tag/${row.tag.toLowerCase().replace(/\s+/g, "-")}/`,
+      route: blogTagArchivePath(row.tag),
       source: occupancynpvBlogTagArchiveSource(row.tag),
       schema: occupancynpvBlogTagArchiveSchema(row.tag),
     });
@@ -157,7 +196,7 @@ export default nextConfig;
     const keep = blogSitemapUrls({
       index: OCCUPANCYNPV_BLOG_INDEX_PATH,
       articles: occupancynpvPublishedBlogPosts(),
-      categories: [OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY],
+      categories: occupancynpvActiveCategories(),
       tags: occupancynpvActiveTags().map((row) => ({ tag: row.tag, count: row.count, intro: occupancynpvTagDescription(row.tag) })),
       legacy_paths: [OCCUPANCYNPV_BLOG_ARTICLE_LEGACY_PATH],
     });
@@ -279,6 +318,40 @@ export async function fetchPublicHtml(url: string): Promise<{ ok: boolean; statu
   }
 }
 
+export async function reconcileReadyOccupancyNpvDeployment(vercel: VercelDomainBindingAdapter): Promise<{
+  id: string;
+  preview_url: string;
+  aliased: boolean;
+  html: string;
+  safe_error: string | null;
+} | null> {
+  const listed = await vercel.listDeployments(CRE_VERCEL_PROJECT_ID, 8);
+  if (!listed.ok) return null;
+  for (const row of listed.deployments) {
+    if (row.readyState !== "READY" || !row.id || row.id === "UNKNOWN") continue;
+    const host = row.url.replace(/^https?:\/\//, "");
+    if (!host || host === "UNKNOWN") continue;
+    const preview = `https://${host}${OCCUPANCYNPV_CAM_FIRST_YEAR_PATH}`;
+    const live = await fetchPublicHtml(preview);
+    if (!live.ok || !live.body.includes(OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER)) continue;
+    const index = await fetchPublicHtml(`https://${host}${OCCUPANCYNPV_BLOG_INDEX_PATH}`);
+    if (!index.ok || !index.body.includes("cam-first-year")) continue;
+    if (!index.body.includes("data-blog-all-articles") || !index.body.includes("data-blog-main-roll")) continue;
+    if (!index.body.includes("Featured Blogs") || !index.body.includes("Featured Reads")) continue;
+    if (!index.body.includes('data-carousel-geometry-contract="v2"') || !index.body.includes("onpv-blog-featured-body") || !index.body.includes("data-carousel-body")) continue;
+    if (!live.body.includes("typically includes") || !live.body.includes("typically excludes")) continue;
+    const alias = await vercel.assignDeploymentAlias(row.id, OCCUPANCYNPV_DOMAIN);
+    return {
+      id: row.id,
+      preview_url: `https://${host}`,
+      aliased: alias.ok,
+      html: live.body,
+      safe_error: alias.ok ? null : alias.safeError ?? "VERCEL_ALIAS_FAILED",
+    };
+  }
+  return null;
+}
+
 export async function deployOccupancyNpvOrganicLivePage(input: {
   deploy?: boolean;
   pollAttempts?: number;
@@ -287,8 +360,28 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
   if (input.deploy !== false) {
     loadServerEnvFromLocalFile();
     reloadVercelFromLocalFile();
+    await activateVercelTokenForProject({ projectId: CRE_VERCEL_PROJECT_ID });
   }
-  const composed = composeOccupancyNpvOrganicLiveFiles();
+  const composedSafe = composeOccupancyNpvOrganicLiveFilesSafe();
+  if (!composedSafe.ok) {
+    return {
+      adapter: OCCUPANCYNPV_LIVE_PUBLISHER_ID,
+      domain: OCCUPANCYNPV_DOMAIN,
+      project: CRE_VERCEL_PROJECT_LIVE_NAME,
+      page_path: composedSafe.pagePath,
+      file_count: 0,
+      deployment_id: null,
+      preview_url: null,
+      deployed: false,
+      aliased: false,
+      live_url: `https://occupancynpv.com${OCCUPANCYNPV_LIVE_CAP_RATE_PATH.replace(/\/+$/, "")}`,
+      live_status: 0,
+      live_html: "",
+      safe_error: composedSafe.reason,
+      exception: composedSafe.exception ?? null,
+    };
+  }
+  const composed = { files: composedSafe.files, pagePath: composedSafe.pagePath };
   const pageReady = composed.files.some((file) => file.path.replace(/\\/g, "/") === composed.pagePath)
     && composed.files.some((file) => file.path.replace(/\\/g, "/") === "app/pricing/page.tsx");
   let deploymentId: string | null = null;
@@ -302,6 +395,26 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     if (!vercel.tokenPresent()) {
       safeError = "VERCEL_TOKEN_MISSING";
     } else {
+      const reconciled = await reconcileReadyOccupancyNpvDeployment(vercel);
+      if (reconciled) {
+        return {
+          adapter: OCCUPANCYNPV_LIVE_PUBLISHER_ID,
+          domain: OCCUPANCYNPV_DOMAIN,
+          project: CRE_VERCEL_PROJECT_LIVE_NAME,
+          page_path: composed.pagePath,
+          file_count: composed.files.length,
+          deployment_id: reconciled.id,
+          preview_url: reconciled.preview_url,
+          deployed: reconciled.aliased,
+          aliased: reconciled.aliased,
+          live_url: `https://occupancynpv.com${OCCUPANCYNPV_CAM_FIRST_YEAR_PATH.replace(/\/+$/, "")}`,
+          live_status: reconciled.aliased ? 200 : 0,
+          live_html: reconciled.html,
+          safe_error: reconciled.aliased ? null : reconciled.safe_error ?? "VERCEL_ALIAS_FAILED",
+          exception: null,
+          reconciled: true,
+        };
+      }
       for (const file of composed.files) {
         const uploaded = await vercel.uploadSourceFile(file);
         if (!uploaded.ok) {
@@ -366,5 +479,6 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     live_status: live.status,
     live_html: live.body,
     safe_error: safeError,
+    exception: null,
   };
 }

@@ -70,13 +70,15 @@ export type VentureBlogAuditRow = {
 };
 
 export function defaultVentureBlogSurface(venture_id: string): VentureBlogSurface {
+  const journal = venture_id === "club-throttle";
+  const root = journal ? "/journal/" : "/blog/";
   return {
     venture_id,
-    editorial_route: "/blog/",
-    index_route: "/blog/",
-    article_template: "/blog/[category]/[slug]/",
-    category_archive_route: "/blog/category/[category]/",
-    tag_archive_route: "/blog/tag/[tag]/",
+    editorial_route: root,
+    index_route: root,
+    article_template: journal ? "/journal/[category]/[slug]/" : "/blog/[category]/[slug]/",
+    category_archive_route: journal ? "/journal/category/[category]/" : "/blog/category/[category]/",
+    tag_archive_route: journal ? "/journal/tag/[tag]/" : "/blog/tag/[tag]/",
     taxonomy: manageBlogTaxonomy({ title: "Editorial", topic: "Market Education" }),
     schema: [
       "Organization",
@@ -236,10 +238,16 @@ export function auditActiveVentureBlogs(): VentureBlogAuditRow[] {
       reason: "blog_index_and_article_template_provisioned",
     },
     {
+      venture_id: "club-throttle",
+      public_name: "Club Throttle",
+      status: "BLOG_PARTIAL",
+      reason: "CONTENT_SURFACE_INCOMPLETE_UNTIL_JOURNAL_LIVE",
+    },
+    {
       venture_id: "candidate:f1336945-3350-4d08-921e-4dcb5bc77b8e",
       public_name: "AskReview",
       status: "BLOG_MISSING",
-      reason: "public_site_without_editorial_surface",
+      reason: "CONTENT_SURFACE_INCOMPLETE",
     },
   ];
 }
@@ -260,7 +268,7 @@ export function salesCanRetrieveBlogAsset(input: {
 
 export function provisionBuildFactoryBlogFiles(): Record<string, string> {
   return {
-    "app/blog/page.tsx": "export default function BlogIndex() { return <main data-blog-layout=\"editorial\"><header data-blog-hero=\"true\" data-blog-hero-treatment=\"editorial-panel\" /><h1>Blog</h1><article data-blog-featured-card=\"true\" /><section data-blog-carousel=\"true\" data-blog-carousel-shared=\"LatestBlogsCarousel\" data-carousel-controls=\"flanking\" data-carousel-contrast=\"high\" data-blog-roll=\"true\"><h2 className=\"onpv-blog-section-heading\">Latest Blogs</h2><button data-blog-carousel-control=\"arrow\" aria-label=\"Previous blogs\" /><button data-blog-carousel-control=\"arrow\" aria-label=\"Next blogs\" /></section><aside data-blog-sidebar=\"true\" data-blog-sidebar-shared=\"BlogSidebar\" data-blog-categories=\"true\" data-blog-tag-cloud=\"true\" data-blog-popular-resources=\"true\" /></main>; }\n",
+    "app/blog/page.tsx": "export default function BlogIndex() { return <main data-blog-layout=\"editorial\"><header data-blog-hero=\"true\" data-blog-hero-treatment=\"editorial-panel\" /><h1>Blog</h1><article data-blog-featured-card=\"true\" /><section data-blog-main-roll=\"true\" data-blog-roll-capacity=\"9\" /><section data-blog-carousel=\"true\" data-blog-carousel-shared=\"LatestBlogsCarousel\" data-carousel-controls=\"flanking\" data-carousel-contrast=\"high\" data-blog-roll=\"true\"><h2 className=\"onpv-blog-section-heading\">Featured Reads</h2><button data-blog-carousel-control=\"arrow\" aria-label=\"Previous blogs\" /><button data-blog-carousel-control=\"arrow\" aria-label=\"Next blogs\" /></section><aside data-blog-sidebar=\"true\" data-blog-sidebar-shared=\"BlogSidebar\" data-blog-categories=\"true\" data-blog-tag-cloud=\"true\" data-blog-popular-resources=\"true\" /></main>; }\n",
     "app/blog/[category]/[slug]/page.tsx": "export default function BlogArticle() { return <main data-blog-article-layout=\"true\" data-blog-article-sidebar=\"true\"><article><img alt=\"featured\" /><h1>Article</h1><section data-section-type=\"RELATED_CONTENT\" /><section data-blog-article-discovery=\"true\" data-blog-carousel-shared=\"LatestBlogsCarousel\" /><nav data-blog-sequential-nav=\"true\" /></article><aside data-blog-sidebar=\"true\" data-blog-sidebar-shared=\"BlogSidebar\" data-blog-categories=\"true\" data-blog-tag-cloud=\"true\" data-blog-popular-resources=\"true\" /></main>; }\n",
     "app/blog/[slug]/page.tsx": "export { default } from \"../lib/blog/BlogPermalinkRedirectManager\";\n",
     "app/blog/category/[category]/page.tsx": "export default function BlogCategoryArchive() { return <main data-blog-layout=\"editorial\" data-blog-archive=\"category\"><header data-blog-hero=\"true\" data-blog-hero-treatment=\"editorial-panel\" /><section data-blog-archive-roll=\"true\" /><aside data-blog-sidebar-shared=\"BlogSidebar\" /></main>; }\n",

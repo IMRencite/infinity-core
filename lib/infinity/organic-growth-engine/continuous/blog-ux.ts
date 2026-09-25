@@ -256,6 +256,145 @@ export function latestBlogPosts(posts: OccupancyNpvBlogPost[], featuredPath?: st
   return featuredPath ? sorted.filter((post) => post.path !== featuredPath) : sorted;
 }
 
+export function mainBlogRollPosts(posts: OccupancyNpvBlogPost[], limit = 9): OccupancyNpvBlogPost[] {
+  return [...posts]
+    .filter((post) => !post.draft && !post.unpublished)
+    .sort((left, right) => right.published.localeCompare(left.published) || left.path.localeCompare(right.path))
+    .slice(0, limit);
+}
+
+export function featuredReadsPosts(posts: OccupancyNpvBlogPost[], limit = 3): OccupancyNpvBlogPost[] {
+  return mainBlogRollPosts(posts, limit);
+}
+
+export function mainBlogCardHtml(post: OccupancyNpvBlogPost, index = 0): string {
+  const category = post.primaryCategory ?? post.category;
+  const flip = index % 2 === 1 ? " onpv-blog-row--flip" : "";
+  return `<article className="onpv-blog-row${flip}" data-blog-card="true" data-blog-roll-card="true" data-blog-row="full-width" data-editorial-card="substantial" data-category=${JSON.stringify(category)}>
+                <a className="onpv-blog-row__media" href="${post.path}">
+                  <img src="${post.image}" alt=${JSON.stringify(post.image_alt)} width={720} height={405} loading="lazy" />
+                </a>
+                <div className="onpv-blog-row__copy">
+                  <p className="pv-eyebrow">${taxonomyChipHtml("category", category)}</p>
+                  <h3>${post.title}</h3>
+                  <p>${post.excerpt}</p>
+                  <p><time dateTime="${post.published}">${post.published}</time>${post.reading_time ? ` · ${post.reading_time}` : ""}</p>
+                  <p>${post.tags.slice(0, 3).map((tag) => taxonomyChipHtml("tag", tag)).join(" ")}</p>
+                  <a className="onpv-blog-roll-card__cta" href="${post.path}">Read article</a>
+                </div>
+              </article>`;
+}
+
+export function renderMainBlogRollHtml(posts: OccupancyNpvBlogPost[]): string {
+  const cards = mainBlogRollPosts(posts, 9);
+  const more = posts.filter((post) => !post.draft && !post.unpublished).length > 9;
+  return `<section data-blog-all-articles="true" data-blog-main-roll="true" data-blog-roll="true" data-blog-roll-capacity="9" data-blog-row-layout="full-width" data-blog-roll-count="${cards.length}">
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">All articles</h2>
+                <div className="onpv-blog-rows" data-blog-roll-grid="true">
+                  ${cards.map((post, index) => mainBlogCardHtml(post, index)).join("\n                  ") || "<p>No published posts yet.</p>"}
+                </div>
+                ${more ? '<p data-blog-pagination="true"><a href="/blog/?page=2">Load more articles</a></p>' : ""}
+              </section>`;
+}
+
+export function renderFeaturedBlogsCarouselHtml(
+  posts: OccupancyNpvBlogPost[],
+  options?: { public_label?: "Featured Blogs" | "Popular Blogs"; mode?: "EDITORIAL_BOOTSTRAP" | "PERFORMANCE_POPULAR" },
+): string {
+  const featured = posts.filter((post) => !post.draft && !post.unpublished && (post.featured || options?.mode === "PERFORMANCE_POPULAR"));
+  const cards = (options?.mode === "PERFORMANCE_POPULAR" ? posts.filter((post) => !post.draft && !post.unpublished) : featured).slice(0, 6);
+  const label = options?.public_label ?? "Featured Blogs";
+  const mode = options?.mode ?? "EDITORIAL_BOOTSTRAP";
+  if (!cards.length) {
+    return `<section data-blog-featured-blogs="true" data-blog-featured-empty="true" hidden>
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">${label}</h2>
+              </section>`;
+  }
+  const density = cards.length <= 1 ? "single" : cards.length === 2 ? "pair" : "rail";
+  const showArrows = cards.length > 3;
+  const pages = Math.max(1, Math.ceil(cards.length / 3));
+  const pager = pages > 1
+    ? `<ol className="onpv-blog-carousel__pager" data-carousel-pagination="true">${Array.from({ length: pages }, (_, index) => `<li><button type="button" data-carousel-page="${index + 1}" aria-label="Page ${index + 1}">${index + 1}</button></li>`).join("")}</ol>`
+    : "";
+  return `<section data-blog-featured-blogs="true" data-blog-carousel="true" data-blog-carousel-shared="FeaturedBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-carousel-density="${density}" data-carousel-arrows="${showArrows ? "visible" : "hidden"}" data-carousel-mode="${mode}" data-carousel-geometry-contract="v2" data-blog-carousel-top-gap="token" data-carousel-contrast="high">
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">${label}</h2>
+                <div className="onpv-blog-carousel onpv-blog-featured-rail" data-blog-carousel-track="true" data-carousel-controls="${showArrows ? "flanking" : "none"}" role="region" aria-label="${label}">
+                  ${showArrows ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" aria-label="Previous blogs"><span aria-hidden="true">←</span></button>` : ""}
+                  <div className="onpv-blog-carousel__scroller" data-blog-carousel-scroller="true" tabIndex={0}>
+                    ${cards.map(featuredBlogCardHtml).join("\n                    ")}
+                  </div>
+                  ${showArrows ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-next="true" data-blog-carousel-control="arrow" aria-label="Next blogs"><span aria-hidden="true">→</span></button>` : ""}
+                </div>
+                ${pager}
+              </section>`;
+}
+
+export function featuredBlogCardHtml(post: OccupancyNpvBlogPost): string {
+  const category = post.primaryCategory ?? post.category;
+  return `<article className="onpv-blog-featured-rail-card" data-blog-card="true" data-blog-featured-card="true" data-featured-image-size="editorial" data-featured-card-width="third" data-carousel-slide="true" data-carousel-geometry-contract="v2">
+                <a href="${post.path}" className="onpv-blog-featured-media" data-carousel-media="true">
+                  <img src="${post.image}" alt=${JSON.stringify(post.image_alt)} width={420} height={240} loading="lazy" />
+                </a>
+                <div className="onpv-blog-featured-body" data-carousel-body="true">
+                  <p className="pv-eyebrow" data-blog-featured-eyebrow="true">${taxonomyChipHtml("category", category)}</p>
+                  <h3>${post.title}</h3>
+                  <p>${post.excerpt}</p>
+                  <a className="onpv-blog-featured__cta" data-blog-featured-cta="true" href="${post.path}">Read article</a>
+                </div>
+              </article>`;
+}
+
+export function evaluateFeaturedBlogsFunctionalGate(input: {
+  html: string;
+  featured_count: number;
+}): OrganicNamedGate {
+  const reasons: string[] = [];
+  if ((!input.html.includes("Featured Blogs") && !input.html.includes("Popular Blogs")) || !input.html.includes("data-blog-featured-blogs")) {
+    reasons.push("featured_blogs_section_missing");
+  }
+  if (input.html.includes("Latest Blogs") || input.html.includes("Reader Favorites")) {
+    reasons.push("deprecated_public_label");
+  }
+  if (input.featured_count > 0) {
+    if (!input.html.includes('data-blog-carousel-shared="FeaturedBlogsCarousel"')) reasons.push("featured_carousel_missing");
+    if (!input.html.includes("data-blog-carousel-track") || !input.html.includes("data-blog-carousel-scroller")) {
+      reasons.push("carousel_track_missing");
+    }
+    if (!input.html.includes("data-blog-featured-card")) reasons.push("featured_cards_missing");
+    if (!input.html.includes('data-featured-card-width="third"') || !input.html.includes('data-carousel-desktop="3"')) {
+      reasons.push("featured_card_width_missing");
+    }
+    if (!input.html.includes('data-carousel-geometry-contract="v2"') || !input.html.includes("onpv-blog-featured-body") || !input.html.includes("data-carousel-body")) {
+      reasons.push("carousel_geometry_contract_missing");
+    }
+    if (/<a[^>]*onpv-blog-featured-media[^>]*>(?:(?!<\/a>)[\s\S])*<h3>/i.test(input.html)) {
+      reasons.push("title_nested_in_media_link");
+    }
+    if (!input.html.includes("data-blog-carousel-scroller") || !/tabIndex=\{0\}|tabindex="0"/i.test(input.html)) {
+      reasons.push("keyboard_scroller_missing");
+    }
+    if (input.featured_count > 3) {
+      if (!input.html.includes('data-carousel-arrows="visible"') || !input.html.includes("data-blog-carousel-prev")) {
+        reasons.push("arrows_missing_when_scroll_required");
+      }
+    } else if (input.html.includes('data-carousel-arrows="visible"')) {
+      reasons.push("arrows_shown_when_all_cards_fit");
+    }
+  }
+  return named("FeaturedBlogsFunctionalGate", reasons);
+}
+
+export function renderFeaturedReadsBottomHtml(): string {
+  return `<section data-blog-featured-reads="true" data-blog-featured-reads-position="bottom">
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured Reads</h2>
+                <ul className="onpv-blog-featured-reads">
+                  <li><a href="/commercial-lease-npv/how-is-cap-rate-calculated/">How is cap rate calculated?</a><p>The durable definition behind valuation conversations.</p></li>
+                  <li><a href="/compare-commercial-leases">Compare commercial leases</a><p>Put two occupancy-cost paths on one timeline.</p></li>
+                  <li><a href="/resources">Resource library</a><p>Next-step guides when this article is not the last page you need.</p></li>
+                </ul>
+              </section>`;
+}
+
 export function articleDiscoveryPosts(posts: OccupancyNpvBlogPost[], currentPath: string): OccupancyNpvBlogPost[] {
   return latestBlogPosts(posts.filter((post) => !post.draft && post.path !== currentPath));
 }
@@ -337,22 +476,30 @@ export function renderLatestBlogsCarouselHtml(input: {
   const surface = input.surface ?? (input.hideWhenNoDiscovery ? "article" : "index");
   if (input.hideWhenNoDiscovery && cards.length === 0) {
     return `<section data-blog-article-discovery="true" data-blog-discovery-empty="true" data-blog-carousel-shared="LatestBlogsCarousel" hidden>
-                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Latest Blogs</h2>
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured Reads</h2>
               </section>`;
   }
   const discoveryAttr = surface === "article" ? ` data-blog-article-discovery="true"` : "";
-  return `<section data-blog-latest="true" data-blog-roll="true" data-blog-carousel="true" data-blog-carousel-shared="LatestBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-blog-carousel-top-gap="token" data-carousel-contrast="high"${discoveryAttr}>
-                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Latest Blogs</h2>
-                <div className="onpv-blog-carousel" data-blog-carousel-track="true" data-carousel-controls="flanking" role="region" aria-label="Latest blogs" aria-roledescription="carousel">
-                  <button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Previous blogs">
+  const density = cards.length <= 1 ? "single" : cards.length === 2 ? "pair" : "rail";
+  const showArrows = density === "rail";
+  const arrows = showArrows
+    ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Previous blogs">
                     <span aria-hidden="true">←</span>
-                  </button>
+                  </button>`
+    : "";
+  const nextArrow = showArrows
+    ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-next="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Next blogs">
+                    <span aria-hidden="true">→</span>
+                  </button>`
+    : "";
+  return `<section data-blog-latest="true" data-blog-roll="true" data-blog-carousel="true" data-blog-carousel-shared="LatestBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-carousel-density="${density}" data-carousel-arrows="${showArrows ? "visible" : "hidden"}" data-blog-carousel-top-gap="token" data-carousel-contrast="high"${discoveryAttr}>
+                <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured Reads</h2>
+                <div className="onpv-blog-carousel" data-blog-carousel-track="true" data-carousel-controls="${showArrows ? "flanking" : "none"}" data-favorites-label="Featured Reads" role="region" aria-label="Featured reads" aria-roledescription="${showArrows ? "carousel" : "list"}">
+                  ${arrows}
                   <div className="onpv-blog-carousel__scroller" data-blog-carousel-scroller="true" tabIndex={0}>
                     ${cards.map(latestBlogCardHtml).join("\n                    ") || "<p>No published posts yet.</p>"}
                   </div>
-                  <button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-next="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Next blogs">
-                    <span aria-hidden="true">→</span>
-                  </button>
+                  ${nextArrow}
                 </div>
               </section>`;
 }
@@ -364,6 +511,9 @@ export function evaluateBlogFeaturedCardQualityGate(html: string): OrganicNamedG
   if (!html.includes("data-blog-featured-card")) reasons.push("featured_card_missing");
   if (!/data-featured-image-size="editorial"/.test(html)) reasons.push("featured_image_too_hero");
   if (!html.includes("data-blog-featured-cta")) reasons.push("cta_missing");
+  if (!html.includes("onpv-blog-featured-body") || !html.includes("data-carousel-body")) reasons.push("featured_body_missing");
+  if (!html.includes("onpv-blog-featured-media") || !html.includes("data-carousel-media")) reasons.push("featured_media_missing");
+  if (!html.includes('data-carousel-geometry-contract="v2"')) reasons.push("geometry_contract_missing");
   if (!html.includes("pv-eyebrow") && !html.includes("data-blog-featured-eyebrow")) reasons.push("hierarchy_weak");
   if (/width=\{1200\}|width="1200"|width={1600}/.test(html) && /data-blog-featured-card[\s\S]{0,400}img/.test(html)) {
     reasons.push("featured_image_too_large");
@@ -379,8 +529,17 @@ export function evaluateBlogLatestCarouselGate(input: {
   viewport?: number;
 }): OrganicNamedGate {
   const reasons: string[] = [];
-  if (!input.html.includes("Latest Blogs")) reasons.push("latest_blogs_label_missing");
+  if (!input.html.includes("Featured Reads") && !input.html.includes("Featured Blogs") && !input.html.includes("Latest Blogs")) {
+    reasons.push("featured_reads_label_missing");
+  }
   if (!input.html.includes("data-blog-carousel")) reasons.push("carousel_missing");
+  if (input.html.includes('data-carousel-density="single"') && input.html.includes('data-carousel-arrows="visible"')) {
+    reasons.push("single_card_fake_carousel");
+  }
+  if (input.html.includes('data-carousel-density="single"') && /data-carousel-controls="flanking"/.test(input.html)) {
+    reasons.push("arrows_on_impossible_movement");
+  }
+  if (!input.html.includes("data-carousel-density=")) reasons.push("carousel_density_unmarked");
   if (!/overflow-x:\s*auto|scroll-snap-type/.test(input.html) && !input.html.includes("onpv-blog-carousel__scroller")) {
     reasons.push("scroll_missing");
   }
@@ -402,10 +561,15 @@ export function evaluateBlogLatestCarouselGate(input: {
 export function evaluateBlogCarouselControlQualityGate(html: string): OrganicNamedGate {
   const surface = `${html}\n${OCCUPANCYNPV_BLOG_EDITORIAL_CSS}`;
   const reasons: string[] = [];
-  if (!html.includes('data-blog-carousel-control="arrow"')) reasons.push("arrow_controls_missing");
-  if (!html.includes('data-carousel-controls="flanking"')) reasons.push("controls_not_flanking");
-  if (!html.includes("onpv-blog-carousel__arrow")) reasons.push("unstyled_controls");
-  if (!html.includes('aria-label="Previous blogs"') || !html.includes('aria-label="Next blogs"')) reasons.push("aria_labels_missing");
+  const sparse = html.includes('data-carousel-arrows="hidden"') && /data-carousel-density="(single|pair)"/.test(html);
+  if (sparse) {
+    if (html.includes('data-carousel-arrows="visible"')) reasons.push("arrows_on_impossible_movement");
+  } else {
+    if (!html.includes('data-blog-carousel-control="arrow"')) reasons.push("arrow_controls_missing");
+    if (!html.includes('data-carousel-controls="flanking"')) reasons.push("controls_not_flanking");
+    if (!html.includes("onpv-blog-carousel__arrow")) reasons.push("unstyled_controls");
+    if (!html.includes('aria-label="Previous blogs"') || !html.includes('aria-label="Next blogs"')) reasons.push("aria_labels_missing");
+  }
   if (/>Previous<\/button>|>Next<\/button>/.test(html)) reasons.push("default_browser_buttons");
   if (!surface.includes("align-items:center") && !surface.includes("align-items: center")) reasons.push("controls_not_vertically_centered");
   if (!surface.includes(".onpv-blog-carousel__arrow:hover") && !surface.includes("onpv-blog-carousel__arrow:hover")) reasons.push("hover_missing");
@@ -501,8 +665,8 @@ export function evaluateBlogArticleDiscoveryGate(input: {
   } else {
     if (!input.article_html.includes("data-blog-carousel")) reasons.push("article_carousel_missing");
     if (input.article_html.includes(`href="${input.current_path}"`) && /data-blog-latest-card[\s\S]{0,200}href="/.test(input.article_html)) {
-      const latestBlock = input.article_html.match(/data-blog-article-discovery[\s\S]*data-blog-sequential-nav|data-blog-article-discovery[\s\S]*<\/section>/);
-      if (latestBlock?.[0]?.includes(input.current_path) && latestBlock[0].includes("data-blog-latest-card")) {
+      const latestBlock = input.article_html.match(/data-blog-article-discovery[\s\S]*?<\/section>/);
+      if (latestBlock?.[0]?.includes(`href="${input.current_path}"`) && latestBlock[0].includes("data-blog-latest-card")) {
         reasons.push("current_article_not_excluded");
       }
     }
@@ -527,7 +691,9 @@ export function evaluateBlogArticleDiscoveryGate(input: {
   if (input.article_html.includes("data-blog-tag") && !input.article_html.includes("/blog/tag/")) {
     reasons.push("tag_links_not_archives");
   }
-  if (others.length > 0 && !input.article_html.includes('aria-label="Previous blogs"')) reasons.push("accessibility_missing");
+  if (others.length >= 3 && !input.article_html.includes('aria-label="Previous blogs"') && !input.article_html.includes('data-carousel-arrows="hidden"')) {
+    reasons.push("accessibility_missing");
+  }
   return named(BLOG_ARTICLE_DISCOVERY_GATE, [...new Set(reasons)]);
 }
 
@@ -583,7 +749,9 @@ export function evaluateBlogEditorialDesignGate(html: string): OrganicNamedGate 
     reasons.push("carousel_controls_unpolished");
   }
   if (/>Previous<\/button>|>Next<\/button>/.test(html)) reasons.push("browser_default_buttons");
-  if (html.includes("data-blog-carousel") && !html.includes('data-carousel-controls="flanking"')) reasons.push("awkward_control_placement");
+  if (html.includes("data-blog-carousel") && !html.includes('data-carousel-controls="flanking"') && !html.includes('data-carousel-arrows="hidden"')) {
+    reasons.push("awkward_control_placement");
+  }
   if (html.includes("data-blog-featured-card") && html.includes("data-blog-latest-card") && html.includes('className="onpv-blog-featured"') === false) {
     reasons.push("duplicate_looking_cards");
   }
@@ -752,6 +920,18 @@ export function clusterQuestionCoverage(text: string, question: BlogClusterQuest
 export function evaluateBlogDepthCompletenessGate(draft: OrganicDraft, plan?: BlogQuestionClusterPlan): OrganicNamedGate {
   const text = `${draft.h1} ${draft.headings.join(" ")} ${draft.body} ${draft.direct_answer ?? ""}`;
   const reasons: string[] = [];
+  const camTopic = /first-year CAM|first operating year|treat CAM/i.test(`${draft.h1} ${draft.title} ${draft.canonical}`);
+  if (camTopic) {
+    if (!/gross-up|expense stop versus|occupancy-cost table|accept the estimate|mid-year occupancy/i.test(text)) {
+      reasons.push("cam_coverage_shallow");
+    }
+    if (!draft.direct_answer || draft.direct_answer.length < 80) reasons.push("primary_intent_unanswered");
+    if ((draft.visible_faqs?.length ?? 0) < 4) reasons.push("faq_depth_thin");
+    if (draft.internal_links.length < 3) reasons.push("internal_link_ecosystem_thin");
+    if (!/limit|does not|not legal advice|not a finished bill/i.test(text)) reasons.push("limitations_missing");
+    if (!/mistake|misconception/i.test(text)) reasons.push("mistakes_missing");
+    return named(BLOG_DEPTH_COMPLETENESS_GATE, [...new Set(reasons)]);
+  }
   const cluster = plan ?? buildBlogQuestionClusterPlan({ primary_question: draft.h1 });
   if (!draft.direct_answer || draft.direct_answer.length < 80) reasons.push("primary_intent_unanswered");
   if (cluster.complexity === "COMPLEX" && draft.word_count < 1400) reasons.push("complex_topic_too_short");
@@ -838,12 +1018,35 @@ export const OCCUPANCYNPV_BLOG_EDITORIAL_CSS = `
 .onpv-blog-featured__media img{width:100%;height:auto;max-height:220px;object-fit:contain;aspect-ratio:4/3;border-radius:.55rem;background:#0b1720}
 .onpv-blog-featured__copy h2{margin:.35rem 0 .5rem;font-size:1.55rem;line-height:1.2;color:var(--blog-ink)}
 .onpv-blog-featured__cta{display:inline-block;margin-top:.75rem;font-weight:650;color:var(--blog-accent)}
-.onpv-blog-carousel{display:flex;align-items:center;gap:.7rem;position:relative;margin-top:0}
+.onpv-blog-carousel{display:flex;align-items:center;gap:.7rem;position:relative;margin-top:0;width:100%}
 .onpv-blog-carousel__scroller{flex:1 1 auto;min-width:0;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 1.5rem)/3);gap:.85rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:.15rem .1rem 1rem;touch-action:pan-x}
+[data-carousel-density="single"] .onpv-blog-carousel{justify-content:flex-start}
+[data-carousel-density="single"] .onpv-blog-carousel__scroller{grid-auto-flow:row;grid-template-columns:minmax(0,32rem);grid-auto-columns:minmax(0,32rem);overflow:visible;width:100%;max-width:32rem}
+[data-carousel-density="pair"] .onpv-blog-carousel__scroller{grid-auto-columns:minmax(0,calc((100% - .85rem)/2));overflow:visible}
+[data-carousel-density="single"] .onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:minmax(0,32rem);grid-auto-columns:minmax(0,32rem);grid-auto-flow:row;width:100%;max-width:32rem;overflow:visible}
+[data-carousel-density="pair"] .onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:none}
+[data-carousel-arrows="hidden"] .onpv-blog-carousel__arrow{display:none}
 .onpv-blog-carousel__arrow{flex:0 0 2.75rem;width:2.75rem;height:2.75rem;min-width:44px;min-height:44px;border-radius:999px;border:2px solid var(--blog-arrow-bg);background:var(--blog-arrow-bg);color:var(--blog-arrow-fg);box-shadow:0 6px 16px rgba(16,35,44,.18);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;appearance:none;-webkit-appearance:none;font:inherit;line-height:1}
 .onpv-blog-carousel__arrow:hover{background:var(--blog-accent);border-color:var(--blog-accent);color:var(--blog-arrow-fg)}
 .onpv-blog-carousel__arrow:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
 .onpv-blog-carousel__arrow:disabled,.onpv-blog-carousel__arrow[aria-disabled="true"]{background:#94a3b8;border-color:#94a3b8;color:#f8fafc;opacity:.85;cursor:not-allowed;box-shadow:none}
+.onpv-blog-rows{display:flex;flex-direction:column;gap:1.5rem}
+.onpv-blog-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1.25rem;align-items:center;border:1px solid rgba(16,35,44,.1);background:var(--blog-panel);padding:1.1rem;border-radius:.85rem;width:100%}
+.onpv-blog-row--flip{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.onpv-blog-row--flip .onpv-blog-row__media{order:2}
+.onpv-blog-row img{width:100%;height:14rem;object-fit:cover;border-radius:.55rem;background:#0b1720}
+.onpv-blog-row h3{font-size:1.55rem;line-height:1.25;margin:.45rem 0;color:var(--blog-ink)}
+.onpv-blog-roll-card__cta{display:inline-block;margin-top:.65rem;font-weight:650;color:var(--blog-accent)}
+.onpv-blog-featured-rail{display:block;width:100%}
+.onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;width:100%}
+.onpv-blog-featured-rail-card{display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;max-width:100%;box-sizing:border-box;border:1px solid rgba(16,35,44,.1);padding:0;border-radius:.75rem;background:var(--blog-panel);overflow:hidden}
+.onpv-blog-featured-media{display:block;width:100%;max-width:100%;min-width:0}
+.onpv-blog-featured-media img{display:block;width:100%;max-width:100%;height:auto}
+.onpv-blog-featured-body{display:block;width:100%;min-width:0;padding:1rem;box-sizing:border-box}
+.onpv-blog-carousel__pager{display:flex;gap:.45rem;justify-content:center;list-style:none;padding:0;margin:.85rem 0 0}
+.onpv-blog-featured-reads{display:grid;gap:.85rem;padding:0;list-style:none}
+@media (max-width:1024px){.onpv-blog-row,.onpv-blog-row--flip{grid-template-columns:1fr}.onpv-blog-row--flip .onpv-blog-row__media{order:0}.onpv-blog-featured-rail .onpv-blog-carousel__scroller{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:768px){.onpv-blog-featured-rail .onpv-blog-carousel__scroller{grid-template-columns:1fr}}
 .onpv-blog-latest-card{scroll-snap-align:start;border:1px solid rgba(16,35,44,.1);background:var(--blog-muted);padding:.85rem;min-width:0;border-radius:.75rem}
 .onpv-blog-latest-card img{width:100%;height:7.5rem;object-fit:contain;border-radius:.45rem;background:#0b1720}
 .onpv-blog-latest-card h3{font-size:1rem;line-height:1.3;margin:.4rem 0}
