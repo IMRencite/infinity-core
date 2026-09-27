@@ -55,8 +55,12 @@ export function safeHqRedirectPath(target: string | null | undefined): string {
 export async function completeBrowserLogin(
   supabase: AppSupabaseClient,
   targetPath = "/dashboard",
+  options?: { session?: { access_token: string; refresh_token: string } | null },
 ): Promise<{ ok: true } | { ok: false; reason: string }> {
   targetPath = safeHqRedirectPath(targetPath);
+  if (options?.session?.access_token && options?.session?.refresh_token) {
+    await supabase.auth.setSession(options.session);
+  }
   const {
     data: { user: browserUser },
     error: browserUserError,

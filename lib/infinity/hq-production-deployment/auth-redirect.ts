@@ -6,6 +6,7 @@ import {
 
 export const HQ_PRODUCTION_AUTH_CALLBACK = `${HQ_PRODUCTION_ORIGIN}/auth/callback` as const;
 export const HQ_PRODUCTION_AUTH_API_CALLBACK = `${HQ_PRODUCTION_ORIGIN}/api/auth/callback` as const;
+export const HQ_PRODUCTION_PASSWORD_RESET_URL = `${HQ_PRODUCTION_ORIGIN}/reset-password` as const;
 
 export function evaluateHQProductionAuthRedirectGate(input: {
   hqOriginAllowed: boolean;

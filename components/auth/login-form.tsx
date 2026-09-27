@@ -49,9 +49,11 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 function LoginFormInner({
   confirmed = false,
   confirmationError = false,
+  passwordResetSuccess = false,
 }: {
   confirmed?: boolean;
   confirmationError?: boolean;
+  passwordResetSuccess?: boolean;
 }) {
   const searchParams = useSearchParams();
   const forensicMode = searchParams.get("auth_forensic") === "1";
@@ -194,6 +196,17 @@ function LoginFormInner({
         </div>
       ) : null}
 
+      {passwordResetSuccess ? (
+        <div
+          className="rounded-md border border-emerald-500/20 bg-emerald-500/10 px-4 py-3"
+          role="status"
+        >
+          <p className="text-sm leading-relaxed text-emerald-400/90">
+            Your password has been updated. Sign in with your new password.
+          </p>
+        </div>
+      ) : null}
+
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {formError ? (
           <div
@@ -246,6 +259,14 @@ function LoginFormInner({
             placeholder="Your password"
           />
           <FieldError id="password-error" message={fieldErrors.password} />
+          <p className="mt-2 text-right text-xs">
+            <Link
+              href="/forgot-password"
+              className="font-medium text-zinc-400 underline-offset-4 hover:text-zinc-200 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </p>
         </div>
 
         <button
@@ -273,6 +294,7 @@ function LoginFormInner({
 export function LoginForm(props: {
   confirmed?: boolean;
   confirmationError?: boolean;
+  passwordResetSuccess?: boolean;
 }) {
   return (
     <Suspense fallback={null}>

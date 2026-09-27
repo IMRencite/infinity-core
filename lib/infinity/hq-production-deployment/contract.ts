@@ -60,6 +60,8 @@ export type HqNamedGate = {
 export const HQ_PUBLIC_AUTH_PATHS = [
   "/login",
   "/signup",
+  "/forgot-password",
+  "/reset-password",
   "/auth/callback",
   "/api/auth/callback",
 ] as const;
