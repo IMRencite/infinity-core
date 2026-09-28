@@ -47,3 +47,20 @@ export function mapForgotPasswordError(message: string): string | null {
   }
   return null;
 }
+
+export function mapPasswordUpdateError(message: string): string {
+  const normalized = message.toLowerCase();
+  if (
+    normalized.includes("different from the old password")
+    || normalized.includes("different from your current password")
+    || normalized.includes("same password")
+    || normalized.includes("same_password")
+    || normalized.includes("password should be different")
+  ) {
+    return "Please choose a new password that is different from your current password.";
+  }
+  if (normalized.includes("session") && normalized.includes("missing")) {
+    return "This reset link is invalid or has expired. Request a new link from the forgot password page.";
+  }
+  return "Unable to update your password. Request a new reset link and try again.";
+}

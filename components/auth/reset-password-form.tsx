@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
-import { validatePasswordResetFields } from "@/lib/auth/password-recovery";
+import { mapPasswordUpdateError, validatePasswordResetFields } from "@/lib/auth/password-recovery";
 import { completeBrowserLogin } from "@/lib/auth/complete-browser-login";
 import { createClient } from "@/lib/supabase/client";
 
@@ -98,7 +98,7 @@ export function ResetPasswordForm() {
 
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
-        setFormError("Unable to update your password. Request a new reset link and try again.");
+        setFormError(mapPasswordUpdateError(error.message));
         setIsPending(false);
         return;
       }

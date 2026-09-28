@@ -74,6 +74,8 @@
   max-width: min(20rem, 78vw);
   height: auto;
   background: transparent;
+  object-fit: contain;
+  mix-blend-mode: normal;
 }
 
 .heroTitleVisuallyHidden {
