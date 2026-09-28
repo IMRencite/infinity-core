@@ -47,6 +47,9 @@ export type DurableBlogHold = {
   evidence_pack_url: string;
   founder_review_status: "NOT_STARTED" | "NOT_ACTIONABLE" | "NOT_ACTIONABLE_ENGINEERING_BLOCKED" | "AWAITING_HUMAN" | "CLEAR" | "KEEP";
   resolved_at: string | null;
+  hold_state?: "ACTIVE" | "CLEARED";
+  hold_version?: string | null;
+  execute_publish?: boolean;
 };
 
 export type DurableBlogObligation = {
