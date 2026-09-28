@@ -8,9 +8,10 @@
 }
 
 .shell {
+  position: relative;
   width: min(820px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 3rem 7.4rem 4rem 0;
+  padding: 3rem 3.5rem 4rem 0;
 }
 
 .kicker {

@@ -8,14 +8,16 @@ export function ImrBrandMark() {
       href="/"
       className={styles.brandMark}
       data-imr-brand-mark="true"
+      data-section-contained-brand="true"
+      data-brand-scroll-behavior="scroll-with-section"
       aria-label="IMR"
       title="IMR"
     >
       <img
         src={IMR_BRAND_MARK_SRC}
         alt="IMR"
-        width={56}
-        height={56}
+        width={36}
+        height={36}
         decoding="async"
       />
     </a>

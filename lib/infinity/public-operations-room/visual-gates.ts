@@ -227,6 +227,9 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   const markCss = existsSync(join(cwd, "components/public/operations-room/imr-brand-mark.module.css"))
     ? readFileSync(join(cwd, "components/public/operations-room/imr-brand-mark.module.css"), "utf8")
     : "";
+  const markTsx = existsSync(join(cwd, "components/public/operations-room/imr-brand-mark.tsx"))
+    ? readFileSync(join(cwd, "components/public/operations-room/imr-brand-mark.tsx"), "utf8")
+    : "";
   const live = existsSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"))
     ? readFileSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"), "utf8")
     : "";
@@ -239,8 +242,13 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   if (!pngHasAlpha(asset)) reasons.push("IMR_MARK_NOT_TRANSPARENT");
   if (!ui.includes("data-imr-brand-mark") || !ui.includes("/brand/imr-mark.png")) reasons.push("IMR_MARK_NOT_RENDERED");
   if (!live.includes("ImrBrandMark")) reasons.push("HOMEPAGE_MARK_MISSING");
+  if (!live.includes("heroCopy") || !/heroCopy[\s\S]{0,220}ImrBrandMark/.test(live)) {
+    reasons.push("HOMEPAGE_MARK_NOT_HERO_CONTAINED");
+  }
   if (!legal.includes("ImrBrandMark")) reasons.push("LEGAL_MARK_MISSING");
-  if (!/position:\s*(fixed|absolute)/.test(markCss) || !markCss.includes("right:")) reasons.push("MARK_NOT_TOP_RIGHT");
+  if (!/position:\s*absolute/.test(markCss) || !markCss.includes("right:")) reasons.push("MARK_NOT_SECTION_ABSOLUTE_TOP_RIGHT");
+  if (/position:\s*fixed/.test(markCss)) reasons.push("MARK_FIXED_GLOBAL_OVERLAY");
+  if (!markTsx.includes("data-section-contained-brand")) reasons.push("MARK_NOT_SECTION_CONTAINED");
   if (!markCss.includes("background: transparent")) reasons.push("MARK_BOX_NOT_TRANSPARENT");
   if (!ui.includes('alt="IMR"') || !ui.includes('aria-label="IMR"')) reasons.push("MARK_ALT_MISSING");
   if (/background:\s*#000|background:\s*black/i.test(markCss)) reasons.push("OPAQUE_BLACK_BOX");
