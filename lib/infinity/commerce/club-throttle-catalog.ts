@@ -1,0 +1,90 @@
+export const CLUB_THROTTLE_SIZE_CHART = [
+  { size_name: "S", body_width: 18, body_length: 28, sleeve: null, unit: "in", fit_classification: "classic unisex", source: "gildan-5300-public-size-chart", source_timestamp: "2026-09-24" },
+  { size_name: "M", body_width: 20, body_length: 29, sleeve: null, unit: "in", fit_classification: "classic unisex", source: "gildan-5300-public-size-chart", source_timestamp: "2026-09-24" },
+  { size_name: "L", body_width: 22, body_length: 30, sleeve: null, unit: "in", fit_classification: "classic unisex", source: "gildan-5300-public-size-chart", source_timestamp: "2026-09-24" },
+  { size_name: "XL", body_width: 24, body_length: 31, sleeve: null, unit: "in", fit_classification: "classic unisex", source: "gildan-5300-public-size-chart", source_timestamp: "2026-09-24" },
+  { size_name: "2XL", body_width: 26, body_length: 32, sleeve: null, unit: "in", fit_classification: "classic unisex", source: "gildan-5300-public-size-chart", source_timestamp: "2026-09-24" },
+] as const;
+
+export const CLUB_THROTTLE_CORE_TEE = {
+  product_id: "cprod_club_throttle_core_tee_v1",
+  slug: "club-throttle-core-tee",
+  title: "Club Throttle Core Tee",
+  product_class: "CORE_BRANDED",
+  territory_id: "THROTTLE_CORE",
+  collection_slug: "throttle-core",
+  price_usd: 42,
+  published: true,
+  garment: {
+    name: "Gildan 5300 Heavy Cotton tee",
+    type: "unisex short-sleeve tee",
+    materials: "100% cotton",
+    fabric_weight: "5.4 oz/yd² (183 g/m²)",
+    construction: "Classic fit. Taped neck and shoulders. Tear-away label.",
+    fit: "Classic unisex. Not slim. Sits like a standard heavy cotton tee.",
+    print_method: "Direct-to-garment on the front",
+    colors: ["black"],
+    care: "Wash inside out in cold water. Tumble low. Do not iron the print. Do not dry clean.",
+    sources: {
+      name: "gildan-5300-public-spec",
+      materials: "gildan-5300-public-spec",
+      fabric_weight: "gildan-5300-public-spec",
+      construction: "gildan-5300-public-spec",
+      fit: "gildan-5300-public-spec",
+      print_method: "gelato-4-0-dtg-mapping",
+      care: "dtg-on-cotton-care-guidance",
+    },
+  },
+  shipping:
+    "Shirts print after you pay, then ship to the address on the order. Checkout is launching soon, so a delivery clock does not start from this page. We do not quote a guaranteed date.",
+  returns:
+    "Once checkout is live, unused and unwashed shirts can come back within 14 days of delivery. Worn print-on-demand shirts cannot be returned.",
+} as const;
+
+export const CLUB_THROTTLE_COLLECTIONS = [
+  {
+    slug: "throttle-core",
+    name: "Throttle Core",
+    territory_id: "THROTTLE_CORE",
+    product_count: 1,
+    blurb: "The Club Throttle mark, printed clean, ready to ride.",
+    story: "Throttle Core is the house mark on a heavy cotton tee — white field, black throttle form, red ticks left alone. These are the shirts you throw on after the helmet comes off. No second logo. No slogan piled on the chest. If a design cannot sit next to this mark without confusing it, it does not belong here.",
+    image: "/visual/territory-core.svg",
+  },
+  {
+    slug: "after-dark",
+    name: "After Dark",
+    territory_id: "AFTER_DARK",
+    product_count: 0,
+    blurb: "Night rides, street lights, and the hour the road opens up.",
+    story: "After Dark is for night pavement, wet asphalt, and the clothes that leave with you. The interesting hour starts when the commute ends — helmets on, street lights in the visor, a late ride with people who already know the route. Designs land here when they can hold city light and still look like Club Throttle the next morning.",
+    image: "/visual/territory-after-dark.svg",
+  },
+  {
+    slug: "redline",
+    name: "Redline",
+    territory_id: "REDLINE",
+    product_count: 0,
+    blurb: "Acceleration, the red tick, the last honest number.",
+    story: "Redline is for throttle response and the moment the engine is fully awake. Club Throttle's own instrument marks stay: the red tick, the honest needle, the last honest number. Manufacturer gauge faces stay off the shirt. If a design needs a borrowed cluster to make sense, it is not Redline.",
+    image: "/visual/territory-redline.svg",
+  },
+  {
+    slug: "open-road",
+    name: "Open Road",
+    territory_id: "OPEN_ROAD",
+    product_count: 0,
+    blurb: "Lane lines, gas stops, and the long way home.",
+    story: "Open Road is for the stretch after the city: lane paint, shoulder gravel, cold starts that turn into early rides, and the long way home. Designs have to belong on that shoulder — motorcycle graphics and streetwear fits, not a stock highway clip or a rental-map graphic.",
+    image: "/visual/territory-open-road.svg",
+  },
+  {
+    slug: "garage-culture",
+    name: "Garage Culture",
+    territory_id: "GARAGE_CULTURE",
+    product_count: 0,
+    blurb: "Bikes lined up, engines warming, kickstands still down.",
+    story: "Garage Culture starts before the ride. Bikes lined up, helmets ready, engines warming and somebody deciding where the road goes next. This collection pulls from the places riders meet, build, talk and roll out from — motorcycle graphics, streetwear fits and Club Throttle designs made for life around the bike. It is the social world around the ride, not mechanic uniforms.",
+    image: "/visual/territory-garage.svg",
+  },
+] as const;
