@@ -81,14 +81,20 @@ export function injectOccupancyNpvOrganicPage(files: ArtifactFile[], input: {
   const schemaFile = next.find((file) => file.path.replace(/\\/g, "/") === "lib/site-schema.ts");
   if (schemaFile) {
     const routeKey = input.route.replace(/\/+$/, "") || "/";
-    next = upsert(
-      next,
-      "lib/site-schema.ts",
-      schemaFile.content.replace(
-        /export const SITE_SCHEMA: Record<string, unknown> = \{/,
-        `export const SITE_SCHEMA: Record<string, unknown> = {\n  ${JSON.stringify(routeKey)}: ${JSON.stringify(input.schema)},\n  ${JSON.stringify(input.route)}: ${JSON.stringify(input.schema)},`,
-      ),
-    );
+    const routeWithSlash = routeKey === "/" ? "/" : `${routeKey}/`;
+    const schemaLiteral = JSON.stringify(input.schema);
+    const keyNeedle = `${JSON.stringify(routeKey)}:`;
+    const slashNeedle = `${JSON.stringify(routeWithSlash)}:`;
+    if (!schemaFile.content.includes(keyNeedle) && !schemaFile.content.includes(slashNeedle)) {
+      next = upsert(
+        next,
+        "lib/site-schema.ts",
+        schemaFile.content.replace(
+          /export const SITE_SCHEMA: Record<string, unknown> = \{/,
+          `export const SITE_SCHEMA: Record<string, unknown> = {\n  ${JSON.stringify(routeKey)}: ${schemaLiteral},`,
+        ),
+      );
+    }
   }
   const hubPath = input.route.includes("lease-comparison")
     ? "app/lease-comparison/how-do-you-compare-two-commercial-lease-options/page.tsx"
