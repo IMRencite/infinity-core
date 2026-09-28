@@ -1,7 +1,9 @@
 import { HQ_PRODUCTION_ORIGIN } from "@/lib/infinity/hq-production-deployment/contract";
+import { HQ_RECOVERY_LANDING_PATH, passwordRecoveryLandingForOrigin } from "@/lib/auth/recovery-landing";
 
 export const HQ_FORGOT_PASSWORD_PATH = "/forgot-password" as const;
 export const HQ_RESET_PASSWORD_PATH = "/reset-password" as const;
+export { HQ_RECOVERY_LANDING_PATH };
 
 /** Production recovery landing URL — add to Supabase Auth redirect allow list. */
 export const HQ_PASSWORD_RESET_REDIRECT_URL = `${HQ_PRODUCTION_ORIGIN}${HQ_RESET_PASSWORD_PATH}` as const;
@@ -33,10 +35,9 @@ export function validatePasswordResetFields(password: string, confirmPassword: s
   return fieldErrors;
 }
 
-/** Safe client redirect target for resetPasswordForEmail (current origin in browser). */
+/** Safe client redirect target for resetPasswordForEmail (allow-list recovery landing). */
 export function passwordResetRedirectForBrowserOrigin(origin: string): string {
-  const base = origin.replace(/\/$/, "");
-  return `${base}${HQ_RESET_PASSWORD_PATH}`;
+  return passwordRecoveryLandingForOrigin(origin);
 }
 
 export function mapForgotPasswordError(message: string): string | null {

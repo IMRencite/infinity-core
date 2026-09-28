@@ -8,6 +8,15 @@ export async function GET(request: Request) {
   const recoveryNext =
     nextPath === "/reset-password" || searchParams.get("type") === "recovery";
 
+  if (recoveryNext) {
+    const recoveryParams = new URLSearchParams(searchParams);
+    recoveryParams.set("type", "recovery");
+    if (code) recoveryParams.set("code", code);
+    const tokenHash = searchParams.get("token_hash");
+    if (tokenHash) recoveryParams.set("token_hash", tokenHash);
+    return NextResponse.redirect(`${origin}/auth/recovery?${recoveryParams.toString()}`);
+  }
+
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=confirmation_failed`);
   }
@@ -17,19 +26,11 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      return NextResponse.redirect(
-        recoveryNext ? `${origin}/reset-password` : `${origin}/login?error=confirmation_failed`,
-      );
-    }
-
-    if (recoveryNext) {
-      return NextResponse.redirect(`${origin}/reset-password`);
+      return NextResponse.redirect(`${origin}/login?error=confirmation_failed`);
     }
 
     return NextResponse.redirect(`${origin}/login?confirmed=true`);
   } catch {
-    return NextResponse.redirect(
-      recoveryNext ? `${origin}/reset-password` : `${origin}/login?error=confirmation_failed`,
-    );
+    return NextResponse.redirect(`${origin}/login?error=confirmation_failed`);
   }
 }

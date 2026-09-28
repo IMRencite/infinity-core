@@ -34,17 +34,12 @@ export function ResetPasswordForm() {
 
     async function bootstrapRecoverySession() {
       const url = new URL(window.location.href);
-      const code = url.searchParams.get("code");
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (url.searchParams.has("code") || url.searchParams.has("token_hash")) {
         url.searchParams.delete("code");
+        url.searchParams.delete("token_hash");
         url.searchParams.delete("type");
         const cleanPath = url.pathname + (url.search || "");
         window.history.replaceState({}, "", cleanPath);
-        if (error && !cancelled) {
-          setPhase("invalid");
-          return;
-        }
       }
 
       const {
@@ -125,7 +120,7 @@ export function ResetPasswordForm() {
   }
 
   if (phase === "loading") {
-    return <p className="text-sm text-zinc-500">Verifying your reset link…</p>;
+    return <p className="text-sm text-zinc-500">Checking your reset session…</p>;
   }
 
   if (phase === "success") {

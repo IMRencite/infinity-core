@@ -62,6 +62,7 @@ export const HQ_PUBLIC_AUTH_PATHS = [
   "/signup",
   "/forgot-password",
   "/reset-password",
+  "/auth/recovery",
   "/auth/callback",
   "/api/auth/callback",
 ] as const;
