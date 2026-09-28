@@ -50,6 +50,30 @@ export function readLocalEnvValue(name: string, cwd = process.cwd()): string | n
   return matched;
 }
 
+/** Every value assigned to `name` in `.env.local` (last duplicate wins in loadServerEnvFromLocalFile). */
+export function readAllLocalEnvValues(name: string, cwd = process.cwd()): string[] {
+  const file = join(cwd, ".env.local");
+  if (!existsSync(file)) return [];
+  const values: string[] = [];
+  for (const raw of readFileSync(file, "utf8").split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const index = line.indexOf("=");
+    if (index <= 0) continue;
+    const key = line.slice(0, index).trim();
+    if (key !== name) continue;
+    let value = line.slice(index + 1);
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    values.push(value);
+  }
+  return values;
+}
+
 export function reloadStripeSecretFromLocalFile(cwd = process.cwd()): {
   loaded: boolean;
   replaced: boolean;

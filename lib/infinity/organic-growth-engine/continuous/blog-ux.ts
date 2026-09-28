@@ -17,6 +17,7 @@ import {
   BLOG_RENDERED_VISUAL_QUALITY_GATE,
 } from "./contract";
 import { taxonomyChipHtml } from "./blog-taxonomy";
+import { SHARED_BLOG_CAROUSEL_SCRIPT } from "./featured-blogs-carousel";
 import {
   occupancynpvCategoryCounts,
   occupancynpvTagCloud,
@@ -155,7 +156,7 @@ export function occupancynpvInterestRateQuestionCluster(): BlogQuestionClusterPl
       {
         question: "Why do cap rates not move one-for-one with Fed or Treasury rates?",
         role: "MUST_ANSWER",
-        coverage_tokens: ["not 1:1", "credit spread", "liquidity", "property-specific"],
+        coverage_tokens: ["1:1", "credit spread", "liquidity", "property-specific"],
       },
       {
         question: "How do LTV, DSCR, and debt yield change when rates rise?",
@@ -301,8 +302,7 @@ export function renderFeaturedBlogsCarouselHtml(
   posts: OccupancyNpvBlogPost[],
   options?: { public_label?: "Featured Blogs" | "Popular Blogs"; mode?: "EDITORIAL_BOOTSTRAP" | "PERFORMANCE_POPULAR" },
 ): string {
-  const featured = posts.filter((post) => !post.draft && !post.unpublished && (post.featured || options?.mode === "PERFORMANCE_POPULAR"));
-  const cards = (options?.mode === "PERFORMANCE_POPULAR" ? posts.filter((post) => !post.draft && !post.unpublished) : featured).slice(0, 6);
+  const cards = posts.filter((post) => !post.draft && !post.unpublished).slice(0, 6);
   const label = options?.public_label ?? "Featured Blogs";
   const mode = options?.mode ?? "EDITORIAL_BOOTSTRAP";
   if (!cards.length) {
@@ -316,22 +316,21 @@ export function renderFeaturedBlogsCarouselHtml(
   const pager = pages > 1
     ? `<ol className="onpv-blog-carousel__pager" data-carousel-pagination="true">${Array.from({ length: pages }, (_, index) => `<li><button type="button" data-carousel-page="${index + 1}" aria-label="Page ${index + 1}">${index + 1}</button></li>`).join("")}</ol>`
     : "";
-  return `<section data-blog-featured-blogs="true" data-blog-carousel="true" data-blog-carousel-shared="FeaturedBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-carousel-density="${density}" data-carousel-arrows="${showArrows ? "visible" : "hidden"}" data-carousel-mode="${mode}" data-carousel-geometry-contract="v2" data-blog-carousel-top-gap="token" data-carousel-contrast="high">
+  return `<section data-blog-featured-blogs="true" data-blog-carousel="true" data-blog-carousel-shared="FeaturedBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-carousel-density="${density}" data-carousel-arrows="${showArrows ? "visible" : "hidden"}" data-carousel-mode="${mode}" data-carousel-inventory="${cards.length}" data-carousel-source="CANONICAL_INVENTORY" data-carousel-geometry-contract="v2" data-blog-carousel-top-gap="token" data-carousel-contrast="high">
                 <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">${label}</h2>
-                <div className="onpv-blog-carousel onpv-blog-featured-rail" data-blog-carousel-track="true" data-carousel-controls="${showArrows ? "flanking" : "none"}" role="region" aria-label="${label}">
-                  ${showArrows ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" aria-label="Previous blogs"><span aria-hidden="true">←</span></button>` : ""}
-                  <div className="onpv-blog-carousel__scroller" data-blog-carousel-scroller="true" tabIndex={0}>
-                    ${cards.map(featuredBlogCardHtml).join("\n                    ")}
-                  </div>
-                  ${showArrows ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-next="true" data-blog-carousel-control="arrow" aria-label="Next blogs"><span aria-hidden="true">→</span></button>` : ""}
-                </div>
+                ${renderSharedCarouselShell({
+                  cardsHtml: cards.map(featuredBlogCardHtml).join("\n                    "),
+                  showArrows,
+                  label,
+                  extraClass: "onpv-blog-featured-rail",
+                })}
                 ${pager}
               </section>`;
 }
 
 export function featuredBlogCardHtml(post: OccupancyNpvBlogPost): string {
   const category = post.primaryCategory ?? post.category;
-  return `<article className="onpv-blog-featured-rail-card" data-blog-card="true" data-blog-featured-card="true" data-featured-image-size="editorial" data-featured-card-width="third" data-carousel-slide="true" data-carousel-geometry-contract="v2">
+  return `<article className="onpv-blog-featured-rail-card" data-blog-card="true" data-blog-featured-card="true" data-featured-image-size="editorial" data-featured-card-width="third" data-carousel-slide="true" data-carousel-card-id=${JSON.stringify(post.slug)} data-carousel-geometry-contract="v2">
                 <a href="${post.path}" className="onpv-blog-featured-media" data-carousel-media="true">
                   <img src="${post.image}" alt=${JSON.stringify(post.image_alt)} width={420} height={240} loading="lazy" />
                 </a>
@@ -373,24 +372,51 @@ export function evaluateFeaturedBlogsFunctionalGate(input: {
     if (!input.html.includes("data-blog-carousel-scroller") || !/tabIndex=\{0\}|tabindex="0"/i.test(input.html)) {
       reasons.push("keyboard_scroller_missing");
     }
-    if (input.featured_count > 3) {
+    const inventory = Number(input.html.match(/data-carousel-inventory="(\d+)"/)?.[1] ?? input.featured_count);
+    if (inventory > 3) {
       if (!input.html.includes('data-carousel-arrows="visible"') || !input.html.includes("data-blog-carousel-prev")) {
         reasons.push("arrows_missing_when_scroll_required");
       }
     } else if (input.html.includes('data-carousel-arrows="visible"')) {
       reasons.push("arrows_shown_when_all_cards_fit");
     }
+    if (inventory >= 3 && !input.html.includes('data-carousel-density="rail"')) {
+      reasons.push("THREE_ELIGIBLE_BUT_NOT_THREE_WIDE");
+    }
+    if (!input.html.includes('data-carousel-source="CANONICAL_INVENTORY"')) {
+      reasons.push("HARDCODED_CAROUSEL_SOURCE");
+    }
   }
   return named("FeaturedBlogsFunctionalGate", reasons);
 }
 
-export function renderFeaturedReadsBottomHtml(): string {
-  return `<section data-blog-featured-reads="true" data-blog-featured-reads-position="bottom">
+export function selectSameVentureRecommendations(
+  posts: OccupancyNpvBlogPost[],
+  currentPath: string,
+  max = 3,
+): OccupancyNpvBlogPost[] {
+  const current = posts.find((post) => post.path === currentPath);
+  return posts
+    .filter((post) => !post.draft && !post.unpublished && post.path !== currentPath)
+    .map((post) => {
+      let score = 0;
+      if (current && (post.primaryCategory ?? post.category) === (current.primaryCategory ?? current.category)) score += 4;
+      score += post.tags.filter((tag) => current?.tags.includes(tag)).length * 2;
+      return { post, score };
+    })
+    .sort((left, right) => right.score - left.score)
+    .map((row) => row.post)
+    .slice(0, max);
+}
+
+export function renderFeaturedReadsBottomHtml(items: Array<{ href: string; label: string; dek?: string }> = []): string {
+  if (!items.length) {
+    return `<section data-blog-featured-reads="true" data-blog-featured-reads-position="bottom" data-blog-inventory="INSUFFICIENT_VENTURE_INVENTORY" hidden></section>`;
+  }
+  return `<section data-blog-featured-reads="true" data-blog-featured-reads-position="bottom" data-recommendation-venture-scoped="true">
                 <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured Reads</h2>
                 <ul className="onpv-blog-featured-reads">
-                  <li><a href="/commercial-lease-npv/how-is-cap-rate-calculated/">How is cap rate calculated?</a><p>The durable definition behind valuation conversations.</p></li>
-                  <li><a href="/compare-commercial-leases">Compare commercial leases</a><p>Put two occupancy-cost paths on one timeline.</p></li>
-                  <li><a href="/resources">Resource library</a><p>Next-step guides when this article is not the last page you need.</p></li>
+                  ${items.map((row) => `<li><a href="${row.href}">${row.label}</a>${row.dek ? `<p>${row.dek}</p>` : ""}</li>`).join("\n                  ")}
                 </ul>
               </section>`;
 }
@@ -405,9 +431,32 @@ export function carouselVisibleColumns(width: number): 1 | 2 | 3 {
   return 3;
 }
 
+function renderSharedCarouselShell(input: {
+  cardsHtml: string;
+  showArrows: boolean;
+  label: string;
+  extraClass?: string;
+}): string {
+  const prev = input.showArrows
+    ? `<button type="button" className="onpv-blog-carousel__arrow onpv-blog-carousel__arrow--prev" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" data-carousel-arrow-side="left" aria-label="Previous blogs"><span aria-hidden="true">←</span></button>`
+    : "";
+  const next = input.showArrows
+    ? `<button type="button" className="onpv-blog-carousel__arrow onpv-blog-carousel__arrow--next" data-blog-carousel-next="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" data-carousel-arrow-side="right" aria-label="Next blogs"><span aria-hidden="true">→</span></button>`
+    : "";
+  return `<div className="onpv-blog-carousel${input.extraClass ? ` ${input.extraClass}` : ""}" data-blog-carousel-shell="true" data-carousel-instance="shared" data-carousel-controls="${input.showArrows ? "flanking" : "none"}" data-carousel-arrow-position="flanking" role="region" aria-label="${input.label}" aria-roledescription="${input.showArrows ? "carousel" : "list"}">
+                  ${prev}
+                  <div className="onpv-blog-carousel__viewport" data-blog-carousel-viewport="true" data-blog-carousel-scroller="true" data-carousel-scroll-owner="viewport" tabIndex={0}>
+                    <div className="onpv-blog-carousel__track" data-blog-carousel-track="true">
+                      ${input.cardsHtml}
+                    </div>
+                  </div>
+                  ${next}
+                </div>`;
+}
+
 export function latestBlogCardHtml(post: OccupancyNpvBlogPost): string {
   const category = post.primaryCategory ?? post.category;
-  return `<article className="onpv-blog-latest-card" data-blog-card="true" data-blog-latest-card="true" data-category=${JSON.stringify(category)}>
+  return `<article className="onpv-blog-latest-card" data-blog-card="true" data-blog-latest-card="true" data-carousel-slide="true" data-carousel-card-id=${JSON.stringify(post.slug)} data-category=${JSON.stringify(category)}>
                 <a href="${post.path}">
                   <img src="${post.image}" alt=${JSON.stringify(post.image_alt)} width={480} height={270} loading="lazy" />
                   <p className="pv-eyebrow">${taxonomyChipHtml("category", category)}</p>
@@ -420,26 +469,92 @@ export function latestBlogCardHtml(post: OccupancyNpvBlogPost): string {
               </article>`;
 }
 
-export function renderBlogSidebarHtml(posts: OccupancyNpvBlogPost[]): string {
+export function defaultVentureResources(ventureId: string, posts: OccupancyNpvBlogPost[]): Array<{ href: string; label: string }> {
+  if (ventureId === "club-throttle") {
+    return selectSameVentureRecommendations(posts, "", 3).map((post) => ({ href: post.path, label: post.title }));
+  }
+  return [
+    { href: "/commercial-lease-npv/how-is-cap-rate-calculated/", label: "How is cap rate calculated?" },
+    { href: "/compare-commercial-leases", label: "Compare commercial leases" },
+    { href: "/resources", label: "Resource library" },
+  ];
+}
+
+export function renderBlogSidebarHtml(
+  posts: OccupancyNpvBlogPost[],
+  resources?: Array<{ href: string; label: string }>,
+  context?: { venture_id?: string; archive_root?: string },
+): string {
   const published = posts.filter((post) => !post.draft);
   const categories = occupancynpvCategoryCounts(published);
   const cloud = occupancynpvTagCloud(published);
+  const archiveRoot = context?.archive_root ?? "/blog";
+  const links = resources ?? defaultVentureResources(context?.venture_id ?? "occupancynpv", published);
   return `<aside className="onpv-blog-sidebar" data-blog-sidebar="true" data-blog-sidebar-shared="BlogSidebar">
               <nav className="onpv-blog-sidebar__panel" aria-label="Categories" data-blog-categories="true">
                 <h2>Categories</h2>
-                <ul>${categories.map((row) => `<li className="onpv-blog-cat" data-blog-category=${JSON.stringify(row.category)}>${taxonomyChipHtml("category", row.category)}<span>${row.count}</span></li>`).join("")}</ul>
+                <ul>${categories.map((row) => `<li className="onpv-blog-cat" data-blog-category=${JSON.stringify(row.category)}>${taxonomyChipHtml("category", row.category, "light", archiveRoot)}<span>${row.count}</span></li>`).join("")}</ul>
               </nav>
               <nav className="onpv-blog-sidebar__panel" aria-label="Topics" data-blog-tag-cloud="true">
                 <h2>Topic cloud</h2>
-                <div className="onpv-blog-cloud">${cloud.map((row) => `<span data-count="${row.count}">${taxonomyChipHtml("tag", row.tag)}</span>`).join("")}</div>
+                <div className="onpv-blog-cloud">${cloud.map((row) => `<span data-count="${row.count}">${taxonomyChipHtml("tag", row.tag, "light", archiveRoot)}</span>`).join("")}</div>
               </nav>
               <section className="onpv-blog-sidebar__panel" aria-label="Resources" data-blog-popular-resources="true">
                 <h2>Popular resources</h2>
-                <p><a href="/commercial-lease-npv/how-is-cap-rate-calculated/">How is cap rate calculated?</a></p>
-                <p><a href="/compare-commercial-leases">Compare commercial leases</a></p>
-                <p><a href="/resources">Resource library</a></p>
+                ${links.map((row) => `<p><a href="${row.href}">${row.label}</a></p>`).join("")}
               </section>
             </aside>`;
+}
+
+export function renderBlogArticleShell(input: {
+  category: string;
+  date: string;
+  title: string;
+  dek: string;
+  featured_image: string;
+  featured_alt: string;
+  tags?: string[];
+  main_html: string;
+  posts: OccupancyNpvBlogPost[];
+  path: string;
+  resources?: Array<{ href: string; label: string }>;
+  featured_reads_html?: string;
+  venture_id?: string;
+  archive_root?: string;
+}): string {
+  const ventureId = input.venture_id ?? "occupancynpv";
+  const archiveRoot = input.archive_root ?? "/blog";
+  const tags = (input.tags ?? []).map((tag) => taxonomyChipHtml("tag", tag, "hero", archiveRoot)).join(" ");
+  const featured = input.featured_reads_html ?? renderFeaturedReadsBottomHtml(
+    selectSameVentureRecommendations(input.posts, input.path).map((post) => ({
+      href: post.path,
+      label: post.title,
+      dek: post.excerpt,
+    })),
+  );
+  return `
+        <header className="pv-hero pv-article-hero pv-hero-photo onpv-blog-article-hero" data-section-type="HERO" data-blog-article-hero="true" data-page-type="BLOG_ARTICLE" data-hero-height="editorial" data-hero-height-token="BLOG_ARTICLE_HERO_HEIGHT" data-h1-surface="solid-dark">
+          <figure className="pv-hero-media onpv-blog-article-hero__media" data-visual-role="FEATURED_EDITORIAL_IMAGE">
+            <img src="${input.featured_image}" alt=${JSON.stringify(input.featured_alt)} width={1600} height={900} fetchPriority="high" decoding="async" />
+          </figure>
+          <div className="onpv-blog-article-hero__title" data-h1-surface="solid-dark">
+            <div className="onpv-blog-article-container">
+              <p className="pv-eyebrow onpv-taxonomy-row" data-blog-article-category="true">${taxonomyChipHtml("category", input.category, "hero", archiveRoot)} <time dateTime="${input.date}">${input.date}</time></p>
+              <h1 className="pv-display" data-blog-article-h1="true">${input.title}</h1>
+              ${tags ? `<p className="onpv-taxonomy-row">${tags}</p>` : ""}
+              <div id="direct-answer" data-direct-answer="true"><p>${input.dek}</p></div>
+            </div>
+          </div>
+        </header>
+        <article className="pv-section onpv-blog-article-shell" data-section-type="ARTICLE" data-blog-article-shell="true" data-blog-article-layout="true" data-content-quality="content-quality-framework-v4">
+          <div className="onpv-blog-article-container onpv-blog-layout" data-blog-layout="editorial" data-blog-article-layout="true" data-blog-article-sidebar="true">
+          <div className="onpv-blog-main pv-reading">
+            ${input.main_html}
+            ${featured}
+          </div>
+            ${renderBlogSidebarHtml(input.posts, input.resources, { venture_id: ventureId, archive_root: archiveRoot })}
+          </div>
+        </article>`;
 }
 
 export function renderBlogHeroHtml(input: {
@@ -482,29 +597,17 @@ export function renderLatestBlogsCarouselHtml(input: {
   const discoveryAttr = surface === "article" ? ` data-blog-article-discovery="true"` : "";
   const density = cards.length <= 1 ? "single" : cards.length === 2 ? "pair" : "rail";
   const showArrows = density === "rail";
-  const arrows = showArrows
-    ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-prev="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Previous blogs">
-                    <span aria-hidden="true">←</span>
-                  </button>`
-    : "";
-  const nextArrow = showArrows
-    ? `<button type="button" className="onpv-blog-carousel__arrow" data-blog-carousel-next="true" data-blog-carousel-control="arrow" data-carousel-contrast="high" aria-label="Next blogs">
-                    <span aria-hidden="true">→</span>
-                  </button>`
-    : "";
   return `<section data-blog-latest="true" data-blog-roll="true" data-blog-carousel="true" data-blog-carousel-shared="LatestBlogsCarousel" data-carousel-desktop="3" data-carousel-tablet="2" data-carousel-mobile="1" data-carousel-loop="false" data-carousel-density="${density}" data-carousel-arrows="${showArrows ? "visible" : "hidden"}" data-blog-carousel-top-gap="token" data-carousel-contrast="high"${discoveryAttr}>
                 <h2 className="onpv-blog-section-heading" data-blog-section-heading="true">Featured Reads</h2>
-                <div className="onpv-blog-carousel" data-blog-carousel-track="true" data-carousel-controls="${showArrows ? "flanking" : "none"}" data-favorites-label="Featured Reads" role="region" aria-label="Featured reads" aria-roledescription="${showArrows ? "carousel" : "list"}">
-                  ${arrows}
-                  <div className="onpv-blog-carousel__scroller" data-blog-carousel-scroller="true" tabIndex={0}>
-                    ${cards.map(latestBlogCardHtml).join("\n                    ") || "<p>No published posts yet.</p>"}
-                  </div>
-                  ${nextArrow}
-                </div>
+                ${renderSharedCarouselShell({
+                  cardsHtml: cards.map(latestBlogCardHtml).join("\n                    ") || "<p>No published posts yet.</p>",
+                  showArrows,
+                  label: "Featured reads",
+                })}
               </section>`;
 }
 
-export const LATEST_BLOGS_CAROUSEL_SCRIPT = `(()=>{document.querySelectorAll("[data-blog-carousel-track]").forEach((root)=>{const s=root.querySelector("[data-blog-carousel-scroller]");const prev=root.querySelector("[data-blog-carousel-prev]");const next=root.querySelector("[data-blog-carousel-next]");if(!s||!prev||!next)return;const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;const sync=()=>{const max=Math.max(0,s.scrollWidth-s.clientWidth-2);prev.disabled=s.scrollLeft<=2;next.disabled=s.scrollLeft>=max;prev.setAttribute("aria-disabled",String(prev.disabled));next.setAttribute("aria-disabled",String(next.disabled));};const move=(d)=>{s.scrollBy({left:d*s.clientWidth*0.9,behavior:reduced?"auto":"smooth"});};prev.addEventListener("click",()=>move(-1));next.addEventListener("click",()=>move(1));s.addEventListener("scroll",sync,{passive:true});window.addEventListener("resize",sync);sync();});})();`;
+export const LATEST_BLOGS_CAROUSEL_SCRIPT = SHARED_BLOG_CAROUSEL_SCRIPT;
 
 export function evaluateBlogFeaturedCardQualityGate(html: string): OrganicNamedGate {
   const reasons: string[] = [];
@@ -540,7 +643,7 @@ export function evaluateBlogLatestCarouselGate(input: {
     reasons.push("arrows_on_impossible_movement");
   }
   if (!input.html.includes("data-carousel-density=")) reasons.push("carousel_density_unmarked");
-  if (!/overflow-x:\s*auto|scroll-snap-type/.test(input.html) && !input.html.includes("onpv-blog-carousel__scroller")) {
+  if (!/overflow-x:\s*auto|scroll-snap-type/.test(input.html) && !input.html.includes("onpv-blog-carousel__viewport") && !input.html.includes("onpv-blog-carousel__scroller")) {
     reasons.push("scroll_missing");
   }
   if (!input.html.includes("aria-label")) reasons.push("keyboard_inaccessible");
@@ -771,12 +874,15 @@ export function evaluateBlogEditorialDesignGate(html: string): OrganicNamedGate 
 
 export function evaluateBlogHeroContrastGate(html: string): OrganicNamedGate {
   const reasons: string[] = [];
-  if (html.includes("pv-hero-photo")) {
+  if (html.includes("pv-hero-photo") || html.includes("data-blog-article-hero")) {
     if (!html.includes("data-blog-taxonomy-chip")) reasons.push("HERO_READABILITY_FAIL");
     if (!html.includes('data-blog-taxonomy-surface="hero"')) reasons.push("TAXONOMY_CONTRAST_FAIL");
     const surface = `${html}\n${OCCUPANCYNPV_BLOG_EDITORIAL_CSS}`;
-    if (!surface.includes(".pv-hero-photo .onpv-taxonomy-chip") && !surface.includes(".pv-hero-photo .onpv-taxonomy-chip")) {
+    if (!surface.includes(".pv-hero-photo .onpv-taxonomy-chip") && !surface.includes("[data-h1-surface=\"solid-dark\"]")) {
       reasons.push("VISUAL_CONTRAST_FAIL");
+    }
+    if (html.includes("data-blog-article-hero") && !html.includes('data-h1-surface="solid-dark"')) {
+      reasons.push("FAIL_H1_CONTRAST");
     }
   }
   return named(BLOG_HERO_CONTRAST_GATE, reasons);
@@ -1004,27 +1110,36 @@ export function profileBlogContentQuality(draft: OrganicDraft, plan?: BlogQuesti
 
 export const OCCUPANCYNPV_BLOG_EDITORIAL_CSS = `
 /* OCCUPANCYNPV_BLOG_EDITORIAL_CSS_START */
-:root{--blog-section-heading-gap:1.25rem;--blog-section-block-gap:2.5rem;--blog-carousel-top-gap:1.4rem;--blog-hero-tint:#eef3f7;--blog-accent:#1d4e63;--blog-ink:#10232c;--blog-arrow-bg:#10232c;--blog-arrow-fg:#ffffff;--blog-panel:#ffffff;--blog-muted:#f4f7f8}
+:root{--blog-section-heading-gap:1.25rem;--blog-section-block-gap:2.5rem;--blog-carousel-top-gap:1.4rem;--blog-hero-tint:#eef3f7;--blog-accent:#1d4e63;--blog-ink:#10232c;--blog-arrow-bg:#10232c;--blog-arrow-fg:#ffffff;--blog-panel:#ffffff;--blog-muted:#f4f7f8;--blog-article-gutter:4rem;--blog-article-max:90rem;--blog-article-reading-max:46rem;--blog-article-column-gap:2rem;--blog-article-sidebar-min:16rem;--blog-article-body-top:2rem;--blog-article-hero-height:clamp(16rem,32vh,24rem);--blog-article-hero-max:26rem;--blog-article-hero-aspect:16 / 9;--blog-article-h1-bg:#0b0b0b;--blog-article-h1-fg:#f7f3ec}
 .onpv-blog-hero[data-blog-hero-treatment="editorial-panel"]{background:linear-gradient(135deg,var(--blog-hero-tint) 0%,#f8fafb 58%,#e7eef2 100%);border-bottom:1px solid rgba(16,35,44,.08);padding:2.4rem 0 2.2rem}
 .onpv-blog-hero__grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(14rem,.75fr);gap:2rem;align-items:center}
 .onpv-blog-hero__copy .pv-display{color:var(--blog-ink);letter-spacing:-.03em}
 .onpv-blog-hero__copy p{max-width:40rem;color:#334155}
 .onpv-blog-hero__visual{margin:0;border-radius:1rem;overflow:hidden;box-shadow:0 16px 40px rgba(16,35,44,.12);aspect-ratio:4/3}
 .onpv-blog-hero__visual img{width:100%;height:100%;object-fit:contain;display:block;background:#0b1720}
-.onpv-blog-layout[data-blog-layout="editorial"]{display:grid;grid-template-columns:minmax(0,2.35fr) minmax(16rem,.85fr);gap:2rem;align-items:start}
+.onpv-blog-layout[data-blog-layout="editorial"]{display:grid;grid-template-columns:minmax(0,2.35fr) minmax(var(--blog-article-sidebar-min),0.85fr);gap:var(--blog-article-column-gap);align-items:start}
 .onpv-blog-main{display:flex;flex-direction:column;gap:var(--blog-section-block-gap)}
 .onpv-blog-section-heading{margin:0 0 var(--blog-carousel-top-gap);color:var(--blog-ink)}
 .onpv-blog-featured[data-blog-featured-card]{display:grid;grid-template-columns:minmax(11rem,.4fr) minmax(0,1fr);gap:1.25rem;align-items:center;border:1px solid rgba(16,35,44,.1);background:var(--blog-panel);padding:1.15rem 1.25rem;border-radius:.85rem;box-shadow:0 8px 24px rgba(16,35,44,.05)}
 .onpv-blog-featured__media img{width:100%;height:auto;max-height:220px;object-fit:contain;aspect-ratio:4/3;border-radius:.55rem;background:#0b1720}
 .onpv-blog-featured__copy h2{margin:.35rem 0 .5rem;font-size:1.55rem;line-height:1.2;color:var(--blog-ink)}
 .onpv-blog-featured__cta{display:inline-block;margin-top:.75rem;font-weight:650;color:var(--blog-accent)}
-.onpv-blog-carousel{display:flex;align-items:center;gap:.7rem;position:relative;margin-top:0;width:100%}
-.onpv-blog-carousel__scroller{flex:1 1 auto;min-width:0;display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 1.5rem)/3);gap:.85rem;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:.15rem .1rem 1rem;touch-action:pan-x}
+[data-blog-carousel-shell="true"],.onpv-blog-carousel{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:.7rem;position:relative;margin-top:0;width:100%;max-width:100%;box-sizing:border-box}
+[data-blog-carousel-shell="true"]>[data-blog-carousel-prev],.onpv-blog-carousel__arrow--prev{order:0;flex:0 0 auto}
+[data-blog-carousel-shell="true"]>[data-blog-carousel-viewport],[data-blog-carousel-shell="true"]>[data-blog-carousel-scroller],.onpv-blog-carousel__viewport{order:1}
+[data-blog-carousel-shell="true"]>[data-blog-carousel-next],.onpv-blog-carousel__arrow--next{order:2;flex:0 0 auto}
+.onpv-blog-carousel__viewport,.onpv-blog-carousel__scroller,[data-carousel-scroll-owner="viewport"]{flex:1 1 auto;min-width:0;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:.15rem .1rem 1rem;touch-action:pan-x;container-type:inline-size;scrollbar-width:none;-ms-overflow-style:none}
+.onpv-blog-carousel__viewport::-webkit-scrollbar,.onpv-blog-carousel__scroller::-webkit-scrollbar,[data-carousel-scroll-owner="viewport"]::-webkit-scrollbar{display:none;width:0;height:0}
+.onpv-blog-carousel__track{display:flex;flex-direction:row;flex-wrap:nowrap;gap:.85rem;width:max-content}
+.onpv-blog-carousel__track > [data-carousel-slide]{flex:0 0 calc((100cqw - 1.7rem) / 3);min-width:0;max-width:none;scroll-snap-align:start;box-sizing:border-box}
 [data-carousel-density="single"] .onpv-blog-carousel{justify-content:flex-start}
-[data-carousel-density="single"] .onpv-blog-carousel__scroller{grid-auto-flow:row;grid-template-columns:minmax(0,32rem);grid-auto-columns:minmax(0,32rem);overflow:visible;width:100%;max-width:32rem}
-[data-carousel-density="pair"] .onpv-blog-carousel__scroller{grid-auto-columns:minmax(0,calc((100% - .85rem)/2));overflow:visible}
-[data-carousel-density="single"] .onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:minmax(0,32rem);grid-auto-columns:minmax(0,32rem);grid-auto-flow:row;width:100%;max-width:32rem;overflow:visible}
-[data-carousel-density="pair"] .onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:none}
+[data-carousel-density="single"] .onpv-blog-carousel__viewport{overflow:visible}
+[data-carousel-density="single"] .onpv-blog-carousel__track{width:100%;max-width:32rem}
+[data-carousel-density="single"] .onpv-blog-carousel__track > [data-carousel-slide]{flex-basis:100%}
+[data-carousel-density="pair"] .onpv-blog-carousel__viewport{overflow:visible}
+[data-carousel-density="pair"] .onpv-blog-carousel__track{width:100%}
+[data-carousel-density="pair"] .onpv-blog-carousel__track > [data-carousel-slide]{flex-basis:calc((100% - .85rem) / 2)}
+[data-carousel-density="single"] .onpv-blog-featured-rail .onpv-blog-carousel__scroller,[data-carousel-density="single"] .onpv-blog-featured-rail .onpv-blog-carousel__viewport{overflow:visible;width:100%;max-width:32rem}
 [data-carousel-arrows="hidden"] .onpv-blog-carousel__arrow{display:none}
 .onpv-blog-carousel__arrow{flex:0 0 2.75rem;width:2.75rem;height:2.75rem;min-width:44px;min-height:44px;border-radius:999px;border:2px solid var(--blog-arrow-bg);background:var(--blog-arrow-bg);color:var(--blog-arrow-fg);box-shadow:0 6px 16px rgba(16,35,44,.18);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;appearance:none;-webkit-appearance:none;font:inherit;line-height:1}
 .onpv-blog-carousel__arrow:hover{background:var(--blog-accent);border-color:var(--blog-accent);color:var(--blog-arrow-fg)}
@@ -1037,16 +1152,21 @@ export const OCCUPANCYNPV_BLOG_EDITORIAL_CSS = `
 .onpv-blog-row img{width:100%;height:14rem;object-fit:cover;border-radius:.55rem;background:#0b1720}
 .onpv-blog-row h3{font-size:1.55rem;line-height:1.25;margin:.45rem 0;color:var(--blog-ink)}
 .onpv-blog-roll-card__cta{display:inline-block;margin-top:.65rem;font-weight:650;color:var(--blog-accent)}
-.onpv-blog-featured-rail{display:block;width:100%}
-.onpv-blog-featured-rail .onpv-blog-carousel__scroller{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;width:100%}
-.onpv-blog-featured-rail-card{display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;max-width:100%;box-sizing:border-box;border:1px solid rgba(16,35,44,.1);padding:0;border-radius:.75rem;background:var(--blog-panel);overflow:hidden}
+.onpv-blog-featured-rail{width:100%;min-width:0}
+.onpv-blog-carousel.onpv-blog-featured-rail{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center}
+[data-carousel-density="rail"] .onpv-blog-featured-rail .onpv-blog-carousel__viewport{overflow-x:auto;width:100%;max-width:none}
+.onpv-blog-featured-rail-card{display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;max-width:100%;box-sizing:border-box;scroll-snap-align:start;border:1px solid rgba(16,35,44,.1);padding:0;border-radius:.75rem;background:var(--blog-panel);overflow:hidden}
 .onpv-blog-featured-media{display:block;width:100%;max-width:100%;min-width:0}
 .onpv-blog-featured-media img{display:block;width:100%;max-width:100%;height:auto}
 .onpv-blog-featured-body{display:block;width:100%;min-width:0;padding:1rem;box-sizing:border-box}
 .onpv-blog-carousel__pager{display:flex;gap:.45rem;justify-content:center;list-style:none;padding:0;margin:.85rem 0 0}
+.onpv-blog-carousel__pager button{min-width:2.25rem;min-height:2.25rem;border-radius:999px;border:2px solid #10232c;background:#fff;color:#10232c;font:inherit;cursor:pointer}
+.onpv-blog-carousel__pager button[aria-current="page"]{background:#10232c;color:#fff}
+.onpv-blog-carousel__pager button:hover{background:#1d4e63;border-color:#1d4e63;color:#fff}
+.onpv-blog-carousel__pager button:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
 .onpv-blog-featured-reads{display:grid;gap:.85rem;padding:0;list-style:none}
-@media (max-width:1024px){.onpv-blog-row,.onpv-blog-row--flip{grid-template-columns:1fr}.onpv-blog-row--flip .onpv-blog-row__media{order:0}.onpv-blog-featured-rail .onpv-blog-carousel__scroller{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:768px){.onpv-blog-featured-rail .onpv-blog-carousel__scroller{grid-template-columns:1fr}}
+@media (max-width:1024px){.onpv-blog-row,.onpv-blog-row--flip{grid-template-columns:1fr}.onpv-blog-row--flip .onpv-blog-row__media{order:0}[data-carousel-density="rail"] .onpv-blog-carousel__track > [data-carousel-slide]{flex-basis:calc((100cqw - .85rem) / 2)}}
+@media (max-width:768px){[data-carousel-density="rail"] .onpv-blog-carousel__track > [data-carousel-slide]{flex-basis:100cqw}}
 .onpv-blog-latest-card{scroll-snap-align:start;border:1px solid rgba(16,35,44,.1);background:var(--blog-muted);padding:.85rem;min-width:0;border-radius:.75rem}
 .onpv-blog-latest-card img{width:100%;height:7.5rem;object-fit:contain;border-radius:.45rem;background:#0b1720}
 .onpv-blog-latest-card h3{font-size:1rem;line-height:1.3;margin:.4rem 0}
@@ -1060,7 +1180,30 @@ export const OCCUPANCYNPV_BLOG_EDITORIAL_CSS = `
 .onpv-blog-seq a{display:block;border:1px solid rgba(16,35,44,.1);padding:.95rem;border-radius:.75rem;background:var(--blog-panel)}
 .onpv-blog-flow{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0 1.25rem}
 .onpv-blog-flow span{border:1px solid rgba(29,78,99,.16);border-radius:999px;padding:.35rem .7rem;font-size:.85rem;background:#fff;color:var(--blog-ink)}
-.onpv-blog-article-shell{background:linear-gradient(180deg,#f6f8f9 0%,#fff 18rem)}
+.onpv-blog-article-shell{background:linear-gradient(180deg,#f6f8f9 0%,#fff 18rem);padding-top:var(--blog-article-body-top);padding-bottom:3rem}
+.onpv-blog-article-container{width:min(calc(100% - (var(--blog-article-gutter) * 2)),var(--blog-article-max));max-width:var(--blog-article-max);margin-inline:auto;box-sizing:border-box}
+.onpv-blog-main,.onpv-blog-main.pv-reading{max-width:var(--blog-article-reading-max);width:100%;margin-inline:0}
+header.pv-hero.pv-article-hero.pv-hero-photo[data-blog-article-hero],
+header.onpv-blog-article-hero[data-blog-article-hero]{position:relative;display:block;min-height:0;height:auto;max-height:none;padding:0;margin:0;overflow:hidden;isolation:isolate;border-bottom:0;background:var(--blog-article-h1-bg);color:var(--blog-article-h1-fg)}
+header.pv-hero.pv-article-hero.pv-hero-photo[data-blog-article-hero] .pv-hero-media,
+[data-blog-article-hero] .onpv-blog-article-hero__media{position:relative;inset:auto;margin:0;width:100%;height:var(--blog-article-hero-height);max-height:var(--blog-article-hero-max);overflow:hidden;background:#0b0b0b}
+header.pv-hero.pv-article-hero.pv-hero-photo[data-blog-article-hero] .pv-hero-media img,
+[data-blog-article-hero] .onpv-blog-article-hero__media img{display:block;width:100%;height:100%;max-width:none;object-fit:cover;object-position:center;aspect-ratio:auto}
+header.pv-hero.pv-article-hero.pv-hero-photo[data-blog-article-hero] .pv-hero-overlay{display:none}
+[data-blog-article-hero] .onpv-blog-article-hero__title,
+[data-h1-surface="solid-dark"]{background:var(--blog-article-h1-bg);color:var(--blog-article-h1-fg);padding:1.35rem 0 1.55rem}
+header.pv-hero.pv-article-hero.pv-hero-photo[data-h1-surface="solid-dark"] .pv-display,
+header.pv-hero.pv-article-hero.pv-hero-photo[data-h1-surface="solid-dark"] .pv-hero-copy > p:not(.pv-eyebrow):not(.pv-answer-label),
+[data-h1-surface="solid-dark"] .pv-display,
+[data-h1-surface="solid-dark"] [data-direct-answer],
+[data-h1-surface="solid-dark"] [data-direct-answer] p,
+[data-h1-surface="solid-dark"] time{color:var(--blog-article-h1-fg)}
+[data-h1-surface="solid-dark"] .pv-display{max-width:min(42rem,100%);margin:.35rem 0 .7rem}
+[data-h1-surface="solid-dark"] [data-direct-answer] p{max-width:var(--blog-article-reading-max);opacity:.92}
+@media (max-width:1679px){:root{--blog-article-gutter:2.5rem}}
+@media (max-width:1024px){:root{--blog-article-gutter:1.75rem}}
+@media (max-width:768px){[data-blog-article-hero] .onpv-blog-article-hero__media,header.pv-hero.pv-article-hero.pv-hero-photo[data-blog-article-hero] .pv-hero-media{height:clamp(11rem,28vh,15rem);max-height:15rem}[data-h1-surface="solid-dark"]{padding:1rem 0 1.15rem}[data-h1-surface="solid-dark"] .pv-display{font-size:clamp(1.65rem,6vw,2.2rem);margin:.2rem 0 .5rem}}
+@media (max-width:599px){:root{--blog-article-gutter:1.125rem}}
 .onpv-blog-archive-grid{display:grid;gap:1.15rem}
 .onpv-blog-archive-card{border:1px solid rgba(16,35,44,.1);background:var(--blog-panel);padding:1rem 1.1rem;border-radius:.85rem;box-shadow:0 8px 24px rgba(16,35,44,.05)}
 .onpv-blog-archive-card img{width:100%;height:10rem;object-fit:contain;border-radius:.55rem;background:#0b1720}
@@ -1079,7 +1222,7 @@ a[data-blog-taxonomy-link]{color:var(--blog-accent);text-decoration:none;font-we
 a.onpv-taxonomy-chip:hover{background:#10232c;color:#ffffff;border-color:#10232c}
 a.onpv-taxonomy-chip:hover:visited{background:#10232c;color:#ffffff;border-color:#10232c}
 .pv-hero-photo .pv-hero-overlay{background:linear-gradient(180deg,rgba(8,12,16,.78),rgba(8,12,16,.88))}
-.pv-hero-photo .pv-display,.pv-hero-photo .pv-hero-copy > p:not(.pv-eyebrow):not(.pv-answer-label),.pv-hero-photo time{color:#f8fafc}
+.pv-hero-photo:not([data-h1-surface="solid-dark"]) .pv-display,.pv-hero-photo:not([data-h1-surface="solid-dark"]) .pv-hero-copy > p:not(.pv-eyebrow):not(.pv-answer-label),.pv-hero-photo:not([data-h1-surface="solid-dark"]) time{color:#f8fafc}
 header.pv-hero.pv-article-hero.pv-hero-photo--article .pv-display,
 header.pv-hero.pv-article-hero.pv-hero-photo--article .pv-lede,
 header.pv-hero.pv-article-hero.pv-hero-photo--article .pv-hero-copy > p:not(.pv-eyebrow):not(.pv-answer-label){color:#122033}
@@ -1127,13 +1270,13 @@ header.pv-hero.pv-article-hero.pv-hero-photo--article .vg-badge{
 .pv-table-shell{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .pv-fin-table{width:100%;min-width:32rem;border-collapse:collapse}
 .pv-fin-table th,.pv-fin-table td{padding:.62rem .75rem;text-align:left;vertical-align:top}
-@media (max-width:1024px){.onpv-blog-hero__grid{grid-template-columns:minmax(0,1.2fr) minmax(12rem,.7fr)}.onpv-blog-layout[data-blog-layout="editorial"]{grid-template-columns:minmax(0,1.8fr) minmax(14rem,.9fr)}.onpv-blog-carousel__scroller{grid-auto-columns:calc((100% - .75rem)/2)}}
-@media (max-width:768px){.onpv-blog-hero[data-blog-hero-treatment="editorial-panel"]{padding:1.6rem 0 1.5rem}.onpv-blog-hero__grid,.onpv-blog-layout[data-blog-layout="editorial"],.onpv-blog-featured[data-blog-featured-card]{grid-template-columns:minmax(0,1fr)}.onpv-blog-carousel__scroller{grid-auto-columns:100%}.onpv-blog-seq{grid-template-columns:1fr}.pv-fin-table{font-size:.86rem}.pv-fin-table th,.pv-fin-table td{padding:.5rem .55rem;white-space:nowrap}}
-@media (prefers-reduced-motion:reduce){.onpv-blog-carousel__scroller{scroll-behavior:auto}}
+@media (max-width:1024px){.onpv-blog-hero__grid{grid-template-columns:minmax(0,1.2fr) minmax(12rem,.7fr)}.onpv-blog-layout[data-blog-layout="editorial"]{grid-template-columns:minmax(0,1.8fr) minmax(14rem,.9fr)}}
+@media (max-width:768px){.onpv-blog-hero[data-blog-hero-treatment="editorial-panel"]{padding:1.6rem 0 1.5rem}.onpv-blog-hero__grid,.onpv-blog-layout[data-blog-layout="editorial"],.onpv-blog-featured[data-blog-featured-card]{grid-template-columns:minmax(0,1fr)}.onpv-blog-seq{grid-template-columns:1fr}.pv-fin-table{font-size:.86rem}.pv-fin-table th,.pv-fin-table td{padding:.5rem .55rem;white-space:nowrap}}
+@media (prefers-reduced-motion:reduce){.onpv-blog-carousel__viewport{scroll-behavior:auto}}
 a.vg-cta,a.vg-cta--primary,a.pv-cta,button.vg-cta,.vg-cta[type="submit"]{background:#1d4e78;color:#ffffff;border:1px solid #1d4e78;text-decoration:none}
 a.vg-cta:hover,a.vg-cta--primary:hover,a.pv-cta:hover,button.vg-cta:hover,.vg-cta--primary:hover{background:#163b5c;color:#ffffff;border-color:#163b5c}
 a.vg-cta:focus-visible,a.pv-cta:focus-visible,button.vg-cta:focus-visible,.vg-cta:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px;color:#ffffff}
-.pv-cta-panel a.vg-cta,.pv-cta-panel a.vg-cta--primary,.pv-cta-panel a.pv-cta,header.pv-hero a.vg-cta,.pv-hero-photo a.vg-cta,.vg-legal-footer a.vg-cta{background:#f4f7fb;color:#102033;border:1px solid #f4f7fb}
+.pv-cta-panel a.vg-cta,.pv-cta-panel a.vg-cta--primary,.pv-cta-panel a.pv-cta,header.pv-hero a.vg-cta,.pv-hero-photo a.vg-cta{background:#f4f7fb;color:#102033;border:1px solid #f4f7fb}
 .pv-cta-panel a.vg-cta:hover,.pv-cta-panel a.vg-cta--primary:hover,.pv-cta-panel a.pv-cta:hover,header.pv-hero a.vg-cta:hover,.pv-hero-photo a.vg-cta:hover{background:#ffffff;color:#102033;border-color:#ffffff}
 .pv-cta-panel a.vg-cta:focus-visible,header.pv-hero a.vg-cta:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px;color:#102033}
 .vg-cta--secondary,a.vg-cta--secondary{background:transparent;color:#1d4e78;border:1px solid #c5d0da}

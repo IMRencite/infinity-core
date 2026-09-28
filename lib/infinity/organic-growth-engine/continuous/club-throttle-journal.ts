@@ -4,12 +4,28 @@ import { buildBlogQuestionClusterPlan } from "./blog-ux";
 import type { OrganicDraft } from "./quality";
 import { evaluateContentQualityFramework } from "./content-quality-framework";
 import {
+  evaluateCrossArticleTemplateSimilarityGate,
+  evaluateCustomerFacingLanguageGate,
+  evaluateGenericContentPatternGate,
+  evaluateInternalProcessLanguageGate,
+  evaluateVentureIsolationGate,
+} from "@/lib/infinity/venture-isolation/venture-isolation";
+import {
   renderFeaturedBlogsCarouselHtml,
+  renderFeaturedReadsBottomHtml,
   renderMainBlogRollHtml,
+  renderBlogArticleShell,
   LATEST_BLOGS_CAROUSEL_SCRIPT,
   OCCUPANCYNPV_BLOG_EDITORIAL_CSS,
 } from "./blog-ux";
 import { selectPopularOrFeaturedBlogs } from "@/lib/infinity/performance-intelligence-engine/popular-blogs";
+import { renderCanonicalArticleMain } from "./article-section-renderer";
+import { clubThrottleShirtV5Body } from "./club-throttle-v5-body-shirt";
+import { clubThrottleAfterDarkV5Body } from "./club-throttle-v5-body-after-dark";
+import { clubThrottleBikeNightV5Body } from "./club-throttle-v5-body-bike-night";
+import { clubThrottleGarageV5Body } from "./club-throttle-v5-body-garage";
+import { clubThrottleGroupRideV5Body } from "./club-throttle-v5-body-group-ride";
+import { clubThrottleStreetwearGearV5Body } from "./club-throttle-v5-body-streetwear-gear";
 
 export const CLUB_THROTTLE_JOURNAL_ROOT = "/journal/" as const;
 
@@ -103,8 +119,6 @@ function journalPlan(input: {
     cluster: buildBlogQuestionClusterPlan({
       primary_question: input.primary,
       questions,
-      secondary_questions: input.secondary,
-      must_answer_questions: input.must.map((row) => row.question),
     }),
     sources: ["TOPIC_GRAPH", "SEARCH_DEMAND", "AUTHORITATIVE_RESEARCH"],
     learning_outcomes: input.outcomes,
@@ -118,6 +132,7 @@ function draftFrom(input: {
   body: string;
   faqs: Array<{ question: string; answer: string }>;
   links: string[];
+  citations?: OrganicDraft["citations"];
 }): OrganicDraft {
   return {
     title: input.post.title,
@@ -126,7 +141,7 @@ function draftFrom(input: {
     headings: input.headings,
     body: input.body,
     direct_answer: input.answer,
-    citations: [
+    citations: input.citations ?? [
       { source: "https://www.nhtsa.gov/road-safety/motorcycle-safety", source_type: "authority", retrieved_at: "2026-09-25", claim: "Motorcycle visibility and protective equipment remain public safety guidance." },
       { source: "https://www.iihs.org/topics/motorcycles", source_type: "authority", retrieved_at: "2026-09-25", claim: "Night and other-vehicle visibility are recurring crash factors." },
     ],
@@ -153,47 +168,87 @@ const SHARED_LINKS = [
   "/shop",
 ];
 
+function featuredReadsFor(slug: string): string {
+  const shirt = { href: permalink("apparel", "how-riders-choose-a-shirt"), label: "How riders choose a shirt", dek: "Weight, print, fit, and wash." };
+  const gear = { href: permalink("apparel", "streetwear-vs-riding-gear"), label: "Streetwear versus riding gear", dek: "When a shirt is clothes and when you still need a jacket." };
+  const night = { href: permalink("night-riding", "how-to-ride-after-dark"), label: "How to ride after dark", dek: "Lights, layers, and a named road." };
+  const bike = { href: permalink("culture", "bike-night-etiquette"), label: "Bike-night etiquette", dek: "One space, short idle, open path." };
+  const garage = { href: permalink("culture", "garage-culture-as-rider-social-life"), label: "Garage culture", dek: "The hour after the ride, not a costume." };
+  const group = { href: permalink("rides", "group-ride-etiquette"), label: "Group-ride etiquette", dek: "Spacing, sweep, and a wave-off." };
+  const bySlug: Record<string, Array<{ href: string; label: string; dek: string }>> = {
+    "how-riders-choose-a-shirt": [gear, night],
+    "streetwear-vs-riding-gear": [shirt],
+    "how-to-ride-after-dark": [shirt, group],
+    "bike-night-etiquette": [garage, group],
+    "garage-culture-as-rider-social-life": [bike, shirt],
+    "group-ride-etiquette": [night, bike],
+  };
+  return renderFeaturedReadsBottomHtml(bySlug[slug] ?? []);
+}
+
 export function clubThrottleJournalCoveragePlans(): ContentCoveragePlan[] {
   return [
     journalPlan({
       plan_id: "coverage:club-throttle:night-ride",
       canonical_url: permalink("night-riding", "how-to-ride-after-dark"),
-      primary: "How do you ride after dark without treating the night as a stunt?",
+      primary: "How to ride after dark without turning the night into a stunt",
       must: [
-        { question: "How do you ride after dark without treating the night as a stunt?", tokens: ["night ride checklist", "not a stunt", "sight line"] },
-        { question: "What lights and layers should you inspect?", tokens: ["headlight", "brake light", "layer"] },
-        { question: "What mistakes make a late ride worse?", tokens: ["overdriving the headlight", "cold hands", "dark clothing"] },
-        { question: "When should you not go?", tokens: ["fatigue", "rain film", "unknown road"] },
+        { question: "How to ride after dark without turning the night into a stunt", tokens: ["headlight", "visibility", "after dark"] },
+        { question: "How far can you trust your headlight?", tokens: ["headlight", "overdriving", "stopping"] },
+        { question: "What should you inspect before a night ride?", tokens: ["checklist", "lights", "visor"] },
+        { question: "When should you postpone a night ride?", tokens: ["postpone", "fatigue", "fog"] },
       ],
       secondary: [],
-      definitions: ["after dark", "sight line", "overdriving the headlight", "high-visibility", "layering"],
+      definitions: ["headlight reach", "dark adaptation", "overdriving the headlight", "high-visibility", "following distance"],
       mistakes: ["overdriving the headlight", "dark clothing"],
-      edges: ["rain film", "unknown road"],
-      decisions: ["go or stay", "add a layer"],
-      examples: ["45 minutes after sunset", "55 degree start"],
-      next: ["night ride checklist", "inspect lights", "tell someone the route"],
-      links: SHARED_LINKS.slice(0, 4),
-      outcomes: ["explain a night ride checklist", "identify overdriving the headlight", "compare layers", "avoid dark clothing on an unlit road", "request a second light check"],
+      edges: ["fog", "unknown road"],
+      decisions: ["postpone", "clear visor"],
+      examples: ["30 percent", "two seconds"],
+      next: ["inspect lights", "tell someone the route", "check the visor"],
+      links: [
+        permalink("apparel", "how-riders-choose-a-shirt"),
+        permalink("apparel", "streetwear-vs-riding-gear"),
+        permalink("culture", "bike-night-etiquette"),
+        "/shop",
+      ],
+      outcomes: [
+        "explain headlight reach",
+        "identify overdriving the headlight",
+        "compare clear versus tinted visors",
+        "avoid dark clothing on an unlit road",
+        "request a pre-ride checklist",
+      ],
     }),
     journalPlan({
       plan_id: "coverage:club-throttle:shirt",
       canonical_url: permalink("apparel", "how-riders-choose-a-shirt"),
-      primary: "How should a rider choose a shirt that still works after the ride?",
+      primary: "How riders choose a shirt that survives the ride home",
       must: [
-        { question: "How should a rider choose a shirt that still works after the ride?", tokens: ["fabric weight", "print placement", "wash"] },
-        { question: "Why does heavyweight matter?", tokens: ["heavyweight", "thin catalog", "drape"] },
-        { question: "Where should the print sit?", tokens: ["small front", "large back", "print area"] },
-        { question: "What is a fair price band to compare?", tokens: ["$45", "$55", "price band"] },
+        { question: "How riders choose a shirt that survives the ride home", tokens: ["fabric weight", "size chart", "print"] },
+        { question: "Why does heavyweight matter for riders?", tokens: ["heavyweight", "GSM", "drape"] },
+        { question: "Where should the print sit on a lifestyle tee?", tokens: ["front print", "back print", "placement"] },
+        { question: "How should a rider judge value without a fake price chart?", tokens: ["keep or return", "value", "compare two shirts"] },
       ],
       secondary: [],
-      definitions: ["heavyweight", "print placement", "size chart", "drape", "wash cycle"],
+      definitions: ["heavyweight", "GSM", "drape", "size chart", "screen print", "DTG"],
       mistakes: ["thin catalog", "tiny back print"],
       edges: ["humid night", "cold start"],
       decisions: ["tee or hoodie", "keep or return"],
-      examples: ["Gildan Heavy Cotton", "small front large back"],
+      examples: ["six ounce", "200 GSM"],
       next: ["compare fabric weight", "check the size chart", "wash inside out"],
-      links: SHARED_LINKS.slice(0, 4),
-      outcomes: ["explain fabric weight", "identify a tiny back print", "compare price band", "avoid thin catalog tees", "request the size chart"],
+      links: [
+        permalink("apparel", "streetwear-vs-riding-gear"),
+        "/shop",
+        "/collections/after-dark",
+        permalink("night-riding", "how-to-ride-after-dark"),
+      ],
+      outcomes: [
+        "explain fabric weight and GSM",
+        "identify a tiny back print",
+        "compare tee versus hoodie",
+        "avoid treating a shirt as armor",
+        "request the size chart",
+      ],
     }),
     journalPlan({
       plan_id: "coverage:club-throttle:bike-night",
@@ -278,270 +333,78 @@ export function clubThrottleJournalCoveragePlans(): ContentCoveragePlan[] {
   ];
 }
 
-function nightBody(): string {
-  return `A night ride checklist is not a stunt brief. After dark means your sight line shrinks, other drivers guess later, and cold hands show up around a 55 degree start. The point is to leave, ride, and come back.
-
-## What after dark actually changes
-After dark is not a mood. A 30 percent drop in usable sight distance is common. Headlight throw is finite. Overdriving the headlight means you are riding faster than you can see a stop or a dark-clad walker. High-visibility on you is a courtesy to the car that has not seen you yet.
-
-## Lights to inspect
-Check headlight, brake light, and a rear reflector before you leave. If one is out, stay. A second light check after the first fuel stop catches a loose lamp.
-
-## Layers
-Layering is a decision: add a layer before the 45 minutes after sunset temperature drop, not after your hands go numb. A heavyweight tee under a jacket is clothes. It is not armor.
-
-## Sight line
-Pick roads you know. An unknown road plus rain film is a reason to go or stay: stay.
-
-## Common mistakes
-The recurring mistake is overdriving the headlight. The second is dark clothing on an unlit road. Both are avoidable.
-
-## Edge cases
-Rain film and an unknown road stack. Fatigue is another edge. This is not automatically a go.
-
-## Checklist
-Night ride checklist: lights, layer, route, fuel, tell someone the route. Inspect lights twice. This is not legal advice.
-
-## What a passenger should know
-A passenger needs the same layer decision and the same go or stay call. They are not cargo.
-
-## Limitations
-This does not replace a rider-education course. Club Throttle will not publish a night ride as a dare.
-
-## Next
-Use the night ride checklist. Compare layers in how riders choose a shirt. Read streetwear versus riding gear before you treat a tee as protection.`;
-}
-
-function shirtBody(): string {
-  return `Choose fabric weight, print placement, and a wash you will actually do. A thin catalog tee at a $22 impulse price will look finished after one humid night. A honest price band for a heavyweight rider shirt sits nearer $45 to $55, not because a number is magic, but because the blank and the print area cost more.
-
-## Fabric weight
-Heavyweight cotton holds drape. Thin catalog cotton collapses. If the shirt cannot sit on a bike and still look like itself the next day, skip it.
-
-## Print placement
-Small front plus large back is a composition, not a slogan dump. A tiny back print is a common mistake. Print area has to be large enough to read from a bike length away.
-
-## Size chart
-Read the size chart. Do not guess. Gildan Heavy Cotton numbers are a starting point, not a promise every body matches.
-
-## Price band
-Compare the $45 to $55 band against a $22 thin catalog tee. If the cheaper shirt is the one that pills, you did not save.
-
-## Tee or hoodie
-A hoodie wins on a cold start. A tee wins when you want the large back print to show. That is the decision.
-
-## Wash
-Wash inside out on a gentle wash cycle. Skip a hard cycle if the print is new. Avoid thin catalog tees.
-
-## Mistakes
-Tiny back print. Thin catalog cotton sold as rider wear.
-
-## Edge cases
-Humid night sweat and a cold start are different layers. Do not pretend one shirt solves both.
-
-## Checklist
-Compare fabric weight. Check the size chart. Decide tee or hoodie. Keep or return after one ride if the drape is wrong.
-
-## Limitations
-This is not automatically a product pitch. It does not replace riding gear.
-
-## Next
-Read streetwear versus riding gear. Then look at After Dark when you want the night-road idea without treating the shirt as armor.`;
-}
-
-function bikeNightBody(): string {
-  return `Bike night etiquette is social. Bike-night etiquette still means park once. Keep idle short. Leave a lane. The lot is not a grid. First-timer riders get the same etiquette.
-
-## Arrive
-Arrive on time enough to take one space. Do not block an aisle while you look for a better angle.
-
-## Idle
-A 20 minute idle in a weeknight lot is a courtesy fail. Shut it down.
-
-## Talk
-Race bait and illegal stunt talk stays off the lot. This is not a race brief.
-
-## First-timer
-Ask before touching a bike. No mock. A first-timer who leaves early still did the night right.
-
-## Leave
-Leave the way you arrived. Exhaust pointed away from doors. Do not make the last rider invent a new plan.
-
-## Full lot
-If the lot is full, leave. Compare stay or leave. If 40 percent of the aisle is blocked, go home.
-
-## Mistakes
-Blocking an aisle. Race bait. Treating a burnout as content. A burnout is a problem when it is treated as content. What if the lot is full? Leave.
-
-## Edge cases
-Rain start and a full lot. Move the bike or go home.
-
-## Checklist
-Park once. Keep idle short. Leave a lane. Ask before you touch.
-
-## Limitations
-This is not legal advice and not a club rulebook.
-
-## Next
-If the night turns into a group, read group-ride etiquette. If you came for clothes talk, read how riders choose a shirt.`;
-}
-
-function garageBody(): string {
-  return `A working garage is light, time, and people who stay after the ride. It is not a costume. Garage culture is rider identity and social life: one bench light, a late oil change, and talk that does not need a $10,000 set. Compare meet and garage. Request a real reason to print. Off-limits imagery includes a fake outlaw mark and a manufacturer mark on a repair-shop costume.
-
-## Who belongs
-People who stay. Tools. Time. Not an audience.
-
-## Clothes
-Clothes should survive grease and still look like themselves the next day. That is a different job than a repair-shop costume.
-
-## Off-limits
-Fake outlaw marks and manufacturer merch stay off Club Throttle. A suggestion is a note, not a command to print.
-
-## Meet versus garage
-A meet is public. A garage is invited. How is a garage different from a meet? The garage is invited time. When is a suggestion just a note? Always, until we print. Invite or not is the decision.
-
-## Print or hold
-If the mark cannot name why it belongs after the ride, hold it.
-
-## Mistakes
-Fake outlaw. Repair-shop costume graphics.
-
-## Edge cases
-A shared shop and apartment parking still count if the hour is real.
-
-## Checklist
-Keep the floor clear. Name the hour. Do not print a costume.
-
-## Limitations
-This does not automatically make a garage a brand set.
-
-## Next
-Read bike-night etiquette if the garage spills into a lot. Read the night-ride note if the night is the point.`;
-}
-
-function groupBody(): string {
-  return `Group-ride etiquette for street bikes is not a race. Six bikes can work if someone leads, someone sweeps, and the two-second gap stays real. Compare lead or sweep. A common mistake is street racing. Another mistake is a gap jump that copies the rider ahead by 50 percent too close.
-
-## Spacing
-Staggered formation. Two-second gap. Do not gap jump.
-
-## Signals
-Signal early. The sweep watches the last rider.
-
-## Fuel
-Stop for fuel together. Do not make the last rider invent a station.
-
-## Leave
-Wave off. The last rider should know you are gone.
-
-## Unsafe to copy
-Street racing, gap jump, and illegal evasion are out. Club Throttle will not teach those.
-
-## Lead or sweep
-Decide before you roll. Who should lead? Someone who already knows the route. What if someone is new? They should not lead a night group.
-
-## Mixed bikes
-A mixed group rides to the slowest honest pace, not the loudest.
-
-## Checklist
-Agree the route. Name the sweep. Stop for fuel together.
-
-## Limitations
-This is not legal advice. It does not automatically make a group safe.
-
-## Next
-Read how to ride after dark if the group is a night group. Read bike-night etiquette if you are only meeting in a lot.`;
-}
-
-function gearBody(): string {
-  return `Streetwear versus riding gear is a comparison table, not a slogan. A $48 heavyweight tee can drape, take a print, and work as daily wear. Compare tee under a jacket. It is not armor. It is not abrasion protection. It is not a helmet.
-
-## What a tee can do
-Daily wear. Print. The hour after the ride.
-
-## What it cannot do
-A shirt as armor is a mistake. Helmet optional talk is a mistake.
-
-## Tee under a jacket
-Yes. Wear real gear on the ride. Keep the tee for after.
-
-## Hoodie
-A hoodie does not change the armor answer.
-
-## Short commute
-A parking-lot move is still a ride. The comparison table does not get you a pass.
-
-## How a shop should talk
-A shop does not replace gear. This is not automatically protective. This is not legal advice.
-
-## Checklist
-Wear real gear on the ride. Keep the tee for after. Read the comparison table.
-
-## Limitations
-Club Throttle sells clothes. Clothes do not become armor because the print mentions a road.
-
-## Next
-Read how riders choose a shirt. Read how to ride after dark. Shop is a preview, not a promise that a tee is gear.`;
-}
-
 export function clubThrottleJournalDrafts(): OrganicDraft[] {
   const posts = CLUB_THROTTLE_JOURNAL_POSTS;
+  const night = clubThrottleAfterDarkV5Body();
+  const shirt = clubThrottleShirtV5Body();
+  const bike = clubThrottleBikeNightV5Body();
+  const garage = clubThrottleGarageV5Body();
+  const group = clubThrottleGroupRideV5Body();
+  const gear = clubThrottleStreetwearGearV5Body();
   return [
     draftFrom({
       post: posts[0],
-      answer: "Ride after dark with a night ride checklist: inspect lights, choose layers, keep the sight line, and treat go or stay as a real decision. It is not a stunt.",
-      headings: ["What after dark actually changes", "Lights to inspect", "Layers", "Sight line", "Common mistakes", "Edge cases", "Checklist", "What a passenger should know", "Limitations", "Next"],
-      body: nightBody(),
-      faqs: [
-        { question: "Is a night ride a stunt?", answer: "No. Overdriving the headlight is the failure mode." },
-        { question: "What is the first inspect?", answer: "Headlight and brake light." },
+      answer: night.answer,
+      headings: night.headings,
+      body: night.body,
+      faqs: night.faqs,
+      links: [
+        permalink("apparel", "how-riders-choose-a-shirt"),
+        permalink("apparel", "streetwear-vs-riding-gear"),
+        permalink("culture", "bike-night-etiquette"),
+        "/shop",
       ],
-      links: SHARED_LINKS.slice(0, 4),
+      citations: [
+        { source: "https://www.nhtsa.gov/road-safety/motorcycle-safety", source_type: "authority", retrieved_at: "2026-09-27", claim: "Motorcycle visibility and protective equipment guidance for night riding context." },
+        { source: "https://www.iihs.org/topics/motorcycles", source_type: "authority", retrieved_at: "2026-09-27", claim: "Crash factors involving visibility and other road users." },
+      ],
     }),
     draftFrom({
       post: posts[1],
-      answer: "Choose fabric weight, print placement, and a size chart you will use. Compare the $45 to $55 heavyweight band against a thin catalog tee before you buy.",
-      headings: ["Fabric weight", "Print placement", "Size chart", "Price band", "Tee or hoodie", "Wash", "Mistakes", "Edge cases", "Checklist", "Limitations", "Next"],
-      body: shirtBody(),
-      faqs: [
-        { question: "Does heavyweight always win?", answer: "For drape and print area, usually. For a cold start, a hoodie can win." },
+      answer: shirt.answer,
+      headings: shirt.headings,
+      body: shirt.body,
+      faqs: shirt.faqs,
+      links: [permalink("apparel", "streetwear-vs-riding-gear"), "/shop", "/collections/after-dark", permalink("night-riding", "how-to-ride-after-dark")],
+      citations: [
+        { source: "https://www.cottoninc.com/cotton-from-field-to-fabric/", source_type: "authority", retrieved_at: "2026-09-27", claim: "Cotton fiber structure influences breathability, hand, and shrink behavior in knits." },
+        { source: "https://www.printing.org/", source_type: "authority", retrieved_at: "2026-09-27", claim: "Screen printing and digital print methods differ in ink film, durability, and hand on fabric." },
       ],
-      links: SHARED_LINKS.slice(0, 4),
     }),
-    draftFrom({
-      post: posts[2],
-      answer: "Bike-night etiquette is park once, keep idle short, leave a lane, and skip race bait. The lot stays usable when people treat it as social, not a show.",
-      headings: ["Arrive", "Idle", "Talk", "First-timer", "Leave", "Full lot", "Mistakes", "Edge cases", "Checklist", "Limitations", "Next"],
-      body: bikeNightBody(),
-      faqs: [{ question: "What if the lot is full?", answer: "Leave. That is stay or leave." }],
-      links: SHARED_LINKS.slice(1, 5),
-    }),
-    draftFrom({
-      post: posts[3],
-      answer: "Garage culture is a working garage after the ride: people who stay, light, and time. It is not a costume shop and not a fake outlaw set.",
-      headings: ["Who belongs", "Clothes", "Off-limits", "Meet versus garage", "Print or hold", "Mistakes", "Edge cases", "Checklist", "Limitations", "Next"],
-      body: garageBody(),
-      faqs: [{ question: "Is a suggestion a print order?", answer: "No. A suggestion is a note." }],
-      links: SHARED_LINKS.slice(0, 4),
-    }),
-    draftFrom({
-      post: posts[4],
-      answer: "A street group ride needs staggered spacing, a named sweep, shared fuel stops, and a way to wave off. It is not a race and not a place to copy illegal evasion.",
-      headings: ["Spacing", "Signals", "Fuel", "Leave", "Unsafe to copy", "Lead or sweep", "Mixed bikes", "Checklist", "Limitations", "Next"],
-      body: groupBody(),
-      faqs: [{ question: "Who should lead?", answer: "Someone who already knows the route. Not the newest rider." }],
-      links: SHARED_LINKS.slice(0, 4),
-    }),
-    draftFrom({
-      post: posts[5],
-      answer: "A motorcycle shirt is streetwear. Riding gear is protective equipment. The comparison table is the point: the tee does not replace a jacket or a helmet.",
-      headings: ["What a tee can do", "What it cannot do", "Tee under a jacket", "Hoodie", "Short commute", "How a shop should talk", "Checklist", "Limitations", "Next"],
-      body: gearBody(),
-      faqs: [{ question: "Can I wear the shirt on the bike?", answer: "Under gear, yes. As armor, no." }],
-      links: SHARED_LINKS.slice(0, 4),
-    }),
+    draftFrom({ post: posts[2], answer: bike.answer, headings: bike.headings, body: bike.body, faqs: bike.faqs, links: SHARED_LINKS.slice(1, 5) }),
+    draftFrom({ post: posts[3], answer: garage.answer, headings: garage.headings, body: garage.body, faqs: garage.faqs, links: SHARED_LINKS.slice(0, 4) }),
+    draftFrom({ post: posts[4], answer: group.answer, headings: group.headings, body: group.body, faqs: group.faqs, links: SHARED_LINKS.slice(0, 4) }),
+    draftFrom({ post: posts[5], answer: gear.answer, headings: gear.headings, body: gear.body, faqs: gear.faqs, links: SHARED_LINKS.slice(0, 4) }),
   ];
+}
+
+export function clubThrottleJournalPublishedRecords() {
+  return CLUB_THROTTLE_JOURNAL_POSTS.map((post) => ({
+    venture_id: "club-throttle" as const,
+    asset_id: `journal-${post.slug}`,
+    obligation_id: `obl:club-throttle:${post.slug}`,
+    content_version: `${post.slug}-v1`,
+    visual_version: "journal-cover-v1",
+    publication_status: "PUBLISHED" as const,
+    title: post.title,
+    slug: post.slug,
+    path: post.path,
+    canonical_url: `https://clubthrottle.com${post.path}`,
+    excerpt: post.excerpt,
+    primary_category: post.primaryCategory ?? post.category,
+    secondary_categories: [],
+    tags: post.tags,
+    featured_image: post.image,
+    featured_image_alt: post.image_alt,
+    published_at: `${post.published}T00:00:00.000Z`,
+    updated_at: `${post.modified}T00:00:00.000Z`,
+    indexability: true,
+    discovery_eligibility: true,
+    featured: Boolean(post.featured),
+    reading_time: post.reading_time,
+    schema: { type: "Article", id: `journal-${post.slug}` },
+    publication_evidence: "STOREFRONT_COMPOSE",
+  }));
 }
 
 export function evaluateClubThrottleJournalQuality(): { result: "PASS" | "FAIL"; articles: number; failed: string[] } {
@@ -551,7 +414,18 @@ export function evaluateClubThrottleJournalQuality(): { result: "PASS" | "FAIL";
   drafts.forEach((draft, index) => {
     const report = evaluateContentQualityFramework(draft, plans[index]);
     if (report.result !== "PASS") failed.push(`${draft.canonical}:${report.reasons.join(",")}`);
+    const isolation = evaluateVentureIsolationGate({ venture_id: "club-throttle", html_or_text: `${draft.body}\n${draft.internal_links.join(" ")}` });
+    if (isolation.result === "FAIL") failed.push(`${draft.canonical}:${isolation.reasons.join(",")}`);
+    const leak = evaluateInternalProcessLanguageGate(draft.body);
+    if (leak.result === "FAIL") failed.push(`${draft.canonical}:${leak.reasons.join(",")}`);
+    const voice = evaluateCustomerFacingLanguageGate(draft.body);
+    if (voice.result === "FAIL") failed.push(`${draft.canonical}:${voice.reasons.join(",")}`);
   });
+  const bodies = drafts.map((draft) => draft.body);
+  const pattern = evaluateGenericContentPatternGate(bodies);
+  if (pattern.result === "FAIL") failed.push(`journal:${pattern.reasons.join(",")}`);
+  const template = evaluateCrossArticleTemplateSimilarityGate(bodies);
+  if (template.result === "FAIL") failed.push(`journal:${template.reasons.join(",")}`);
   return { result: failed.length ? "FAIL" : "PASS", articles: drafts.length, failed };
 }
 
@@ -621,17 +495,34 @@ export default async function JournalTag({ params }: { params: Promise<{ tag: st
   drafts.forEach((draft) => {
     const slug = draft.canonical.split("/").filter(Boolean).slice(-1)[0];
     const category = draft.canonical.split("/").filter(Boolean)[1];
+    const post = CLUB_THROTTLE_JOURNAL_POSTS.find((row) => row.slug === slug);
+    const mainHtml = renderCanonicalArticleMain({
+      headings: draft.headings,
+      body: draft.body,
+      faqs: draft.visible_faqs,
+    });
+    const shell = renderBlogArticleShell({
+      category: draft.breadcrumbs[1] ?? category,
+      date: post?.published ?? "2026-09-25",
+      title: draft.h1,
+      dek: draft.direct_answer ?? "",
+      featured_image: post?.image ?? "/visual/journal-night-ride.svg",
+      featured_alt: post?.image_alt ?? draft.h1,
+      tags: post?.tags,
+      path: draft.canonical,
+      posts: CLUB_THROTTLE_JOURNAL_POSTS,
+      main_html: mainHtml,
+      venture_id: "club-throttle",
+      archive_root: "/journal",
+      featured_reads_html: featuredReadsFor(slug),
+    });
     files.push({
       path: `app/journal/${category}/${slug}/page.tsx`,
       content: `export const metadata = { title: ${JSON.stringify(draft.title + " · Club Throttle Journal")} };
 export default function JournalArticle() {
   return (
-    <article className="sheet" data-blog-article-layout="true" data-performance-surface="journal-article">
-      <p className="kicker">${draft.breadcrumbs[1]}</p>
-      <h1>${draft.h1}</h1>
-      <p data-direct-answer="true">${draft.direct_answer}</p>
-      ${draft.headings.map((heading) => `<h2>${heading}</h2>`).join("\\n      ")}
-      <section>${draft.body.split("\\n\\n").map((block) => `<p>${block.replace(/`/g, "")}</p>`).join("")}</section>
+    <div data-page-type="BLOG_ARTICLE" data-performance-surface="journal-article">
+      ${shell}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ${JSON.stringify(JSON.stringify({
         "@context": "https://schema.org",
         "@graph": [
@@ -643,7 +534,7 @@ export default function JournalArticle() {
           { "@type": "FAQPage", mainEntity: (draft.visible_faqs ?? []).map((row) => ({ "@type": "Question", name: row.question, acceptedAnswer: { "@type": "Answer", text: row.answer } })) },
         ],
       }))} }} />
-    </article>
+    </div>
   );
 }
 `,
