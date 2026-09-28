@@ -41,3 +41,8 @@ export function validateManifestAgainstWorkspace(input: {
 export function validateBuildInternallyComplete(build: PersistedBuild): boolean {
   return build.status === "internally_complete" && build.reviewStatus === "passed";
 }
+
+/** Compilation-only internal complete does not satisfy venture launch visual QC — see venture-launch-qc-contract. */
+export function buildCompilationIsNotVentureLaunchProof(): true {
+  return true;
+}
