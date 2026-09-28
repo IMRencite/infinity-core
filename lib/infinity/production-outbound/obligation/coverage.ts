@@ -117,7 +117,7 @@ export function evaluateHistoricalInboundCoverageGate(input: {
   );
 }
 
-export function evaluateCommunicationCrossPathSendIdempotencyGate(input: {
+export function evaluateCommunicationCrossPathSendOutcomeGate(input: {
   first: "OK" | "EXISTING";
   second: "OK" | "EXISTING";
 }): NamedOutboundLoopGate {

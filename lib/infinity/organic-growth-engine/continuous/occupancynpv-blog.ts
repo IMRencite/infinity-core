@@ -92,7 +92,7 @@ export function occupancynpvBlogArticlePage(): PlannedPage {
   };
 }
 
-export function occupancynpvBlogCategoryArchivePage(category = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): PlannedPage {
+export function occupancynpvBlogCategoryArchivePage(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): PlannedPage {
   const path = blogCategoryArchivePath(category);
   return {
     route: path.replace(/\/+$/, ""),
@@ -262,7 +262,7 @@ export function occupancynpvBlogArticleCrumbs() {
   ];
 }
 
-export function occupancynpvBlogCategoryCrumbs(category = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
+export function occupancynpvBlogCategoryCrumbs(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
   return [
     { name: "Home", item: "/" },
     { name: "Blog", item: OCCUPANCYNPV_BLOG_INDEX_PATH },
@@ -330,7 +330,7 @@ export function occupancynpvBlogIndexSchema() {
   });
 }
 
-export function occupancynpvBlogCategoryArchiveSchema(category = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
+export function occupancynpvBlogCategoryArchiveSchema(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
   const page = occupancynpvBlogCategoryArchivePage(category);
   const posts = occupancynpvPublishedBlogPosts().filter((post) => (post.primaryCategory ?? post.category) === category);
   return buildConnectedSchemaGraph({
@@ -457,7 +457,7 @@ export function occupancynpvBlogArticleSource(): string {
   );
 }
 
-export function occupancynpvBlogCategoryArchiveSource(category = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): string {
+export function occupancynpvBlogCategoryArchiveSource(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): string {
   const page = occupancynpvBlogCategoryArchivePage(category);
   const posts = occupancynpvPublishedBlogPosts();
   const matching = posts.filter((post) => (post.primaryCategory ?? post.category) === category && !post.draft && !post.unpublished);

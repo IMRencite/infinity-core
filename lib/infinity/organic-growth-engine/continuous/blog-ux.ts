@@ -521,6 +521,7 @@ export function renderBlogArticleShell(input: {
   featured_reads_html?: string;
   venture_id?: string;
   archive_root?: string;
+  hideWhenNoDiscovery?: boolean;
 }): string {
   const ventureId = input.venture_id ?? "occupancynpv";
   const archiveRoot = input.archive_root ?? "/blog";

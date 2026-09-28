@@ -303,7 +303,6 @@ export async function executeOrganicScheduledWorkflow(input: {
         execute_publish: true,
         resolved_at: input.hold.resolved_at ?? input.now,
       },
-      execute_publish: true,
       pre_publish: {
         mode: "PRE_PUBLISH",
         url: live.public_url,

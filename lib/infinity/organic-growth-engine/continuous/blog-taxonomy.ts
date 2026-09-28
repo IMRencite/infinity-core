@@ -216,8 +216,18 @@ export function blogSitemapUrls(input: {
   return [...urls];
 }
 
-export function taxonomyChipHtml(kind: BlogTaxonomyKind, label: string, surface: "light" | "hero" = "light"): string {
-  const href = kind === "category" ? blogCategoryArchivePath(label) : blogTagArchivePath(label);
+export function taxonomyChipHtml(
+  kind: BlogTaxonomyKind,
+  label: string,
+  surface: "light" | "hero" = "light",
+  archiveRoot?: string,
+): string {
+  const href =
+    archiveRoot == null
+      ? kind === "category"
+        ? blogCategoryArchivePath(label)
+        : blogTagArchivePath(label)
+      : `${archiveRoot.replace(/\/+$/, "")}/${kind === "category" ? "category" : "tag"}/${taxonomySlug(label)}/`;
   const attr = kind === "category" ? "data-blog-category" : "data-blog-tag";
   const display = kind === "category" ? `[ ${label.toUpperCase()} ]` : `[ ${label} ]`;
   return `<a href=${JSON.stringify(href)} className="onpv-taxonomy-chip" ${attr}=${JSON.stringify(label)} data-blog-taxonomy-link="${kind}" data-blog-taxonomy-chip="true" data-blog-taxonomy-kind="${kind}" data-blog-taxonomy-surface="${surface}">${display}</a>`;

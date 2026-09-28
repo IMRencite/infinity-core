@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { RecoveryLandingForm } from "@/components/auth/recovery-landing-form";
 
 export default function RecoveryLandingPage() {
@@ -7,7 +8,9 @@ export default function RecoveryLandingPage() {
         <h1 className="text-xl font-semibold text-white">Password reset</h1>
         <p className="text-sm text-zinc-500">Infinity HQ</p>
       </div>
-      <RecoveryLandingForm />
+      <Suspense fallback={<p className="text-center text-sm text-zinc-500">Loading…</p>}>
+        <RecoveryLandingForm />
+      </Suspense>
     </div>
   );
 }

@@ -18,7 +18,7 @@ export function occupancynpvEditorialBlogPageSource(input: {
   featured_image: string;
   featured_alt: string;
   breadcrumbs: Array<{ href: string; label: string }>;
-  importDepth: string;
+  importDepth: "../../" | "../" | "../../../" | "../../../../";
   related_html?: string;
 }): string {
   const posts = occupancynpvPublishedBlogPosts();

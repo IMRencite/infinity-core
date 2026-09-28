@@ -78,7 +78,14 @@ export type DurableBlogObligation = {
   decision_owner: string | null;
   decided_at: string | null;
   updated_at: string;
+  is_test?: boolean;
+  execution_class?: "PRODUCTION" | "STAGED_TEST";
+  provenance?: "REAL_CRON_CREATED" | "STAGED_TEST_CREATED" | string;
 };
+
+export function isProductionOrganicObligation(row: DurableBlogObligation): boolean {
+  return row.is_test !== true && row.execution_class !== "STAGED_TEST" && row.provenance !== "STAGED_TEST_CREATED";
+}
 
 export type BlogObligationEvent = {
   id: string;

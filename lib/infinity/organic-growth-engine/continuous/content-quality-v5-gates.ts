@@ -69,7 +69,7 @@ export function evaluateTopicPurityGateV2(input: { boundary: PageTopicBoundary; 
 }
 
 export function evaluateVentureIsolationGateV2(input: { venture_id: string; text: string }): OrganicNamedGate {
-  const base = evaluateVentureIsolationGate(input);
+  const base = evaluateVentureIsolationGate({ venture_id: input.venture_id, html_or_text: input.text });
   return {
     gate: "VentureIsolationGateV2",
     result: base.result,

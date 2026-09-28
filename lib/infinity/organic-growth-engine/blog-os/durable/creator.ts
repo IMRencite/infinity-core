@@ -40,6 +40,8 @@ export function createDailyBlogObligation(input: {
 }): { result: "INSERTED" | "CONFLICT_NOOP"; obligation: DurableBlogObligation } {
   const operating_date = operatingDateInTimezone(input.now);
   const started = input.now;
+  const stagedTest =
+    input.actor === "TEST" || input.venture_id.startsWith("test-") || input.venture_id === "test-venture";
   const created: DurableBlogObligation = {
     id: `blog:${input.venture_id}:${operating_date}`,
     venture_id: input.venture_id,
@@ -66,6 +68,9 @@ export function createDailyBlogObligation(input: {
     decision_owner: null,
     decided_at: null,
     updated_at: input.now,
+    is_test: stagedTest,
+    execution_class: stagedTest ? "STAGED_TEST" : "PRODUCTION",
+    provenance: stagedTest ? "STAGED_TEST_CREATED" : input.actor === "VERCEL_CRON" ? "REAL_CRON_CREATED" : undefined,
   };
   const inserted = input.store.insertDailyObligation(created);
   input.store.recordSchedulerEvent({

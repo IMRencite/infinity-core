@@ -32,7 +32,11 @@ import { evaluateExternalCommunicationObserver, evaluateFailedDeploymentAlert, e
 import { evaluateShadowCompose, executeNoSendCanary, FOUNDER_TRIAL_INBOUND_TEXT, evaluateCommunicationProviderIdentityParityGate, evaluateCommunicationProviderReadCanaryGate } from "../canary";
 import { remainingPacingFromProvider, evaluateCommunicationPacingAnchorGate, evaluateSloMargin, desiredNaturalPacingMs, COMMUNICATION_SCHEDULER_CADENCE_MS } from "../pacing";
 import { markRecoveredTurn, evaluateRecoveredTurnMonotonicityGate, resetRecoveredTurns } from "../recovered";
-import { evaluateHistoricalInboundCoverageGate, evaluateCommunicationCrossPathSendIdempotencyGate, evaluateProviderInboundCoverage } from "../coverage";
+import {
+  evaluateHistoricalInboundCoverageGate,
+  evaluateCommunicationCrossPathSendOutcomeGate,
+  evaluateProviderInboundCoverage,
+} from "../coverage";
 import { attachEvidenceClass, evaluateGateEvidenceClassIntegrity } from "../evidence";
 import { normalizeCommunicationTimestamp, evaluateCommunicationTimestampNormalizationGate } from "../timestamps";
 import { evaluateCrossSystemRuntimeIsolation } from "../isolation-core";
@@ -270,7 +274,7 @@ describe("communication release-parity v2", () => {
     });
     expect(first.ok).toBe(true);
     expect(second).toBe("EXISTING");
-    expect(evaluateCommunicationCrossPathSendIdempotencyGate({ first: "OK", second: "EXISTING" }).result).toBe("PASS");
+    expect(evaluateCommunicationCrossPathSendOutcomeGate({ first: "OK", second: "EXISTING" }).result).toBe("PASS");
   });
 
   it("historical inbounds map to covered or suppressed", () => {

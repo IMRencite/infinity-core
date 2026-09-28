@@ -11,10 +11,8 @@ import { evaluateOrganicDuplicateIntentGate } from "./gates";
 import { liveOccupancyNpvQuestionAssets } from "./live-catalog";
 import { evaluateOrganicInternalLinkGate } from "./links";
 import {
-  OCCUPANCYNPV_LIVE_CAP_RATE_DIRECT_ANSWER,
   OCCUPANCYNPV_LIVE_CAP_RATE_QUESTION,
-  occupancynpvCapRateFaqs,
-  occupancynpvLiveCapRateDraftText,
+  occupancynpvLiveCapRateDraft,
   occupancynpvLiveCapRatePage,
 } from "./occupancynpv-live-page";
 import { deployOccupancyNpvOrganicLivePage, fetchPublicHtml } from "./occupancynpv-publisher";
@@ -46,66 +44,6 @@ import { buildVentureTopicGraph } from "./graph";
 
 export const OCCUPANCYNPV_ORGANIC_LIVE_PROOF_PATH =
   ".infinity/organic-growth-engine/occupancynpv-organic-v2-live-publish-proof.json" as const;
-
-export function occupancynpvLiveCapRateDraft(): OrganicDraft {
-  const page = occupancynpvLiveCapRatePage();
-  const geo = planGeoAnswer({
-    question: OCCUPANCYNPV_LIVE_CAP_RATE_QUESTION,
-    topic: "Cap Rates",
-    entity: "Commercial Real Estate",
-  });
-  const body = occupancynpvLiveCapRateDraftText();
-  return {
-    title: page.title,
-    meta_description: page.metaDescription,
-    h1: OCCUPANCYNPV_LIVE_CAP_RATE_QUESTION,
-    headings: [
-      "What is a cap rate?",
-      "How the calculation works",
-      "Worked teaching sample",
-      "How to calculate property value from NOI and the ratio",
-      "What a high or low ratio implies",
-      "Comparisons: cash-on-cash return and IRR",
-      "Limitations and common mistakes",
-    ],
-    body: `${geo.direct_answer} ${body}`,
-    direct_answer: OCCUPANCYNPV_LIVE_CAP_RATE_DIRECT_ANSWER,
-    citations: [
-      {
-        source: "https://www.investopedia.com/terms/c/capitalizationrate.asp",
-        source_type: "authority",
-        published_at: "2024-01-01",
-        retrieved_at: "2026-09-17",
-        claim: "Cap rate relates income to property value",
-      },
-      {
-        source: "https://www.investopedia.com/terms/n/noi.asp",
-        source_type: "authority",
-        published_at: "2024-01-01",
-        retrieved_at: "2026-09-17",
-        claim: "NOI is income after operating expenses and before debt service",
-      },
-    ],
-    schema: ["Organization", "WebSite", "WebPage", "Article", "BreadcrumbList", "SpeakableSpecification", "FAQPage"],
-    canonical: OCCUPANCYNPV_LIVE_CAP_RATE_PATH,
-    breadcrumbs: ["Home", "Commercial lease NPV", OCCUPANCYNPV_LIVE_CAP_RATE_QUESTION],
-    internal_links: [
-      "/commercial-lease-npv/",
-      "/commercial-lease-npv/what-is-npv-in-a-commercial-lease/",
-      "/occupancy-costs/what-is-cam-in-a-commercial-lease/",
-      "/compare-commercial-leases",
-    ],
-    word_count: `${geo.direct_answer} ${body}`.split(/\s+/).length,
-    visible_faqs: occupancynpvCapRateFaqs(),
-    speakable_selectors: ["#direct-answer", "#summary", "#key-takeaways"],
-    date_published: "2026-09-17",
-    date_modified: "2026-09-17",
-    page_kind: "EVERGREEN_RESOURCE",
-    origin: "https://occupancynpv.com",
-    about: ["capitalization rate", "net operating income"],
-    mentions: ["commercial lease NPV", "cash-on-cash return", "IRR"],
-  };
-}
 
 export function evaluateOrganicLiveUrlTruthGate(input: {
   status: number;

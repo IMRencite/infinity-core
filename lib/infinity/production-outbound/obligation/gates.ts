@@ -206,7 +206,4 @@ export {
 } from "./canary";
 export { evaluateCommunicationWatchdogIndependenceGate, evaluateExternalCommunicationObserver } from "./observer";
 export { evaluateRecoveredTurnMonotonicityGate } from "./recovered";
-export {
-  evaluateHistoricalInboundCoverageGate,
-  evaluateCommunicationCrossPathSendIdempotencyGate,
-} from "./coverage";
+export { evaluateHistoricalInboundCoverageGate, evaluateCommunicationCrossPathSendOutcomeGate } from "./coverage";
