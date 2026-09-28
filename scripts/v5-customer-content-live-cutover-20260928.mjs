@@ -21,7 +21,7 @@ const OCC_PATHS = [
   "/blog/occupancy-costs/cam-first-year/",
   "/lease-comparison/how-do-you-compare-two-commercial-lease-options/",
   "/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/",
-  "/blog/leasing/what-is-occupancy-cost-versus-rent/",
+  "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
 ];
 
 const CT_PATHS = [

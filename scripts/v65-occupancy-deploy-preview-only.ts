@@ -1,12 +1,9 @@
 import { writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
-import { CRE_VERCEL_PROJECT_ID } from "../lib/infinity/venture-operating-scale/constants";
+import { CRE_VERCEL_PROJECT_ID, OCCUPANCYNPV_DOMAIN } from "../lib/infinity/venture-operating-scale/constants";
 import { loadServerEnvFromLocalFile, reloadVercelFromLocalFile } from "../lib/infinity/communication-provider/load-local-env";
 import { activateVercelTokenForProject } from "../lib/infinity/commercialization/providers/vercel/token-select";
-import {
-  deployOccupancyNpvOrganicLivePage,
-  OCCUPANCYNPV_DOMAIN,
-} from "../lib/infinity/organic-growth-engine/continuous/occupancynpv-publisher";
+import { deployOccupancyNpvOrganicLivePage } from "../lib/infinity/organic-growth-engine/continuous/occupancynpv-publisher";
 import { VercelDomainBindingAdapter } from "../lib/infinity/commercialization/providers/vercel/domain-binding-adapter";
 
 const reportPath = ".infinity/blog-os/v5-occupancy-candidate-deploy-20260928.json";
@@ -23,6 +20,7 @@ async function main() {
     if (!deploymentId?.startsWith("dpl_")) throw new Error("DEPLOYMENT_ID_REQUIRED");
     const vercel = new VercelDomainBindingAdapter();
     const alias = await vercel.assignDeploymentAlias(deploymentId, OCCUPANCYNPV_DOMAIN);
+    const promote = await vercel.promoteDeployment(CRE_VERCEL_PROJECT_ID, deploymentId);
     const report = {
       collected_at: new Date().toISOString(),
       release_sha: releaseSha,
@@ -30,11 +28,12 @@ async function main() {
       deployment_id: deploymentId,
       domain: OCCUPANCYNPV_DOMAIN,
       aliased: alias.ok,
-      safe_error: alias.ok ? null : alias.safeError ?? "VERCEL_ALIAS_FAILED",
+      promote_ok: promote.ok,
+      safe_error: alias.ok || promote.ok ? null : alias.safeError ?? promote.safeError ?? "VERCEL_ALIAS_FAILED",
     };
     writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
     console.log(JSON.stringify(report, null, 2));
-    if (!alias.ok) process.exit(1);
+    if (!alias.ok && !promote.ok) process.exit(1);
     return;
   }
 
