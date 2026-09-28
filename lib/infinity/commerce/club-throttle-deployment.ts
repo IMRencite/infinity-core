@@ -47,7 +47,10 @@ export async function executeClubThrottleProductionDeployment(input: {
   persistEvidence?: boolean;
   pollAttempts?: number;
   pollDelayMs?: number;
+  /** When false, do not assign clubthrottle.com to the deployment. */
+  aliasProduction?: boolean;
 } = {}) {
+  const aliasProduction = input.aliasProduction !== false;
   if (input.deploy !== false) {
     loadServerEnvFromLocalFile();
     reloadVercelFromLocalFile();
@@ -99,9 +102,12 @@ export async function executeClubThrottleProductionDeployment(input: {
             deploymentUrl = status.url.startsWith("http") ? status.url : `https://${status.url}`;
           }
           if (status.readyState === "READY") {
-            const alias = await vercel.assignDeploymentAlias(created.id, "clubthrottle.com");
-            deployed = alias.ok;
-            if (!alias.ok) safeError = alias.safeError ?? "VERCEL_ALIAS_FAILED";
+            deployed = true;
+            if (aliasProduction) {
+              const alias = await vercel.assignDeploymentAlias(created.id, "clubthrottle.com");
+              deployed = alias.ok;
+              if (!alias.ok) safeError = alias.safeError ?? "VERCEL_ALIAS_FAILED";
+            }
             break;
           }
           if (status.readyState === "ERROR" || status.readyState === "CANCELED") {

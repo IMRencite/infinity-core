@@ -1,10 +1,14 @@
 import styles from "./operations-room.module.css";
+import { INFINITY_OS_LOGO_SRC } from "./infinity-os-brand-logo";
 
 export function OperationsHeader() {
   return (
     <header>
       <p className={styles.heroKicker}>Infinity OS · Autonomous Venture Operations</p>
-      <h1 className={styles.heroTitle}>Infinity OS</h1>
+      <div className={styles.heroLogo} data-infinity-os-hero-logo="true">
+        <img src={INFINITY_OS_LOGO_SRC} alt="Infinity OS" width={320} height={82} decoding="async" />
+      </div>
+      <h1 className={styles.heroTitleVisuallyHidden}>Infinity OS</h1>
       <p className={styles.heroLead}>
         Infinity researches, validates, builds, launches, markets, sells, and operates ventures. This is the public
         observation layer of a continuously running autonomous headquarters.

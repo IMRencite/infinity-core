@@ -2,13 +2,19 @@ import type { PlannedPage } from "@/lib/infinity/venture-website-architecture/ty
 import { innerPageShell } from "@/lib/infinity/venture-website-architecture/page-sources";
 import { buildConnectedSchemaGraph, occupancynpvOrganization, type SchemaFaqItem } from "./schema-standard";
 import type { OrganicDraft } from "./quality";
+import { occupancynpvFeaturedEditorialFor } from "./occupancynpv-featured-visuals";
+import { occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
+import { occupancyCamFirstYearV5Body } from "./occupancy-v5-body-cam-first-year";
+import { occupancynpvEditorialBlogPageSource } from "./occupancynpv-editorial-blog-page";
 
 export const OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION =
   "How should a tenant treat CAM in the first operating year?" as const;
 export const OCCUPANCYNPV_CAM_FIRST_YEAR_PATH = "/blog/occupancy-costs/cam-first-year/" as const;
 export const OCCUPANCYNPV_CAM_FIRST_YEAR_DIRECT_ANSWER =
-  "Treat first-year CAM as an occupancy-cost estimate that still has to sit on the same timeline as rent, not as a finished bill. Use the lease estimate or stop language, label what is projected versus reconciled, and do not treat a first-year CAM figure as a market average or as a property cap rate." as const;
+  "Treat first-year CAM as an occupancy-cost estimate that still has to sit on the occupancy-cost timeline with rent, not a finished bill. Use the lease estimate or stop language, label what is projected versus reconciled, and do not treat a first-year CAM figure as a market average or as a property cap rate." as const;
 export const OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER = "first-year CAM belongs on the occupancy-cost timeline" as const;
+export const OCCUPANCYNPV_CAM_FIRST_YEAR_ASSET_ID = "blog-cam-first-year" as const;
+export const OCCUPANCYNPV_CAM_FIRST_YEAR_ASSET_VERSION = "cam-first-year-v3" as const;
 
 export const OCCUPANCYNPV_CAM_VISUALS = {
   featured_image: "/media/hero-interior.webp",
@@ -45,6 +51,22 @@ export function occupancynpvCamFirstYearFaqs(): SchemaFaqItem[] {
       question: "Can OccupancyNPV invent a missing CAM number?",
       answer: "No. OccupancyNPV compares occupancy-cost cash you enter. It does not invent a market-average CAM or replace reading the lease. The 3-day free trial has no credit card and no automatic billing.",
     },
+    {
+      question: "What is the difference between a CAM estimate, an expense stop, and a base year?",
+      answer: "An estimate is a budget. An expense stop versus a base-year comparison changes who pays the overrun. A stop sets a ceiling the landlord absorbs above. A base year sets a starting operating-expense year. Neither is automatically the cash you will write in month one.",
+    },
+    {
+      question: "What if the first operating year is not twelve months?",
+      answer: "Treat stub-year cash as a partial period. Mid-year occupancy means you may owe a pro-rata share, not a full-year CAM line. Do not annualize a four-month stub and call it year one.",
+    },
+    {
+      question: "Who pays a CAM reconciliation deficit?",
+      answer: "The lease says who pays a deficit. If the clause is silent, do not guess. Demand the backup invoices before you treat a reconciliation deficit as settled cash.",
+    },
+    {
+      question: "What if the landlord will not give a first-year CAM budget?",
+      answer: "That is a no CAM budget case. Leave the cell blank. Do not invent a market average. Ask for last year's actuals or walk from a lease that hides the occupancy extra.",
+    },
   ];
 }
 
@@ -74,7 +96,7 @@ export function occupancynpvCamFirstYearSchema() {
       faqs: occupancynpvCamFirstYearFaqs(),
       visible_faqs: occupancynpvCamFirstYearFaqs(),
       date_published: "2026-09-24",
-      date_modified: "2026-09-24",
+      date_modified: "2026-09-25",
       author: { type: "Organization", name: "OccupancyNPV", url: "https://occupancynpv.com" },
       about: ["CAM", "first operating year", "occupancy cost"],
       mentions: ["common area maintenance", "expense stop", "commercial lease NPV"],
@@ -85,38 +107,20 @@ export function occupancynpvCamFirstYearSchema() {
 }
 
 export function occupancynpvCamFirstYearDraftText(): string {
-  return [
-    OCCUPANCYNPV_CAM_FIRST_YEAR_DIRECT_ANSWER,
-    "CAM is common-area maintenance and related operating extras a tenant may pay under a net or modified-gross lease. In the first operating year the number on the proposal is often a budget, a stop, or a pro-rata share of an incomplete year. Tenants should compare that figure the same way they compare rent: as cash that belongs on one occupancy-cost timeline.",
-    "Worked example: Lease A quotes $8,000 monthly rent and $14 per square foot of first-year CAM on 4,000 square feet, or $56,000 of CAM. Lease B quotes $7,400 monthly rent and $18 CAM, or $72,000 of CAM. Face rent makes B look cheaper. Year-one occupancy cash before other extras is $96,000 plus $56,000 on A versus $88,800 plus $72,000 on B. A is $152,000. B is $160,800. Lower rent did not win year one.",
-    "What owners, investors, and tenants can do: copy the CAM clause, the base year or stop, the first-year estimate, and the reconciliation rule onto the same worksheet as rent. Watch for a stub year that is not twelve months. Stress-test a 10 percent CAM overrun and a zero-reconciliation case. Review the actual lease, not a broker summary, before you treat the estimate as final.",
-    "Checklist for first-year CAM: estimate or stop amount, what expenses are included, whether the first year is a stub, when reconciliation happens, who pays a deficit, and whether a cap applies. Leave a cell blank if the document does not state the number. Do not invent a market-average CAM to finish the row.",
-    "Limitations: first-year CAM is not a property cap rate, not NOI, not a full building valuation, and not automatically the second-year CAM. OccupancyNPV does not guarantee a winner after discounting. A later year can flip the rank if CAM steps or a reconciliation deficit appears.",
-    "Common mistakes include comparing face rent and ignoring CAM, treating a first-year estimate as a final bill, mixing a calendar year with a lease year, using a building cap-rate screen as the tenant CAM number, and guessing a market CAM instead of leaving the cell blank.",
-    "Related pages: what CAM is in a commercial lease, the lease-input checklist, and how two lease options are compared. OccupancyNPV puts both occupancy-cost paths on one timeline. It does not invent missing bids. The 3-day free trial has no credit card and no automatic billing. Start at /pricing.",
-    "This resource is not legal advice, tax advice, or a substitute for reading the lease with counsel or your accountant.",
-  ].join(" ");
+  return occupancyCamFirstYearV5Body().body;
 }
 
 export function occupancynpvCamFirstYearDraft(): OrganicDraft {
   const page = occupancynpvCamFirstYearPage();
-  const body = occupancynpvCamFirstYearDraftText();
+  const v5 = occupancyCamFirstYearV5Body();
+  const body = v5.body;
   return {
     title: page.title,
     meta_description: page.metaDescription,
     h1: OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION,
-    headings: [
-      "What is CAM in the first operating year?",
-      "How should a tenant put first-year CAM on the timeline?",
-      "Worked example",
-      "What owners and tenants can do",
-      "First-year CAM checklist",
-      "Limitations and common mistakes",
-      "How OccupancyNPV uses the number",
-      "FAQ",
-    ],
+    headings: v5.headings,
     body,
-    direct_answer: OCCUPANCYNPV_CAM_FIRST_YEAR_DIRECT_ANSWER,
+    direct_answer: v5.answer,
     citations: [
       {
         source: "https://www.gsa.gov/real-estate/real-estate-services/leasing-policy",
@@ -144,10 +148,10 @@ export function occupancynpvCamFirstYearDraft(): OrganicDraft {
       "/pricing",
     ],
     word_count: body.split(/\s+/).length,
-    visible_faqs: occupancynpvCamFirstYearFaqs(),
+    visible_faqs: [...occupancynpvCamFirstYearFaqs(), ...v5.faqs],
     speakable_selectors: ["#direct-answer", "#key-takeaways"],
     date_published: "2026-09-24",
-    date_modified: "2026-09-24",
+    date_modified: "2026-09-25",
     page_kind: "BLOG_ARTICLE",
     origin: "https://occupancynpv.com",
     about: ["CAM", "first operating year", "occupancy cost"],
@@ -181,92 +185,29 @@ export function occupancynpvCamFirstYearRenderedHtml(): string {
 
 export function occupancynpvCamFirstYearPageSource(): string {
   const page = occupancynpvCamFirstYearPage();
-  const crumbs = [
-    { href: "/", label: "Home" },
-    { href: "/occupancy-costs", label: "Occupancy costs" },
-    { href: page.route, label: OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION },
-  ];
-  const sources = [
-    { href: "https://www.gsa.gov/real-estate/real-estate-services/leasing-policy", label: "GSA — leasing policy" },
-    { href: "https://www.sba.gov/business-guide/manage-your-business/rent-commercial-space", label: "SBA — renting commercial space" },
-    { href: "/occupancy-costs/what-is-cam-in-a-commercial-lease/", label: "What is CAM in a commercial lease?" },
-  ];
-  const body = `
-        <header className="pv-hero pv-article-hero pv-hero-photo pv-hero-photo--article" data-section-type="HERO" data-section-id="hero" data-pattern-id="FOCUSED_HERO" data-above-fold-visual="true" data-surface="DEFAULT">
-          <figure className="pv-hero-media">
-            <img src="/media/hero-interior.webp" alt="Editorial commercial interior used as occupancy-cost context. Not a customer photo." width={1600} height={900} fetchPriority="high" decoding="async" />
-          </figure>
-          <div className="pv-hero-overlay" aria-hidden="true" />
-          <div className="vg-container pv-reading pv-hero-copy">
-            <p className="pv-eyebrow">Occupancy costs</p>
-            <h1 className="pv-display">${OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION}</h1>
-            <div id="direct-answer">
-              <p>${OCCUPANCYNPV_CAM_FIRST_YEAR_DIRECT_ANSWER}</p>
-            </div>
-            <p>${OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER} with rent, not beside it as an afterthought.</p>
-            <div className="pv-cta-panel pv-wide-module">
-              <p>Put the first-year CAM estimate on the same worksheet as rent before you argue about which lease is cheaper.</p>
-              <p><PrimaryCTA href="/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/">See the lease input checklist</PrimaryCTA></p>
-            </div>
-          </div>
-        </header>
-        <section className="pv-section" data-section-type="DEFINITION" data-surface="DEFAULT">
-          <div className="vg-container pv-reading">
-            <h2 id="what">What is CAM in the first operating year?</h2>
-            <p>CAM is common-area maintenance and related operating extras a tenant may pay under a net or modified-gross lease. In the first operating year the number on the proposal is often a budget, a stop, or a pro-rata share of an incomplete year.</p>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="PROCESS" data-surface="TINTED">
-          <div className="vg-container pv-reading">
-            <h2 id="timeline">How should a tenant put first-year CAM on the timeline?</h2>
-            <p>Copy the CAM clause, the base year or stop, the first-year estimate, and the reconciliation rule onto the same worksheet as rent. Watch for a stub year that is not twelve months. Stress-test a 10 percent CAM overrun and a zero-reconciliation case.</p>
-            <aside className="pv-callout" id="key-takeaways"><h3>Key takeaway</h3><p>Label first-year CAM as projected until a reconciliation exists. Do not invent a market average.</p></aside>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="EXAMPLE" data-surface="DEFAULT">
-          <div className="vg-container pv-reading">
-            <h2 id="example">Worked example</h2>
-            <p>Lease A quotes $8,000 monthly rent and $14 per square foot of first-year CAM on 4,000 square feet, or $56,000 of CAM. Lease B quotes $7,400 monthly rent and $18 CAM, or $72,000 of CAM. Year-one occupancy cash before other extras is $152,000 on A and $160,800 on B. Lower rent did not win year one.</p>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="CHECKLIST" data-surface="DEFAULT">
-          <div className="vg-container pv-reading">
-            <h2 id="checklist">First-year CAM checklist</h2>
-            <p>What owners and tenants can do: record the estimate or stop amount, what expenses are included, whether the first year is a stub, when reconciliation happens, who pays a deficit, and whether a cap applies.</p>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="MISTAKES" data-surface="TINTED">
-          <div className="vg-container pv-reading">
-            <h2 id="mistakes">Limitations and common mistakes</h2>
-            <p>First-year CAM is not a property cap rate, not NOI, and not automatically the second-year CAM. OccupancyNPV does not guarantee a winner. Common mistakes include ignoring CAM, treating an estimate as a final bill, and guessing a market CAM.</p>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="PRODUCT" data-surface="SUBTLE">
-          <div className="vg-container pv-reading">
-            <h2 id="occupancynpv">How OccupancyNPV uses the number</h2>
-            <p>OccupancyNPV puts both occupancy-cost paths on one timeline. It does not invent missing bids. The 3-day free trial has no credit card and no automatic billing. Start at <a href="/pricing">/pricing</a>.</p>
-            <RelatedContent items={[
-              { href: "/occupancy-costs/what-is-cam-in-a-commercial-lease/", label: "What is CAM in a commercial lease?" },
-              { href: "/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/", label: "What numbers do you need to compare two commercial leases?" },
-              { href: "/lease-comparison/how-do-you-compare-two-commercial-lease-options/", label: "How do you compare two commercial lease options?" },
-              { href: "/pricing", label: "OccupancyNPV pricing and trial" },
-            ]} />
-            <p><PrimaryCTA href="/pricing">Start free trial</PrimaryCTA></p>
-          </div>
-        </section>
-        <section className="pv-section" data-section-type="FAQ" data-surface="TINTED">
-          <div className="vg-container pv-reading">
-            <h2>FAQ</h2>
-            ${occupancynpvCamFirstYearFaqs().map((row) => `<div><h3>${row.question}</h3><p>${row.answer}</p></div>`).join("\n            ")}
-          </div>
-        </section>
-        <section className="pv-source-board" data-section-type="AUTHORITY_REFERENCES" data-surface="SUBTLE">
-          <h2>Trusted sources</h2>
-          <AuthorityRefs items={${JSON.stringify(sources)}} />
-        </section>
-        <Disclosure>Use the figures in your lease proposals and confirm final terms against the actual lease documents.</Disclosure>`;
-  return innerPageShell({ page, importDepth: "../../../../", body }).replace(
-    /<SiteBreadcrumb items=\{[\s\S]*?\}\s*\/>/,
-    `<SiteBreadcrumb items={${JSON.stringify(crumbs)}} />`,
-  );
+  const draft = occupancynpvCamFirstYearDraft();
+  const post =
+    occupancynpvPublishedBlogPosts().find((row) => row.path === OCCUPANCYNPV_CAM_FIRST_YEAR_PATH) ?? {
+      path: OCCUPANCYNPV_CAM_FIRST_YEAR_PATH,
+      published: "2026-09-24",
+      primaryCategory: "Occupancy costs",
+      category: "Occupancy costs",
+      tags: ["CAM", "Occupancy costs", "First year"],
+      title: OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION,
+    };
+  const featured = occupancynpvFeaturedEditorialFor("cam-first-year");
+  return occupancynpvEditorialBlogPageSource({
+    page,
+    draft,
+    post,
+    featured_image: featured.path,
+    featured_alt: featured.alt,
+    importDepth: "../../../../",
+    breadcrumbs: [
+      { href: "/", label: "Home" },
+      { href: "/blog", label: "Blog" },
+      { href: "/blog/occupancy-costs/", label: "Occupancy costs" },
+      { href: page.route, label: OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION },
+    ],
+  });
 }

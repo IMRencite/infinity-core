@@ -1,0 +1,20 @@
+{
+  "collected_at": "2026-09-28T00:00:00.000Z",
+  "oauth_application": "Infinity OS Communications",
+  "do_not_create_new_client": true,
+  "required_scopes": ["https://www.googleapis.com/auth/gmail.readonly", "https://www.googleapis.com/auth/gmail.send", "openid", "email"],
+  "runtime_project": "infinity-runtime",
+  "env_vars": ["GMAIL_OAUTH_CLIENT_ID", "GMAIL_OAUTH_CLIENT_SECRET", "GMAIL_OAUTH_REFRESH_TOKEN", "GMAIL_SENDER_EMAIL"],
+  "founder_steps": [
+    "Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client (Infinity OS Communications)",
+    "OAuth consent screen → ensure test users or production status allows founder mailbox",
+    "Generate new authorization code via OAuth Playground or internal consent URL using the SAME client id (offline access, force prompt if needed)",
+    "Exchange code for refresh token; update GMAIL_OAUTH_REFRESH_TOKEN on Vercel project infinity-runtime (Production + Preview)",
+    "Run: node scripts/gmail-oauth-health-check.mjs (local with updated .env.local or after Vercel env sync)",
+    "Do not paste client secret, auth code, refresh token, or access token into chat or commits"
+  ],
+  "e1_thread_after_healthy": "1a0cd64dacdf68a1",
+  "e1_secondary_thread": "1a0c6c76504f13b9",
+  "health_check_script": "scripts/gmail-oauth-health-check.mjs",
+  "cursor_status": "FOUNDER_ACTION_REQUIRED until token_exchange PASS"
+}
