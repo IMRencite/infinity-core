@@ -23,7 +23,7 @@ export function occupancynpvEntityCreative(kind: "category" | "tag" | "article",
   if (kind === "article") {
     return {
       src: OCCUPANCYNPV_ARTICLE_HERO,
-      alt: "Editorial commercial building used as valuation context. Not a customer property.",
+      alt: "Commercial office building exterior used as article illustration.",
       role: "HERO",
     };
   }

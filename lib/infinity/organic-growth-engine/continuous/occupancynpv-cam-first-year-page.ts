@@ -18,7 +18,7 @@ export const OCCUPANCYNPV_CAM_FIRST_YEAR_ASSET_VERSION = "cam-first-year-v3" as 
 
 export const OCCUPANCYNPV_CAM_VISUALS = {
   featured_image: "/media/hero-interior.webp",
-  featured_alt: "Editorial commercial interior used as occupancy-cost context. Not a customer photo.",
+  featured_alt: "Empty commercial conference room with windows and a city view.",
   supporting_visual: true,
 } as const;
 
@@ -179,7 +179,7 @@ export function occupancynpvCamFirstYearRenderedHtml(): string {
   <p id="direct-answer">${draft.direct_answer}</p>
   <p>${OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER}.</p>
   <p>${draft.body}</p>
-  <figure><img src="/media/hero-building.webp" alt="Supporting occupancy-cost visual. Not a customer property." /></figure>
+  <figure><img src="/media/hero-building.webp" alt="Commercial building exterior illustrating occupancy-cost context." /></figure>
 </body></html>`;
 }
 

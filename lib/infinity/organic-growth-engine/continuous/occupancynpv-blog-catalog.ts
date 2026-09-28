@@ -44,7 +44,7 @@ export function occupancynpvPublishedBlogPosts(): OccupancyNpvBlogPost[] {
       categories: [OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY],
       tags: ["Interest Rates", "Cap Rates", "Commercial Real Estate"],
       image: "/media/hero-building.webp",
-      image_alt: "Editorial commercial building used as valuation context. Not a customer property.",
+      image_alt: "Commercial office building exterior at late afternoon light.",
       featured: true,
       reading_time: "16 min read",
     },

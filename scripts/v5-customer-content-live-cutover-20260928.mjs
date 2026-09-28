@@ -15,6 +15,26 @@ import { writeFileSync } from "node:fs";
 const LEAK =
   /learning check|learning test|teaching sample|actionability|section-depth|founder review|compose pass|preview pass|publication hold|\bcandidate\b|\bfixture\b|\bgate\b|\bQC\b|cadence|provider readiness|store id|after this page a reader should|for learning the method/i;
 
+const ACCESSIBILITY_INTERNAL =
+  /teaching diagram|teaching context|editorial context|not a customer|not a client|generated for|internal use|\bcompose\b|\bpreview\b|publication hold|founder review/i;
+
+function accessibilityLeaksFromHtml(html) {
+  const hits = new Set();
+  const attrRe = /\b(?:alt|title|aria-label)=["']([^"']+)["']/gi;
+  let m;
+  while ((m = attrRe.exec(html))) {
+    const val = m[1];
+    const leaks = val.match(new RegExp(ACCESSIBILITY_INTERNAL.source, "gi")) ?? [];
+    for (const leak of leaks) hits.add(leak.toLowerCase());
+  }
+  const figRe = /<figcaption[^>]*>([\s\S]*?)<\/figcaption>/gi;
+  while ((m = figRe.exec(html))) {
+    const leaks = m[1].match(new RegExp(ACCESSIBILITY_INTERNAL.source, "gi")) ?? [];
+    for (const leak of leaks) hits.add(leak.toLowerCase());
+  }
+  return [...hits];
+}
+
 const OCC_PATHS = [
   "/blog/valuation/how-is-cap-rate-calculated-for-a-building/",
   "/blog/valuation/how-interest-rates-affect-commercial-property-values/",
@@ -60,6 +80,7 @@ async function qaBase(baseUrl, mode) {
     const leaks = visible.match(new RegExp(LEAK.source, "gi")) ?? [];
     const foreign =
       mode === "club" ? (visible.match(new RegExp(CT_FOREIGN.source, "gi")) ?? []) : [];
+    const a11y = mode === "occupancy" ? accessibilityLeaksFromHtml(html) : [];
     const words = visible.split(/\s+/).filter(Boolean).length;
     results.push({
       path,
@@ -68,7 +89,13 @@ async function qaBase(baseUrl, mode) {
       words,
       leak_hits: [...new Set(leaks.map((x) => x.toLowerCase()))],
       foreign_hits: [...new Set(foreign.map((x) => x.toLowerCase()))],
-      pass: res.ok && leaks.length === 0 && foreign.length === 0 && words >= 800,
+      accessibility_leak_hits: a11y,
+      pass:
+        res.ok
+        && leaks.length === 0
+        && foreign.length === 0
+        && a11y.length === 0
+        && words >= 800,
       body_hash: createHash("sha256").update(visible).digest("hex").slice(0, 16),
     });
   }
