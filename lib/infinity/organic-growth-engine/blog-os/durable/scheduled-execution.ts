@@ -1,4 +1,6 @@
 import { evaluateBlogContentQualityGate, evaluateBlogVisualAssetGate } from "@/lib/infinity/organic-growth-engine/continuous/blog-quality-core";
+import { runBoundedConsumerEditorialRepair } from "@/lib/infinity/organic-growth-engine/continuous/consumer-editorial-publish-loop";
+import type { OrganicDraft } from "@/lib/infinity/organic-growth-engine/continuous/quality";
 import { evaluateOrganicContentQualityGate } from "@/lib/infinity/organic-growth-engine/continuous/quality";
 import {
   OCCUPANCYNPV_CAM_FIRST_YEAR_MARKER,
@@ -59,6 +61,11 @@ export type OrganicScheduledAdapters = {
   }) => Promise<OrganicLivePublishResult>;
   fetchPublic?: (url: string) => Promise<{ status: number; html: string }>;
   draft?: () => ReturnType<typeof occupancynpvCamFirstYearDraft>;
+  repairConsumerDraft?: (ctx: {
+    hints: string[];
+    attempt: number;
+    prior: OrganicDraft;
+  }) => OrganicDraft | null;
   visuals?: {
     featured_image?: string;
     featured_alt?: string;
@@ -222,7 +229,19 @@ export async function executeOrganicScheduledWorkflow(input: {
   }
 
   if (current.pipeline_state === "DRAFTED") {
-    const draft = input.adapters.draft?.() ?? occupancynpvCamFirstYearDraft();
+    const initialDraft = input.adapters.draft?.() ?? occupancynpvCamFirstYearDraft();
+    const editorial = runBoundedConsumerEditorialRepair({
+      draft: initialDraft,
+      repair: input.adapters.repairConsumerDraft,
+    });
+    if (!editorial.publish_allowed) {
+      const hints = editorial.attempts.flatMap((row) => row.revision_hints);
+      return fail(input.store, current, input.now, "CONTENT_QC_FAILED", [
+        editorial.escalation ?? "CONSUMER_EDITORIAL_QC_FAILED",
+        ...hints.slice(0, 8),
+      ]);
+    }
+    const draft = editorial.final_draft;
     const content = evaluateBlogContentQualityGate(draft);
     const organic = evaluateOrganicContentQualityGate(draft, { complexity: "MODERATE" });
     if (content.result !== "PASS" || organic.result !== "PASS") {

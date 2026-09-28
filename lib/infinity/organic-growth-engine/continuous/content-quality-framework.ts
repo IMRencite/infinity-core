@@ -20,6 +20,10 @@ import {
   evaluateDuplicateDraftGate,
   evaluateEmptySectionGate,
 } from "./content-normalization";
+import {
+  evaluateConsumerEditorialPublishStack,
+  isConsumerEditorialDraft,
+} from "./consumer-editorial-publish-loop";
 
 export const CONTENT_QUALITY_FRAMEWORK = "ContentQualityFramework" as const;
 export const CONTENT_QUALITY_FRAMEWORK_VERSION = "content-quality-framework-v4" as const;
@@ -206,6 +210,10 @@ export function evaluateContentQualityFramework(draft: OrganicDraft, plan = reso
   const normalization = v4 ? evaluateContentNormalizationGate({ body: draft.body }) : { result: "PASS" as const, reasons: [] as string[] };
   const empty = v4 ? evaluateEmptySectionGate({ headings: draft.headings, body: draft.body }) : { result: "PASS" as const, reasons: [] as string[] };
   const duplicate = v4 ? evaluateDuplicateDraftGate({ body: draft.body, headings: draft.headings }) : { result: "PASS" as const, reasons: [] as string[] };
+  const consumerEditorial =
+    v4 && isConsumerEditorialDraft(draft)
+      ? evaluateConsumerEditorialPublishStack({ draft })
+      : { result: "PASS" as const, reasons: [] as string[] };
   const reasons = [
     ...baseline.reasons,
     ...overlayReasons,
@@ -227,6 +235,7 @@ export function evaluateContentQualityFramework(draft: OrganicDraft, plan = reso
     ...(normalization.result === "FAIL" ? normalization.reasons : []),
     ...(empty.result === "FAIL" ? empty.reasons : []),
     ...(duplicate.result === "FAIL" ? duplicate.reasons : []),
+    ...(consumerEditorial.result === "FAIL" ? consumerEditorial.reasons.map((row) => `CONSUMER_EDITORIAL:${row}`) : []),
   ];
   return {
     gate: CONTENT_QUALITY_FRAMEWORK,

@@ -75,7 +75,8 @@
   height: auto;
   background: transparent;
   object-fit: contain;
-  mix-blend-mode: normal;
+  /* Drop opaque matte fringe on dark hero without altering source PNG bytes. */
+  mix-blend-mode: lighten;
 }
 
 .heroTitleVisuallyHidden {

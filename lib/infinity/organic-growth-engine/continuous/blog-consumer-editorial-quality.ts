@@ -136,14 +136,26 @@ export function evaluateBlogConsumerEditorialQualityGate(
   const reasons: string[] = [];
 
   const opening = draft.body.slice(0, 420);
-  if (!/\?|you know|you've|when you|after the ride|at the lot|peel off|gas station/i.test(opening)) {
-    reasons.push("WEAK_HOOK");
-  }
-  if (!/for most riders|in practice|the better bet|here is the catch|that sounds minor until/i.test(text)) {
-    reasons.push("LOW_EDITORIAL_VOICE");
-  }
-  if (!/before you cut tags|30.?second|keep or return|exchange when|return when|do this/i.test(text)) {
-    reasons.push("WEAK_ACTIONABILITY");
+  if (resolved.venture_id === "club-throttle") {
+    if (!/\?|you know|you've|when you|after the ride|at the lot|peel off|gas station/i.test(opening)) {
+      reasons.push("WEAK_HOOK");
+    }
+    if (!/for most riders|in practice|the better bet|here is the catch|that sounds minor until/i.test(text)) {
+      reasons.push("LOW_EDITORIAL_VOICE");
+    }
+    if (!/before you cut tags|30.?second|keep or return|exchange when|return when|do this/i.test(text)) {
+      reasons.push("WEAK_ACTIONABILITY");
+    }
+  } else if (resolved.venture_id === "occupancynpv") {
+    if (!/\?|when you|before you|first year|operating year|reconcil|budget|lease|tenant|landlord|surprise/i.test(opening)) {
+      reasons.push("WEAK_HOOK");
+    }
+    if (!/in practice|operators|tenants|landlords|the better read|here is the catch|watch for/i.test(text)) {
+      reasons.push("LOW_EDITORIAL_VOICE");
+    }
+    if (!/checklist|compare|reconcile|before you sign|next step|decision|stress-test|review/i.test(text)) {
+      reasons.push("WEAK_ACTIONABILITY");
+    }
   }
   const gates = [
     evaluateBlogManualToneDetector({ draft, profile: resolved }),
