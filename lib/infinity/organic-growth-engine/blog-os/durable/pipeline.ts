@@ -9,6 +9,7 @@ export function attemptPublish(input: {
   now: string;
   hold: DurableBlogHold | null;
   pre_publish: RenderedPageInput;
+  execute_publish?: boolean;
 }): { ok: boolean; reason: string } {
   const check = evaluateRenderedPageVerificationCheck({ ...input.pre_publish, mode: "PRE_PUBLISH" });
   return input.store.transition({
@@ -19,6 +20,7 @@ export function attemptPublish(input: {
     invoked_by: "PIPELINE",
     now: input.now,
     hold: input.hold,
+    execute_publish: input.execute_publish ?? true,
     pre_publish: check.result === "PASS" ? "PASS" : "FAIL",
   });
 }

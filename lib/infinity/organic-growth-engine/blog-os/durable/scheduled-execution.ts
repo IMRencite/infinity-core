@@ -316,6 +316,7 @@ export async function executeOrganicScheduledWorkflow(input: {
       venture_id: current.venture_id,
       operating_date: current.operating_date,
       now: input.now,
+      execute_publish: true,
       hold: {
         ...input.hold,
         hold_state: "CLEARED",
