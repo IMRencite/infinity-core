@@ -1,5 +1,6 @@
 import type { BuildManifest, PersistedBuild } from "./types";
 import { getBuildTemplate } from "./template-registry";
+import { autonomousAgentMayUseQcBypass } from "./venture-production-qc-enforcement";
 
 export function validateManifestAgainstWorkspace(input: {
   manifest: BuildManifest;
@@ -45,4 +46,9 @@ export function validateBuildInternallyComplete(build: PersistedBuild): boolean 
 /** Compilation-only internal complete does not satisfy venture launch visual QC — see venture-launch-qc-contract. */
 export function buildCompilationIsNotVentureLaunchProof(): true {
   return true;
+}
+
+/** Venture launch requires rendered + post-deploy QC; autonomous agents cannot bypass. */
+export function ventureLaunchRequiresProductionQcEvidence(): boolean {
+  return !autonomousAgentMayUseQcBypass();
 }

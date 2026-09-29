@@ -10,15 +10,30 @@ export const VENTURE_RELEASE_PIPELINE_STAGES = [
   "DESKTOP_VISUAL_QC",
   "TABLET_VISUAL_QC",
   "MOBILE_VISUAL_QC",
+  "PREVIEW_BRAND_CONTRACT_QC",
   "SCROLL_QC",
   "INTERACTION_QC",
   "CONTENT_QC",
   "RELEASE_CANDIDATE",
   "PRODUCTION_DEPLOY",
+  "PRODUCTION_IDENTITY_VERIFICATION",
   "POST_DEPLOY_VISUAL_VERIFICATION",
+  "PRODUCTION_BRAND_CONTRACT_QC",
   "LIVE_VERIFIED",
   "LIVE_QC_FAILED",
 ] as const;
+
+export type VentureDeploymentIdentity = {
+  canonicalSourceProject: string;
+  deploymentSource: string;
+  deploymentProject: string;
+  deploymentProjectId: string;
+  productionDomain: string;
+  productionBranch: string;
+  expectedReleaseSha: string | null;
+  observedReleaseSha: string | null;
+  mirrorStep: string | null;
+};
 
 export type VentureReleasePipelineStage = (typeof VENTURE_RELEASE_PIPELINE_STAGES)[number];
 
@@ -43,6 +58,10 @@ export function evaluateVentureLaunchQcBlocking(input: {
   renderedVisualQcPassed: boolean;
   scrollQcPassed: boolean;
   postDeployVisualQcPassed: boolean;
+  previewBrandContractQcPassed?: boolean;
+  productionBrandContractQcPassed?: boolean;
+  productionIdentityVerified?: boolean;
+  deploymentIdentity?: VentureDeploymentIdentity | null;
 }): {
   gate: typeof VENTURE_LAUNCH_QC_GATE;
   result: "PASS" | "FAIL";
@@ -56,6 +75,12 @@ export function evaluateVentureLaunchQcBlocking(input: {
   if (!input.renderedVisualQcPassed) reasons.push("RENDERED_VISUAL_QC_REQUIRED");
   if (!input.scrollQcPassed) reasons.push("SCROLL_QC_REQUIRED");
   if (!input.postDeployVisualQcPassed) reasons.push("POST_DEPLOY_VISUAL_QC_REQUIRED");
+  if (input.previewBrandContractQcPassed === false) reasons.push("PREVIEW_BRAND_CONTRACT_QC_REQUIRED");
+  if (input.productionBrandContractQcPassed === false) reasons.push("PRODUCTION_BRAND_CONTRACT_QC_REQUIRED");
+  if (input.productionIdentityVerified === false) reasons.push("PRODUCTION_IDENTITY_NOT_VERIFIED");
+  if (input.deploymentIdentity?.deploymentProject && input.deploymentIdentity.deploymentProject !== "imros-public") {
+    reasons.push("DEPLOYMENT_PROJECT_MISMATCH");
+  }
   return {
     gate: VENTURE_LAUNCH_QC_GATE,
     result: reasons.length === 0 ? "PASS" : "FAIL",

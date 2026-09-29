@@ -18,6 +18,16 @@ import {
   type VentureVisualContract,
 } from "./venture-visual-contract";
 import { CUSTOMER_FACING_VIEWPORTS } from "./rendered-layout/customer-facing-gutter";
+import {
+  evaluateBrandAssetContrastGate,
+  BRAND_ASSET_CONTRAST_GATE,
+  darkWordmarkContrastFixture,
+} from "./brand-asset-contrast-gate";
+import {
+  evaluateBrandColorIntegrityGate,
+  BRAND_COLOR_INTEGRITY_GATE,
+  whiteBleedSymbolFixture,
+} from "./brand-color-integrity-gate";
 
 export const VENTURE_RENDERED_QUALITY_GATE = "VentureRenderedQualityGate" as const;
 export const RESPONSIVE_VENTURE_QUALITY_GATE = "ResponsiveVentureQualityGate" as const;
@@ -43,10 +53,17 @@ export function evaluateSecondaryLogoDimensionGate(
   if (!spec) {
     return { gate: "SecondaryLogoDimensionGate", result: "PASS", reasons: ["NO_SECONDARY_LOGO"] };
   }
-  const desktopMatch = markCss.match(/\.brandMark\s*\{[\s\S]*?width:\s*([\d.]+)rem/);
-  const desktopRem = desktopMatch ? Number(desktopMatch[1]) * 16 : 999;
-  if (desktopRem > spec.maxDesktopPx.width + 1) reasons.push("SECONDARY_LOGO_TOO_LARGE_DESKTOP");
+  const desktopBlock = markCss.match(/\.brandMark\s*\{([\s\S]*?)\}/)?.[1] ?? "";
+  const desktopWidthPx = Number(desktopBlock.match(/width:\s*([\d.]+)px/)?.[1] ?? 0);
+  const desktopHeightPx = Number(desktopBlock.match(/height:\s*([\d.]+)px/)?.[1] ?? 0);
+  if (desktopWidthPx < spec.minDesktopPx.width || desktopHeightPx < spec.minDesktopPx.height) {
+    reasons.push("SECONDARY_LOGO_TOO_SMALL_DESKTOP");
+  }
+  if (desktopWidthPx > spec.maxDesktopPx.width || desktopHeightPx > spec.maxDesktopPx.height) {
+    reasons.push("SECONDARY_LOGO_TOO_LARGE_DESKTOP");
+  }
   if (/position:\s*fixed/i.test(markCss)) reasons.push("SECONDARY_LOGO_GLOBAL_FIXED");
+  if (!/position:\s*absolute/i.test(markCss)) reasons.push("SECONDARY_LOGO_NOT_SECTION_ABSOLUTE");
   return {
     gate: "SecondaryLogoDimensionGate",
     result: reasons.length === 0 ? "PASS" : "FAIL",
@@ -87,6 +104,8 @@ export function evaluateVentureRenderedQualityGate(input: {
   contract?: VentureVisualContract;
   cwd?: string;
   pixelAnalysis?: Parameters<typeof evaluateTransparentAssetIntegrityGate>[0]["pixelAnalysis"];
+  brandContrastRgba?: { width: number; height: number; rgba: Uint8ClampedArray };
+  brandSymbolReferenceRgba?: { width: number; height: number; rgba: Uint8ClampedArray };
 }): {
   gate: typeof VENTURE_RENDERED_QUALITY_GATE;
   result: "PASS" | "FAIL";
@@ -116,6 +135,30 @@ export function evaluateVentureRenderedQualityGate(input: {
 
   gates.push(evaluateSecondaryLogoDimensionGate(markCss, contract));
 
+  if (input.brandContrastRgba) {
+    const contrast = evaluateBrandAssetContrastGate({
+      width: input.brandContrastRgba.width,
+      height: input.brandContrastRgba.height,
+      rgba: input.brandContrastRgba.rgba,
+    });
+    gates.push({
+      gate: BRAND_ASSET_CONTRAST_GATE,
+      result: contrast.result,
+      reasons: contrast.reasons,
+    });
+    const colorIntegrity = evaluateBrandColorIntegrityGate({
+      width: input.brandContrastRgba.width,
+      height: input.brandContrastRgba.height,
+      rgba: input.brandContrastRgba.rgba,
+      referenceRgba: input.brandSymbolReferenceRgba?.rgba,
+    });
+    gates.push({
+      gate: BRAND_COLOR_INTEGRITY_GATE,
+      result: colorIntegrity.result,
+      reasons: colorIntegrity.reasons,
+    });
+  }
+
   const zIndex = evaluateVentureZIndexContract(markCss + opsCss);
   gates.push({
     gate: "VentureZIndexContractGate",
@@ -144,6 +187,28 @@ export function evaluateVentureRenderedQualityGate(input: {
     reasons,
     gates,
   };
+}
+
+export function evaluateImrosTooSmallImrRegression(): NamedVentureGate {
+  return evaluateSecondaryLogoDimensionGate(
+    `.brandMark { position: absolute; width: 28px; height: 28px; }`,
+    IMROS_PUBLIC_OPERATIONS_VISUAL_CONTRACT,
+  );
+}
+
+export function evaluateImrosDarkWordmarkContrastRegression(): ReturnType<typeof evaluateBrandAssetContrastGate> {
+  const rgba = darkWordmarkContrastFixture();
+  return evaluateBrandAssetContrastGate({ width: 20, height: 20, rgba });
+}
+
+export function evaluateImrosWhiteBleedSymbolRegression(): ReturnType<typeof evaluateBrandColorIntegrityGate> {
+  const fx = whiteBleedSymbolFixture();
+  return evaluateBrandColorIntegrityGate({
+    width: fx.width,
+    height: fx.height,
+    rgba: fx.rgba,
+    referenceRgba: fx.referenceRgba,
+  });
 }
 
 export function evaluateImrosBrokenBrandingRegressionFixtures(): {

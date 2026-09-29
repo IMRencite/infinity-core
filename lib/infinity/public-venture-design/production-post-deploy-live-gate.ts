@@ -1,4 +1,8 @@
 import { PUBLIC_IMROS_ORIGIN, PUBLIC_IMROS_PROJECT } from "@/lib/infinity/hq-production-deployment/contract";
+import {
+  evaluateBrandPlacementGate,
+  evaluateRenderedBrandSizeGate,
+} from "./venture-brand-presentation-contract";
 
 export const LIVE_DEPLOYMENT_PARITY_GATE = "LiveDeploymentParityGate" as const;
 export const IMROS_PUBLIC_OPERATIONS_LIVE_GATE = "ImrosPublicOperationsLiveGate" as const;
@@ -10,6 +14,9 @@ export type LiveImrProbe = {
   fixedOrSticky: boolean;
   visibleAfterHeroScroll: boolean;
   overlapWithProtectedPx: number;
+  viewport?: "desktop" | "tablet" | "mobile";
+  heroBounds?: { left: number; top: number; width: number; height: number };
+  markBounds?: { left: number; top: number; width: number; height: number };
 };
 
 export type LiveHeroProbe = {
@@ -18,6 +25,7 @@ export type LiveHeroProbe = {
   sourceAssetHashPrefix: string | null;
   assetParity: "PASS" | "FAIL";
   mixBlendMode: string;
+  wordmarkContrast?: "PASS" | "FAIL" | "UNKNOWN";
 };
 
 export function evaluateLiveDeploymentParityGate(input: {
@@ -62,9 +70,25 @@ export function evaluateImrosPublicOperationsLiveGate(input: {
   if (input.hero.mixBlendMode !== "normal") reasons.push("HERO_BLEND_MODE_WORKAROUND");
   if (input.hero.assetParity === "FAIL") reasons.push("HERO_ASSET_NOT_CANONICAL_SOURCE");
   if (input.imr.fixedOrSticky) reasons.push("IMR_FIXED_OR_STICKY");
-  if (input.imr.widthPx > 32 || input.imr.heightPx > 32) reasons.push(`IMR_TOO_LARGE:${input.imr.widthPx}x${input.imr.heightPx}`);
+  const vp = input.imr.viewport ?? "desktop";
+  const sizeGate = evaluateRenderedBrandSizeGate({
+    assetId: "imr_endorsement",
+    viewport: vp,
+    widthPx: input.imr.widthPx,
+    heightPx: input.imr.heightPx,
+  });
+  if (sizeGate.result === "FAIL") reasons.push(...sizeGate.reasons.map((r) => `IMR_SIZE:${r}`));
+  if (input.imr.heroBounds && input.imr.markBounds) {
+    const placement = evaluateBrandPlacementGate({
+      assetId: "imr_endorsement",
+      heroBounds: input.imr.heroBounds,
+      markBounds: input.imr.markBounds,
+    });
+    if (placement.result === "FAIL") reasons.push(...placement.reasons.map((r) => `IMR_PLACEMENT:${r}`));
+  }
   if (input.imr.visibleAfterHeroScroll) reasons.push("IMR_VISIBLE_AFTER_HERO_EXIT");
   if (input.imr.overlapWithProtectedPx > 0) reasons.push(`IMR_OVERLAP:${input.imr.overlapWithProtectedPx}px`);
+  if (input.hero.wordmarkContrast === "FAIL") reasons.push("HERO_WORDMARK_LOW_CONTRAST");
   return {
     gate: IMROS_PUBLIC_OPERATIONS_LIVE_GATE,
     result: reasons.length === 0 ? "PASS" : "FAIL",

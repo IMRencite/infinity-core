@@ -1,12 +1,14 @@
 .brandMark {
-  position: static;
+  position: absolute;
+  top: 1.35rem;
+  right: 2.5rem;
+  z-index: 1;
   display: block;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 133px;
+  height: 133px;
   line-height: 0;
   background: transparent;
   pointer-events: auto;
-  flex-shrink: 0;
 }
 
 .brandMark img {
@@ -15,26 +17,22 @@
   height: 100%;
   object-fit: contain;
   background: transparent;
-  filter: drop-shadow(0 0 6px rgba(3, 7, 17, 0.28));
 }
 
 @media (min-width: 721px) and (max-width: 1024px) {
   .brandMark {
-    width: 1.625rem;
-    height: 1.625rem;
-  }
-}
-
-@media (min-width: 1025px) {
-  .brandMark {
-    width: 1.75rem;
-    height: 1.75rem;
+    top: 1.25rem;
+    right: 2rem;
+    width: 112px;
+    height: 112px;
   }
 }
 
 @media (max-width: 720px) {
   .brandMark {
-    width: 1.5rem;
-    height: 1.5rem;
+    top: 1rem;
+    right: 1.25rem;
+    width: 88px;
+    height: 88px;
   }
 }

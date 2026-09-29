@@ -233,9 +233,6 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   const live = existsSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"))
     ? readFileSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"), "utf8")
     : "";
-  const header = existsSync(join(cwd, "components/public/operations-room/operations-header.tsx"))
-    ? readFileSync(join(cwd, "components/public/operations-room/operations-header.tsx"), "utf8")
-    : "";
   const roomCss = existsSync(join(cwd, "components/public/operations-room/operations-room.module.css"))
     ? readFileSync(join(cwd, "components/public/operations-room/operations-room.module.css"), "utf8")
     : "";
@@ -248,12 +245,15 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   if (!pngHasAlpha(asset)) reasons.push("IMR_MARK_NOT_TRANSPARENT");
   if (!markTsx.includes("data-imr-brand-mark") || !markTsx.includes("/brand/imr-mark.png")) reasons.push("IMR_MARK_NOT_RENDERED");
   if (!live.includes("ImrBrandMark")) reasons.push("HOMEPAGE_MARK_MISSING");
-  if (!live.includes("trailingBrand") || !header.includes("heroHeaderBrand") || !roomCss.includes(".heroHeaderBrand")) {
-    reasons.push("HOMEPAGE_MARK_NOT_HERO_HEADER_ROW");
+  if (!live.includes("heroRegion") || !roomCss.includes(".heroRegion")) {
+    reasons.push("HOMEPAGE_MARK_NOT_HERO_REGION");
   }
+  if (!live.includes('data-imros-hero-region="true"')) reasons.push("HERO_REGION_MARKER_MISSING");
   if (!legal.includes("ImrBrandMark")) reasons.push("LEGAL_MARK_MISSING");
   if (/position:\s*(fixed|sticky)/.test(markCss)) reasons.push("MARK_FIXED_GLOBAL_OVERLAY");
-  if (!/position:\s*static/.test(markCss)) reasons.push("MARK_NOT_IN_DOCUMENT_FLOW");
+  if (!/position:\s*absolute/.test(markCss)) reasons.push("MARK_NOT_HERO_TOP_RIGHT_ABSOLUTE");
+  const desktopWidth = Number(markCss.match(/\.brandMark\s*\{[\s\S]*?width:\s*([\d.]+)px/)?.[1] ?? 0);
+  if (desktopWidth < 110 || desktopWidth > 145) reasons.push("MARK_DESKTOP_SIZE_OUT_OF_CONTRACT");
   if (!markTsx.includes("data-section-contained-brand")) reasons.push("MARK_NOT_SECTION_CONTAINED");
   if (!markCss.includes("background: transparent")) reasons.push("MARK_BOX_NOT_TRANSPARENT");
   if (!markTsx.includes('alt="IMR"') || !markTsx.includes('aria-label="IMR"')) reasons.push("MARK_ALT_MISSING");

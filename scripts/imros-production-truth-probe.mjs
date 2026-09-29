@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { execSync } from "node:child_process";
 
 const URL = "https://imros.io/public/operations-room";
-const RUNTIME_PROJECT = "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox";
+const IMROS_PUBLIC_PROJECT = "prj_vFJv26Vt5w08ShcrqqBQmcHTVxcX";
 const EXPECTED_SHA = process.env.EXPECTED_IMROS_SHA ?? execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
 
 function loadToken() {
@@ -34,7 +34,7 @@ async function vercelJson(path, token) {
 async function deploymentIdentity(token) {
   const alias = await vercelJson("/v13/deployments/imros.io", token);
   const dep = alias.json;
-  const runtimeProd = await vercelJson(`/v6/deployments?projectId=${RUNTIME_PROJECT}&target=production&limit=3`, token);
+  const imrosProd = await vercelJson(`/v6/deployments?projectId=${IMROS_PUBLIC_PROJECT}&target=production&limit=3`, token);
   return {
     alias_status: alias.status,
     alias_deployment_id: dep?.id ?? dep?.deploymentId ?? null,
@@ -42,7 +42,8 @@ async function deploymentIdentity(token) {
     alias_meta: dep?.meta ?? null,
     alias_git: dep?.meta?.githubCommitSha ?? dep?.meta?.gitlabCommitSha ?? dep?.gitSource?.sha ?? null,
     alias_created: dep?.created ?? null,
-    runtime_recent: (runtimeProd.json?.deployments ?? []).map((row) => ({
+    alias_project_id: dep?.projectId ?? IMROS_PUBLIC_PROJECT,
+    imros_public_recent: (imrosProd.json?.deployments ?? []).map((row) => ({
       id: row.uid ?? row.id,
       url: row.url,
       ready: row.readyState,
@@ -80,7 +81,19 @@ async function liveDomProbe() {
     const headers = resp?.headers() ?? {};
     const imr = page.locator("[data-imr-brand-mark]").first();
     const hero = page.locator("[data-infinity-os-hero-logo] img").first();
+    const heroRegion = page.locator('[data-imros-hero-region="true"]').first();
     await imr.waitFor({ state: "attached", timeout: 30000 }).catch(() => null);
+    const bounds = await page.evaluate(() => {
+      const region = document.querySelector('[data-imros-hero-region="true"]');
+      const mark = document.querySelector("[data-imr-brand-mark]");
+      const rr = region?.getBoundingClientRect();
+      const mr = mark?.getBoundingClientRect();
+      return {
+        hero: rr ? { left: rr.left, top: rr.top, width: rr.width, height: rr.height } : null,
+        mark: mr ? { left: mr.left, top: mr.top, width: mr.width, height: mr.height } : null,
+      };
+    }).catch(() => ({ hero: null, mark: null }));
+
     const imrStyle = await imr.evaluate((el) => {
       const cs = getComputedStyle(el);
       const rect = el.getBoundingClientRect();
@@ -151,6 +164,9 @@ async function liveDomProbe() {
       scrollSamples.push({ pct, ...sample });
     }
 
+    const imrRect = imrStyle?.rect ?? null;
+    const visibleAfterHero = scrollSamples.some((s) => s.pct >= 0.5 && s.imrVisible);
+
     out[vp.name] = {
       responseHeaders: {
         "x-vercel-id": headers["x-vercel-id"] ?? null,
@@ -158,8 +174,23 @@ async function liveDomProbe() {
         "cache-control": headers["cache-control"] ?? null,
       },
       imr: imrStyle,
+      heroRegionBounds: bounds.hero,
+      markBounds: bounds.mark,
       hero: heroInfo,
       scrollSamples,
+      liveGateInputs: {
+        imr: {
+          position: imrStyle?.position ?? "unknown",
+          widthPx: imrRect?.w ?? 0,
+          heightPx: imrRect?.h ?? 0,
+          fixedOrSticky: /fixed|sticky/.test(imrStyle?.position ?? ""),
+          visibleAfterHeroScroll: visibleAfterHero,
+          overlapWithProtectedPx: Math.max(...scrollSamples.map((s) => s.overlapWithSidebarPx ?? 0), 0),
+          viewport: vp.name,
+          heroBounds: bounds.hero ?? undefined,
+          markBounds: bounds.mark ?? undefined,
+        },
+      },
     };
     await page.close();
   }
@@ -189,7 +220,8 @@ const report = {
   expected_sha: EXPECTED_SHA,
   observed_production_sha: observedSha,
   observed_vercel_project: "imros-public",
-  expected_deployment: "infinity-runtime production (imros.io alias)",
+  expected_vercel_project_id: IMROS_PUBLIC_PROJECT,
+  expected_deployment: "imros-public production (imros.io alias)",
   observed_deployment: identity.alias_deployment_id ?? null,
   domain_alias_target: identity.alias_url ?? null,
   release_parity: releaseParity,

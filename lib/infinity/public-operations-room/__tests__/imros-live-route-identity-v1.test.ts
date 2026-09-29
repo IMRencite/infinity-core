@@ -13,7 +13,8 @@ describe("IMROS public operations route identity", () => {
     );
     expect(canonical).toContain("LiveOperationsRoom");
     const live = readFileSync(join(process.cwd(), "components/public/operations-room/live-operations-room.tsx"), "utf8");
-    expect(live).toContain("trailingBrand={<ImrBrandMark />}");
+    expect(live).toContain('data-imros-hero-region="true"');
+    expect(live).toContain("<ImrBrandMark />");
     expect(PUBLIC_IMROS_PROJECT).toBe("imros-public");
   });
 });

@@ -50,27 +50,16 @@
   padding: 1.5rem 0 3.4rem;
 }
 
+.heroRegion {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
 .heroCopy {
   position: relative;
   max-width: 48rem;
-  padding-right: 0;
-}
-
-.heroHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.heroHeaderBody {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.heroHeaderBrand {
-  flex: 0 0 auto;
-  padding-top: 0.15rem;
+  padding-right: 9.5rem;
 }
 
 .heroKicker {
