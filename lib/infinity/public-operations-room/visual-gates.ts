@@ -233,6 +233,12 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   const live = existsSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"))
     ? readFileSync(join(cwd, "components/public/operations-room/live-operations-room.tsx"), "utf8")
     : "";
+  const header = existsSync(join(cwd, "components/public/operations-room/operations-header.tsx"))
+    ? readFileSync(join(cwd, "components/public/operations-room/operations-header.tsx"), "utf8")
+    : "";
+  const roomCss = existsSync(join(cwd, "components/public/operations-room/operations-room.module.css"))
+    ? readFileSync(join(cwd, "components/public/operations-room/operations-room.module.css"), "utf8")
+    : "";
   const legal = existsSync(join(cwd, "components/public/legal/legal-shell.tsx"))
     ? readFileSync(join(cwd, "components/public/legal/legal-shell.tsx"), "utf8")
     : "";
@@ -240,17 +246,17 @@ export function evaluatePublicImrBrandMarkGate(cwd = process.cwd()): NamedPublic
   const reasons: string[] = [];
   if (!existsSync(asset)) reasons.push("IMR_MARK_ASSET_MISSING");
   if (!pngHasAlpha(asset)) reasons.push("IMR_MARK_NOT_TRANSPARENT");
-  if (!ui.includes("data-imr-brand-mark") || !ui.includes("/brand/imr-mark.png")) reasons.push("IMR_MARK_NOT_RENDERED");
+  if (!markTsx.includes("data-imr-brand-mark") || !markTsx.includes("/brand/imr-mark.png")) reasons.push("IMR_MARK_NOT_RENDERED");
   if (!live.includes("ImrBrandMark")) reasons.push("HOMEPAGE_MARK_MISSING");
-  if (!live.includes("heroCopy") || !/heroCopy[\s\S]{0,220}ImrBrandMark/.test(live)) {
-    reasons.push("HOMEPAGE_MARK_NOT_HERO_CONTAINED");
+  if (!live.includes("trailingBrand") || !header.includes("heroHeaderBrand") || !roomCss.includes(".heroHeaderBrand")) {
+    reasons.push("HOMEPAGE_MARK_NOT_HERO_HEADER_ROW");
   }
   if (!legal.includes("ImrBrandMark")) reasons.push("LEGAL_MARK_MISSING");
-  if (!/position:\s*absolute/.test(markCss) || !markCss.includes("right:")) reasons.push("MARK_NOT_SECTION_ABSOLUTE_TOP_RIGHT");
-  if (/position:\s*fixed/.test(markCss)) reasons.push("MARK_FIXED_GLOBAL_OVERLAY");
+  if (/position:\s*(fixed|sticky)/.test(markCss)) reasons.push("MARK_FIXED_GLOBAL_OVERLAY");
+  if (!/position:\s*static/.test(markCss)) reasons.push("MARK_NOT_IN_DOCUMENT_FLOW");
   if (!markTsx.includes("data-section-contained-brand")) reasons.push("MARK_NOT_SECTION_CONTAINED");
   if (!markCss.includes("background: transparent")) reasons.push("MARK_BOX_NOT_TRANSPARENT");
-  if (!ui.includes('alt="IMR"') || !ui.includes('aria-label="IMR"')) reasons.push("MARK_ALT_MISSING");
+  if (!markTsx.includes('alt="IMR"') || !markTsx.includes('aria-label="IMR"')) reasons.push("MARK_ALT_MISSING");
   if (/background:\s*#000|background:\s*black/i.test(markCss)) reasons.push("OPAQUE_BLACK_BOX");
   return reasons.length
     ? fail(PUBLIC_IMR_BRAND_MARK_GATE, reasons)

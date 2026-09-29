@@ -58,8 +58,7 @@ export function LiveOperationsRoom() {
     <div className={styles.page} data-imros-operations-room="true" data-hq-grid="true" data-full-width="true">
       <div className={styles.shell}>
         <div className={styles.heroCopy}>
-          <ImrBrandMark />
-          <OperationsHeader />
+          <OperationsHeader trailingBrand={<ImrBrandMark />} />
         </div>
         {!projection && !unavailable ? (
           <section className={styles.statusStrip} data-public-loading="true">

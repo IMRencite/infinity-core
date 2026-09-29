@@ -27,6 +27,11 @@ const files = [
   "lib/infinity/public-operations-room/__tests__/public-operations-state-parity-v1.test.ts",
   "lib/infinity/public-operations-room/__tests__/public-homepage-operations-v1.test.ts",
   "lib/infinity/public-legal",
+  "public/brand/infinity-os-logo.png",
+  "public/brand/imr-mark.png",
+  "lib/infinity/hq-production-deployment/contract.ts",
+  "lib/infinity/public-venture-design/production-post-deploy-live-gate.ts",
+  "lib/infinity/public-venture-design/transparent-asset-integrity.ts",
 ];
 
 if (!existsSync(destRoot)) {

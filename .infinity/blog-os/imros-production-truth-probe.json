@@ -1,0 +1,503 @@
+{
+  "collected_at": "2026-09-29T01:15:54.417Z",
+  "url": "https://imros.io/public/operations-room",
+  "expected_sha": "727e2427e72e9ad6b5b2c88552b12b077f4b7a49",
+  "observed_production_sha": "f10aa5338971d1dbdeff70994a3053c300bdb061",
+  "observed_vercel_project": "imros-public",
+  "expected_deployment": "infinity-runtime production (imros.io alias)",
+  "observed_deployment": "dpl_4aHPrm3rrAG92Wuh6L4BJ4A2dwz2",
+  "domain_alias_target": "imros-public-il0b9pp5c-infinite-media-resources-imr.vercel.app",
+  "release_parity": "FAIL",
+  "deployment_identity": {
+    "alias_status": 200,
+    "alias_deployment_id": "dpl_4aHPrm3rrAG92Wuh6L4BJ4A2dwz2",
+    "alias_url": "imros-public-il0b9pp5c-infinite-media-resources-imr.vercel.app",
+    "alias_meta": {
+      "gitCommitAuthorName": "IMRencite",
+      "gitCommitAuthorEmail": "infinitemediaresources@gmail.com",
+      "gitCommitMessage": "Document IMROS Cloudflare pending DNS and DNSSEC rollback.",
+      "gitCommitRef": "imros-public-production",
+      "gitCommitSha": "f10aa5338971d1dbdeff70994a3053c300bdb061",
+      "gitDirty": "1",
+      "gitRootDirectory": "",
+      "actor": "cursor-cli",
+      "lambdaRuntimeStats": "{\"nodejs\":3}",
+      "bundler": "turbopack"
+    },
+    "alias_git": null,
+    "alias_created": null,
+    "runtime_recent": [
+      {
+        "id": "dpl_DTaQnviqecKQ3tEGZgcmf4wk74b2",
+        "url": "infinity-runtime-26qhcyzmp-infinite-media-resources-imr.vercel.app",
+        "ready": "READY",
+        "sha": null,
+        "created": 1790160985420
+      },
+      {
+        "id": "dpl_5LtZDNbKYyFfZNiYpq6kN4jFRN1h",
+        "url": "infinity-runtime-8yha8uiya-infinite-media-resources-imr.vercel.app",
+        "ready": "READY",
+        "sha": null,
+        "created": 1790160942419
+      },
+      {
+        "id": "dpl_Gz1sfywMG6TAYAdfchGoTzDtzScV",
+        "url": "infinity-runtime-1vi63kza1-infinite-media-resources-imr.vercel.app",
+        "ready": "READY",
+        "sha": null,
+        "created": 1790160602886
+      }
+    ]
+  },
+  "source_asset_hash": "37da6239efe45e57",
+  "live_hero_asset": {
+    "url": "https://imros.io/brand/infinity-os-logo.png",
+    "status": 200,
+    "contentType": "image/png",
+    "bytes": 386253,
+    "sha256_prefix": "37da6239efe45e57"
+  },
+  "live_imr_asset": {
+    "url": "https://imros.io/brand/imr-mark.png",
+    "status": 200,
+    "contentType": "image/png",
+    "bytes": 37961,
+    "sha256_prefix": "049e693d93dabd9a"
+  },
+  "asset_parity": "PASS",
+  "live_dom": {
+    "desktop": {
+      "responseHeaders": {
+        "x-vercel-id": "cle1::iad1::tp2xj-1790644541166-56db2c8545d0",
+        "age": "0",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate"
+      },
+      "imr": {
+        "position": "static",
+        "top": "auto",
+        "right": "auto",
+        "width": "28px",
+        "height": "28px",
+        "zIndex": "auto",
+        "transform": "none",
+        "filter": "none",
+        "mixBlendMode": "normal",
+        "opacity": "1",
+        "rect": {
+          "x": 768.796875,
+          "y": 26.390625,
+          "w": 28,
+          "h": 28
+        },
+        "parentChain": [
+          {
+            "tag": "a",
+            "className": "imr-brand-mark-module__j8YVSa__brandMark",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroHeaderBrand",
+            "id": ""
+          },
+          {
+            "tag": "header",
+            "className": "operations-room-module__q_xGUW__heroHeader",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroCopy",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__shell",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__page",
+            "id": ""
+          },
+          {
+            "tag": "body",
+            "className": "min-h-full flex flex-col",
+            "id": ""
+          },
+          {
+            "tag": "html",
+            "className": "geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased",
+            "id": ""
+          }
+        ]
+      },
+      "hero": {
+        "src": "https://imros.io/brand/infinity-os-logo.png",
+        "width": 320,
+        "height": 107,
+        "naturalWidth": 2172,
+        "naturalHeight": 724,
+        "mixBlendMode": "normal",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "rect": {
+          "x": 28.796875,
+          "y": 50.703125,
+          "w": 320,
+          "h": 106.65625
+        }
+      },
+      "scrollSamples": [
+        {
+          "pct": 0,
+          "scrollY": 0,
+          "imrVisible": true,
+          "imrRect": {
+            "top": 26.390625,
+            "bottom": 54.390625,
+            "w": 28,
+            "h": 28
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.25,
+          "scrollY": 706,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -679.609375,
+            "bottom": -651.609375,
+            "w": 28,
+            "h": 28
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.5,
+          "scrollY": 1413,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -1386.609375,
+            "bottom": -1358.609375,
+            "w": 28,
+            "h": 28
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.75,
+          "scrollY": 2119,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -2092.609375,
+            "bottom": -2064.609375,
+            "w": 28,
+            "h": 28
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 1,
+          "scrollY": 2825,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -2798.609375,
+            "bottom": -2770.609375,
+            "w": 28,
+            "h": 28
+          },
+          "overlapWithSidebarPx": 0
+        }
+      ]
+    },
+    "tablet": {
+      "responseHeaders": {
+        "x-vercel-id": "cle1::iad1::j8dxc-1790644543722-a313a38a5762",
+        "age": "0",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate"
+      },
+      "imr": {
+        "position": "static",
+        "top": "auto",
+        "right": "auto",
+        "width": "26px",
+        "height": "26px",
+        "zIndex": "auto",
+        "transform": "none",
+        "filter": "none",
+        "mixBlendMode": "normal",
+        "opacity": "1",
+        "rect": {
+          "x": 766.59375,
+          "y": 26.390625,
+          "w": 26,
+          "h": 26
+        },
+        "parentChain": [
+          {
+            "tag": "a",
+            "className": "imr-brand-mark-module__j8YVSa__brandMark",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroHeaderBrand",
+            "id": ""
+          },
+          {
+            "tag": "header",
+            "className": "operations-room-module__q_xGUW__heroHeader",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroCopy",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__shell",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__page",
+            "id": ""
+          },
+          {
+            "tag": "body",
+            "className": "min-h-full flex flex-col",
+            "id": ""
+          },
+          {
+            "tag": "html",
+            "className": "geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased",
+            "id": ""
+          }
+        ]
+      },
+      "hero": {
+        "src": "https://imros.io/brand/infinity-os-logo.png",
+        "width": 320,
+        "height": 107,
+        "naturalWidth": 2172,
+        "naturalHeight": 724,
+        "mixBlendMode": "normal",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "rect": {
+          "x": 24.59375,
+          "y": 50.703125,
+          "w": 320,
+          "h": 106.65625
+        }
+      },
+      "scrollSamples": [
+        {
+          "pct": 0,
+          "scrollY": 0,
+          "imrVisible": true,
+          "imrRect": {
+            "top": 26.390625,
+            "bottom": 52.390625,
+            "w": 26,
+            "h": 26
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.25,
+          "scrollY": 1160,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -1133.609375,
+            "bottom": -1107.609375,
+            "w": 26,
+            "h": 26
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.5,
+          "scrollY": 2319,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -2292.609375,
+            "bottom": -2266.609375,
+            "w": 26,
+            "h": 26
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.75,
+          "scrollY": 3479,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -3452.609375,
+            "bottom": -3426.609375,
+            "w": 26,
+            "h": 26
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 1,
+          "scrollY": 4638,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -4611.609375,
+            "bottom": -4585.609375,
+            "w": 26,
+            "h": 26
+          },
+          "overlapWithSidebarPx": 0
+        }
+      ]
+    },
+    "mobile": {
+      "responseHeaders": {
+        "x-vercel-id": "cle1::iad1::t7txq-1790644547603-b817250e406d",
+        "age": "0",
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate"
+      },
+      "imr": {
+        "position": "static",
+        "top": "auto",
+        "right": "auto",
+        "width": "24px",
+        "height": "24px",
+        "zIndex": "auto",
+        "transform": "none",
+        "filter": "none",
+        "mixBlendMode": "normal",
+        "opacity": "1",
+        "rect": {
+          "x": 264.703125,
+          "y": 26.390625,
+          "w": 24,
+          "h": 24
+        },
+        "parentChain": [
+          {
+            "tag": "a",
+            "className": "imr-brand-mark-module__j8YVSa__brandMark",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroHeaderBrand",
+            "id": ""
+          },
+          {
+            "tag": "header",
+            "className": "operations-room-module__q_xGUW__heroHeader",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__heroCopy",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__shell",
+            "id": ""
+          },
+          {
+            "tag": "div",
+            "className": "operations-room-module__q_xGUW__page",
+            "id": ""
+          },
+          {
+            "tag": "body",
+            "className": "min-h-full flex flex-col",
+            "id": ""
+          },
+          {
+            "tag": "html",
+            "className": "geist_a71539c9-module__T19VSG__variable geist_mono_8d43a2aa-module__8Li5zG__variable h-full antialiased",
+            "id": ""
+          }
+        ]
+      },
+      "hero": {
+        "src": "https://imros.io/brand/infinity-os-logo.png",
+        "width": 304,
+        "height": 101,
+        "naturalWidth": 2172,
+        "naturalHeight": 724,
+        "mixBlendMode": "normal",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "rect": {
+          "x": 11.703125,
+          "y": 67.015625,
+          "w": 304.1875,
+          "h": 101.390625
+        }
+      },
+      "scrollSamples": [
+        {
+          "pct": 0,
+          "scrollY": 0,
+          "imrVisible": true,
+          "imrRect": {
+            "top": 26.390625,
+            "bottom": 50.390625,
+            "w": 24,
+            "h": 24
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.25,
+          "scrollY": 2126,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -2099.609375,
+            "bottom": -2075.609375,
+            "w": 24,
+            "h": 24
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.5,
+          "scrollY": 4253,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -4226.609375,
+            "bottom": -4202.609375,
+            "w": 24,
+            "h": 24
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 0.75,
+          "scrollY": 6379,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -6352.609375,
+            "bottom": -6328.609375,
+            "w": 24,
+            "h": 24
+          },
+          "overlapWithSidebarPx": 0
+        },
+        {
+          "pct": 1,
+          "scrollY": 8505,
+          "imrVisible": false,
+          "imrRect": {
+            "top": -8478.609375,
+            "bottom": -8454.609375,
+            "w": 24,
+            "h": 24
+          },
+          "overlapWithSidebarPx": 0
+        }
+      ]
+    }
+  }
+}

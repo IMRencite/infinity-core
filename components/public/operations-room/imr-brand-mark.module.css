@@ -1,14 +1,12 @@
 .brandMark {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
+  position: static;
   display: block;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
   line-height: 0;
   background: transparent;
   pointer-events: auto;
+  flex-shrink: 0;
 }
 
 .brandMark img {
@@ -22,14 +20,21 @@
 
 @media (min-width: 721px) and (max-width: 1024px) {
   .brandMark {
-    width: 2rem;
-    height: 2rem;
+    width: 1.625rem;
+    height: 1.625rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .brandMark {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 }
 
 @media (max-width: 720px) {
   .brandMark {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 }

@@ -16,8 +16,8 @@ export function ImrBrandMark() {
       <img
         src={IMR_BRAND_MARK_SRC}
         alt="IMR"
-        width={36}
-        height={36}
+        width={28}
+        height={28}
         decoding="async"
       />
     </a>

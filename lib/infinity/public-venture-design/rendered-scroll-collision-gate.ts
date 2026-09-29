@@ -84,8 +84,8 @@ export function evaluateSectionContainedBrandingCss(markCss: string, componentSo
   reasons: string[];
 } {
   const reasons: string[] = [];
-  if (/position:\s*fixed/i.test(markCss)) reasons.push("DECORATIVE_BRAND_MARK_FIXED_TO_VIEWPORT");
-  if (!/position:\s*absolute/i.test(markCss)) reasons.push("DECORATIVE_BRAND_NOT_SECTION_ABSOLUTE");
+  if (/position:\s*(fixed|sticky)/i.test(markCss)) reasons.push("DECORATIVE_BRAND_MARK_FIXED_TO_VIEWPORT");
+  if (!/position:\s*(static|relative|absolute)/i.test(markCss)) reasons.push("DECORATIVE_BRAND_POSITION_UNDECLARED");
   if (!componentSource.includes("data-section-contained-brand")) {
     reasons.push("SECTION_CONTAINMENT_ATTRIBUTE_MISSING");
   }

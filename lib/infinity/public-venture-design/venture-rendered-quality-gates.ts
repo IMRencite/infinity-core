@@ -43,7 +43,7 @@ export function evaluateSecondaryLogoDimensionGate(
   if (!spec) {
     return { gate: "SecondaryLogoDimensionGate", result: "PASS", reasons: ["NO_SECONDARY_LOGO"] };
   }
-  const desktopMatch = markCss.match(/width:\s*([\d.]+)rem/);
+  const desktopMatch = markCss.match(/\.brandMark\s*\{[\s\S]*?width:\s*([\d.]+)rem/);
   const desktopRem = desktopMatch ? Number(desktopMatch[1]) * 16 : 999;
   if (desktopRem > spec.maxDesktopPx.width + 1) reasons.push("SECONDARY_LOGO_TOO_LARGE_DESKTOP");
   if (/position:\s*fixed/i.test(markCss)) reasons.push("SECONDARY_LOGO_GLOBAL_FIXED");

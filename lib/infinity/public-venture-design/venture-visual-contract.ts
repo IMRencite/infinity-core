@@ -59,9 +59,9 @@ export const IMROS_PUBLIC_OPERATIONS_VISUAL_CONTRACT: VentureVisualContract = {
       path: "/brand/imr-mark.png",
       role: "secondary_logo",
       expectedTransparency: true,
-      maxDesktopPx: { width: 36, height: 36 },
-      maxTabletPx: { width: 32, height: 32 },
-      maxMobilePx: { width: 28, height: 28 },
+      maxDesktopPx: { width: 28, height: 28 },
+      maxTabletPx: { width: 26, height: 26 },
+      maxMobilePx: { width: 24, height: 24 },
     },
   },
   layout: {
