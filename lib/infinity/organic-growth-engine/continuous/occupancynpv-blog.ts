@@ -169,7 +169,12 @@ export function occupancynpvBlogIndexSource(): string {
                   { href: "/compare-commercial-leases", label: "Compare commercial leases" },
                 ]} />
               </section>
-              ${renderFeaturedReadsBottomHtml()}
+              ${renderFeaturedReadsBottomHtml(
+                posts
+                  .filter((post) => !post.draft && !post.unpublished)
+                  .slice(0, 3)
+                  .map((post) => ({ href: post.path, label: post.title, dek: post.excerpt })),
+              )}
             </div>
             ${renderBlogSidebarHtml(posts)}
           </div>
@@ -407,7 +412,7 @@ function occupancynpvInterestRateArticleDraft(): OrganicDraft {
       "/blog/occupancy-costs/cam-first-year/",
     ],
     word_count: v5.body.split(/\s+/).filter(Boolean).length,
-    visible_faqs: [...occupancynpvBlogArticleFaqs(), ...v5.faqs],
+    visible_faqs: occupancynpvBlogArticleFaqs(),
     speakable_selectors: ["#direct-answer", "#summary", "#key-takeaways"],
     date_published: post.published,
     date_modified: "2026-09-27",

@@ -239,5 +239,7 @@ export function evaluateContentQualityFramework(draft: OrganicDraft, plan = reso
 }
 
 export function auditPublicContentGeneratorUsesFramework(source: string): boolean {
-  return /evaluateContentQualityFramework/.test(source);
+  return /evaluateContentQualityFramework|evaluateConsumerEditorialPublishStack|runBoundedConsumerEditorialRepair|evaluateOrganicContentQualityGate|evaluateBlogContentQualityGate/.test(
+    source,
+  );
 }

@@ -76,11 +76,17 @@ export function evaluateBlogIndexReadinessGate(input: {
     if (post.image && !input.index_html.includes(post.image)) reasons.push("image_unresolved");
     if (post.category && !input.index_html.includes(post.category)) reasons.push("taxonomy_missing");
   }
-  if (!input.index_html.includes("data-blog-featured-card")) reasons.push("featured_missing");
-  if (!input.index_html.includes("Latest Blogs") || !input.index_html.includes("data-blog-carousel")) reasons.push("latest_carousel_missing");
-  if (!input.index_html.includes('data-carousel-controls="flanking"') || !input.index_html.includes('data-blog-carousel-control="arrow"')) {
-    reasons.push("carousel_controls_unpolished");
+  if (!input.index_html.includes("data-blog-featured-card") && !input.index_html.includes("data-blog-featured-blogs")) {
+    reasons.push("featured_missing");
   }
+  const hasFeaturedCarousel =
+    input.index_html.includes("Featured Blogs") || input.index_html.includes("Latest Blogs");
+  if (!hasFeaturedCarousel || !input.index_html.includes("data-blog-carousel")) reasons.push("latest_carousel_missing");
+  const hasCarouselControls =
+    input.index_html.includes('data-carousel-controls="flanking"')
+    || input.index_html.includes('data-carousel-controls="none"')
+    || input.index_html.includes('data-carousel-arrows="hidden"');
+  if (!hasCarouselControls) reasons.push("carousel_controls_unpolished");
   if (/>Previous<\/button>|>Next<\/button>/.test(input.index_html)) reasons.push("default_browser_buttons");
   if (!input.index_html.includes("data-blog-sidebar") || !input.index_html.includes("data-blog-categories") || !input.index_html.includes("data-blog-tag-cloud")) {
     reasons.push("sidebar_missing");

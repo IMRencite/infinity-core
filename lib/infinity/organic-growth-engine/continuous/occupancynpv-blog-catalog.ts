@@ -6,6 +6,12 @@ export const OCCUPANCYNPV_BLOG_ARTICLE_QUESTION = "How do interest rates affect 
 export const OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID = "blog-interest-rate" as const;
 export const OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY = "Valuation" as const;
 
+import {
+  ensureCanonicalPublishedBlogInventory,
+  listPublishedBlogRecords,
+  publishedBlogRecordToCatalogPost,
+} from "./published-blog-inventory";
+
 export type OccupancyNpvBlogPost = {
   asset_id?: string;
   slug: string;
@@ -28,27 +34,16 @@ export type OccupancyNpvBlogPost = {
 };
 
 export function occupancynpvPublishedBlogPosts(): OccupancyNpvBlogPost[] {
-  return [
-    {
-      asset_id: OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID,
-      slug: OCCUPANCYNPV_BLOG_ARTICLE_SLUG,
-      path: OCCUPANCYNPV_BLOG_ARTICLE_PATH,
-      legacy_paths: [OCCUPANCYNPV_BLOG_ARTICLE_LEGACY_PATH],
-      title: OCCUPANCYNPV_BLOG_ARTICLE_QUESTION,
-      excerpt:
-        "Financing costs change the yield buyers require. Same NOI at a higher cap rate is a lower indicated value. This is a property-valuation story, not a tenant lease NPV.",
-      published: "2026-09-17",
-      modified: "2026-09-17",
-      primaryCategory: OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY,
-      category: OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY,
-      categories: [OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY],
-      tags: ["Interest Rates", "Cap Rates", "Commercial Real Estate"],
-      image: "/media/hero-building.webp",
-      image_alt: "Commercial office building exterior at late afternoon light.",
-      featured: true,
-      reading_time: "16 min read",
-    },
-  ];
+  ensureCanonicalPublishedBlogInventory();
+  return listPublishedBlogRecords("occupancynpv").map(publishedBlogRecordToCatalogPost);
+}
+
+export function occupancynpvCamFirstYearCatalogPost(): OccupancyNpvBlogPost {
+  const post = occupancynpvPublishedBlogPosts().find((row) => row.asset_id === "blog-cam-first-year");
+  if (!post) {
+    throw new Error("blog-cam-first-year missing from canonical published blog inventory");
+  }
+  return post;
 }
 
 export function occupancynpvCategoryCounts(posts = occupancynpvPublishedBlogPosts()): Array<{ category: string; count: number }> {

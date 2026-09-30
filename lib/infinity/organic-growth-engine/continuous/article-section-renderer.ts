@@ -49,9 +49,12 @@ export function renderCanonicalArticleMain(input: {
 }): string {
   const sections = pairHeadingsToParagraphs(input.headings, input.body);
   const main = sections
-    .map((section) => {
+    .map((section, index) => {
       const paras = section.paragraphs.map((row) => `<p>${row.replace(/`/g, "")}</p>`).join("\n            ");
-      return section.heading ? `<h2>${section.heading}</h2>\n            ${paras}` : paras;
+      if (!section.heading) return paras;
+      const speakableId =
+        index === 0 ? ' id="summary"' : index === sections.length - 1 ? ' id="key-takeaways"' : "";
+      return `<h2${speakableId}>${section.heading}</h2>\n            ${paras}`;
     })
     .join("\n            ");
   const faqs = (input.faqs ?? [])
