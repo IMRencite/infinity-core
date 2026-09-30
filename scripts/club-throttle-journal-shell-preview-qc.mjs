@@ -276,12 +276,12 @@ async function main() {
         const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((s) => s.textContent ?? "");
         const graphText = ld.join("\n");
         const norm = (value) => value.replace(/\/+$/, "").toLowerCase();
-        const articleRoot =
-          document.querySelector("[data-blog-article-shell], .onpv-blog-article-shell, article") ?? document.body;
-        const articleText = (articleRoot?.innerText ?? "").trim();
-        const headings = [...articleRoot.querySelectorAll("h2")].map((h) => h.textContent?.trim() ?? "").filter(Boolean);
+        const articleMain =
+          document.querySelector(".onpv-blog-main, .pv-reading, [data-blog-main]") ?? document.body;
+        const articleText = (articleMain?.innerText ?? "").trim();
+        const headings = [...articleMain.querySelectorAll("h2")].map((h) => h.textContent?.trim() ?? "").filter(Boolean);
         const cta = Boolean(
-          [...articleRoot.querySelectorAll("a[href]")].some((a) => /shop|collection|after dark/i.test(a.textContent ?? "")),
+          [...document.querySelectorAll("a[href]")].some((a) => /shop|collection|after dark/i.test(a.textContent ?? "")),
         );
         const related = Boolean(
           [...document.querySelectorAll("a[href]")].some((a) => /journal|related|read/i.test(a.textContent ?? "")),

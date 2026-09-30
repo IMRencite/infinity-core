@@ -28,7 +28,6 @@ export function clubThrottleShirtV5Body() {
     "The blank matters more than the marketing copy",
     "The first wash is the real product review",
     "The keep-or-return rule",
-    "Where to go next in Club Throttle",
   ];
 
   const body = paragraphs([
