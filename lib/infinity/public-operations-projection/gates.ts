@@ -1,6 +1,7 @@
 import { PUBLIC_OPERATIONS_FIELD_ALLOWLIST } from "./registry";
 import { isAskReviewIdentity } from "./registry";
-import type { NamedPublicGate, PublicOperationsProjection, PublicVentureVisibility } from "./types";
+import { selectMostRecentPublicVentures } from "./recent-public-ventures";
+import type { NamedPublicGate, PublicOperationsProjection, PublicVentureProjection, PublicVentureVisibility } from "./types";
 import { PUBLIC_ALLOWED_CLASSIFICATIONS } from "./types";
 
 function pass(gate: string, reason: string): NamedPublicGate {
@@ -24,6 +25,7 @@ export const PUBLIC_PROJECTION_UNKNOWN_NOT_ZERO_GATE = "PublicProjectionUnknownN
 export const PUBLIC_AGENT_ACTIVITY_TRUTH_GATE = "PublicAgentActivityTruthGate" as const;
 export const PUBLIC_PROJECTION_FAILURE_SANITIZATION_GATE = "PublicProjectionFailureSanitizationGate" as const;
 export const PUBLIC_PROJECTION_FIELD_ALLOWLIST_GATE = "PublicProjectionFieldAllowlistGate" as const;
+export const RECENT_VENTURE_SIDEBAR_FRESHNESS_GATE = "RecentVentureSidebarFreshnessGate" as const;
 
 const FINANCIAL_KEYS = /treasury|authorized capital|spend authority|allocation|commitment|actual spend|revenue|profit|contribution margin|mercury|stripe balance|verified cash|\$50\b/i;
 const CUSTOMER_KEYS = /@[a-z0-9.-]+\.[a-z]{2,}|customer email|reply content|\+1[\s-]?\d{3}|phone number|cus_|suppression/i;
@@ -246,6 +248,47 @@ export function evaluatePublicProjectionGateBundle(input: {
     evaluatePublicProjectionFailureSanitizationGate(input.projection),
     evaluatePublicProjectionFieldAllowlistGate(input.projection),
   ];
+}
+
+function normalizeUrl(url: string | undefined): string {
+  return (url ?? "").replace(/\/+$/, "").toLowerCase();
+}
+
+export function evaluateRecentVentureSidebarFreshnessGate(input: {
+  projection: PublicOperationsProjection;
+  rendered?: PublicVentureProjection[];
+}): NamedPublicGate {
+  const expected = selectMostRecentPublicVentures(input.projection.public_ventures, 10);
+  const rendered = input.rendered ?? expected;
+  const reasons: string[] = [];
+  if (rendered.length > 10) reasons.push("sidebar_count_exceeds_limit");
+  const renderedKeys = rendered.map((row) => row.public_venture_id ?? row.public_name);
+  if (new Set(renderedKeys).size !== renderedKeys.length) reasons.push("duplicate_sidebar_venture");
+  for (const row of rendered) {
+    if (row.public_url && !/^https:\/\//i.test(row.public_url)) reasons.push("invalid_public_url");
+  }
+  if (expected.length !== rendered.length) reasons.push("sidebar_count_mismatch");
+  for (let index = 0; index < Math.min(expected.length, rendered.length); index += 1) {
+    const left = expected[index]!;
+    const right = rendered[index]!;
+    if ((left.public_venture_id ?? left.public_name) !== (right.public_venture_id ?? right.public_name)) {
+      reasons.push("sidebar_order_mismatch");
+      break;
+    }
+    if (left.public_name !== right.public_name) reasons.push("sidebar_name_mismatch");
+    if (normalizeUrl(left.public_url) !== normalizeUrl(right.public_url)) reasons.push("sidebar_url_mismatch");
+  }
+  for (let index = 1; index < rendered.length; index += 1) {
+    const prev = Date.parse(rendered[index - 1]?.created_at ?? "");
+    const next = Date.parse(rendered[index]?.created_at ?? "");
+    if (Number.isFinite(prev) && Number.isFinite(next) && prev < next) {
+      reasons.push("sidebar_not_newest_first");
+      break;
+    }
+  }
+  return reasons.length
+    ? fail(RECENT_VENTURE_SIDEBAR_FRESHNESS_GATE, [...new Set(reasons)])
+    : pass(RECENT_VENTURE_SIDEBAR_FRESHNESS_GATE, "sidebar_matches_canonical_recent_ventures");
 }
 
 void PUBLIC_ALLOWED_CLASSIFICATIONS;

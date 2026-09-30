@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { DELETE, GET, PATCH, POST, PUT } from "@/app/api/public/operations/route";
+import { resetVentureOperatingScaleStore } from "@/lib/infinity/venture-operating-scale/persist";
 import {
   MALICIOUS_PRIVATE_FIXTURE,
   PUBLIC_OPERATIONS_PROJECTION,
@@ -73,6 +74,7 @@ describe("Public Operations Projection V1", () => {
   beforeEach(() => {
     resetPublicProjectionCache();
     resetCanonicalPublicOccupancyMemory();
+    resetVentureOperatingScaleStore();
     expect(process.env.INFINITY_CANONICAL_WORK_PERSIST).not.toBe("1");
     expect(process.env.INFINITY_AUTONOMOUS_LOOP_PERSIST).not.toBe("1");
   });
@@ -122,7 +124,7 @@ describe("Public Operations Projection V1", () => {
       useCache: false,
     });
     const row = projection.public_ventures.find((item) => item.public_name === "Horizon");
-    expect(row).toEqual({ public_name: "Horizon", status_label: "Operating" });
+    expect(row).toMatchObject({ public_name: "Horizon", status_label: "Operating" });
     expect(row).not.toHaveProperty("category");
     expect(row).not.toHaveProperty("sanitized_description");
     expect(row).not.toHaveProperty("approved_stats");

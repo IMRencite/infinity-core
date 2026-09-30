@@ -99,6 +99,8 @@ export type PublicSalesRoomProjection = {
 };
 
 export type PublicVentureProjection = {
+  public_venture_id?: string;
+  created_at?: string;
   public_name: string;
   public_url?: string;
   status_label: string;
@@ -164,6 +166,7 @@ export type InternalVentureObservation = {
   venture_status: "ACTIVE" | "PAUSED" | "ARCHIVED";
   operating_stage: string;
   public_launch_state: "YES" | "NO";
+  venture_created_at?: string;
   is_operating: boolean;
   is_started: boolean;
   is_fixture: boolean;

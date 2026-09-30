@@ -13,3 +13,4 @@ export * from "./occupancy";
 export * from "./derive-occupancy";
 export * from "./persist-occupancy";
 export * from "./publish-occupancy";
+export * from "./recent-public-ventures";

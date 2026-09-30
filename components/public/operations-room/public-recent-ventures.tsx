@@ -12,7 +12,7 @@ export function PublicRecentVentures({ ventures }: { ventures: PublicVentureProj
       ) : (
         <ol className={styles.ventureChips}>
           {recent.map((venture) => (
-            <li key={venture.public_name} data-public-venture={venture.public_name}>
+            <li key={venture.public_venture_id ?? venture.public_name} data-public-venture={venture.public_name}>
               {venture.public_url ? (
                 <a
                   className={styles.ventureChip}

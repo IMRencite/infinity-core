@@ -66,6 +66,7 @@ export type PaymentPriceRecord = {
 
 export type VentureOperationalRecord = {
   venture_id: string;
+  venture_created_at?: string;
   venture_name: string;
   venture_status: "ACTIVE" | "PAUSED" | "ARCHIVED";
   operating_stage: VentureOperatingStage;
@@ -138,6 +139,7 @@ export type VentureOperationalRecord = {
 
 export const VENTURE_OPERATIONAL_RECORD_FIELDS = [
   "venture_id",
+  "venture_created_at",
   "venture_name",
   "venture_status",
   "operating_stage",

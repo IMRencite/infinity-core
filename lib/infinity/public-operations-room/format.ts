@@ -1,3 +1,4 @@
+import { selectMostRecentPublicVentures } from "@/lib/infinity/public-operations-projection/recent-public-ventures";
 import type {
   PublicActivityLevel,
   PublicCount,
@@ -6,8 +7,10 @@ import type {
 } from "@/lib/infinity/public-operations-projection/types";
 import { PUBLIC_COUNT_UNKNOWN } from "@/lib/infinity/public-operations-projection/types";
 
+export { selectMostRecentPublicVentures };
+
 export function recentPublicVentures(ventures: PublicVentureProjection[], limit = 10): PublicVentureProjection[] {
-  return ventures.slice(0, Math.max(0, limit));
+  return selectMostRecentPublicVentures(ventures, limit);
 }
 
 export function formatPublicCount(value: PublicCount): string {

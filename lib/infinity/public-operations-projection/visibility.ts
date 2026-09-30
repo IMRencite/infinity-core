@@ -1,4 +1,7 @@
+import { CLUB_THROTTLE_VENTURE_CREATED_AT, OCCUPANCYNPV_VENTURE_CREATED_AT } from "@/lib/infinity/venture-operating-scale/canonical-venture-registry";
+import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import {
+  CLUB_THROTTLE_PUBLIC_ALLOWLIST,
   DEFAULT_PUBLIC_VENTURE_VISIBILITY,
   OCCUPANCYNPV_PUBLIC_ALLOWLIST,
   PUBLIC_VENTURE_VISIBILITY_POLICY,
@@ -13,6 +16,22 @@ export function occupancyNpvAllowlistObservation(): InternalVentureObservation {
     venture_status: "ACTIVE",
     operating_stage: "PUBLICLY_LAUNCHED",
     public_launch_state: "YES",
+    venture_created_at: OCCUPANCYNPV_VENTURE_CREATED_AT,
+    is_operating: true,
+    is_started: true,
+    is_fixture: false,
+    has_active_artifact: true,
+  };
+}
+
+export function clubThrottleAllowlistObservation(): InternalVentureObservation {
+  return {
+    private_venture_id: CLUB_THROTTLE_VENTURE_ID,
+    private_name: "Club Throttle",
+    venture_status: "ACTIVE",
+    operating_stage: "PUBLICLY_LAUNCHED",
+    public_launch_state: "YES",
+    venture_created_at: CLUB_THROTTLE_VENTURE_CREATED_AT,
     is_operating: true,
     is_started: true,
     is_fixture: false,
@@ -22,14 +41,12 @@ export function occupancyNpvAllowlistObservation(): InternalVentureObservation {
 
 export function ensureAllowlistedPublicVentures(
   ventures: InternalVentureObservation[],
-  env: NodeJS.Dict<string> = process.env,
 ): InternalVentureObservation[] {
-  const occupancyPresent = ventures.some((row) =>
-    OCCUPANCYNPV_PUBLIC_ALLOWLIST.match(row.private_venture_id, row.private_name),
-  );
-  if (occupancyPresent) return ventures;
-  if (env.IMROS_PUBLIC_SURFACE !== "1" && env.VERCEL !== "1") return ventures;
-  return [...ventures, occupancyNpvAllowlistObservation()];
+  const byId = new Map(ventures.map((row) => [row.private_venture_id, row]));
+  for (const fallback of [occupancyNpvAllowlistObservation(), clubThrottleAllowlistObservation()]) {
+    if (!byId.has(fallback.private_venture_id)) byId.set(fallback.private_venture_id, fallback);
+  }
+  return [...byId.values()];
 }
 
 export function resolvePublicVentureVisibility(
@@ -42,6 +59,12 @@ export function resolvePublicVentureVisibility(
     row.match(venture.private_venture_id, venture.private_name),
   );
   return policy?.visibility ?? DEFAULT_PUBLIC_VENTURE_VISIBILITY;
+}
+
+export function publicVentureIdForProjection(venture: Pick<InternalVentureObservation, "private_venture_id" | "private_name">): string {
+  if (OCCUPANCYNPV_PUBLIC_ALLOWLIST.match(venture.private_venture_id, venture.private_name)) return "occupancynpv";
+  if (CLUB_THROTTLE_PUBLIC_ALLOWLIST.match(venture.private_venture_id, venture.private_name)) return CLUB_THROTTLE_VENTURE_ID;
+  return venture.private_venture_id.replace(/^candidate:/, "public-venture-").replace(/^venture:/, "public-venture-");
 }
 
 export function projectPublicVenture(
@@ -66,6 +89,8 @@ export function projectPublicVenture(
   if (!approved || approved.visibility === "HIDDEN") return null;
   const name = approved.public_name === "HIDDEN" ? sanitizePublicName(venture.private_name) : approved.public_name;
   const base: PublicVentureProjection = {
+    public_venture_id: publicVentureIdForProjection(venture),
+    created_at: venture.venture_created_at,
     public_name: name,
     status_label: approved.status_label,
   };

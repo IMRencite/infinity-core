@@ -30,7 +30,7 @@ import {
   type PublicStatProjection,
   type PublicVentureVisibility,
 } from "./types";
-import { ensureAllowlistedPublicVentures, projectPublicVenture, resolvePublicVentureVisibility } from "./visibility";
+import { projectPublicVenture, resolvePublicVentureVisibility } from "./visibility";
 
 export function emptyUnavailableProjection(now = new Date().toISOString()): PublicOperationsProjection {
   return {
@@ -102,12 +102,12 @@ export function constructPublicOperationsProjection(
   observation: InternalPublicObservation,
   visibilityOverrides?: Record<string, PublicVentureVisibility>,
 ): PublicOperationsProjection {
-  observation = { ...observation, ventures: ensureAllowlistedPublicVentures(observation.ventures) };
   const loop = observation.loop;
   const occupancy = observation.occupancy ?? null;
   const agents = projectPublicAgents(loop, observation.now, occupancy);
   const departments = projectPublicDepartments(loop, observation.now, occupancy);
   const publicVentures = observation.ventures
+    .filter((venture) => !venture.is_fixture)
     .map((venture) => {
       const visibility = resolvePublicVentureVisibility(venture, visibilityOverrides);
       return projectPublicVenture(venture, visibility);

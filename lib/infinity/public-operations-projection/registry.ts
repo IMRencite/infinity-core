@@ -1,3 +1,4 @@
+import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import { ASKREVIEW_VENTURE_ID, ASKREVIEW_CANDIDATE_ID } from "@/lib/infinity/second-venture-factory/constants";
 import { CRE_VENTURE_ID, OCCUPANCYNPV_DOMAIN } from "@/lib/infinity/venture-operating-scale/constants";
 import type { PublicProjectionFieldSpec, PublicVentureVisibility } from "./types";
@@ -45,6 +46,20 @@ export type PublicVentureAllowlistEntry = {
 
 export const ASKREVIEW_PUBLIC_VISIBILITY: PublicVentureVisibility = "HIDDEN";
 
+export const CLUB_THROTTLE_PUBLIC_ALLOWLIST: PublicVentureAllowlistEntry = {
+  match: (ventureId, name) => {
+    const id = ventureId.toLowerCase();
+    const label = name.toLowerCase();
+    return id === CLUB_THROTTLE_VENTURE_ID || label.includes("club throttle") || label.includes("clubthrottle");
+  },
+  visibility: "PUBLIC_STATS",
+  public_name: "Club Throttle",
+  public_url: "https://clubthrottle.com/",
+  status_label: "Live",
+  category: "Rider apparel",
+  sanitized_description: "Original marks for night pavement, garage light, and the road home.",
+};
+
 export const OCCUPANCYNPV_PUBLIC_ALLOWLIST: PublicVentureAllowlistEntry = {
   match: (ventureId, name) => {
     const id = ventureId.toLowerCase();
@@ -84,6 +99,7 @@ export const PUBLIC_VENTURE_VISIBILITY_POLICY: PublicVentureAllowlistEntry[] = [
     status_label: "HIDDEN",
   },
   OCCUPANCYNPV_PUBLIC_ALLOWLIST,
+  CLUB_THROTTLE_PUBLIC_ALLOWLIST,
 ];
 
 export const AUTONOMOUS_HOURS_DEFINITION =
