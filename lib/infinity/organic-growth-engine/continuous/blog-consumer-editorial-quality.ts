@@ -6,6 +6,7 @@ import {
   resolveVentureEditorialProfile,
   type VentureEditorialProfile,
 } from "./venture-editorial-profiles";
+import { evaluateHumanFirstEditorialQc } from "./blog-human-flow-gates";
 
 export const BLOG_CONSUMER_EDITORIAL_QUALITY_GATE = "BlogConsumerEditorialQualityGate" as const;
 export const BLOG_MANUAL_TONE_DETECTOR = "BlogManualToneDetector" as const;
@@ -36,7 +37,7 @@ export function evaluateBlogManualToneDetector(input: {
   profile?: VentureEditorialProfile | null;
 }): OrganicNamedGate {
   const profile = input.profile ?? resolveVentureEditorialProfile(input.draft);
-  if (!profile || profile.sophistication === "OPERATOR") {
+  if (!profile) {
     return named(BLOG_MANUAL_TONE_DETECTOR, []);
   }
   const text = visibleText(input.draft);
@@ -53,6 +54,14 @@ export function evaluateBlogManualToneDetector(input: {
     /in plain numbers|versus|how to read|limitations of|where to go next inside/i.test(h),
   ).length;
   if (flatHeadings >= Math.ceil(input.draft.headings.length * 0.45)) reasons.push("TEXTBOOK_HEADINGS");
+  if (profile.sophistication === "OPERATOR") {
+    const operatorManual = countMatches(text, /how do interest rates|same noi at a higher|is not the same as a tenant|cap rates do not move 1:1/gi);
+    if (operatorManual >= 7) reasons.push("OPERATOR_DEFINITION_CHAIN");
+    if (/buyer impact|seller impact|owner and operator impact|limitations and tradeoffs|key takeaways/i.test(input.draft.headings.join(" "))) {
+      const scenario = /\$\d|120,?000|286,?000|1\.54|debt service/i.test(text);
+      if (!scenario) reasons.push("OPERATOR_TEXTBOOK_WITHOUT_SCENARIO");
+    }
+  }
   const avgPara =
     input.draft.body.split(/\n{2,}/).reduce((sum, block) => sum + block.split(/\s+/).length, 0)
     / Math.max(1, input.draft.body.split(/\n{2,}/).length);
@@ -66,6 +75,9 @@ const REPETITION_CONCEPTS = [
   { id: "wash", patterns: [/wash|dryer|tumble dry|hang dry/gi] },
   { id: "print_method", patterns: [/screen print|direct-to-garment|dtg|plastisol/gi] },
   { id: "size_chart", patterns: [/size chart/gi] },
+  { id: "noi_cap", patterns: [/same noi|cap rate|going-in cap|required yield|indicated value/gi] },
+  { id: "fed_mortgage", patterns: [/federal reserve|commercial mortgage|treasury yield|credit spread/gi] },
+  { id: "dscr_leverage", patterns: [/dscr|debt service|loan-to-value|ltv|debt yield/gi] },
 ];
 
 export function evaluateBlogSemanticRepetitionGate(draft: OrganicDraft): OrganicNamedGate {
@@ -74,7 +86,9 @@ export function evaluateBlogSemanticRepetitionGate(draft: OrganicDraft): Organic
   for (const concept of REPETITION_CONCEPTS) {
     let hits = 0;
     for (const pattern of concept.patterns) hits += countMatches(text, pattern);
-    if (hits >= 12) reasons.push(`REPEAT_${concept.id.toUpperCase()}`);
+    const isOcc = draft.origin?.includes("occupancynpv") || draft.canonical?.includes("occupancynpv");
+    const limit = isOcc && ["noi_cap", "fed_mortgage", "dscr_leverage"].includes(concept.id) ? 24 : 12;
+    if (hits >= limit) reasons.push(`REPEAT_${concept.id.toUpperCase()}`);
   }
   const sents = sentences(text);
   const normalized = sents.map((s) => s.toLowerCase().replace(/\d+/g, "#").slice(0, 80));
@@ -186,9 +200,12 @@ export function evaluateRenderedEditorialQualityGate(input: {
 }
 
 export function consumerEditorialRevisionHints(draft: OrganicDraft): string[] {
+  const reasons: string[] = [];
   const gate = evaluateBlogConsumerEditorialQualityGate(draft);
-  if (gate.result === "PASS") return [];
-  return gate.reasons.filter((r) => r !== "OK");
+  if (gate.result === "FAIL") reasons.push(...gate.reasons.filter((r) => r !== "OK"));
+  const human = evaluateHumanFirstEditorialQc(draft);
+  if (human.result === "FAIL") reasons.push(...human.reasons.filter((r) => r !== "OK"));
+  return [...new Set(reasons)];
 }
 
 export { CLUB_THROTTLE_EDITORIAL_PROFILE, OCCUPANCY_EDITORIAL_PROFILE };

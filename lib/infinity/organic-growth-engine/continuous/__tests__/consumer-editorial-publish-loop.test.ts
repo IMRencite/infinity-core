@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { clubThrottleShirtV5Body } from "../club-throttle-v5-body-shirt";
 import { CLUB_THROTTLE_SHIRT_DRY_LEGACY_SAMPLE } from "../fixtures/club-throttle-shirt-dry-legacy-sample";
 import type { OrganicDraft } from "../quality";
-import { runBoundedConsumerEditorialRepair } from "../consumer-editorial-publish-loop";
+import { evaluateConsumerEditorialPublishStack, runBoundedConsumerEditorialRepair } from "../consumer-editorial-publish-loop";
+import { occupancynpvInterestRateDraft } from "../occupancynpv-blog";
+import { occupancyInterestRatesEditorialCandidateBody } from "../occupancy-v5-editorial-candidate-interest-rates";
 
 function shirtDraft(body: string, headings: string[]): OrganicDraft {
   const shirt = clubThrottleShirtV5Body();
@@ -34,6 +36,19 @@ describe("ConsumerEditorialRepairLoop", () => {
     expect(result.publish_allowed).toBe(false);
     expect(result.attempts.length).toBeGreaterThan(0);
     expect(result.attempts[0]?.revision_hints.length).toBeGreaterThan(0);
+  });
+
+  it("blocks live Occupancy interest-rate body until human-first candidate replaces it", () => {
+    expect(evaluateConsumerEditorialPublishStack({ draft: occupancynpvInterestRateDraft() }).result).toBe("FAIL");
+    const candidate = occupancyInterestRatesEditorialCandidateBody();
+    const improved: OrganicDraft = {
+      ...occupancynpvInterestRateDraft(),
+      headings: candidate.headings,
+      body: candidate.body,
+      direct_answer: candidate.answer,
+      word_count: candidate.body.split(/\s+/).length,
+    };
+    expect(evaluateConsumerEditorialPublishStack({ draft: improved }).result).toBe("PASS");
   });
 
   it("allows bounded repair when adapter supplies passing draft", () => {

@@ -61,6 +61,7 @@ export function evaluateVentureLaunchQcBlocking(input: {
   previewBrandContractQcPassed?: boolean;
   productionBrandContractQcPassed?: boolean;
   productionIdentityVerified?: boolean;
+  humanEditorialQcPassed?: boolean;
   deploymentIdentity?: VentureDeploymentIdentity | null;
 }): {
   gate: typeof VENTURE_LAUNCH_QC_GATE;
@@ -78,6 +79,7 @@ export function evaluateVentureLaunchQcBlocking(input: {
   if (input.previewBrandContractQcPassed === false) reasons.push("PREVIEW_BRAND_CONTRACT_QC_REQUIRED");
   if (input.productionBrandContractQcPassed === false) reasons.push("PRODUCTION_BRAND_CONTRACT_QC_REQUIRED");
   if (input.productionIdentityVerified === false) reasons.push("PRODUCTION_IDENTITY_NOT_VERIFIED");
+  if (input.humanEditorialQcPassed === false) reasons.push("HUMAN_EDITORIAL_QC_REQUIRED");
   if (input.deploymentIdentity?.deploymentProject && input.deploymentIdentity.deploymentProject !== "imros-public") {
     reasons.push("DEPLOYMENT_PROJECT_MISMATCH");
   }

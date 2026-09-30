@@ -5,6 +5,7 @@ import {
   evaluateBlogConsumerEditorialQualityGate,
   evaluateRenderedEditorialQualityGate,
 } from "./blog-consumer-editorial-quality";
+import { evaluateHumanFirstEditorialQc } from "./blog-human-flow-gates";
 import { resolveVentureEditorialProfile } from "./venture-editorial-profiles";
 
 export const MAX_CONSUMER_EDITORIAL_REPAIR_ATTEMPTS = 2 as const;
@@ -43,7 +44,10 @@ export function evaluateConsumerEditorialPublishStack(input: {
   if (!isConsumerEditorialDraft(input.draft)) {
     return { result: "PASS", reasons: ["NOT_CONSUMER_EDITORIAL"], gates: [] };
   }
-  const gates: OrganicNamedGate[] = [evaluateBlogConsumerEditorialQualityGate(input.draft)];
+  const gates: OrganicNamedGate[] = [
+    evaluateBlogConsumerEditorialQualityGate(input.draft),
+    evaluateHumanFirstEditorialQc(input.draft),
+  ];
   const profile = resolveVentureEditorialProfile(input.draft);
   if (input.rendered_html && profile) {
     const venture = profile.venture_id === "club-throttle" ? "club-throttle" : "occupancynpv";

@@ -1,0 +1,30 @@
+/** Frozen dry interest-rates prose patterns — human editorial regression only. */
+export const OCCUPANCY_INTEREST_RATES_DRY_LEGACY_SAMPLE = {
+  h1: "How do interest rates affect commercial property values?",
+  headings: [
+    "Which interest rates are relevant to commercial real estate",
+    "Why borrowing costs matter for value",
+    "How interest rates influence required returns",
+    "Valuation: NOI, cap rate, and property-specific risk",
+    "Financing: LTV, DSCR, debt yield, and loan structure",
+    "Buyer impact",
+    "Seller impact",
+    "Owner and operator impact",
+    "Market context without inventing averages",
+    "Scenario analysis on the same NOI",
+    "Common mistakes and misconceptions",
+    "Limitations and tradeoffs",
+    "Key takeaways",
+  ],
+  body: [
+    "How do interest rates affect commercial property values? They change the cost of capital, which changes the required yield buyers need on net operating income.",
+    "Same NOI at a higher required yield implies a lower indicated value. That link is about property income and price.",
+    "A Federal Reserve policy rate is not the same as a commercial mortgage coupon. Treasury yields are a benchmark.",
+    "Cap rates do not move 1:1 with Treasury or Fed rates. Credit spread, property-specific risk, and transaction liquidity sit between the benchmark and the bid.",
+    "Indicated value is NOI divided by the going-in capitalization rate. Same NOI at a higher cap rate is a lower indicated value.",
+    "Higher rates often mean lower leverage capacity, a higher cash-equity requirement, and a higher return hurdle.",
+    "Do higher interest rates always lower property values? No. A higher required yield pressures price only if NOI, liquidity, and risk do not offset it.",
+    "What is the difference between Fed rates and commercial mortgage rates? The Federal Reserve sets a policy rate.",
+    "Is that the same as a tenant lease NPV? No. Financing-cost valuation is a buyer-yield story.",
+  ].join("\n\n"),
+};
