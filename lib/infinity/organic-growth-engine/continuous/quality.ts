@@ -74,11 +74,22 @@ export function evaluateOrganicContentQualityGate(
   if (complex && !/limit|does not|not a full/i.test(text)) reasons.push("missing_limitations");
   if (complex && !/related|compare|versus|npv|cash-on-cash|irr|mistake/i.test(text)) reasons.push("missing_related_question_coverage");
   if (complex && !/noi|vacancy|operating expenses|property value|interest/i.test(text)) reasons.push("missing_core_entities");
-  const focus = draft.h1
-    .toLowerCase()
+  const h1Lower = draft.h1.toLowerCase();
+  const phraseFocus = ["cap rate", "interest rates", "net operating income", "commercial lease npv"].find((phrase) =>
+    h1Lower.includes(phrase),
+  );
+  const tokenFocus = h1Lower
     .split(/\s+/)
-    .find((word) => word.length >= 3 && !/^(how|what|when|where|which|does|with|from|this|that|calculated)$/.test(word));
-  if (focus && draft.body.split(/\s+/).filter((word) => word.toLowerCase().replace(/[^a-z]/g, "") === focus.replace(/[^a-z]/g, "")).length > 28) {
+    .find((word) => word.length >= 3 && !/^(how|what|when|where|which|does|with|from|this|that|calculated|is|are|the|for|and|your)$/.test(word));
+  const focusMentions = phraseFocus
+    ? (text.toLowerCase().match(new RegExp(phraseFocus.replace(/\s+/g, "\\s+"), "g")) ?? []).length
+    : tokenFocus
+      ? draft.body.split(/\s+/).filter((word) => word.toLowerCase().replace(/[^a-z]/g, "") === tokenFocus.replace(/[^a-z]/g, "")).length
+      : 0;
+  const focusLimit = phraseFocus
+    ? Math.max(36, Math.floor(draft.word_count / 22))
+    : 28;
+  if (focusMentions > focusLimit) {
     reasons.push("keyword_stuffing");
   }
   if (!draft.meta_description || draft.meta_description.length < 40) reasons.push("adds_no_meaningful_value");

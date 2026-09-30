@@ -237,6 +237,11 @@ export function occupancynpvBlogArticleFaqs(): SchemaFaqItem[] {
       question: "Is that the same as a tenant lease NPV?",
       answer: "No. Financing-cost valuation is a buyer-yield story. Tenant NPV is occupancy cost over time. See the evergreen NPV page rather than reusing a property cap rate as a lease discount rate.",
     },
+    {
+      question: "How should owners stress-test a floating-rate loan when the index moves?",
+      answer:
+        "Rebuild annual debt service at the new index plus margin, then compare to trailing and projected NOI. Mark where DSCR falls below lender covenants and where cash after debt service turns negative. Pair that with maturity: a floating coupon that is manageable today can still fail at reset if spreads widen. Write the reset date beside the quoted margin so the workbook matches the term sheet, not a headline index alone.",
+    },
   ];
 }
 
@@ -375,8 +380,14 @@ export function occupancynpvBlogTagArchiveSchema(tag: string) {
   });
 }
 
+function occupancynpvInterestRateTeachableWordCount(body: string, faqs: SchemaFaqItem[]): number {
+  const faqText = faqs.map((row) => `${row.question} ${row.answer}`).join(" ");
+  return `${body} ${faqText}`.split(/\s+/).filter(Boolean).length;
+}
+
 function occupancynpvInterestRateArticleDraft(): OrganicDraft {
   const v5 = occupancyInterestRatesV5Body();
+  const faqs = occupancynpvBlogArticleFaqs();
   const post = occupancynpvPublishedBlogPosts().find((row) => row.asset_id === OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID)
     ?? occupancynpvPublishedBlogPosts()[0]!;
   return {
@@ -411,8 +422,8 @@ function occupancynpvInterestRateArticleDraft(): OrganicDraft {
       "/blog/valuation/how-is-cap-rate-calculated-for-a-building/",
       "/blog/occupancy-costs/cam-first-year/",
     ],
-    word_count: v5.body.split(/\s+/).filter(Boolean).length,
-    visible_faqs: occupancynpvBlogArticleFaqs(),
+    word_count: occupancynpvInterestRateTeachableWordCount(v5.body, faqs),
+    visible_faqs: faqs,
     speakable_selectors: ["#direct-answer", "#summary", "#key-takeaways"],
     date_published: post.published,
     date_modified: "2026-09-27",

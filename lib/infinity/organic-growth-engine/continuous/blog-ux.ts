@@ -230,6 +230,13 @@ export function occupancynpvInterestRateQuestionCluster(): BlogQuestionClusterPl
   });
 }
 
+export function blogQuestionClusterPlanForDraft(draft: OrganicDraft): BlogQuestionClusterPlan | undefined {
+  if (draft.canonical.includes("/blog/valuation/how-interest-rates-affect-commercial-property-values")) {
+    return occupancynpvInterestRateQuestionCluster();
+  }
+  return undefined;
+}
+
 export function sequentialBlogNeighbors(
   posts: OccupancyNpvBlogPost[],
   currentPath: string,

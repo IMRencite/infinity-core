@@ -4,7 +4,7 @@ import {
   BLOG_INDEX_READINESS_GATE,
   BLOG_VALUE_FIRST_GATE,
 } from "./contract";
-import { evaluateBlogDepthCompletenessGate } from "./blog-ux";
+import { blogQuestionClusterPlanForDraft, evaluateBlogDepthCompletenessGate } from "./blog-ux";
 import { evaluateBlogContentQualityGate, evaluateBlogVisualAssetGate } from "./blog-quality-core";
 import type { OrganicDraft } from "./quality";
 import type { OrganicNamedGate } from "./types";
@@ -108,7 +108,9 @@ export function classifyBlogEditorial(draft: OrganicDraft, visuals: { featured_i
   if (evaluateBlogActionabilityGate(draft).result !== "PASS" || evaluateBlogHumanReadabilityGate(draft).result !== "PASS") {
     return "BLOG_NEEDS_EXPANSION";
   }
-  if (evaluateBlogDepthCompletenessGate(draft).result !== "PASS") return "BLOG_NEEDS_EXPANSION";
+  if (evaluateBlogDepthCompletenessGate(draft, blogQuestionClusterPlanForDraft(draft)).result !== "PASS") {
+    return "BLOG_NEEDS_EXPANSION";
+  }
   return "BLOG_COMPLETE";
 }
 
