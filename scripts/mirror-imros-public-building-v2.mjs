@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const destRoot = join(process.cwd(), "..", "imros-public-deploy");
@@ -14,16 +14,10 @@ const files = [
   "lib/infinity/public-operations-projection/project.ts",
   "lib/infinity/public-operations-projection/registry.ts",
   "lib/infinity/public-operations-projection/visibility.ts",
-  "lib/infinity/public-operations-projection/sources.ts",
   "lib/infinity/public-operations-projection/recent-public-ventures.ts",
+  "lib/infinity/public-operations-projection/canonical-public-venture-feed.ts",
   "lib/infinity/public-operations-projection/gates.ts",
   "lib/infinity/public-operations-projection/cache.ts",
-  "lib/infinity/commerce/club-throttle.ts",
-  "lib/infinity/venture-operating-scale/canonical-venture-registry.ts",
-  "lib/infinity/venture-operating-scale/types.ts",
-  "lib/infinity/venture-operating-scale/constants.ts",
-  "lib/infinity/venture-operating-scale/persist.ts",
-  "lib/infinity/venture-operating-scale/secrets.ts",
   "lib/infinity/public-operations-room/imros-founder-qa-state.ts",
   "lib/infinity/public-operations-projection/occupancy.ts",
   "lib/infinity/public-operations-projection/derive-occupancy.ts",
@@ -68,4 +62,11 @@ for (const rel of files) {
   cpSync(from, to, { recursive: true });
 }
 
-console.log(JSON.stringify({ ok: true, destRoot, copied: files.length }));
+const imrosSources = join(process.cwd(), "lib/infinity/public-operations-projection/sources.imros-public.ts");
+const imrosSourcesDest = join(destRoot, "lib/infinity/public-operations-projection/sources.ts");
+if (existsSync(imrosSources)) {
+  mkdirSync(dirname(imrosSourcesDest), { recursive: true });
+  writeFileSync(imrosSourcesDest, readFileSync(imrosSources, "utf8"));
+}
+
+console.log(JSON.stringify({ ok: true, destRoot, copied: files.length + 1 }));

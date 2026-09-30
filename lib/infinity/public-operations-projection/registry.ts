@@ -1,4 +1,4 @@
-import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
+import { CLUB_THROTTLE_VENTURE_ID } from "./canonical-public-venture-feed";
 import { ASKREVIEW_VENTURE_ID, ASKREVIEW_CANDIDATE_ID } from "@/lib/infinity/second-venture-factory/constants";
 import { CRE_VENTURE_ID, OCCUPANCYNPV_DOMAIN } from "@/lib/infinity/venture-operating-scale/constants";
 import type { PublicProjectionFieldSpec, PublicVentureVisibility } from "./types";

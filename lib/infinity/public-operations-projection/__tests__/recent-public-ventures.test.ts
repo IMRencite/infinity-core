@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CLUB_THROTTLE_VENTURE_CREATED_AT, OCCUPANCYNPV_VENTURE_CREATED_AT } from "@/lib/infinity/venture-operating-scale/canonical-venture-registry";
+import { CLUB_THROTTLE_VENTURE_CREATED_AT, OCCUPANCYNPV_VENTURE_CREATED_AT } from "../canonical-public-venture-feed";
 import { evaluatePublicMissionDetailGate, evaluatePublicProjectionGateBundle, evaluateRecentVentureSidebarFreshnessGate } from "../gates";
 import { maliciousPrivateObservation } from "../fixtures";
 import { projectPublicOperations } from "../project";

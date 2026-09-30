@@ -1,5 +1,8 @@
-import { CLUB_THROTTLE_VENTURE_CREATED_AT, OCCUPANCYNPV_VENTURE_CREATED_AT } from "@/lib/infinity/venture-operating-scale/canonical-venture-registry";
-import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
+import {
+  CLUB_THROTTLE_VENTURE_CREATED_AT,
+  CLUB_THROTTLE_VENTURE_ID,
+  OCCUPANCYNPV_VENTURE_CREATED_AT,
+} from "./canonical-public-venture-feed";
 import {
   CLUB_THROTTLE_PUBLIC_ALLOWLIST,
   DEFAULT_PUBLIC_VENTURE_VISIBILITY,

@@ -9,9 +9,9 @@ import {
 } from "@/lib/infinity/venture-operating-scale/hq-venture-lifecycle";
 import type { VentureOperationalRecord } from "@/lib/infinity/venture-operating-scale/types";
 import {
-  mergeCanonicalVentureRecordsForPublicProjection,
-  resolveVentureCreatedAt,
-} from "@/lib/infinity/venture-operating-scale/canonical-venture-registry";
+  listCanonicalPublicVentureFeedObservations,
+  resolvePublicVentureCreatedAt,
+} from "./canonical-public-venture-feed";
 import { ensureAllowlistedPublicVentures } from "./visibility";
 import type {
   InternalLoopObservation,
@@ -43,7 +43,10 @@ export function observeVentureRecord(record: VentureOperationalRecord): Internal
     venture_status: record.venture_status,
     operating_stage: record.operating_stage,
     public_launch_state: record.public_launch_state,
-    venture_created_at: resolveVentureCreatedAt(record),
+    venture_created_at: resolvePublicVentureCreatedAt({
+      private_venture_id: record.venture_id,
+      venture_created_at: record.venture_created_at,
+    }),
     is_operating: operating,
     is_started: started,
     is_fixture: isFixtureVenture(record.venture_id, record.venture_name),
@@ -68,11 +71,10 @@ export function loadInternalPublicObservation(input?: {
 function readVentureObservations(): InternalVentureObservation[] {
   const parsed = readJsonFile(VENTURE_OPERATING_SCALE_STATE_FILE) as { records?: VentureOperationalRecord[] } | null;
   const fromFile = (parsed?.records ?? []).map(observeVentureRecord);
-  const mergedRecords = mergeCanonicalVentureRecordsForPublicProjection();
-  const fromRegistry = mergedRecords.map(observeVentureRecord);
+  const fromFeed = listCanonicalPublicVentureFeedObservations();
   const byId = new Map<string, InternalVentureObservation>();
   for (const row of fromFile) byId.set(row.private_venture_id, row);
-  for (const row of fromRegistry) {
+  for (const row of fromFeed) {
     if (!byId.has(row.private_venture_id)) byId.set(row.private_venture_id, row);
   }
   return ensureAllowlistedPublicVentures([...byId.values()]);
