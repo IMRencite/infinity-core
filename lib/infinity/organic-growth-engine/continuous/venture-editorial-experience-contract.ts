@@ -14,6 +14,11 @@ export const DEFAULT_VENTURE_EDITORIAL_GATES = [
   "BlogShareabilityGate",
   "HolisticEditorialJudge",
   "HumanFirstEditorialQc",
+  "HumanFirstEditorialQcV2",
+  "EditorialNarrativeArchitectureGate",
+  "BlogHeadingDensityGate",
+  "BlogTransitionContinuityGate",
+  "HolisticPublicationQualityJudge",
   "RenderedEditorialQualityGate",
 ] as const;
 

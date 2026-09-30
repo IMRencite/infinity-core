@@ -7,6 +7,7 @@ import {
   type VentureEditorialProfile,
 } from "./venture-editorial-profiles";
 import { evaluateHumanFirstEditorialQc } from "./blog-human-flow-gates";
+import { narrativeStructuralRewriteHints } from "./blog-editorial-narrative-gates";
 
 export const BLOG_CONSUMER_EDITORIAL_QUALITY_GATE = "BlogConsumerEditorialQualityGate" as const;
 export const BLOG_MANUAL_TONE_DETECTOR = "BlogManualToneDetector" as const;
@@ -99,15 +100,20 @@ export function evaluateBlogSemanticRepetitionGate(draft: OrganicDraft): Organic
 
 export function evaluateBlogShareabilityGate(draft: OrganicDraft): OrganicNamedGate {
   const text = visibleText(draft);
+  const words = text.split(/\s+/).length;
   const reasons: string[] = [];
-  const memorable =
-    /mockup|collar tells|parking.?lot test|bar.?reach|30.?second|here'?s the catch|most riders|better bet|send this/i.test(
+  const signals = [
+    /first wash is the real|mockup sells|collar tells|that is when you find out|worth sending|debate this|remember this line/i.test(
       text,
-    );
-  const comparison = /versus|vs\.|compared to|rather than|instead of/i.test(text);
-  const myth = /myth|mistake|wrong move|do not|don't/i.test(text);
-  if (!memorable && !comparison && !myth) reasons.push("LOW_MEMORABLE_LINES");
-  if (!/[!?—]/.test(text) && text.split(/\s+/).length > 900) reasons.push("FLAT_PROSE_RHYTHM");
+    ),
+    /versus|vs\.|compared to|rather than|instead of|not when you buy/i.test(text),
+    /mistake|wrong move|do not treat|overrated|better bet|here'?s the catch/i.test(text),
+    /disappear|lose \$|waste|stop wearing|four hours later|286,?000/i.test(text),
+    /—.*\b(is|are|was|were|means)\b/i.test(text),
+  ].filter(Boolean).length;
+  if (words > 650 && signals < 2) reasons.push("LOW_SHARE_VALUE");
+  if (words > 900 && signals < 3) reasons.push("LOW_SHARE_VALUE");
+  if (!/[!?—]/.test(text) && words > 900) reasons.push("FLAT_PROSE_RHYTHM");
   return named(BLOG_SHAREABILITY_GATE, reasons);
 }
 
@@ -204,7 +210,10 @@ export function consumerEditorialRevisionHints(draft: OrganicDraft): string[] {
   const gate = evaluateBlogConsumerEditorialQualityGate(draft);
   if (gate.result === "FAIL") reasons.push(...gate.reasons.filter((r) => r !== "OK"));
   const human = evaluateHumanFirstEditorialQc(draft);
-  if (human.result === "FAIL") reasons.push(...human.reasons.filter((r) => r !== "OK"));
+  if (human.result === "FAIL") {
+    reasons.push(...human.reasons.filter((r) => r !== "OK"));
+    reasons.push(...narrativeStructuralRewriteHints(human.reasons));
+  }
   return [...new Set(reasons)];
 }
 

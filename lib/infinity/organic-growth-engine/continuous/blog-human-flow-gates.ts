@@ -1,5 +1,6 @@
 import type { OrganicDraft } from "./quality";
 import type { OrganicNamedGate } from "./types";
+import { evaluateHumanFirstEditorialQcV2 } from "./blog-editorial-narrative-gates";
 import {
   resolveVentureEditorialProfile,
   type VentureEditorialProfile,
@@ -157,7 +158,10 @@ export function evaluateHumanFirstEditorialQc(
     evaluateBlogReaderMomentumGate(draft),
     evaluateBlogSectionProgressionGate(draft),
     evaluateHolisticEditorialJudge(draft),
+    evaluateHumanFirstEditorialQcV2(draft, resolved),
   ];
   const reasons = gates.filter((g) => g.result === "FAIL").flatMap((g) => g.reasons.filter((r) => r !== "OK"));
   return named(HUMAN_FIRST_EDITORIAL_QC, [...new Set(reasons)]);
 }
+
+export { evaluateHumanFirstEditorialQcV2, HUMAN_FIRST_EDITORIAL_QC_V2 } from "./blog-editorial-narrative-gates";

@@ -46,7 +46,9 @@ describe("ConsumerEditorialRepairLoop", () => {
       headings: candidate.headings,
       body: candidate.body,
       direct_answer: candidate.answer,
+      visible_faqs: candidate.faqs,
       word_count: candidate.body.split(/\s+/).length,
+      origin: "https://occupancynpv.com",
     };
     expect(evaluateConsumerEditorialPublishStack({ draft: improved }).result).toBe("PASS");
   });

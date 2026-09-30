@@ -31,7 +31,35 @@ export const EDITORIAL_AUTO_PAUSE_REASON_CODES = [
   "JUDGE_KEEP_READING",
   "JUDGE_PUBLICATION_NOT_MANUAL",
   "HUMAN_EDITORIAL_QC_REQUIRED",
+  "HEADLINE_TO_HEADLINE_FLOW",
+  "MICRO_SECTION_DENSITY_HIGH",
+  "NO_NARRATIVE_SPINE",
+  "LOW_SHARE_VALUE",
+  "TEMPLATED_ARTICLE_STRUCTURE",
+  "STRUCTURAL_REWRITE_REQUIRED",
 ] as const;
+
+/** Founder manual review overrides automated human-first PASS (training + publish block). */
+export function resolveFinalEditorialQc(input: {
+  automatedHumanFirstQcPassed: boolean;
+  founderEditorialVerdict?: "PASS" | "FAIL" | null;
+}): { result: "PASS" | "FAIL"; founderOverrideApplied: boolean; reasons: string[] } {
+  if (input.founderEditorialVerdict === "FAIL" && input.automatedHumanFirstQcPassed) {
+    return {
+      result: "FAIL",
+      founderOverrideApplied: true,
+      reasons: ["FOUNDER_EDITORIAL_OVERRIDE_FAIL", "AUTOMATED_PASS_FOUNDER_REJECT"],
+    };
+  }
+  if (input.founderEditorialVerdict === "PASS") {
+    return { result: "PASS", founderOverrideApplied: false, reasons: ["OK"] };
+  }
+  return {
+    result: input.automatedHumanFirstQcPassed ? "PASS" : "FAIL",
+    founderOverrideApplied: false,
+    reasons: input.automatedHumanFirstQcPassed ? ["OK"] : ["AUTOMATED_HUMAN_EDITORIAL_FAIL"],
+  };
+}
 
 export function evaluateVentureEditorialPublishingInfrastructure(input: {
   ventureId: string;

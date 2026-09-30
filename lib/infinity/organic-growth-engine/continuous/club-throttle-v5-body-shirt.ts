@@ -1,5 +1,5 @@
 /**
- * Customer-facing rider shirt article — consumer editorial V5 (reader-first, not manual tone).
+ * Customer-facing rider shirt article — narrative editorial V6 (single-spine, not module stack).
  */
 import type { PageTopicBoundary } from "@/lib/infinity/venture-isolation/venture-isolation";
 
@@ -20,62 +20,33 @@ function paragraphs(blocks: string[]): string {
 
 export function clubThrottleShirtV5Body() {
   const answer =
-    "Pick a rider shirt the way you pick gear for a long night out: read the blank’s weight and measurements, fit it while reaching for the bars, place the print where people actually see it after the jacket comes off, and keep or return on collar and drape—not the mockup alone.";
+    "The shirt you click is not the shirt you judge. The real product review happens after the jacket comes off, through the ride, and again after the first wash—when fit, fabric, print, and construction either hold up or expose a mockup.";
 
   const headings = [
-    "The gas-station mirror test",
-    "The parking-lot test",
-    "Why the mockup sells a different shirt",
-    "Weight on the tag (without the sermon)",
-    "Cotton, blend, and humid bike nights",
-    "The collar tells on a cheap tee",
-    "The 30-second bar-reach test",
-    "Front print, back print, and bike-night visibility",
-    "Screen print vs DTG — pick your care plan",
-    "The dryer is probably killing your shirt",
-    "Tee vs hoodie for the ride home",
-    "Keep, exchange, or return",
-    "Lifestyle cotton is not armor",
+    "The shirt looks great until the night actually happens",
+    "What the ride exposes that the product photo hid",
+    "The blank matters more than the marketing copy",
+    "The first wash is the real product review",
+    "The keep-or-return rule",
     "Where to go next in Club Throttle",
   ];
 
   const body = paragraphs([
-    "You know the shirt looked good when you left the house. The real test comes four hours later, when you peel off your jacket at a gas station and the collar looks like it lost a fight. Rider streetwear lives in that moment—not in the product photo.",
-    "The parking-lot test is simple: stand where your friends will see you, jacket off, sodium lights on. If the back graphic reads from ten feet and the front mark is not swallowed by a zip or tank strap, placement passed. If the art disappears when you sit on the bike, the mockup lied.",
-    "Mockups are flat. You are not. A design centered on a mannequin chest often dives toward your belt line the second you reach for the bars. For bike-night streetwear, back scale matters more than cramming text edge to edge—leave margin above the hem so the print does not drown in denim.",
-    "Fabric weight is how much yarn the mill packed into a square yard (ounces) or square meter (GSM). A four-ounce tee feels easy in a shop; under a jacket and sweat it can go limp fast. Around six ounces—roughly 200 GSM—shirts start holding shape. Weight alone does not prove tight stitching; it just gives the print a stable panel.",
-    "Cotton breathes and takes ink well. Blends trade a little breathability for stability and faster dry time in a hotel room. Too much polyester on the face can make a direct-to-garment print look glossy. For humid summer nights, for most riders the better bet is deciding whether you care more about dry time or a matte cotton hand—not which tag sounds premium.",
-    "The collar tells on a cheap tee before the print fades. Pinch the rib, stretch lightly, let go. If it rolls outward on the first wear, laundry will not fix it. Do not size up to rescue a wavy collar—size for shoulder point and body length, return bad construction.",
-    "The 30-second bar-reach test: sit, reach forward like you are covering the clutch, note hem rise and chest pull. Sleeve should clear the wrist without binding the bicep. Size charts only work when they match the blank on the label—measure your chest at the fullest point and compare to garment flat width if the chart says so.",
-    "Front print belongs in a chest window—roughly hand-width—so art survives jacket zips and straps. Back print is the identity play: large enough to read across a row of bikes, with quiet margin so the shirt still looks intentional when you are not on the machine.",
-    "Screen print builds a film on the fibers—saturated on darks, slightly raised, durable when cured, hates high dryer heat. Direct-to-garment sprays into the face—soft gradients, can fade if under-cured or washed hot. Ask which you bought; care follows the ink system. Run your palm across the art before you wear it out under a liner.",
-    "Wash inside out, cold or warm per the label, skip softener on fresh prints, tumble low or hang dry. Heat fades black dyes and cracks screen ink. If you need every millimeter for bar reach, hang dry—length often goes first on all-cotton knits after a hot cycle.",
-    "A tee wins when you want a back graphic visible after you peel off at the lot. A hoodie wins on a cold roll-out when one layer with a hood beats juggling a jacket. Hoodies bulk under tight riding jackets—decide which piece owns the night before you order both.",
-    "Keep when one ride and one gentle wash leave the print sharp, hem long enough, collar flat. Exchange when measurements were wrong but seams are honest. Return when the collar rolls, print is crooked, or fabric pills before you have a story in the shirt. The mockup sells the shirt; the collar tells you whether you will still wear it six months later.",
-    "Lifestyle cotton is not armor. It is identity and comfort after the ride or under a jacket—not impact protection. For the line between streetwear and real gear, see streetwear versus riding gear in the journal; on the road, wear protection built for falls.",
-    "When you want house graphics on blanks chosen for print and wash—not a stand-in for reading any brand’s size chart—browse the shop or After Dark collection. Related reads stay inside Club Throttle: night-ride notes for tee-versus-hoodie calls, group etiquette when you are dressing for a meet, not a spec sheet.",
+    "The graphic sold you at checkout. Four hours later you are at a gas station under sodium lights, jacket off, and the collar on your new tee looks like it lost an argument with the humidity. The back print you loved in the photo is half-hidden under a waistband. The hem has climbed toward your belt because you reached for the bars all night. That is when you find out whether you bought a rider shirt or a rider mockup—and most of the answer has nothing to do with the design on the screen.",
+    "Product photos are flat; you are not. A chest graphic centered on a mannequin often dives toward your belt line the second you sit and reach. Stand where your friends will actually see you—jacket off, bike nearby—and ask whether the back mark reads from ten feet without drowning in denim. If the art disappears when you take the seat, the mockup lied about scale, not about taste. Fit and placement fail together: pinch the rib collar, stretch lightly, and let go; if it rolls outward on the first wear, laundry will not fix cheap construction. Run the bar-reach check in thirty seconds—sit, reach like you are covering the clutch, and watch hem rise and chest pull. Size charts only help when they describe the blank on the label; measure your chest at the fullest point and compare to the garment flat width if the chart says so. Front print belongs in a chest window so zips and tank straps do not eat it; back print is the identity play, large enough to read across a parking row with quiet margin above the hem.",
+    "The graphic gets you to click. The collar and knit decide whether you keep wearing the shirt. Fabric weight—ounces per square yard or GSM—is how much yarn the mill packed into the panel: a four-ounce tee feels easy in a shop, but under a jacket and sweat it can glue flat to your back while the ink still looks fine. Around six ounces (roughly 200 GSM) shirts start holding shape; heavyweight tags are useful, but GSM alone is not a quality certificate. Cotton breathes and takes ink well; blends trade a little breath for stability and faster dry time in a hotel room. Too much polyester on the face can make direct-to-garment color look glossy under lot lights. For humid summer nights, for most riders the better bet is picking whether you care more about dry time or a matte cotton hand—not which marketing word sounds premium.",
+    "Screen print builds a film on the fibers—saturated on darks, slightly raised, durable when cured, and unforgiving in a hot dryer. Direct-to-garment sprays into the face—soft gradients, but it can fade if under-cured or washed hot. Ask which system you bought; care follows the ink. Wash inside out, cold or warm per the label, skip softener on fresh prints, tumble low or hang dry. Heat fades black dyes and cracks screen ink; length on all-cotton knits often goes first after a brutal cycle. The first wash is the real product review: if the collar stays flat, the print survives, and the hem still clears your belt when you reach, you probably have a keeper. If the collar waves, the art ghosts, or the shirt shrinks into a crop top, return it before you attach a story to a bad blank.",
+    "Keep when one honest ride and one gentle wash leave the print sharp, hem long enough for bars, and collar flat. Exchange when measurements were wrong but seams are honest. Return when the collar rolls, print placement is crooked, or fabric pills before you have a reason to wear it again. A tee wins when you want a back graphic visible after you peel off at the lot; a hoodie wins on a cold roll-out when one layer with a hood beats juggling a jacket—just decide which piece owns the night before you order both. Lifestyle cotton is not armor: it is identity and comfort after the ride, not impact protection—on the road, wear gear built for falls. When you want house graphics on blanks chosen for print and wash, browse the shop or After Dark collection; for tee-versus-hoodie calls and meet etiquette, stay inside Club Throttle’s journal rather than treating the site like a spec sheet.",
   ]);
 
   const faqs = [
     {
-      question: "What does heavyweight mean on a rider tee?",
-      answer: "A denser knit—often near six ounces or about 200 GSM—not a guarantee of collar recovery or straight side seams.",
-    },
-    {
-      question: "Where should the back print sit?",
-      answer: "High enough to read across a parking row, with clear margin above the hem so it does not disappear when you sit.",
-    },
-    {
-      question: "Should I size up for layering under a jacket?",
-      answer: "Size for shoulder fit and length when the chart puts you between sizes; do not size up to fix a collar that already looks cheap on the hanger.",
-    },
-    {
       question: "Are lifestyle motorcycle shirts protective gear?",
-      answer: "No. They are apparel for comfort and identity; abrasion and impact protection live in real riding gear.",
+      answer: "No. They are apparel for comfort and identity; abrasion and impact protection belong in real riding gear.",
     },
     {
-      question: "When is keep or return the right call?",
-      answer: "Exchange for size when construction is sound; return when collar, print placement, or fabric fails on arrival or after one honest wash.",
+      question: "When should I return a rider tee instead of exchanging size?",
+      answer: "Return when collar construction, print placement, or fabric fails on arrival or after one honest wash—not when the chart size was simply off on an otherwise well-made blank.",
     },
   ];
 

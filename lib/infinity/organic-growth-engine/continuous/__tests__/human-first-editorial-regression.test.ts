@@ -8,7 +8,8 @@ import {
   evaluateBlogConsumerEditorialQualityGate,
   evaluateBlogManualToneDetector,
 } from "../blog-consumer-editorial-quality";
-import { evaluateHumanFirstEditorialQc } from "../blog-human-flow-gates";
+import { evaluateHumanFirstEditorialQc, evaluateHumanFirstEditorialQcV2 } from "../blog-human-flow-gates";
+import { CLUB_THROTTLE_SHIRT_FALSE_POSITIVE_V5 } from "../fixtures/club-throttle-shirt-false-positive-v5";
 import type { OrganicDraft } from "../quality";
 import { CLUB_THROTTLE_EDITORIAL_PROFILE, OCCUPANCY_EDITORIAL_PROFILE } from "../venture-editorial-profiles";
 
@@ -58,11 +59,25 @@ describe("Human-first editorial regression fixtures", () => {
     expect(evaluateBlogConsumerEditorialQualityGate(legacy).result).toBe("FAIL");
   });
 
-  it("passes Club Throttle V5 editorial body", () => {
+  it("fails frozen false-positive V5 shirt (founder rejected)", () => {
+    const draft = {
+      ...ctDraft(CLUB_THROTTLE_SHIRT_FALSE_POSITIVE_V5.body, CLUB_THROTTLE_SHIRT_FALSE_POSITIVE_V5.headings),
+      visible_faqs: CLUB_THROTTLE_SHIRT_FALSE_POSITIVE_V5.faqs,
+    };
+    expect(evaluateHumanFirstEditorialQcV2(draft).result).toBe("FAIL");
+    expect(evaluateHumanFirstEditorialQc(draft).result).toBe("FAIL");
+  });
+
+  it("passes Club Throttle narrative rewrite for publish stack", () => {
     const shirt = clubThrottleShirtV5Body();
-    const draft = ctDraft(shirt.body, shirt.headings);
-    const gate = evaluateBlogConsumerEditorialQualityGate(draft);
-    expect(gate.result).toBe("PASS");
+    const draft = {
+      ...ctDraft(shirt.body, shirt.headings),
+      visible_faqs: shirt.faqs,
+      direct_answer: shirt.answer,
+    };
+    expect(evaluateHumanFirstEditorialQc(draft).result).toBe("PASS");
+    expect(evaluateBlogConsumerEditorialQualityGate(draft).result).toBe("PASS");
+    expect(evaluateConsumerEditorialPublishStack({ draft }).result).toBe("PASS");
   });
 
   it("fails dry Occupancy interest-rates fixture", () => {
