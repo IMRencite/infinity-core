@@ -26,6 +26,12 @@ import { clubThrottleBikeNightV5Body } from "./club-throttle-v5-body-bike-night"
 import { clubThrottleGarageV5Body } from "./club-throttle-v5-body-garage";
 import { clubThrottleGroupRideV5Body } from "./club-throttle-v5-body-group-ride";
 import { clubThrottleStreetwearGearV5Body } from "./club-throttle-v5-body-streetwear-gear";
+import {
+  CLUB_THROTTLE_ORIGIN,
+  clubThrottleJournalArticleMetadata,
+  clubThrottleJournalArticleSchemaGraph,
+  clubThrottleJournalIndexCanonical,
+} from "./club-throttle-journal-publication-metadata";
 
 export const CLUB_THROTTLE_JOURNAL_ROOT = "/journal/" as const;
 
@@ -147,14 +153,15 @@ function draftFrom(input: {
     ],
     schema: ["Organization", "WebSite", "WebPage", "BlogPosting", "BreadcrumbList", "SpeakableSpecification", "FAQPage"],
     canonical: input.post.path,
-    breadcrumbs: ["Journal", input.post.primaryCategory ?? input.post.category, input.post.title],
+    breadcrumbs: ["Home", "Journal", input.post.primaryCategory ?? input.post.category, input.post.title],
     internal_links: input.links,
     word_count: input.body.split(/\s+/).length,
     visible_faqs: input.faqs,
-    speakable_selectors: ["h1", "[data-direct-answer]"],
+    speakable_selectors: ["#direct-answer", "#summary", "#key-takeaways"],
     date_published: "2026-09-25",
     date_modified: "2026-09-25",
     page_kind: "BLOG_ARTICLE",
+    origin: CLUB_THROTTLE_ORIGIN,
   };
 }
 
@@ -450,7 +457,7 @@ export function composeClubThrottleJournalFiles(): Array<{ path: string; content
   const files: Array<{ path: string; content: string }> = [
     {
       path: "app/journal/page.tsx",
-      content: `export const metadata = { title: "Journal · Club Throttle" };
+      content: `export const metadata = { title: "Journal · Club Throttle", alternates: { canonical: ${JSON.stringify(clubThrottleJournalIndexCanonical())} } };
 export default function JournalPage() {
   return (
     <article className="sheet" data-blog-layout="editorial" data-content-surface="journal">
@@ -516,24 +523,16 @@ export default async function JournalTag({ params }: { params: Promise<{ tag: st
       archive_root: "/journal",
       featured_reads_html: featuredReadsFor(slug),
     });
+    const metadata = clubThrottleJournalArticleMetadata(draft);
+    const schemaGraph = clubThrottleJournalArticleSchemaGraph({ draft, post: post!, shell_html: shell });
     files.push({
       path: `app/journal/${category}/${slug}/page.tsx`,
-      content: `export const metadata = { title: ${JSON.stringify(draft.title + " · Club Throttle Journal")} };
+      content: `export const metadata = ${JSON.stringify(metadata, null, 2)};
 export default function JournalArticle() {
   return (
     <div data-page-type="BLOG_ARTICLE" data-performance-surface="journal-article">
       ${shell}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ${JSON.stringify(JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
-          { "@type": "Organization", "@id": "https://clubthrottle.com/#org", name: "Club Throttle" },
-          { "@type": "WebSite", "@id": "https://clubthrottle.com/#site", url: "https://clubthrottle.com/" },
-          { "@type": "BlogPosting", headline: draft.title, mainEntityOfPage: `https://clubthrottle.com${draft.canonical}` },
-          { "@type": "BreadcrumbList", itemListElement: draft.breadcrumbs.map((name, index) => ({ "@type": "ListItem", position: index + 1, name })) },
-          { "@type": "SpeakableSpecification", cssSelector: ["h1", "[data-direct-answer]"] },
-          { "@type": "FAQPage", mainEntity: (draft.visible_faqs ?? []).map((row) => ({ "@type": "Question", name: row.question, acceptedAnswer: { "@type": "Answer", text: row.answer } })) },
-        ],
-      }))} }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ${JSON.stringify(JSON.stringify(schemaGraph))} }} />
     </div>
   );
 }

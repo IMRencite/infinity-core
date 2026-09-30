@@ -313,7 +313,6 @@ export const metadata: Metadata = {
   title: brand.public_name,
   description: "Original rider apparel for the road after dark.",
   metadataBase: new URL("https://clubthrottle.com"),
-  alternates: { canonical: "https://clubthrottle.com" },
   icons: { icon: brand.favicon_path },
   openGraph: { title: brand.public_name, images: [brand.og_image_path], url: "https://clubthrottle.com" },
 };
@@ -337,6 +336,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       path: "app/page.tsx",
       content: `import Link from "next/link";
       import { collections, products } from "../lib/catalog";
+
+export const metadata = { alternates: { canonical: "https://clubthrottle.com" } };
 
 export default function HomePage() {
   return (
