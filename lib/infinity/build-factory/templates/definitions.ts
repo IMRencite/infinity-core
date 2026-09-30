@@ -47,6 +47,8 @@ export const BUILD_PROJECT_TEMPLATES: Record<BuildTemplateKey, BuildProjectTempl
       "website.generate_pages",
       "website.provision_blog_surface",
       "website.provision_schema_stack",
+      "content.provision_venture_editorial_experience_contract",
+      "content.enforce_human_editorial_publish_stack",
       "qa.verify_internal_website",
     ],
     reviewRequirements: ["qa.verify_internal_website"],

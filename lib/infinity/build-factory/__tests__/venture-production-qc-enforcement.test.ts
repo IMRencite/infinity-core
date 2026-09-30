@@ -25,6 +25,7 @@ const fullEvidence = {
   sectionContainmentQc: true,
   scrollQc: true,
   contentQc: true,
+  humanEditorialQc: true,
   interactionQc: true,
   postDeployProbeEvidence: true,
   assetParity: true,
@@ -38,6 +39,19 @@ describe("venture production QC enforcement", () => {
     });
     expect(blocked.result).not.toBe("PASS");
     expect(blocked.reasons).toContain("MISSING_POSTDEPLOYPROBEEVIDENCE");
+  });
+
+  it("blocks public-content venture without editorial infrastructure", () => {
+    const pipeline = evaluateVentureReleasePipelineComplete({
+      stage: "PRODUCTION_BRAND_CONTRACT_QC",
+      buildPassed: true,
+      evidence: { ...fullEvidence, humanEditorialQc: true },
+      deploymentIdentity: null,
+      ventureId: "unknown-venture",
+      publicBlogOrJournalCapability: true,
+    });
+    expect(pipeline.result).toBe("FAIL");
+    expect(pipeline.reasons.some((r) => r.startsWith("EDITORIAL_INFRA:"))).toBe(true);
   });
 
   it("blocks wrong deployment project identity", () => {

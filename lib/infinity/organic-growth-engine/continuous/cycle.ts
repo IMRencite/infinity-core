@@ -20,6 +20,7 @@ import {
   evaluateQuestionClusterCoverageGate,
 } from "./completeness";
 import { evaluateOrganicContentQualityGate, evaluateOrganicEvidenceGate, evaluateOrganicTechnicalSeoGate, evidenceRequiredFor, planGeoAnswer, recommendOrganicSchema, type OrganicDraft } from "./quality";
+import { evaluateConsumerEditorialPublishStackGate } from "@/lib/infinity/build-factory/venture-editorial-publishing-enforcement";
 import {
   evaluateHumanResourceDepthGate,
   evaluateProductClaimTruthGate,
@@ -337,6 +338,10 @@ export function executeOrganicContinuousTick(input: {
     const blogGates = opportunity.content_type === "BLOG" || opportunity.content_type === "TIMELY_EDITORIAL"
       ? evaluateAllBlogQualityGates(draft, { featured_image: "/media/hero-building.webp", featured_alt: "Editorial context", supporting_visual: true })
       : [];
+    const consumerEditorialGate =
+      opportunity.content_type === "BLOG" || opportunity.content_type === "TIMELY_EDITORIAL"
+        ? evaluateConsumerEditorialPublishStackGate(draft)
+        : { gate: "ConsumerEditorialPublishStack", result: "PASS" as const, reasons: ["NOT_BLOG"] };
     const auth = authorizeOrganicPublish({
       venture_active: input.venture_active ?? true,
       website_approved: input.website_approved ?? true,
@@ -350,10 +355,10 @@ export function executeOrganicContinuousTick(input: {
       velocity_available: published_today < cadence.allowed_new_urls || cadence.allowed_new_urls > 0,
       completeness,
       schema_stack: [technical, ...schemaEval.gates],
-      blog_gates: blogGates,
+      blog_gates: [...blogGates, consumerEditorialGate],
       escape_gates: escapeGates,
     });
-    if (quality.result !== "PASS" || completeness.some((row) => row.result !== "PASS") || schemaEval.stack.result !== "PASS" || blogGates.some((row) => row.result !== "PASS") || escapeGates.some((row) => row.result !== "PASS") || auth.result !== "PASS") {
+    if (quality.result !== "PASS" || completeness.some((row) => row.result !== "PASS") || schemaEval.stack.result !== "PASS" || blogGates.some((row) => row.result !== "PASS") || consumerEditorialGate.result !== "PASS" || escapeGates.some((row) => row.result !== "PASS") || auth.result !== "PASS") {
       rejected_quality += 1;
       seed.status = "REJECTED";
       assets = registerOrganicAsset(seed, assets);
