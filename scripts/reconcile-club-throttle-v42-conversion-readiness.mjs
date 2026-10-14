@@ -5,9 +5,12 @@ import { join } from "node:path";
 import {
   canonicalReplacementConversionAuthorityQc,
   canonicalReplacementConversionReadyQc,
-  evaluateCanonicalReplacementDraftConversion,
   v42ValidatedDraftSnapshotLockQc,
 } from "../lib/infinity/commerce/gelato-v42-canonical-art-validation-draft-v1.ts";
+import {
+  canonicalReplacementConversionRequired,
+  evaluateV42DraftConversionAttempt,
+} from "../lib/infinity/commerce/club-throttle-canonical-replacement-closeout-v42.2-v1.ts";
 
 const report = JSON.parse(
   readFileSync(join(process.cwd(), ".infinity/commerce/club-throttle-v42-validation-draft-report.json"), "utf8"),
@@ -34,8 +37,7 @@ const snapshotForLock = {
 };
 
 const snapshotLockQc = v42ValidatedDraftSnapshotLockQc(snapshotForLock);
-const conversionAttempt = evaluateCanonicalReplacementDraftConversion({
-  provider_order_id: lock.draft_id,
+const conversionAttempt = evaluateV42DraftConversionAttempt({
   production_conversion_authorized: false,
   env: {},
 });
@@ -56,6 +58,7 @@ console.log(
       V42_VALIDATED_DRAFT_SNAPSHOT_LOCK_QC: snapshotLockQc,
       CANONICAL_REPLACEMENT_CONVERSION_AUTHORITY_QC: authorityQc,
       CANONICAL_REPLACEMENT_CONVERSION_READY: ready,
+      CANONICAL_REPLACEMENT_CONVERSION_REQUIRED: canonicalReplacementConversionRequired(),
     },
     null,
     2,

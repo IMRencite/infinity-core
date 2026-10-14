@@ -13,10 +13,13 @@ import {
   CLUB_THROTTLE_V42_PRODUCTION_MASTER_SHA256,
   canonicalReplacementConversionAuthorityQc,
   canonicalReplacementConversionReadyQc,
-  evaluateCanonicalReplacementDraftConversion,
   productionConversionAuthorized,
   v42ValidatedDraftSnapshotLockQc,
 } from "../lib/infinity/commerce/gelato-v42-canonical-art-validation-draft-v1.ts";
+import {
+  canonicalReplacementConversionRequired,
+  evaluateV42DraftConversionAttempt,
+} from "../lib/infinity/commerce/club-throttle-canonical-replacement-closeout-v42.2-v1.ts";
 import { inspectGelatoValidationDraft } from "../lib/infinity/commerce/gelato-preflight-draft-validation-v1.ts";
 
 const REPORT_PATH = join(process.cwd(), ".infinity/commerce/club-throttle-v42-validation-draft-report.json");
@@ -53,8 +56,7 @@ const prodAuthFlag = productionConversionAuthorized({
   env: process.env,
 });
 
-const conversionAttempt = evaluateCanonicalReplacementDraftConversion({
-  provider_order_id: CLUB_THROTTLE_V42_VALIDATED_DRAFT_GELATO_ORDER_ID,
+const conversionAttempt = evaluateV42DraftConversionAttempt({
   production_conversion_authorized: report.AUTHORITY?.PRODUCTION_CONVERSION_AUTHORIZED === true,
   env: process.env,
 });
@@ -96,6 +98,7 @@ const out = {
   V42_VALIDATED_DRAFT_SNAPSHOT_LOCK_QC: snapshotLockQc,
   CANONICAL_REPLACEMENT_CONVERSION_AUTHORITY_QC: authorityQc,
   CANONICAL_REPLACEMENT_CONVERSION_READY: ready,
+  CANONICAL_REPLACEMENT_CONVERSION_REQUIRED: canonicalReplacementConversionRequired(),
   PRODUCTION_CONVERSION_AUTHORIZED: prodAuthFlag,
   conversion_attempt: {
     allowed: conversionAttempt.allowed,
