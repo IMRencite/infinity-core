@@ -15,6 +15,11 @@ import {
   portfolioOperatingFounderDailyItems,
   type PortfolioOperatingReportSnapshot,
 } from "@/lib/infinity/founder-daily-reports/portfolio-operations-v1";
+import {
+  PORTFOLIO_OPERATING_CRON_PROOF_PATH,
+  reconcilePortfolioOperatingCronProof,
+  type PortfolioCronProofRecord,
+} from "@/lib/infinity/autonomous-portfolio-operations/portfolio-operating-cron-reconciliation-v1";
 
 export const maxDuration = 300;
 
@@ -40,18 +45,37 @@ export async function GET(request: Request): Promise<NextResponse> {
       trigger,
       execute_publish: publishPolicy.execute_publish,
       publish_authority_reason: publishPolicy.reason,
+      execute_live_creative: (process.env.INFINITY_PORTFOLIO_LIVE_CREATIVE ?? "").trim() === "1",
       publish_live: publishPolicy.execute_publish
         ? async ({ path }) => portfolioOperatingPublishOccupancyNpvPath({ path })
         : undefined,
     });
-    const existingVentureGrowthQc =
+
+    if (trigger === "SCHEDULED") {
+      const cronProof: PortfolioCronProofRecord = {
+        trigger: "SCHEDULED",
+        provenance: "x-vercel-cron",
+        completed_at: new Date().toISOString(),
+        route: "/api/runtime/portfolio-operating-tick",
+        cycle_version: cycle.version,
+        assets_published: cycle.ventures.reduce((s, v) => s + v.assets_published, 0),
+      };
+      writeLocalJsonIfDurable(PORTFOLIO_OPERATING_CRON_PROOF_PATH, cronProof);
+    }
+
+    const cronReconcile = reconcilePortfolioOperatingCronProof();
+    const architecturePass =
       cycle.inventory_qc === "PASS" &&
       cycle.plan_qc === "PASS" &&
       cycle.content_self_healing_qc === "PASS" &&
       cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC === "PASS" &&
-      cycle.publish.AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC === "PASS"
-        ? "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
-        : "PARTIAL";
+      cycle.publish.AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC === "PASS";
+
+    const existingVentureGrowthQc = architecturePass
+      ? cronReconcile.PORTFOLIO_OPERATING_SCHEDULER_QC === "PASS"
+        ? "PASS_PRODUCTION"
+        : "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+      : "PARTIAL";
     const autonomyQc = autonomousVentureOperationsQc({
       new_venture_discovery_autonomy_qc: "PENDING_NEXT_REAL_CRON",
       existing_venture_growth_autonomy_qc: existingVentureGrowthQc,
@@ -73,7 +97,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     const payload = {
       trigger,
       cadence: PORTFOLIO_OPERATING_CRON_SCHEDULE,
-      PORTFOLIO_OPERATING_SCHEDULER_QC: "PENDING_NEXT_REAL_CRON",
+      PORTFOLIO_OPERATING_SCHEDULER_QC: cronReconcile.PORTFOLIO_OPERATING_SCHEDULER_QC,
+      portfolio_cron_reconciliation: cronReconcile,
       AUTONOMOUS_PORTFOLIO_OPERATIONS_V1,
       AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1: cycle.version,
       OPERATING_VENTURE_INVENTORY_QC: cycle.inventory_qc,
@@ -86,7 +111,8 @@ export async function GET(request: Request): Promise<NextResponse> {
       SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC: cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC,
       AUTONOMOUS_PRODUCTION_PUBLISH_CAPABILITY_QC:
         cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC === "PASS" ? "PASS" : "FAIL",
-      AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: cycle.content.CONTENT_PUBLISH_EXECUTED_LAST_CYCLE ? "PASS" : "NOT_RUN",
+      AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: cycle.occupancynpv.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC,
+      AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: cycle.occupancynpv.AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC,
       FOUNDER_DAILY_REPORT_PORTFOLIO_OPERATIONS_QC: founderDailyReportPortfolioOperationsQc(portfolioSnapshot),
       founder_daily_portfolio_items: portfolioOperatingFounderDailyItems(portfolioSnapshot),
       publish_policy: publishPolicy,

@@ -470,6 +470,11 @@ const envKeys = {
   CLUB_THROTTLE_PUBLIC_ORIGIN: process.env.CLUB_THROTTLE_PUBLIC_ORIGIN || "https://clubthrottle.com",
   CLUB_THROTTLE_ORDER_EMAIL_FROM: process.env.CLUB_THROTTLE_ORDER_EMAIL_FROM,
   RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.INFINITY_COMMERCE_RESEND_API_KEY,
+  VERCEL_TOKEN: process.env.VERCEL_TOKEN,
+  VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
+  XAI_API_KEY: process.env.XAI_API_KEY,
+  AI_PROVIDER_XAI_ENABLED: process.env.AI_PROVIDER_XAI_ENABLED || "true",
+  AI_PROVIDER_ALLOW_LIVE_EXECUTION: process.env.AI_PROVIDER_ALLOW_LIVE_EXECUTION || "true",
 };
 
 const moduleCandidates = [

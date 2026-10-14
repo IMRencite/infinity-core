@@ -201,6 +201,7 @@ export function autonomousSchedulerResponsibilitySeparationQc(): "PASS" | "FAIL"
 
 export type ExistingVentureGrowthAutonomyQc =
   | "PASS"
+  | "PASS_PRODUCTION"
   | "FAIL"
   | "PARTIAL"
   | "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF";
@@ -212,7 +213,11 @@ export type AutonomousVentureOperationsQcInput = {
 };
 
 function existingVentureGrowthIsPass(state: ExistingVentureGrowthAutonomyQc): boolean {
-  return state === "PASS" || state === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF";
+  return (
+    state === "PASS" ||
+    state === "PASS_PRODUCTION" ||
+    state === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+  );
 }
 
 export function autonomousVentureOperationsQc(

@@ -14,6 +14,10 @@ import {
 import { pickOccupancyNpvAutonomousBacklogCandidate } from "../portfolio-operating-backlog-publish-v1.ts";
 import { advanceTopClubThrottleProductConcept } from "@/lib/infinity/commerce/club-throttle-product-lifecycle-v1.ts";
 import { executeAutonomousPortfolioOperatingCycleV1 } from "../execute-autonomous-portfolio-operating-cycle-v1.ts";
+import { autonomousVentureProductionDeployerQc } from "../autonomous-venture-production-deployer-v1.ts";
+import { ventureDeployTargetIdentityQc } from "../venture-deploy-target-identity-v1.ts";
+import { reconcileOccupancyNpvBacklog } from "../occupancynpv-backlog-reconciliation-v1.ts";
+import { commerceCreativeVsManufacturingAuthoritySeparationQc } from "@/lib/infinity/commerce/club-throttle-autonomous-creative-approval-policy-v1.ts";
 import { clubThrottleAutonomousProductDevelopmentQc, rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1.ts";
 import { buildVentureTopicGraph } from "@/lib/infinity/organic-growth-engine/continuous/graph";
 
@@ -96,6 +100,19 @@ describe("AUTONOMOUS_PORTFOLIO_OPERATIONS_V1", () => {
     const advanced = advanceTopClubThrottleProductConcept(concepts);
     expect(advanced.PRODUCTS_ADVANCED_BEYOND_CONCEPT).toBe(1);
     expect(advanced.advanced[0]?.lifecycle_stage).toBe("CREATIVE_BRIEF");
+  });
+
+  it("separates venture deploy targets and reconciles OccupancyNPV backlog", () => {
+    expect(autonomousVentureProductionDeployerQc()).toBe("PASS");
+    expect(
+      ventureDeployTargetIdentityQc({
+        venture_id: "occupancynpv",
+        expected_project_id: "prj_vSCXLOYDoExYUAR8ypnYz2W1Lu7d",
+      }),
+    ).toBe("PASS");
+    expect(commerceCreativeVsManufacturingAuthoritySeparationQc()).toBe("PASS");
+    const backlog = reconcileOccupancyNpvBacklog();
+    expect(backlog.OCCUPANCYNPV_QC_PASS_BACKLOG_COUNT).toBeGreaterThan(0);
   });
 
   it("does not treat missing CLI publish as quality hold when backlog is ready", async () => {

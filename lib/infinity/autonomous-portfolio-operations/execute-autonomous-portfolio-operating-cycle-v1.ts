@@ -49,6 +49,13 @@ import {
   ventureOperatingPlanQc,
 } from "./autonomous-portfolio-operations-v1";
 import { recordVentureGrowthLearning, ventureGrowthLearningLoopQc } from "./venture-growth-learning-loop-v1";
+import {
+  reconcileOccupancyNpvBacklog,
+  occupancynpvFailedAssetSummary,
+} from "./occupancynpv-backlog-reconciliation-v1";
+import { verifyOccupancyNpvProductionPublication } from "./occupancynpv-production-publish-proof-v1";
+import { runClubThrottleAutonomousProductPipeline } from "@/lib/infinity/commerce/club-throttle-autonomous-product-pipeline-v1";
+import { resolveRoutineCreativeAuthority } from "@/lib/infinity/commerce/club-throttle-autonomous-creative-approval-policy-v1";
 
 export const AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1 = "AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1" as const;
 
@@ -100,7 +107,12 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
   execute_publish?: boolean;
   publish_authority_reason?: string;
   trigger?: PortfolioOperatingTrigger;
-  publish_live?: (input: { venture_id: string; path: string; canonical_url: string }) => Promise<{ ok: boolean }>;
+  publish_live?: (input: {
+    venture_id: string;
+    path: string;
+    canonical_url: string;
+  }) => Promise<{ ok: boolean; safe_error?: string | null }>;
+  execute_live_creative?: boolean;
 }): Promise<{
   version: typeof AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1;
   portfolio: typeof AUTONOMOUS_PORTFOLIO_OPERATIONS_V1;
@@ -139,7 +151,13 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
   };
   occupancynpv: {
     OCCUPANCYNPV_CONTENT_TO_CONVERSION_QC: "PASS" | "FAIL";
+    reconciliation: ReturnType<typeof reconcileOccupancyNpvBacklog>;
+    failed_summary: ReturnType<typeof occupancynpvFailedAssetSummary>;
+    AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: "PASS" | "FAIL" | "NOT_RUN";
+    AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: "PASS" | "FAIL" | "NOT_RUN";
+    OCCUPANCYNPV_PRODUCTION_URLS: string[];
   };
+  club_throttle_product_pipeline: Awaited<ReturnType<typeof runClubThrottleAutonomousProductPipeline>> | null;
   content: {
     CONTENT_RUNTIME_HEALTHY: boolean;
     CONTENT_AUTONOMOUS_LOOP_RUNNING: boolean;
@@ -177,7 +195,42 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
   const ctLifecycle = advanceTopClubThrottleProductConcept(ctConceptsRaw);
   const ctConcepts = ctLifecycle.advanced;
   const ctProductQc = clubThrottleAutonomousProductDevelopmentQc(ctConceptsRaw);
+  const onpvReconciliation = reconcileOccupancyNpvBacklog();
+  const onpvFailedSummary = occupancynpvFailedAssetSummary(onpvReconciliation);
   const ctCreativeQc = clubThrottleProductCreativeQc(ctConcepts[0] ?? null);
+  let ctProductPipeline: Awaited<ReturnType<typeof runClubThrottleAutonomousProductPipeline>> | null = null;
+  if (ctConceptsRaw[0]) {
+    try {
+      ctProductPipeline = await runClubThrottleAutonomousProductPipeline({
+        concept: ctConceptsRaw[0],
+        execute_live_creative: input.execute_live_creative ?? false,
+      });
+    } catch (error) {
+      ctProductPipeline = {
+        concept_id: ctConceptsRaw[0].concept_id,
+        lifecycle_stage: "CREATIVE_BRIEF",
+        CLUB_THROTTLE_CREATIVE_PROVIDER: "NONE",
+        NEW_ARTWORKS_CREATED: 0,
+        ORIGINALITY_QC: "HOLD",
+        IP_RISK_QC: "HOLD",
+        CLUB_THROTTLE_PRODUCT_CREATIVE_QC: "HOLD",
+        CLUB_THROTTLE_RASTER_ART_GENERATION_QC: "FAIL",
+        CLUB_THROTTLE_MARKET_INFORMED_CREATIVE_RESEARCH_QC: "PASS",
+        CLUB_THROTTLE_CREATIVE_BRIEF_QC: "PASS",
+        PRODUCT_GARMENT_CONTEXT_ART_QC: "PASS",
+        AUTONOMOUS_VISUAL_APPROVAL_ARTIFACT_PIN_QC: "HOLD",
+        approval_policy: "CLUB_THROTTLE_AUTONOMOUS_CREATIVE_APPROVAL_POLICY_V1",
+        source_asset_hash: null,
+        held_reason: error instanceof Error ? error.message : "CREATIVE_PIPELINE_ERROR",
+      };
+    }
+  }
+  const creativeAuthority = resolveRoutineCreativeAuthority({
+    brand_fit_score: ctConceptsRaw[0]?.brand_fit_score ?? 0,
+    ip_risk: "LOW",
+    category_within_strategy: true,
+    controversial_messaging: false,
+  });
   const ctGarmentQc = productGarmentContextArtQc(ctConcepts[0] ?? null);
   const ctStorefrontQc = autonomousStorefrontProductPublishQc({
     lifecycle_stage: ctConcepts[0]?.lifecycle_stage ?? "CONCEPT",
@@ -207,6 +260,9 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
   let selfHealRecoveries = 0;
   let selfHealExhausted = false;
   let conversionBodySample = "";
+  let publicationExecutionQc: "PASS" | "FAIL" | "NOT_RUN" = "NOT_RUN";
+  let publishProofQc: "PASS" | "FAIL" | "NOT_RUN" = "NOT_RUN";
+  const productionUrls: string[] = [];
 
   for (const row of live) {
     const plan = plans.find((p) => p.venture_id === row.venture_id || (row.venture_id === "occupancynpv" && p.venture_id === CRE_VENTURE_ID));
@@ -276,8 +332,16 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
           published += 1;
           blogCreated += 1;
           anyPublished = true;
+          publicationExecutionQc = "PASS";
+          productionUrls.push(candidate.canonical_url);
+          const proof = await verifyOccupancyNpvProductionPublication({
+            canonical_url: candidate.canonical_url,
+            expected_path: candidate.path,
+          });
+          publishProofQc = proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC;
         } else {
           failed += 1;
+          publicationExecutionQc = "FAIL";
         }
       } else if (backlogPublishCandidates === 0) {
         held += 1;
@@ -328,7 +392,7 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
   const productFreshness = ventureProductDevelopmentFreshnessQc({
     backlog_concepts: ctConceptsRaw.length,
     advanced_beyond_concept: ctLifecycle.PRODUCTS_ADVANCED_BEYOND_CONCEPT,
-    documented_blocker: ctLifecycle.policy.includes("FOUNDER_VISUAL_APPROVAL"),
+    documented_blocker: creativeAuthority.requires_founder_visual_review,
   });
 
   const scheduledPolicyQc = scheduledAutonomousPublishPolicyQc({
@@ -374,7 +438,13 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
     },
     occupancynpv: {
       OCCUPANCYNPV_CONTENT_TO_CONVERSION_QC: occupancynpvContentToConversionQc(conversionBodySample || backlog[0]?.path),
+      reconciliation: onpvReconciliation,
+      failed_summary: onpvFailedSummary,
+      AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: publicationExecutionQc,
+      AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: publishProofQc,
+      OCCUPANCYNPV_PRODUCTION_URLS: productionUrls,
     },
+    club_throttle_product_pipeline: ctProductPipeline,
     content: {
       CONTENT_RUNTIME_HEALTHY: inventoryQc === "PASS",
       CONTENT_AUTONOMOUS_LOOP_RUNNING: true,

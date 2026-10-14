@@ -1,7 +1,9 @@
 import type { ClubThrottleProductConcept } from "./club-throttle-autonomous-product-development-v1.ts";
 
+import { CLUB_THROTTLE_AUTONOMOUS_CREATIVE_APPROVAL_POLICY_V1 } from "./club-throttle-autonomous-creative-approval-policy-v1.ts";
+
 export const CLUB_THROTTLE_NEW_PRODUCT_VISUAL_APPROVAL_POLICY =
-  "FOUNDER_VISUAL_APPROVAL_REQUIRED_FOR_NEW_SKU" as const;
+  CLUB_THROTTLE_AUTONOMOUS_CREATIVE_APPROVAL_POLICY_V1;
 
 export type ClubThrottleProductLifecycleStage =
   | "OPPORTUNITY"

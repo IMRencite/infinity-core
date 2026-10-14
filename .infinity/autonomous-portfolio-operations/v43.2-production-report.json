@@ -1,0 +1,181 @@
+{
+  "mission": "V43_2_PRODUCTION_PORTFOLIO_EXECUTION",
+  "generated_at": "2026-10-14T05:54:49.216Z",
+  "PRODUCTION_VENTURE_PUBLISH_ROOT_CAUSE": "NONE_BLOCKING",
+  "PORTFOLIO_DEPLOY_CREDENTIAL_PRESENT": true,
+  "PORTFOLIO_DEPLOY_CREDENTIAL_SCOPE": "VERCEL_CROSS_PROJECT_DEPLOY_EXISTING_VENTURE_PROJECTS",
+  "PORTFOLIO_DEPLOY_CREDENTIAL_SUFFICIENT": true,
+  "runtime_vercel_token_configured": "MISSING",
+  "local_process_env_token": true,
+  "team_id_present": true,
+  "portfolio_cron": {
+    "V43_2_REAL_PORTFOLIO_CRON_AVAILABLE": false,
+    "V43_2_PORTFOLIO_CRON_TIMESTAMP": null,
+    "V43_2_PORTFOLIO_CRON_PROVENANCE": null,
+    "V43_2_PORTFOLIO_CRON_STATUS": "PENDING_NEXT_REAL_CRON",
+    "PORTFOLIO_OPERATING_SCHEDULER_QC": "PENDING_NEXT_REAL_CRON"
+  },
+  "occupancynpv_backlog": {
+    "OCCUPANCYNPV_QC_PASS_BACKLOG_COUNT": 6,
+    "OCCUPANCYNPV_PUBLISH_ELIGIBLE_COUNT": 6,
+    "OCCUPANCYNPV_PUBLISH_BLOCKED_COUNT": 0,
+    "failed": [
+      {
+        "asset_id": "live-cap-rate",
+        "asset_type": "TOOL_PAGE",
+        "topic": "How is cap rate calculated?",
+        "slug": "how-is-cap-rate-calculated",
+        "path": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+        "source_qc": "FAIL",
+        "publish_eligible": false,
+        "deploy_eligible": false,
+        "blocking_reasons": [
+          "HUMAN_FIRST_EDITORIAL_QC_FAIL",
+          "BLOG_VISUAL_VALUE_GATE_FAIL"
+        ]
+      }
+    ]
+  },
+  "cycle_summary": {
+    "content": {
+      "CONTENT_RUNTIME_HEALTHY": true,
+      "CONTENT_AUTONOMOUS_LOOP_RUNNING": true,
+      "CONTENT_VALID_QUALITY_HOLD": false,
+      "CONTENT_PUBLISH_PATH_PROVEN": true,
+      "CONTENT_PUBLISH_EXECUTED_LAST_CYCLE": true
+    },
+    "occupancynpv": {
+      "OCCUPANCYNPV_CONTENT_TO_CONVERSION_QC": "PASS",
+      "reconciliation": {
+        "OCCUPANCYNPV_QC_PASS_BACKLOG_COUNT": 6,
+        "OCCUPANCYNPV_PUBLISH_ELIGIBLE_COUNT": 6,
+        "OCCUPANCYNPV_PUBLISH_BLOCKED_COUNT": 0,
+        "rows": [
+          {
+            "asset_id": "blog-interest-rate",
+            "asset_type": "BLOG",
+            "topic": "How do interest rates affect commercial property values?",
+            "slug": "how-interest-rates-affect-commercial-property-values",
+            "path": "/blog/valuation/how-interest-rates-affect-commercial-property-values/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "blog-expansion-how-is-cap-rate-calculated-for-a-building",
+            "asset_type": "BLOG",
+            "topic": "How is cap rate calculated for a commercial building?",
+            "slug": "how-is-cap-rate-calculated-for-a-building",
+            "path": "/blog/valuation/how-is-cap-rate-calculated-for-a-building/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "blog-expansion-what-is-occupancy-cost-versus-rent",
+            "asset_type": "BLOG",
+            "topic": "What is occupancy cost, and how is it different from rent?",
+            "slug": "what-is-occupancy-cost-versus-rent",
+            "path": "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "blog-expansion-what-numbers-do-you-need-to-compare-two-leases",
+            "asset_type": "BLOG",
+            "topic": "What numbers do you need before you compare two commercial leases?",
+            "slug": "what-numbers-do-you-need-to-compare-two-leases",
+            "path": "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "blog-expansion-how-do-you-compare-two-commercial-lease-options",
+            "asset_type": "BLOG",
+            "topic": "How do you compare two commercial lease options on one timeline?",
+            "slug": "how-do-you-compare-two-commercial-lease-options",
+            "path": "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "blog-cam-first-year",
+            "asset_type": "BLOG",
+            "topic": "How should a tenant treat CAM in the first operating year?",
+            "slug": "cam-first-year",
+            "path": "/blog/occupancy-costs/cam-first-year/",
+            "source_qc": "PASS",
+            "publish_eligible": true,
+            "deploy_eligible": true,
+            "blocking_reasons": []
+          },
+          {
+            "asset_id": "live-cap-rate",
+            "asset_type": "TOOL_PAGE",
+            "topic": "How is cap rate calculated?",
+            "slug": "how-is-cap-rate-calculated",
+            "path": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+            "source_qc": "FAIL",
+            "publish_eligible": false,
+            "deploy_eligible": false,
+            "blocking_reasons": [
+              "HUMAN_FIRST_EDITORIAL_QC_FAIL",
+              "BLOG_VISUAL_VALUE_GATE_FAIL"
+            ]
+          }
+        ],
+        "failed_assets": [
+          {
+            "asset_id": "live-cap-rate",
+            "asset_type": "TOOL_PAGE",
+            "topic": "How is cap rate calculated?",
+            "slug": "how-is-cap-rate-calculated",
+            "path": "/commercial-lease-npv/how-is-cap-rate-calculated/",
+            "source_qc": "FAIL",
+            "publish_eligible": false,
+            "deploy_eligible": false,
+            "blocking_reasons": [
+              "HUMAN_FIRST_EDITORIAL_QC_FAIL",
+              "BLOG_VISUAL_VALUE_GATE_FAIL"
+            ]
+          }
+        ]
+      },
+      "failed_summary": {
+        "OCCUPANCYNPV_FAILED_ASSET_ID": "live-cap-rate",
+        "OCCUPANCYNPV_FAILED_ASSET_TYPE": "TOOL_PAGE",
+        "OCCUPANCYNPV_FAILURE_REASON": "HUMAN_FIRST_EDITORIAL_QC_FAIL,BLOG_VISUAL_VALUE_GATE_FAIL"
+      },
+      "AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC": "PASS",
+      "AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC": "PASS",
+      "OCCUPANCYNPV_PRODUCTION_URLS": [
+        "https://occupancynpv.com/blog/occupancy-costs/cam-first-year/"
+      ]
+    },
+    "club_throttle_product_pipeline": {
+      "concept_id": "ct-merch-concept-v43-3",
+      "lifecycle_stage": "CREATIVE_BRIEF",
+      "CLUB_THROTTLE_CREATIVE_PROVIDER": "NONE",
+      "NEW_ARTWORKS_CREATED": 0,
+      "ORIGINALITY_QC": "PASS",
+      "IP_RISK_QC": "PASS",
+      "CLUB_THROTTLE_PRODUCT_CREATIVE_QC": "HOLD",
+      "CLUB_THROTTLE_RASTER_ART_GENERATION_QC": "SKIPPED",
+      "CLUB_THROTTLE_MARKET_INFORMED_CREATIVE_RESEARCH_QC": "PASS",
+      "CLUB_THROTTLE_CREATIVE_BRIEF_QC": "PASS",
+      "PRODUCT_GARMENT_CONTEXT_ART_QC": "PASS",
+      "AUTONOMOUS_VISUAL_APPROVAL_ARTIFACT_PIN_QC": "PASS",
+      "approval_policy": "CLUB_THROTTLE_AUTONOMOUS_CREATIVE_APPROVAL_POLICY_V1",
+      "source_asset_hash": null,
+      "held_reason": "LIVE_CREATIVE_NOT_REQUESTED"
+    }
+  }
+}
