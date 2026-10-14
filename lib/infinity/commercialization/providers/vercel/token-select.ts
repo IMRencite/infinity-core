@@ -50,7 +50,11 @@ export async function selectTargetAwareVercelCredential(input: {
   permitMutation?: boolean;
 }): Promise<VercelTokenSelectResult> {
   const env = input.env ?? process.env;
-  const tokens = readAllLocalEnvValues(VERCEL_TOKEN_ENV, input.cwd);
+  const tokens = [...readAllLocalEnvValues(VERCEL_TOKEN_ENV, input.cwd)];
+  const envToken = (env[VERCEL_TOKEN_ENV] ?? "").trim();
+  if (envToken.length >= 8 && !tokens.includes(envToken)) {
+    tokens.push(envToken);
+  }
   const team = (input.expectedTeamId ?? readAllLocalEnvValues(VERCEL_TEAM_ID_ENV, input.cwd).at(-1) ?? env[VERCEL_TEAM_ID_ENV] ?? "").trim();
   const fetchImpl = input.fetchImpl ?? fetch;
   const candidates: TargetAwareCredentialCandidate[] = [];
