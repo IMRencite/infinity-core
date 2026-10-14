@@ -115,7 +115,7 @@ export async function runClubThrottleAutonomousProductPipeline(input: {
     };
   }
 
-  const prompt = compileConceptApparelPrompt(brief, chromaKeyPromptSuffix());
+  const prompt = compileConceptApparelPrompt(brief, chromaKeyPromptSuffix("green"));
   const generated = await generateXaiImagineImages({
     prompt,
     n: 1,

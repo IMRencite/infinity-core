@@ -16,7 +16,7 @@ for (const line of readFileSync(envPath, "utf8").split(/\r?\n/)) {
 
 const secret = process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET;
 const url = `${(process.env.INFINITY_RUNTIME_URL || "https://infinity-runtime.vercel.app").replace(/\/$/, "")}/api/runtime/portfolio-operating-tick`;
-const res = await fetch(url, { headers: { Authorization: `Bearer ${secret}` } });
+const res = await fetch(url, { headers: { Authorization: `Bearer ${secret}` }, signal: AbortSignal.timeout(600_000) });
 const text = await res.text();
 let body;
 try {
@@ -37,6 +37,9 @@ const out = {
   V43_1_PRODUCTION_OPERATING_CYCLE_ID: body.cycle?.version ?? null,
   AUTONOMOUS_PRODUCTION_PUBLISH_CAPABILITY_QC: body.AUTONOMOUS_PRODUCTION_PUBLISH_CAPABILITY_QC,
   AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: body.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC,
+  AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: body.AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC,
+  occupancynpv_production_urls: body.cycle?.occupancynpv?.OCCUPANCYNPV_PRODUCTION_URLS ?? [],
+  V43_2_INFINITY_RUNTIME_DEPLOYMENT_ID: "dpl_9NTC4E3BNGxUZ2aeEqbNiS1wPcj8",
 };
 mkdirSync(join(process.cwd(), ".infinity/autonomous-portfolio-operations"), { recursive: true });
 writeFileSync(join(process.cwd(), ".infinity/autonomous-portfolio-operations/v43.1-production-report.json"), `${JSON.stringify(out, null, 2)}\n`);
