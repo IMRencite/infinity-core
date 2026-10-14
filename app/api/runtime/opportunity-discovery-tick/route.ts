@@ -13,6 +13,8 @@ import {
   syncValidationQueueFromPersistence,
   validationQueueHealth,
 } from "@/lib/infinity/venture-discovery/venture-candidate-validation-queue-v1";
+import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
+import { resolvePortfolioCronProvenance } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
 
 export const maxDuration = 300;
 
@@ -41,6 +43,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   }
 
   const trigger = resolveOpportunityScannerTrigger(request);
+  const cronProvenance = resolvePortfolioCronProvenance(request);
   const mode = resolveTickMode(request);
   const orgId = defaultOrgId();
 
@@ -57,7 +60,9 @@ export async function GET(request: Request): Promise<NextResponse> {
         AUTONOMOUS_OPPORTUNITY_SCANNER_SCHEDULER_V1: "AUTONOMOUS_OPPORTUNITY_SCANNER_SCHEDULER_V1",
         OPPORTUNITY_SCANNER_CRON_SCHEDULE,
         trigger,
-        cron_provenance: trigger === "SCHEDULED" ? "x-vercel-cron" : "manual-auth",
+        cron_provenance: cronProvenance.platform_provenance,
+        DISCOVERY_CRON_LEDGER_ROUTE: "/api/runtime/opportunity-discovery-tick",
+        DISCOVERY_CRON_LEDGER_WRITE_PATH: "appendScheduledExecutionLedger(health_no_execute)",
         OPPORTUNITY_SCANNER_CRON_AUTH_QC: "PASS",
         OPPORTUNITY_SCANNER_CRON_CONFIGURATION_QC: "PASS",
         OPPORTUNITY_SCANNER_SCHEDULER_QC: trigger === "SCHEDULED" ? "PASS" : "PENDING_NEXT_REAL_CRON",
@@ -86,12 +91,25 @@ export async function GET(request: Request): Promise<NextResponse> {
       trigger: result.trigger,
     });
 
+    await appendScheduledExecutionLedger({
+      route: "/api/runtime/opportunity-discovery-tick",
+      schedule_identity: OPPORTUNITY_SCANNER_CRON_SCHEDULE,
+      platform_provenance: cronProvenance.platform_provenance,
+      trigger_type: cronProvenance.trigger_type,
+      accepted_status: result.scanner_ok ? "ACCEPTED" : "PARTIAL",
+      completed_status: result.scanner_ok ? "COMPLETED" : "FAILED",
+      completion_timestamp: result.completed_at,
+      payload: { mode: "execute", scanner_run_id: result.run_id ?? null },
+    });
+
     return NextResponse.json({
       mode: "execute",
       AUTONOMOUS_OPPORTUNITY_SCANNER_SCHEDULER_V1: result.scheduler_version,
       OPPORTUNITY_SCANNER_CRON_SCHEDULE,
       trigger,
-      cron_provenance: trigger === "SCHEDULED" ? "x-vercel-cron" : "manual-auth",
+      cron_provenance: cronProvenance.platform_provenance,
+      DISCOVERY_CRON_LEDGER_ROUTE: "/api/runtime/opportunity-discovery-tick",
+      DISCOVERY_CRON_LEDGER_WRITE_PATH: "appendScheduledExecutionLedger",
       OPPORTUNITY_SCANNER_CRON_AUTH_QC: "PASS",
       OPPORTUNITY_SCANNER_CRON_CONFIGURATION_QC: "PASS",
       OPPORTUNITY_SCANNER_SCHEDULER_QC:

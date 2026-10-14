@@ -10,6 +10,8 @@ import { executeBoundedVentureDeploy } from "./async-venture-deployment-reconcil
 import { persistAutonomousDeployTelemetry } from "./autonomous-deploy-telemetry-v1";
 import { registerSuccessfulPublication } from "./autonomous-publication-idempotency-v1";
 import { verifyOccupancyNpvProductionPublication } from "../occupancynpv-production-publish-proof-v1";
+import { evaluateOccupancyNpvTargetPrepublishQc } from "../portfolio-operating-backlog-publish-v1";
+import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
 import { recordVentureGrowthLearning } from "../venture-growth-learning-loop-v1";
 import {
   diagnoseHeldClubThrottlePrintQc,
@@ -66,8 +68,24 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
         return;
       }
       case "VENTURE_DEPLOY": {
+        const expectedPath = String(lineage.path ?? "");
+        if (expectedPath) {
+          const prepublish = evaluateOccupancyNpvTargetPrepublishQc({ path: expectedPath });
+          if (prepublish.OCCUPANCYNPV_TARGET_PREPUBLISH_QC !== "PASS") {
+            await completeJob(job, holder, {
+              status: "FAILED",
+              safe_error: `OCCUPANCYNPV_TARGET_PREPUBLISH_QC_FAIL:${prepublish.reasons.join(",")}`,
+              output_lineage: prepublish as unknown as Record<string, unknown>,
+            });
+            return;
+          }
+        }
         const bundleStart = new Date().toISOString();
-        const deploy = await executeBoundedVentureDeploy({ venture_id: job.venture_id });
+        const deployVentureId =
+          job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"
+            ? CRE_VENTURE_ID
+            : job.venture_id;
+        const deploy = await executeBoundedVentureDeploy({ venture_id: deployVentureId });
         await persistAutonomousDeployTelemetry({
           cycle_id: job.cycle_id,
           job_id: job.job_id,

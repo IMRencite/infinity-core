@@ -20,8 +20,23 @@ import { createPortfolioTickTimer, V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE } f
 import { publicationAssetIdentity, readPublicationRegistry } from "./autonomous-publication-idempotency-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
+import type { OperatingVentureInventoryRow } from "../autonomous-portfolio-operations-v1";
 
 export const PORTFOLIO_CRON_ORCHESTRATOR_V1 = "PORTFOLIO_CRON_ORCHESTRATOR_V1" as const;
+
+function resolveOperatingVentureId(row: OperatingVentureInventoryRow): string {
+  if (
+    row.venture_id === CRE_VENTURE_ID ||
+    row.venture_id === "occupancynpv" ||
+    row.production_url?.includes("occupancynpv.com")
+  ) {
+    return CRE_VENTURE_ID;
+  }
+  if (row.venture_id === CLUB_THROTTLE_VENTURE_ID || row.production_url?.includes("clubthrottle.com")) {
+    return CLUB_THROTTLE_VENTURE_ID;
+  }
+  return row.venture_id;
+}
 
 export async function orchestratePortfolioOperatingTick(input: {
   provenance: PortfolioCronProvenance;
@@ -69,7 +84,7 @@ export async function orchestratePortfolioOperatingTick(input: {
 
   if (cycle_id) {
     for (const row of live) {
-      const vid = row.venture_id === "occupancynpv" ? CRE_VENTURE_ID : row.venture_id;
+      const vid = resolveOperatingVentureId(row);
       const researchKey = `research:${vid}`;
       const research = await enqueuePortfolioJob({
         cycle_id,
@@ -77,7 +92,11 @@ export async function orchestratePortfolioOperatingTick(input: {
         job_type: "VENTURE_RESEARCH",
         idempotency_key: researchKey,
         priority: 30,
-        input_lineage: { plan: plans.find((p) => p.venture_id === vid) ?? null },
+        input_lineage: {
+          plan:
+            plans.find((p) => p.venture_id === vid || p.venture_id === row.venture_id) ?? null,
+          inventory_venture_id: row.venture_id,
+        },
       });
       if (research.job_id) {
         jobsCreated += 1;
@@ -213,6 +232,8 @@ export async function orchestratePortfolioOperatingTick(input: {
   timer.mark("persistence_ms");
   const stage_timings = timer.finish();
 
+  const onpvCandidate = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
+
   return {
     cycle_id,
     jobs_created: jobsCreated,
@@ -223,6 +244,9 @@ export async function orchestratePortfolioOperatingTick(input: {
     stage_timings,
     V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE,
     backlog_publish_candidates: backlogPublishCandidates,
+    onpv_autonomous_publish_candidate: onpvCandidate
+      ? { slug: onpvCandidate.slug, path: onpvCandidate.path, asset_id: onpvCandidate.asset_id }
+      : null,
     enqueued,
   };
 }
