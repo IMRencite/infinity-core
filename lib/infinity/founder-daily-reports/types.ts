@@ -69,6 +69,16 @@ export type FounderDailyReportSources = {
   treasury_verification?: FounderDailyOperationsReport["treasury_verification"];
   venture_ids?: string[];
   outbound_events?: string[];
+  discovery_last_scanner_at?: string | null;
+  discovery_next_scheduled_scan?: string | null;
+  discovery_fresh_candidate_count?: number;
+  discovery_qualified_count?: number;
+  discovery_build_decision_count?: number;
+  discovery_scanner_errors?: string | null;
+  discovery_factory_handoff?: string | null;
+  discovery_validate_candidate_count?: number;
+  discovery_revalidation_due_count?: number;
+  discovery_stagnated_validate_count?: number;
 };
 
 export type DailyNamedGate = { gate: string; result: "PASS" | "FAIL"; reasons: string[] };

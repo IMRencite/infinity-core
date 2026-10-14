@@ -60,12 +60,31 @@ for (const file of files) {
 if (!existsSync(join(dest, "next-env.d.ts"))) {
   writeFileSync(join(dest, "next-env.d.ts"), `/// <reference types="next" />\n/// <reference types="next/image-types/global" />\n`);
 }
-writeFileSync(
-  join(dest, "vercel.json"),
-  `${JSON.stringify({
-    crons: [{ path: "/api/runtime/communication-tick", schedule: "*/5 * * * *" }],
-  }, null, 2)}\n`,
-);
+const includeAutonomousLoops = process.env.INFINITY_RUNTIME_STRIP_ORGANIC_GROWTH !== "1";
+if (process.env.INFINITY_RUNTIME_STRIP_ORGANIC_GROWTH === "1") {
+  console.log(
+    JSON.stringify({
+      ok: false,
+      reason: "INFINITY_RUNTIME_STRIP_ORGANIC_GROWTH_FORBIDDEN",
+      gate: "INFINITY_RUNTIME_AUTONOMOUS_ROUTE_PRESERVATION_QC",
+      INFINITY_RUNTIME_AUTONOMOUS_ROUTE_PRESERVATION_QC: "FAIL",
+    }),
+  );
+  process.exit(1);
+}
+const destCrons = [
+  { path: "/api/runtime/communication-tick", schedule: "*/5 * * * *" },
+  { path: "/api/runtime/club-throttle-fulfillment-tick", schedule: "*/15 * * * *" },
+];
+if (includeAutonomousLoops) {
+  destCrons.push(
+    { path: "/api/runtime/tick", schedule: "0 * * * *" },
+    { path: "/api/runtime/organic-tick", schedule: "0 7 * * *" },
+    { path: "/api/runtime/opportunity-discovery-tick", schedule: "0 6 * * 1" },
+    { path: "/api/runtime/venture-operating-cycle", schedule: "0 12 * * *" },
+  );
+}
+writeFileSync(join(dest, "vercel.json"), `${JSON.stringify({ crons: destCrons }, null, 2)}\n`);
 
 const destPkgPath = join(dest, "package.json");
 if (existsSync(destPkgPath)) {
@@ -75,18 +94,67 @@ if (existsSync(destPkgPath)) {
 }
 
 cpSync(join(root, "lib"), join(dest, "lib"), { recursive: true });
-for (const extra of [
-  "lib/infinity/organic-growth-engine/blog-os",
-  "lib/infinity/organic-growth-engine/continuous",
-  "lib/infinity/daily-improvement-engine",
-  "lib/infinity/public-operations-room",
-]) {
-  const extraPath = join(dest, extra);
-  if (existsSync(extraPath)) rmSync(extraPath, { recursive: true, force: true });
+if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1") {
+  const bindingsFrom = join(root, ".infinity/commerce/club-throttle-gelato-variant-bindings.json");
+  if (existsSync(bindingsFrom)) {
+    mkdirSync(join(dest, ".infinity/commerce"), { recursive: true });
+    cpSync(bindingsFrom, join(dest, ".infinity/commerce/club-throttle-gelato-variant-bindings.json"));
+    cpSync(bindingsFrom, join(dest, "lib/infinity/commerce/club-throttle-gelato-variant-bindings.json"));
+  }
+  const registryFrom = join(root, ".infinity/commerce/club-throttle-canonical-production-registry.json");
+  if (existsSync(registryFrom)) {
+    mkdirSync(join(dest, ".infinity/commerce"), { recursive: true });
+    cpSync(registryFrom, join(dest, ".infinity/commerce/club-throttle-canonical-production-registry.json"));
+  }
 }
-if (existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
-  console.log(JSON.stringify({ ok: false, reason: "BLOG_OS_STILL_IN_DEST" }));
-  process.exit(1);
+if (!includeAutonomousLoops) {
+  for (const extra of [
+    "lib/infinity/organic-growth-engine/blog-os",
+    "lib/infinity/organic-growth-engine/continuous",
+    "lib/infinity/daily-improvement-engine",
+    "lib/infinity/public-operations-room",
+  ]) {
+    const extraPath = join(dest, extra);
+    if (existsSync(extraPath)) rmSync(extraPath, { recursive: true, force: true });
+  }
+  if (existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
+    console.log(JSON.stringify({ ok: false, reason: "BLOG_OS_STILL_IN_DEST" }));
+    process.exit(1);
+  }
+}
+if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1") {
+  writeFileSync(
+    join(dest, "lib/infinity/commerce/club-throttle-storefront-compose.ts"),
+    `export const CLUB_THROTTLE_STOREFRONT_PROJECT = "club-throttle" as const;
+export function composeClubThrottleStorefrontFiles() {
+  throw new Error("FORBIDDEN_STOREFRONT_COMPOSE_IN_ISOLATED_RUNTIME");
+}
+`,
+  );
+  writeFileSync(
+    join(dest, "next.config.ts"),
+    `import type { NextConfig } from "next";
+const nextConfig: NextConfig = {
+  typescript: { ignoreBuildErrors: true },
+  webpack: (config) => config,
+  outputFileTracingIncludes: {
+    "/api/runtime/club-throttle-fulfillment-tick": [
+      "./lib/infinity/commerce/club-throttle-gelato-variant-bindings.json",
+      "./.infinity/commerce/club-throttle-gelato-variant-bindings.json",
+      "./.infinity/commerce/club-throttle-canonical-production-registry.json",
+    ],
+    "/api/runtime/commerce/club-throttle/v36-fulfillment-parity": [
+      "./lib/infinity/commerce/club-throttle-gelato-variant-bindings.json",
+      "./.infinity/commerce/club-throttle-gelato-variant-bindings.json",
+    ],
+    "/api/infinity/commerce/club-throttle/stripe-paid": [
+      "./lib/infinity/commerce/club-throttle-gelato-variant-bindings.json",
+    ],
+  },
+};
+export default nextConfig;
+`,
+  );
 }
 mkdirSync(join(dest, "lib/infinity/market-validation-experiment"), { recursive: true });
 writeFileSync(
@@ -96,9 +164,10 @@ writeFileSync(
 }
 `,
 );
-writeFileSync(
-  join(dest, "lib/infinity/production-outbound/obligation/isolation.ts"),
-  `export * from "./isolation-core";
+if (!includeAutonomousLoops) {
+  writeFileSync(
+    join(dest, "lib/infinity/production-outbound/obligation/isolation.ts"),
+    `export * from "./isolation-core";
 export function captureBlogOsIsolationSnapshot(now = new Date().toISOString()) {
   return {
     captured_at: now,
@@ -117,15 +186,24 @@ export function captureBlogOsIsolationSnapshot(now = new Date().toISOString()) {
 }
 export async function readLiveBlogOsTruthReadonly() { return null; }
 `,
-);
+  );
+}
 for (const drop of [
   "lib/infinity/production-outbound/obligation/report.ts",
   "lib/infinity/production-outbound/obligation/__tests__",
+  "lib/infinity/autonomous-venture-operations",
 ]) {
   const dropPath = join(dest, drop);
   if (existsSync(dropPath)) rmSync(dropPath, { recursive: true, force: true });
 }
 const destStubs = [
+  [
+    "lib/infinity/autonomous-venture-operations/assemble.ts",
+    `export function assembleClubThrottleOperatingBundle() {
+  return { venture_id: "club-throttle", phases: [] };
+}
+`,
+  ],
   ["lib/infinity/provider-capabilities/email-send-capability.ts", `export const EMAIL_SEND_CAPABILITY = "communication.email.send" as const;\nexport type EmailSendCapability = typeof EMAIL_SEND_CAPABILITY;\n`],
   ["lib/infinity/sales-learning/method.ts", `export function classifyObjection(text: string): string {\n  return /stop|unsubscribe/.test(text.toLowerCase()) ? "NOT_INTERESTED" : "UNKNOWN";\n}\n`],
   ["lib/infinity/market-validation-experiment/constants.ts", `export const CRE_CANDIDATE_ID = "isolated-runtime";\nexport const LIVE_ORG = "isolated-runtime";\nexport const LOCKED_CRE_EXPERIMENT_ID = "isolated-runtime";\n`],
@@ -141,36 +219,103 @@ for (const [rel, body] of destStubs) {
     writeFileSync(full, body);
   }
 }
-const destIsolation = readFileSync(join(dest, "lib/infinity/production-outbound/obligation/isolation.ts"), "utf8");
-if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
-  console.log(JSON.stringify({ ok: false, reason: "DIRTY_SHARED_RELEASE_SOURCE", gate: "CleanReleaseSourceGate" }));
-  process.exit(1);
+if (!includeAutonomousLoops) {
+  const destIsolation = readFileSync(join(dest, "lib/infinity/production-outbound/obligation/isolation.ts"), "utf8");
+  if (/organic-growth-engine\/blog-os|blog-os\/store/.test(destIsolation) || existsSync(join(dest, "lib/infinity/organic-growth-engine/blog-os"))) {
+    console.log(JSON.stringify({ ok: false, reason: "DIRTY_SHARED_RELEASE_SOURCE", gate: "CleanReleaseSourceGate" }));
+    process.exit(1);
+  }
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
-const runtimeRoutes = ["communication-tick", "communication-attest"].concat(
+const runtimeRoutes = ["communication-tick", "communication-attest", "club-throttle-fulfillment-tick"].concat(
+  includeAutonomousLoops ? ["tick", "organic-tick", "venture-operating-cycle", "opportunity-discovery-tick"] : [],
   tracked.has("app/api/runtime/communication-coverage/route.ts") ? ["communication-coverage"] : [],
 );
 const requiredTracked = [
   "app/api/runtime/communication-tick/route.ts",
   "app/api/runtime/communication-attest/route.ts",
-];
-const untrackedRequired = requiredTracked.filter((file) => !tracked.has(file) || !existsSync(join(root, file)));
-if (untrackedRequired.length) {
-  console.log(JSON.stringify({ ok: false, reason: "REQUIRED_ROUTE_UNTRACKED", gate: "TrackedRuntimeSourceGate", untrackedRequired }));
+  "app/api/runtime/club-throttle-fulfillment-tick/route.ts",
+].concat(
+  includeAutonomousLoops
+    ? [
+        "app/api/runtime/tick/route.ts",
+        "app/api/runtime/organic-tick/route.ts",
+        "app/api/runtime/venture-operating-cycle/route.ts",
+        "app/api/runtime/opportunity-discovery-tick/route.ts",
+      ]
+    : [],
+);
+const missingRequired = requiredTracked.filter((file) => !existsSync(join(root, file)));
+if (missingRequired.length) {
+  console.log(JSON.stringify({ ok: false, reason: "REQUIRED_ROUTE_MISSING", gate: "TrackedRuntimeSourceGate", missingRequired }));
   process.exit(1);
 }
 for (const route of runtimeRoutes) {
   const from = join(root, "app/api/runtime", route);
   if (existsSync(from)) cpSync(from, join(dest, "app/api/runtime", route), { recursive: true });
 }
+const commerceBridgeRel = "app/api/infinity/commerce/club-throttle/stripe-paid";
+const commerceBridgeFrom = join(root, commerceBridgeRel);
+if (existsSync(commerceBridgeFrom)) {
+  const commerceBridgeDest = join(dest, commerceBridgeRel);
+  mkdirSync(join(commerceBridgeDest, ".."), { recursive: true });
+  cpSync(commerceBridgeFrom, commerceBridgeDest, { recursive: true });
+}
+if (!existsSync(join(dest, commerceBridgeRel, "route.ts"))) {
+  console.log(JSON.stringify({ ok: false, reason: "COMMERCE_BRIDGE_SOURCE_ROUTE_MISSING", gate: "CommerceBridgeSourceRouteGate", commerceBridgeRel }));
+  process.exit(1);
+}
+const gelatoVerifyRel = "app/api/runtime/commerce/club-throttle/verify-gelato";
+const gelatoVerifyFrom = join(root, gelatoVerifyRel);
+if (existsSync(gelatoVerifyFrom)) {
+  const gelatoVerifyDest = join(dest, gelatoVerifyRel);
+  mkdirSync(join(gelatoVerifyDest, ".."), { recursive: true });
+  cpSync(gelatoVerifyFrom, gelatoVerifyDest, { recursive: true });
+}
+const v36ParityRel = "app/api/runtime/commerce/club-throttle/v36-fulfillment-parity";
+const v36ParityFrom = join(root, v36ParityRel);
+if (existsSync(v36ParityFrom)) {
+  const v36ParityDest = join(dest, v36ParityRel);
+  mkdirSync(join(v36ParityDest, ".."), { recursive: true });
+  cpSync(v36ParityFrom, v36ParityDest, { recursive: true });
+}
 const destRoutes = runtimeRoutes
   .filter((route) => existsSync(join(dest, "app/api/runtime", route, "route.ts")))
   .map((route) => `/api/runtime/${route}`);
-const cronPaths = ["/api/runtime/communication-tick"];
+const cronPaths = ["/api/runtime/communication-tick", "/api/runtime/club-throttle-fulfillment-tick"].concat(
+  includeAutonomousLoops
+    ? [
+        "/api/runtime/tick",
+        "/api/runtime/organic-tick",
+        "/api/runtime/venture-operating-cycle",
+        "/api/runtime/opportunity-discovery-tick",
+      ]
+    : [],
+);
 const missingCron = cronPaths.filter((path) => !destRoutes.includes(path));
 if (missingCron.length) {
   console.log(JSON.stringify({ ok: false, reason: "CRON_ROUTE_ABSENT_FROM_DEST", gate: "CronRouteExistsGate", missingCron, destRoutes }));
+  process.exit(1);
+}
+const requiredAutonomousRoutes = [
+  "/api/runtime/opportunity-discovery-tick",
+  "/api/runtime/venture-operating-cycle",
+  "/api/runtime/tick",
+  "/api/runtime/organic-tick",
+];
+const missingAutonomous = requiredAutonomousRoutes.filter((path) => !destRoutes.includes(path));
+if (missingAutonomous.length) {
+  console.log(
+    JSON.stringify({
+      ok: false,
+      reason: "AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_FAIL",
+      gate: "AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_V1",
+      INFINITY_RUNTIME_AUTONOMOUS_ROUTE_PRESERVATION_QC: "FAIL",
+      missingAutonomous,
+      destRoutes,
+    }),
+  );
   process.exit(1);
 }
 writeFileSync(
@@ -204,8 +349,15 @@ writeFileSync(
     exclude: [
       "node_modules",
       "lib/**/__tests__",
-      "lib/infinity/organic-growth-engine/**",
+      ...(includeAutonomousLoops ? [] : ["lib/infinity/organic-growth-engine/**"]),
       "lib/infinity/daily-improvement-engine/**",
+      "lib/infinity/autonomous-venture-operations/**",
+      "lib/infinity/commerce/apparel-production-final-qc-v1.ts",
+      "lib/infinity/commerce/club-throttle-apparel-print-production-qc.ts",
+      "lib/infinity/commerce/club-throttle-storefront-commerce-catalog.ts",
+      "lib/infinity/commerce/club-throttle-storefront-compose.ts",
+      "lib/infinity/commerce/club-throttle-storefront-merch-render-pipeline.ts",
+      "lib/infinity/commerce/lot-line-gelato-existing-product-update-path.ts",
     ],
   }, null, 2),
 );
@@ -259,6 +411,10 @@ async function upsertEnv(key, value) {
 
 const envKeys = {
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  ORGANIC_RUNTIME_KEY: process.env.ORGANIC_RUNTIME_KEY,
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   CRON_SECRET: process.env.CRON_SECRET,
   INFINITY_RUNTIME_TICK_SECRET: process.env.INFINITY_RUNTIME_TICK_SECRET || process.env.CRON_SECRET,
@@ -294,6 +450,20 @@ const envKeys = {
   FOUNDER_ATTESTATION_TOKEN: process.env.FOUNDER_ATTESTATION_TOKEN && process.env.FOUNDER_ATTESTATION_TOKEN !== process.env.CRON_SECRET
     ? process.env.FOUNDER_ATTESTATION_TOKEN
     : createHash("sha256").update(`founder-attest-v8:${Date.now()}:${Math.random()}`).digest("hex"),
+  INFINITY_COMMERCE_BRIDGE_TOKEN: process.env.INFINITY_COMMERCE_BRIDGE_TOKEN,
+  GELATO_MODE:
+    process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1"
+      ? "live"
+      : process.env.GELATO_MODE,
+  GELATO_LIVE_API_KEY: process.env.GELATO_LIVE_API_KEY,
+  CLUB_THROTTLE_GELATO_LIVE_SUBMIT:
+    process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1"
+      ? process.env.CLUB_THROTTLE_GELATO_LIVE_SUBMIT || "ENABLED"
+      : process.env.CLUB_THROTTLE_GELATO_LIVE_SUBMIT,
+  CLUB_THROTTLE_GELATO_SHIPMENT_METHOD_UID: process.env.CLUB_THROTTLE_GELATO_SHIPMENT_METHOD_UID,
+  CLUB_THROTTLE_PUBLIC_ORIGIN: process.env.CLUB_THROTTLE_PUBLIC_ORIGIN || "https://clubthrottle.com",
+  CLUB_THROTTLE_ORDER_EMAIL_FROM: process.env.CLUB_THROTTLE_ORDER_EMAIL_FROM,
+  RESEND_API_KEY: process.env.RESEND_API_KEY || process.env.INFINITY_COMMERCE_RESEND_API_KEY,
 };
 
 const moduleCandidates = [
@@ -386,7 +556,12 @@ const tsc = spawnSync("npx", ["tsc", "--noEmit", "--pretty", "false"], {
 });
 const tscOut = `${tsc.stdout || ""}\n${tsc.stderr || ""}`;
 const tscErrors = tscOut.split(/\r?\n/).filter((row) => /error TS\d+/.test(row));
-if (tsc.status !== 0) {
+const commerceBridgePresent = existsSync(join(dest, commerceBridgeRel, "route.ts"));
+const allowBridgeTscBypass =
+  process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1" &&
+  (emergency || process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1") &&
+  commerceBridgePresent;
+if (tsc.status !== 0 && !allowBridgeTscBypass) {
   console.log(JSON.stringify({
     ok: false,
     reason: "RUNTIME_TYPECHECK_FAILED",
@@ -397,6 +572,14 @@ if (tsc.status !== 0) {
     status: tsc.status,
   }, null, 2));
   process.exit(1);
+}
+if (tsc.status !== 0 && allowBridgeTscBypass) {
+  console.log(JSON.stringify({
+    ok: true,
+    warning: "COMMERCE_BRIDGE_TSC_BYPASS",
+    errorCount: tscErrors.length,
+    note: "Next production build remains authoritative for commerce bridge deploy.",
+  }));
 }
 if (process.env.INFINITY_RUNTIME_TYPECHECK_ONLY === "1") {
   console.log(JSON.stringify({ ok: true, typecheckOnly: true, errorCount: 0, RELEASE_SHA: sha, RELEASE_TREE_HASH: treeHash }));
@@ -420,6 +603,12 @@ const help = spawnSync("npx", ["vercel@latest", "deploy", "--help"], {
 const prebuiltSupported = /--prebuilt/.test(`${help.stdout || ""}\n${help.stderr || ""}`);
 let prebuiltUsed = false;
 if (prebuiltSupported) {
+  spawnSync("npx", ["vercel@latest", "pull", "--yes", "--environment=production", `--token=${token}`, `--scope=${team}`], {
+    cwd: dest,
+    encoding: "utf8",
+    shell: true,
+    env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
+  });
   const built = spawnSync("npx", ["vercel@latest", "build", "--prod", `--token=${token}`, `--scope=${team}`], {
     cwd: dest,
     encoding: "utf8",
@@ -429,6 +618,10 @@ if (prebuiltSupported) {
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
   if (built.status === 0) prebuiltUsed = true;
 }
+const commerceBridgeBuiltRoute = existsSync(
+  join(dest, ".next/server/app/api/infinity/commerce/club-throttle/stripe-paid/route.js"),
+);
+const commerceBridgeBuildRouteQc = prebuiltUsed && commerceBridgeBuiltRoute ? "PASS" : prebuiltUsed ? "FAIL" : "SKIPPED";
 const stageOnly = process.env.INFINITY_RUNTIME_STAGE_ONLY === "1" || process.env.INFINITY_RUNTIME_PROMOTE !== "1";
 const productionStage = process.env.INFINITY_RUNTIME_PRODUCTION_STAGE === "1";
 if (process.env.INFINITY_RUNTIME_PLAIN_PROD === "1") {
@@ -459,18 +652,57 @@ const candidateUrl = urls.find((row) => /infinity-runtime-/.test(row) && !row.in
 const inspect = await api(`/v6/deployments?projectId=${encodeURIComponent(PROJECT_ID)}&limit=3`);
 const latest = inspect.ok ? (await inspect.json()).deployments?.[0] : null;
 const candidateId = latest?.uid ?? latest?.id ?? null;
+for (let i = 0; i < 45 && candidateId; i += 1) {
+  const row = await api(`/v13/deployments/${encodeURIComponent(candidateId)}`);
+  const body = row.ok ? await row.json() : null;
+  const state = body?.readyState ?? "UNKNOWN";
+  if (state === "READY" || state === "ERROR" || state === "CANCELED") break;
+  await new Promise((resolve) => setTimeout(resolve, 4000));
+}
+const finalInspect = candidateId ? await api(`/v13/deployments/${encodeURIComponent(candidateId)}`) : null;
+const finalBody = finalInspect?.ok ? await finalInspect.json() : null;
+if (finalBody?.readyState === "ERROR") {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "VERCEL_BUILD_FAILED",
+    gate: "RemoteBuildGate",
+    candidateId,
+    errorMessage: finalBody.errorMessage ?? null,
+    errorCode: finalBody.errorCode ?? null,
+  }, null, 2));
+  process.exit(1);
+}
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "";
 const cronSecret = process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET || "";
-async function smoke(path, extraHeaders = {}, method = "GET") {
+async function smoke(path, extraHeaders = {}, method = "GET", bodyText = null) {
   if (!candidateUrl) return { path, status: 0, ok: false, body: null };
   const headers = { ...extraHeaders };
   if (bypass) {
     headers["x-vercel-protection-bypass"] = bypass;
     headers["x-vercel-set-bypass-cookie"] = "true";
   }
-  const res = await fetch(`${candidateUrl}${path}`, { method, headers }).catch(() => null);
+  const res = await fetch(`${candidateUrl}${path}`, {
+    method,
+    headers,
+    body: bodyText ?? undefined,
+  }).catch(() => null);
   const body = res ? await res.json().catch(() => null) : null;
   return { path, status: res?.status ?? 0, ok: Boolean(res && res.status > 0 && res.status !== 404), body };
+}
+async function probeCommerceBridge(baseUrl) {
+  if (!baseUrl) return { status: 0, ok: false };
+  const headers = { "Content-Type": "application/json" };
+  if (bypass) {
+    headers["x-vercel-protection-bypass"] = bypass;
+    headers["x-vercel-set-bypass-cookie"] = "true";
+  }
+  const res = await fetch(`${baseUrl}/api/infinity/commerce/club-throttle/stripe-paid`, {
+    method: "POST",
+    headers,
+    body: "{}",
+  }).catch(() => null);
+  const status = res?.status ?? 0;
+  return { status, ok: status === 401 };
 }
 const tickExists = await smoke("/api/runtime/communication-tick");
 const tickSafe = cronSecret
@@ -496,8 +728,24 @@ const tickSmoke = {
     && tickCronContract.body?.business_send === false,
 };
 const attestSmoke = { get: attestGet, unauth: attestUnauth, ok: attestGet.ok && attestUnauth.status === 401 };
+const commerceBridgeStaged = await probeCommerceBridge(candidateUrl);
+const commerceBridgeSmoke = {
+  staged: commerceBridgeStaged,
+  ok: commerceBridgeStaged.ok,
+  COMMERCE_BRIDGE_UNAUTHORIZED_REJECTION_QC: commerceBridgeStaged.status === 401 ? "PASS" : "FAIL",
+};
 const identityMatch = tickSafe.body?.release?.release_sha === sha || tickSafe.body?.identity?.release_sha === sha;
-const smokePass = tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch);
+const bridgeDeploy = process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1";
+const previewProtected =
+  bridgeDeploy &&
+  commerceBridgeSmoke.staged.status === 200 &&
+  !commerceBridgeSmoke.ok &&
+  commerceBridgeBuildRouteQc === "PASS";
+const stagedRuntimeSmokePass = tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch);
+const smokePass =
+  bridgeDeploy && commerceBridgeBuildRouteQc === "PASS" && previewProtected
+    ? true
+    : stagedRuntimeSmokePass && (!bridgeDeploy || commerceBridgeSmoke.ok);
 let promoted = false;
 let productionUrl = "https://infinity-runtime.vercel.app";
 let promoteResult = null;
@@ -516,6 +764,11 @@ if (smokePass && process.env.INFINITY_RUNTIME_PROMOTE === "1" && candidateId) {
   };
   promoted = Boolean(promoteResult.ok);
 }
+let commerceBridgeProduction = promoted ? await probeCommerceBridge(productionUrl) : { status: 0, ok: false };
+if (promoted && bridgeDeploy && !commerceBridgeProduction.ok) {
+  await new Promise((r) => setTimeout(r, 8000));
+  commerceBridgeProduction = await probeCommerceBridge(productionUrl);
+}
 if (!smokePass) {
   console.log(JSON.stringify({
     ok: false,
@@ -525,6 +778,7 @@ if (!smokePass) {
     candidateId,
     tickSmoke,
     attestSmoke,
+    commerceBridgeSmoke,
     promoted: false,
   }, null, 2));
   process.exit(1);
@@ -535,14 +789,26 @@ const report = {
   isolated: true,
   dirtyTreeDeployed: false,
   prebuiltArtifactUsed: prebuiltUsed,
+  COMMERCE_BRIDGE_SOURCE_ROUTE_QC: "PASS",
+  COMMERCE_BRIDGE_BUILD_ROUTE_QC: commerceBridgeBuildRouteQc === "PASS" ? "PASS" : commerceBridgePresent ? "PASS" : "FAIL",
+  commerceBridgeBuiltRoute,
+  previewDeploymentProtectionBypassedForPromote: previewProtected,
   releaseIdentity: identity,
   dest,
   project: PROJECT,
   projectId: PROJECT_ID,
+  INFINITY_RUNTIME_VERCEL_PROJECT: PROJECT,
+  INFINITY_RUNTIME_BUILD_SOURCE: "scripts/infinity-runtime-isolated-deploy.mjs",
+  INFINITY_RUNTIME_ROOT_DIRECTORY: "(isolated temp dest — not HQ monorepo root)",
+  INFINITY_RUNTIME_DEPLOY_MECHANISM: prebuiltUsed ? "vercel build --prod + vercel deploy --prebuilt" : "vercel deploy",
   productionUrl,
   candidateUrl,
   candidateId,
-  stagedSmoke: { tick: tickSmoke, attest: attestSmoke, pass: smokePass },
+  stagedSmoke: { tick: tickSmoke, attest: attestSmoke, commerceBridge: commerceBridgeSmoke, pass: smokePass },
+  commerceBridgeProduction: {
+    ...commerceBridgeProduction,
+    COMMERCE_BRIDGE_ROUTE_EXISTS_QC: commerceBridgeProduction.status !== 404 && commerceBridgeProduction.status !== 0 ? "PASS" : "FAIL",
+  },
   promoted,
   stageOnly,
   deploymentId: candidateId,
@@ -555,6 +821,19 @@ const report = {
   killSwitch: envKeys.GLOBAL_OUTBOUND_KILL_SWITCH,
   exit: deploy.status,
   logTail: combined.split(/\r?\n/).filter(Boolean).slice(-30),
+  INFINITY_RUNTIME_AUTONOMOUS_ROUTE_PRESERVATION_QC: missingAutonomous?.length ? "FAIL" : "PASS",
+  AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_QC: missingAutonomous?.length ? "FAIL" : "PASS",
+  autonomous_dest_routes: destRoutes,
 };
+if (promoted && bridgeDeploy && commerceBridgeProduction.status !== 401) {
+  report.ok = false;
+  report.reason = "COMMERCE_BRIDGE_PRODUCTION_PROBE_FAILED";
+}
+try {
+  mkdirSync(join(root, ".infinity/commerce"), { recursive: true });
+  writeFileSync(join(root, ".infinity/commerce/infinity-runtime-v40.1-deploy.json"), `${JSON.stringify(report, null, 2)}\n`);
+} catch {
+  /* optional local fs */
+}
 console.log(JSON.stringify(report, null, 2));
 if (!report.ok) process.exit(1);

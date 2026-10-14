@@ -44,6 +44,74 @@ export function generateFounderDailyReport(sources: FounderDailyReportSources, p
     items.push(item("sales", "COMPLETED", event, [`outbound-event:${event}`]));
   }
   if (prospects) items.push(item("prospects", "COMPLETED", `Prospect records added: ${prospects}`, ["prospect-intelligence"]));
+  if (sources.discovery_last_scanner_at) {
+    items.push(
+      item(
+        "discovery",
+        "COMPLETED",
+        `Last opportunity scanner: ${sources.discovery_last_scanner_at}`,
+        ["venture-discovery-scanner"],
+      ),
+    );
+  }
+  if (sources.discovery_next_scheduled_scan) {
+    items.push(
+      item(
+        "discovery",
+        "PLANNED",
+        `Next scheduled scanner: ${sources.discovery_next_scheduled_scan}`,
+        ["venture-discovery-schedule"],
+      ),
+    );
+  }
+  if (sources.discovery_fresh_candidate_count != null && sources.discovery_fresh_candidate_count > 0) {
+    items.push(
+      item(
+        "discovery",
+        "COMPLETED",
+        `Fresh discovery candidates (latest cycle): ${sources.discovery_fresh_candidate_count}`,
+        ["venture-discovery-candidates"],
+      ),
+    );
+  }
+  if (sources.discovery_build_decision_count != null) {
+    items.push(
+      item(
+        "discovery",
+        sources.discovery_build_decision_count > 0 ? "COMPLETED" : "PLANNED",
+        `BUILD decisions (latest selection): ${sources.discovery_build_decision_count}`,
+        ["venture-discovery-build-decisions"],
+      ),
+    );
+  }
+  if (sources.discovery_factory_handoff) {
+    items.push(
+      item("discovery", "IN_PROGRESS", sources.discovery_factory_handoff, ["build-factory-handoff"]),
+    );
+  }
+  if (sources.discovery_scanner_errors) {
+    items.push(item("discovery", "BLOCKED", sources.discovery_scanner_errors, ["venture-discovery-error"]));
+  }
+  if (sources.discovery_validate_candidate_count != null) {
+    items.push(
+      item(
+        "discovery",
+        "PLANNED",
+        `VALIDATE queue: ${sources.discovery_validate_candidate_count} candidate(s)`,
+        ["venture-validate-queue"],
+      ),
+    );
+  }
+  if (sources.discovery_revalidation_due_count != null && sources.discovery_revalidation_due_count > 0) {
+    items.push(
+      item(
+        "discovery",
+        "IN_PROGRESS",
+        `Due for autonomous revalidation: ${sources.discovery_revalidation_due_count}`,
+        ["venture-revalidation-due"],
+      ),
+    );
+  }
   for (const deployment of deployments) {
     items.push(item("deploy", "COMPLETED", `Deployment ${deployment.id} → ${deployment.target} (${deployment.status})`, [deployment.id], `/dashboard/builds`));
   }

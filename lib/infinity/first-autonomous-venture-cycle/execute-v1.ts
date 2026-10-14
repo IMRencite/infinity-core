@@ -33,6 +33,7 @@ import {
 import { runBoundedFavc1ValidationLoop } from "./bounded-validation/run";
 import { ensurePreparedHandoffForEvaluation } from "./bounded-validation/handoff";
 import type { CandidateEvaluationDraft } from "@/lib/infinity/venture-selection/types";
+import { claimAutonomousReferenceRunForBuild } from "@/lib/infinity/venture-discovery/discovery-to-build-factory-handoff-v1";
 
 export type FirstAutonomousVentureCycleInput = {
   organizationId: string;
@@ -289,6 +290,17 @@ export async function executeFirstAutonomousVentureCycleV1(
 
     lineage.opportunityCandidateId = winner.candidate.candidateId;
     lineage.handoffId = handoffId;
+
+    claimAutonomousReferenceRunForBuild({
+      candidateId: winner.candidate.candidateId,
+      candidateName:
+        winner.candidate.title?.trim() ||
+        winner.candidate.summary?.slice(0, 80) ||
+        winner.candidate.candidateId,
+      candidateScore: winner.portfolioAdjustedScore ?? winner.selectionScore,
+      selectionReason: "FAVC1 BUILD decision within DEFAULT_BUILD_GATE_THRESHOLDS",
+    });
+
     const ventureName =
       winner.candidate.title?.trim() ||
       winner.candidate.summary?.slice(0, 80) ||

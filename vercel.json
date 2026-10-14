@@ -21,6 +21,10 @@
       "schedule": "0 12 * * *"
     },
     {
+      "path": "/api/runtime/opportunity-discovery-tick",
+      "schedule": "0 6 * * 1"
+    },
+    {
       "path": "/api/runtime/daily-improvement",
       "schedule": "0 6 * * *"
     }
