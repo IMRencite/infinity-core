@@ -1,0 +1,72 @@
+{
+  "mission": "V41.1_CLUB_THROTTLE_PRODUCTION_ART_ASSET_DEPLOYMENT",
+  "generated_at": "2026-10-14T04:01:52.091Z",
+  "V41_DEPLOY_FAILURE_ROOT_CAUSE": "COMPOSE_DIGEST_CONCATENATED_ALL_FILE_CONTENTS: digestComposedStorefrontFiles used merged.map((f) => f.path + f.content).join() which materialized every base64 PNG into one V8 string (>512MB), throwing Invalid string length; secondary risk was appendPublicPngTree inlining large binaries as base64 strings.",
+  "compose_precheck": "PASS",
+  "DEPLOY_FILE_COUNT": 201,
+  "DEPLOY_TOTAL_BYTES": 493639116,
+  "LARGEST_DEPLOY_FILES": [
+    {
+      "path": "public/storefront-merch/production-masters/dualsport_dust-black-production-print-master-3600w.png",
+      "bytes": 28297516
+    },
+    {
+      "path": "public/storefront-merch/production-masters/dualsport_dust-dark-heather-production-print-master-3600w.png",
+      "bytes": 28297516
+    },
+    {
+      "path": "public/storefront-merch/production-masters/dualsport_dust-ash-production-print-master-3600w.png",
+      "bytes": 27569192
+    },
+    {
+      "path": "public/storefront-merch/production-masters/dualsport_dust-natural-production-print-master-3600w.png",
+      "bytes": 27569192
+    },
+    {
+      "path": "public/storefront-merch/production-masters/dualsport_dust-white-production-print-master-3600w.png",
+      "bytes": 27569192
+    },
+    {
+      "path": "public/storefront-merch/production-masters/lot_line-black-production-print-master-3600w.png",
+      "bytes": 24857046
+    },
+    {
+      "path": "public/storefront-merch/production-masters/lot_line-dark-heather-production-print-master-3600w.png",
+      "bytes": 24857046
+    },
+    {
+      "path": "public/storefront-merch/production-masters/lot_line-ash-production-print-master-3600w.png",
+      "bytes": 23977126
+    },
+    {
+      "path": "public/storefront-merch/production-masters/lot_line-white-production-print-master-3600w.png",
+      "bytes": 23977126
+    },
+    {
+      "path": "public/storefront-merch/production-masters/zero_chill_garage-black-production-print-master-3600w.png",
+      "bytes": 23226643
+    },
+    {
+      "path": "public/storefront-merch/production-masters/zero_chill_garage-ash-production-print-master-3600w.png",
+      "bytes": 22177220
+    },
+    {
+      "path": "public/storefront-merch/production-masters/zero_chill_garage-natural-production-print-master-3600w.png",
+      "bytes": 22177220
+    }
+  ],
+  "UNEXPECTED_DEPLOY_PATHS": [],
+  "BASE64_INLINED_BINARY_COUNT": 2,
+  "SOURCE_ABS_BINARY_COUNT": 79,
+  "PRODUCTION_PRINT_MASTER_STATIC_ASSET_DEPLOYMENT_QC": "PASS",
+  "STATIC_BINARY_DEPLOYMENT_PACKAGING_QC": "PASS",
+  "LARGE_STATIC_ASSET_DEPLOYMENT_QC": "PASS",
+  "CLUB_THROTTLE_PRODUCTION_PROJECT": "club-throttle",
+  "CLUB_THROTTLE_PRODUCTION_PROJECT_ID": "prj_LBveyJDSI2LKuNdDlwCJ8Zkx4kcD",
+  "CLUB_THROTTLE_PRODUCTION_ALIAS": "clubthrottle.com",
+  "CLUB_THROTTLE_DEPLOY_TARGET_QC": "PASS",
+  "V41_1_PRODUCTION_DEPLOYMENT_ID": "dpl_BCRr2LoT2YBVR5eyb2Nu8xTY9fCE",
+  "V41_1_PRODUCTION_DEPLOYMENT_QC": "PASS",
+  "deployment_url": "https://club-throttle-h0lxdhrq8-infinite-media-resources-imr.vercel.app",
+  "safe_error": null
+}

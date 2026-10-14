@@ -3,6 +3,8 @@ import { VERCEL_TEAM_ID_ENV, VERCEL_TOKEN_ENV } from "@/lib/infinity/launch-gate
 import {
   buildVercelSourceBundleDeploymentBody,
   fileUploadBytes,
+  translateFilesToVercelSourceBundle,
+  type VercelUploadableSourceFile,
   VERCEL_DEPLOYMENTS_PATH,
   VERCEL_FILES_UPLOAD_PATH,
 } from "@/lib/infinity/launch-gateway/adapters/vercel-source-bundle";
@@ -87,6 +89,33 @@ export class VercelDomainBindingAdapter {
     };
   }
 
+  async createProject(name: string) {
+    const existing = await this.getProject(name);
+    if (existing.ok && existing.id !== "UNKNOWN") {
+      return {
+        ok: true,
+        reused: true,
+        id: existing.id,
+        name: existing.name,
+        status: existing.status,
+        safeError: null,
+      };
+    }
+    const result = await this.request("POST", "/v10/projects", {
+      name,
+      framework: "nextjs",
+    });
+    const body = asRecord(result.json);
+    return {
+      ok: result.ok,
+      reused: false,
+      id: asString(body.id) ?? "UNKNOWN",
+      name: asString(body.name) ?? name,
+      status: result.status,
+      safeError: result.safeError,
+    };
+  }
+
   async getProject(name: string) {
     const result = await this.request("GET", `/v9/projects/${encodeURIComponent(name)}`);
     const body = asRecord(result.json);
@@ -133,7 +162,7 @@ export class VercelDomainBindingAdapter {
     };
   }
 
-  async uploadSourceFile(file: { path: string; content: string; encoding?: "utf8" | "base64" }) {
+  async uploadSourceFile(file: VercelUploadableSourceFile) {
     this.sourceUploads += 1;
     if (!this.token) return { ok: false, status: 0, sha: "", safeError: "VERCEL_TOKEN_MISSING" };
     const bytes = fileUploadBytes(file);
@@ -162,13 +191,27 @@ export class VercelDomainBindingAdapter {
 
   async createSourceBundleDeployment(input: {
     projectName: string;
-    files: Array<{ path: string; content: string; encoding?: "utf8" | "base64" }>;
+    files: VercelUploadableSourceFile[];
+    projectSettings?: {
+      framework: string | null;
+      buildCommand?: string | null;
+      installCommand?: string | null;
+      outputDirectory?: string | null;
+    };
+    target?: "staging" | "production";
   }) {
     this.deploymentCreates += 1;
-    const body = buildVercelSourceBundleDeploymentBody({
-      projectName: input.projectName,
-      files: input.files,
-    });
+    const body = input.projectSettings
+      ? {
+          name: input.projectName,
+          files: translateFilesToVercelSourceBundle(input.files),
+          target: input.target ?? "staging",
+          projectSettings: input.projectSettings,
+        }
+      : buildVercelSourceBundleDeploymentBody({
+          projectName: input.projectName,
+          files: input.files,
+        });
     const result = await this.request("POST", VERCEL_DEPLOYMENTS_PATH, body);
     const created = asRecord(result.json);
     return {

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { digestComposedStorefrontFiles } from "./composed-storefront-file-digest-v1.ts";
 import { join } from "node:path";
 import { CLUB_THROTTLE_BRAND_PROFILE, CLUB_THROTTLE_PRIMARY_LOGO_SOURCE } from "./brand/club-throttle-profile";
 import { CLUB_THROTTLE_CANARY_DESIGN } from "./club-throttle-canary";
@@ -12,14 +13,43 @@ import {
 import { seedCanonicalPublishedBlogInventory } from "@/lib/infinity/organic-growth-engine/continuous/published-blog-inventory";
 import { composeClubThrottleJournalFiles } from "@/lib/infinity/organic-growth-engine/continuous/club-throttle-journal";
 import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "@/lib/infinity/organic-growth-engine/continuous/blog-ux";
+import {
+  clubThrottleShirtV10CollarDetailSvg,
+  clubThrottleShirtV10FitOnBikeSvg,
+  clubThrottleShirtV10HeroSvg,
+} from "@/lib/infinity/organic-growth-engine/continuous/venture-image-creative-v2";
+import {
+  CLUB_THROTTLE_LEGACY_PRODUCT_PAGE_PATHS,
+  clubThrottleIsolatedCatalogExtra,
+  clubThrottleIsolatedStorefrontSupplementFiles,
+  clubThrottleIsolatedVercelRedirectExtras,
+} from "./club-throttle-isolated-storefront-supplement.ts";
+import { clubThrottleMarketplaceStorefrontFiles } from "./club-throttle-storefront-marketplace-files.ts";
+import { clubThrottleProductContentStorefrontFiles } from "./club-throttle-storefront-product-content-compose.ts";
+import { clubThrottleCartContinuityStorefrontFiles } from "./club-throttle-cart-continuity-compose.ts";
+import { clubThrottleEmbeddedCheckoutStorefrontFiles } from "./club-throttle-embedded-checkout-compose.ts";
 
 export const CLUB_THROTTLE_STOREFRONT_PROJECT = "club-throttle" as const;
 export const CLUB_THROTTLE_ARTWORK_PATH = "/commerce-artwork/ride-past-midnight.svg" as const;
+/** Legacy editorial ecommerce routes — must never ship in production bundle (marketplace replaces). */
+export const CLUB_THROTTLE_LEGACY_ECOMMERCE_SURFACE_PATHS = new Set([
+  "app/page.tsx",
+  "app/shop/page.tsx",
+  "app/search/page.tsx",
+  "app/collections/page.tsx",
+  "app/collections/[slug]/page.tsx",
+  "app/layout.tsx",
+  "app/components/header.tsx",
+  "app/api/health/route.ts",
+]);
+export const CLUB_THROTTLE_STOREFRONT_VERSION = "marketplace-v2" as const;
 
 export type ComposedStorefrontFile = {
   path: string;
-  content: string;
+  content?: string;
   encoding?: "utf8" | "base64";
+  /** Large static binaries — read from disk at upload time (no base64 string in memory). */
+  sourceAbs?: string;
 };
 
 function logoBase64(cwd = process.cwd()): { content: string; present: boolean } {
@@ -87,10 +117,17 @@ export function composeClubThrottleStorefrontFiles(cwd = process.cwd()): {
           next: "16.2.11",
           react: "19.2.4",
           "react-dom": "19.2.4",
+          stripe: "17.7.0",
+          "@stripe/stripe-js": "5.6.0",
+          "@stripe/react-stripe-js": "3.6.0",
+          "@supabase/supabase-js": "2.49.8",
           typescript: "5.9.2",
           "@types/node": "20.19.0",
           "@types/react": "19.2.2",
           "@types/react-dom": "19.2.2",
+        },
+        allowScripts: {
+          "sharp@0.34.5": true,
         },
       }, null, 2)}\n`,
     },
@@ -106,6 +143,7 @@ export function composeClubThrottleStorefrontFiles(cwd = process.cwd()): {
             destination: "https://clubthrottle.com/:path*",
             permanent: true,
           },
+          ...clubThrottleIsolatedVercelRedirectExtras(),
         ],
       }, null, 2)}\n`,
     },
@@ -160,6 +198,7 @@ export const products = ${JSON.stringify(products, null, 2)} as const;
 export function productsInCollection(slug: string) {
   return products.filter((row) => row.collection_slug === slug);
 }
+${clubThrottleIsolatedCatalogExtra()}
 `,
     },
     {
@@ -188,7 +227,7 @@ a{color:inherit;text-decoration:none} img{max-width:100%;height:auto;display:blo
 .tee{position:relative}.tee img.garment{width:100%;aspect-ratio:4/5;object-fit:cover;background:#efeae2}
 .tee img.mark{position:absolute;left:36%;top:34%;width:28%;height:auto;background:#fff;padding:.2rem}
 .pad{padding:1rem}
-.sheet,.about-grid,.pdp,.commerce-shell{width:calc(100% - 8vw);max-width:80rem;margin-inline:auto}
+.sheet,.about-grid,.pdp{width:calc(100% - 8vw);max-width:80rem;margin-inline:auto}
 .sheet{padding:2.4rem 0 4rem}
 .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start}
 .about-grid section{grid-column:1/-1}
@@ -209,7 +248,65 @@ input,textarea,select{padding:.75rem;border:1px solid #d8d0c6;background:var(--c
 .release-card,.card .tee,.release-card .tee{max-width:none;width:100%}
 .release-card .tee,.card .tee{position:relative;aspect-ratio:4/5;overflow:hidden;background:#efeae2}
 .release-card .tee img.garment,.card .tee img.garment{width:100%;height:100%;object-fit:contain}
-@media(max-width:800px){.mast{grid-template-columns:1fr 1fr;}.search{grid-column:1/-1}.hero,.pdp,.about-grid{grid-template-columns:1fr}.brand-mark img{height:64px}.releases{grid-template-columns:1fr}}
+.pdp-rich section{margin:2rem 0}
+.pdp-rich h2{font-size:1.25rem;margin:0 0 .65rem}
+.pdp-rich h3{font-size:1rem;margin:1rem 0 .35rem}
+.pdp-rich ul{padding-left:1.2rem}
+.pdp-rich details{border:1px solid #e4ddd3;background:var(--canvas);margin:.45rem 0;padding:.65rem .85rem}
+.pdp-rich details summary{cursor:pointer;font-weight:600}
+.pdp-rich .fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.75rem 1rem;font-size:.92rem;margin:0}
+.pdp-rich .fact-grid dt{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin:0}
+.pdp-rich .fact-grid dd{margin:.15rem 0 0}
+.related-inline{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin-top:1rem;font-size:.92rem}
+.related-inline a{text-decoration:underline}
+.mini-cart-backdrop{position:fixed;inset:0;background:rgba(20,18,16,.45);z-index:120;display:flex;justify-content:flex-end}
+.mini-cart-panel{width:min(22rem,100vw);max-height:100vh;overflow:auto;background:var(--canvas);border-left:1px solid #e4ddd3;padding:1rem 1.1rem 1.4rem;box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.mini-cart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.mini-cart-head h2{margin:0;font-size:1.15rem}
+.mini-cart-close{border:0;background:transparent;font-size:1.5rem;line-height:1;cursor:pointer;padding:.2rem .45rem}
+.mini-cart-lines{list-style:none;margin:0 0 1rem;padding:0;display:grid;gap:.75rem}
+.mini-cart-lines li{display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start;border-bottom:1px solid #e4ddd3;padding-bottom:.65rem}
+.mini-cart-line-actions{display:flex;gap:.35rem}
+.mini-cart-line-actions button{padding:.35rem .55rem;border:1px solid #d8d0c6;background:var(--paper)}
+.mini-cart-subtotal{margin:.5rem 0 1rem}
+.mini-cart-actions{display:grid;gap:.55rem}
+.mini-cart-actions .linkish{border:0;background:transparent;text-decoration:underline;cursor:pointer;font-size:.92rem;padding:.35rem 0}
+.cta.secondary{display:inline-block;text-align:center;background:var(--paper);color:var(--ink);border:1px solid #d8d0c6}
+.checkout-shell{--checkout-shell-max:72rem;max-width:min(var(--checkout-shell-max),calc(100% - 2rem));margin-inline:auto;padding-bottom:3rem;width:100%;box-sizing:border-box;padding-inline:clamp(1rem,2.5vw,1.75rem)}
+.checkout-compact-head{display:flex;align-items:center;gap:.85rem 1rem;margin-bottom:1.15rem;padding-bottom:.85rem;border-bottom:1px solid #e4ddd3}
+.checkout-compact-logo{height:36px;width:auto;max-width:7.5rem;object-fit:contain;flex:0 0 auto}
+.checkout-compact-copy{min-width:0;flex:1 1 auto}
+.checkout-compact-kicker{margin:0 0 .12rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.checkout-compact-title{margin:0;font-size:1.12rem;line-height:1.25;font-weight:650}
+.checkout-compact-legal{margin:.22rem 0 0;font-size:.78rem;color:var(--muted);line-height:1.35}
+.checkout-body-grid{display:flex;flex-direction:column;gap:1.25rem;align-items:stretch}
+.checkout-order-panel{border:1px solid #e4ddd3;background:var(--canvas);padding:1rem 1.1rem;border-radius:4px;min-width:0}
+.checkout-order-panel h2{margin:0 0 .75rem;font-size:.95rem;font-weight:650;letter-spacing:.02em}
+.checkout-order-lines{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+.checkout-order-lines li{display:grid;gap:.2rem;font-size:.92rem;line-height:1.35}
+.checkout-order-lines .checkout-order-line-title{font-weight:600}
+.checkout-order-lines .checkout-order-line-meta{color:var(--muted);font-size:.86rem}
+.checkout-order-lines .checkout-order-line-price{font-variant-numeric:tabular-nums}
+.checkout-order-subtotal{margin-top:.85rem;padding-top:.75rem;border-top:1px solid #e4ddd3;display:flex;justify-content:space-between;font-weight:650;font-size:.95rem}
+.checkout-order-promo-line{display:flex;justify-content:space-between;align-items:baseline;margin-top:.55rem;font-size:.92rem;font-variant-numeric:tabular-nums}
+.checkout-order-promo-line.discount{font-weight:600;color:#0d5c2e}
+.checkout-promo-entry{margin-top:1rem;padding-top:.85rem;border-top:1px solid rgba(0,0,0,.08)}
+.checkout-promo-entry label{display:block;font-size:.82rem;font-weight:600;margin-bottom:.35rem}
+.checkout-promo-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end}
+.checkout-promo-row input{flex:1 1 10rem;min-width:0;padding:.45rem .55rem;border:1px solid rgba(0,0,0,.18);border-radius:4px;font-size:.92rem}
+.checkout-promo-row button{padding:.45rem .85rem;border-radius:4px;border:none;font-size:.88rem;font-weight:600;cursor:pointer}
+.checkout-promo-apply{background:#111;color:#fff}
+.checkout-promo-remove{background:transparent;color:#555;text-decoration:underline;font-weight:500;padding:.25rem 0}
+.checkout-promo-active{display:flex;justify-content:space-between;align-items:center;gap:.75rem;font-size:.92rem}
+.checkout-promo-error{color:#9b1c1c;font-size:.85rem;margin-top:.35rem}
+.checkout-promo-hint{color:#555;font-size:.82rem;margin-top:.35rem}
+.checkout-order-discounted-subtotal{display:flex;justify-content:space-between;margin-top:.45rem;font-weight:650;font-size:.95rem;font-variant-numeric:tabular-nums}
+.checkout-payment-panel{min-width:0;width:100%;padding-bottom:1.25rem;box-sizing:border-box}
+.checkout-embedded-frame{min-height:28rem;width:100%;max-width:100%;overflow:visible;padding-bottom:1.25rem;box-sizing:border-box}
+.checkout-legal{margin-top:1rem;font-size:.78rem;color:var(--muted);line-height:1.4}
+.pdp-thumb button.active{outline:2px solid var(--ink);outline-offset:2px}
+@media (min-width:1024px){.checkout-body-grid{display:grid;grid-template-columns:minmax(0,0.42fr) minmax(0,0.58fr);gap:1.5rem 2rem;align-items:start}.checkout-embedded-frame{min-height:34rem}}
+@media(max-width:800px){.mast{grid-template-columns:1fr 1fr;}.search{grid-column:1/-1}.hero,.pdp,.about-grid{grid-template-columns:1fr}.brand-mark img{height:64px}.releases{grid-template-columns:1fr}.pdp-rich{max-width:100%;overflow-wrap:anywhere}}
 ${OCCUPANCYNPV_BLOG_EDITORIAL_CSS}
 `,
     },
@@ -248,7 +345,7 @@ export function StoreHeader() {
   }
   return (
     <>
-      <div className="util">Preview collection. Launching soon. Printed after payment when checkout opens.</div>
+      <div className="util">The seven-shirt Club Throttle collection. Printed on demand after checkout completes.</div>
       <div className="mast">
         <Link href="/" aria-label="Club Throttle"><BrandMark /></Link>
         <form onSubmit={onSearch}><input className="search" name="q" placeholder="Search shirts, collections, marks" /></form>
@@ -736,7 +833,7 @@ export default function ContactPage() {
       <h1>Talk to the shop</h1>
       <p>Use this page for product questions and design notes. We have not published a public mailbox yet, so we will not invent an address for you to write into the void.</p>
       <h2>Product questions</h2>
-      <p>Size, fabric, print, and care are on the <Link href="/products/club-throttle-core-tee">Core Tee</Link> page. If something there is unclear, say so through Suggest a Design and mark it as a product question.</p>
+      <p>Size, fabric, print, and care are on each product page in the <Link href="/shop">shop</Link>. If something is unclear, say so through Suggest a Design and mark it as a product question.</p>
       <h2>Orders</h2>
       <p>Checkout is launching soon. There is no live order to track and no shipment to chase yet.</p>
       <h2>Design ideas</h2>
@@ -881,6 +978,19 @@ export async function POST() {
     { path: "public/visual/journal-cover.svg", content: editorialWorldSvg("Journal", "notes from the shop and the road", "#102033") },
     { path: "public/visual/journal-night-ride.svg", content: editorialWorldSvg("After dark", "checklist · lights · layers", "#101820") },
     { path: "public/visual/journal-shirt.svg", content: editorialWorldSvg("Shirt logic", "weight · print · wash", "#1a1512") },
+    { path: "public/visual/journal-v2-shirt-hero.svg", content: clubThrottleShirtV10HeroSvg() },
+    ...(function journalHeroRasters() {
+      const dir = join(process.cwd(), "public/visual");
+      if (!existsSync(dir)) return [];
+      return readdirSync(dir)
+        .filter((name) => /^journal-(hero-|v2-shirt-hero).*\.webp$/i.test(name))
+        .map((name) => ({
+          path: `public/visual/${name}`,
+          sourceAbs: join(dir, name),
+        }));
+    })(),
+    { path: "public/visual/journal-v2-shirt-fit-on-bike.svg", content: clubThrottleShirtV10FitOnBikeSvg() },
+    { path: "public/visual/journal-v2-shirt-collar-detail.svg", content: clubThrottleShirtV10CollarDetailSvg() },
     { path: "public/visual/journal-bike-night.svg", content: editorialWorldSvg("Bike night", "park once · leave a lane", "#14181f") },
     { path: "public/visual/journal-garage.svg", content: editorialWorldSvg("Garage hour", "light · time · stay", "#12100e") },
     { path: "public/visual/journal-group-ride.svg", content: editorialWorldSvg("Group ride", "sweep · gap · not a race", "#111820") },
@@ -895,9 +1005,84 @@ export async function POST() {
     files.push({ path: "app/icon.png", content: logo.content, encoding: "base64" });
   }
 
+  const productContentFiles = clubThrottleProductContentStorefrontFiles();
+  const cartContinuityFiles = clubThrottleCartContinuityStorefrontFiles();
+  const embeddedCheckoutFiles = clubThrottleEmbeddedCheckoutStorefrontFiles();
+  const supplementPaths = new Set(clubThrottleIsolatedStorefrontSupplementFiles().map((file) => file.path));
+  const marketplaceFiles = clubThrottleMarketplaceStorefrontFiles(cwd);
+  const marketplacePaths = new Set(marketplaceFiles.map((file) => file.path));
+  const productContentPaths = new Set(productContentFiles.map((file) => file.path));
+  const cartContinuityPaths = new Set(cartContinuityFiles.map((file) => file.path));
+  const embeddedCheckoutPaths = new Set(embeddedCheckoutFiles.map((file) => file.path));
+  const appendPublicPngTree = (relRoot: string) => {
+    const absRoot = join(cwd, relRoot);
+    if (!existsSync(absRoot)) return;
+    const walk = (absDir: string, publicPrefix: string) => {
+      for (const name of readdirSync(absDir, { withFileTypes: true })) {
+        const rel = `${publicPrefix}/${name.name}`.replace(/\\/g, "/");
+        const abs = join(absDir, name.name);
+        if (name.isDirectory()) walk(abs, rel);
+        else if (/\.(png|jpg|jpeg|webp|html)$/i.test(name.name)) {
+          const isText = /\.html$/i.test(name.name);
+          files.push(
+            isText
+              ? { path: rel, content: readFileSync(abs, "utf8"), encoding: "utf8" as const }
+              : { path: rel, sourceAbs: abs },
+          );
+        }
+      }
+    };
+    walk(absRoot, relRoot.replace(/\\/g, "/"));
+  };
+  appendPublicPngTree("public/storefront-merch");
+  appendPublicPngTree("public/commerce-founder-review");
+  appendPublicPngTree("public/commerce-founder");
+  const overridePaths = new Set([
+    ...supplementPaths,
+    ...marketplacePaths,
+    ...productContentPaths,
+    ...cartContinuityPaths,
+    ...embeddedCheckoutPaths,
+  ]);
+  const stripped = files.filter(
+    (file) =>
+      !CLUB_THROTTLE_LEGACY_PRODUCT_PAGE_PATHS.includes(file.path as (typeof CLUB_THROTTLE_LEGACY_PRODUCT_PAGE_PATHS)[number]) &&
+      !CLUB_THROTTLE_LEGACY_ECOMMERCE_SURFACE_PATHS.has(file.path) &&
+      !overridePaths.has(file.path),
+  );
+  let merged = [
+    ...stripped,
+    ...productContentFiles,
+    ...cartContinuityFiles,
+    ...clubThrottleIsolatedStorefrontSupplementFiles(),
+    ...marketplaceFiles,
+    ...embeddedCheckoutFiles,
+  ];
+  const composeDigestBase = digestComposedStorefrontFiles(merged);
+  const buildCommit = process.env.VERCEL_GIT_COMMIT_SHA?.trim() || process.env.GIT_COMMIT?.trim() || "local-compose";
+  const fingerprint = {
+    venture: "club-throttle",
+    storefront_version: CLUB_THROTTLE_STOREFRONT_VERSION,
+    compose_digest: composeDigestBase,
+    build_commit: buildCommit,
+  };
+  merged.push({
+    path: "lib/storefront-build-fingerprint.ts",
+    content: `export const CLUB_THROTTLE_STOREFRONT_BUILD = ${JSON.stringify(fingerprint, null, 2)} as const;\n`,
+  });
+  merged.push({
+    path: "public/club-throttle-storefront-build.json",
+    content: `${JSON.stringify(fingerprint, null, 2)}\n`,
+  });
+  const byPath = new Map<string, ComposedStorefrontFile>();
+  for (const file of merged) byPath.set(file.path, file);
+  merged = [...byPath.values()];
+
   return {
-    files,
-    digest: createHash("sha256").update(files.map((file) => `${file.path}:${file.content}`).sort().join("\n")).digest("hex"),
+    files: merged,
+    digest: digestComposedStorefrontFiles(merged),
+    storefront_version: CLUB_THROTTLE_STOREFRONT_VERSION,
+    compose_digest: composeDigestBase,
     logo_bound: logo.present,
     founder_dirty_tree_deployed: false,
   };

@@ -1,5 +1,14 @@
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { assertVercelDeploymentTargetWriteSafe } from "./vercel-deployment-target";
+
+export type VercelUploadableSourceFile = {
+  path: string;
+  content?: string;
+  encoding?: "utf8" | "base64";
+  /** Read bytes from disk — avoids base64 string materialization for large static assets. */
+  sourceAbs?: string;
+};
 
 export const VERCEL_SOURCE_BUNDLE_DEPLOYMENT_MODE = "files" as const;
 export const VERCEL_FILES_UPLOAD_PATH = "/v2/files";
@@ -21,8 +30,10 @@ export type VercelSourceBundleDeploymentBody = {
   };
 };
 
-export function fileUploadBytes(file: { content: string; encoding?: "utf8" | "base64" }): Buffer {
-  return file.encoding === "base64" ? Buffer.from(file.content, "base64") : Buffer.from(file.content, "utf8");
+export function fileUploadBytes(file: VercelUploadableSourceFile): Buffer {
+  if (file.sourceAbs) return readFileSync(file.sourceAbs);
+  const content = file.content ?? "";
+  return file.encoding === "base64" ? Buffer.from(content, "base64") : Buffer.from(content, "utf8");
 }
 
 export function sha1Hex(content: string): string {
@@ -30,7 +41,7 @@ export function sha1Hex(content: string): string {
 }
 
 export function translateFilesToVercelSourceBundle(
-  files: Array<{ path: string; content: string; encoding?: "utf8" | "base64" }>,
+  files: VercelUploadableSourceFile[],
 ): VercelSourceBundleFile[] {
   return files
     .map((file) => {
@@ -46,7 +57,7 @@ export function translateFilesToVercelSourceBundle(
 
 export function buildVercelSourceBundleDeploymentBody(input: {
   projectName: string;
-  files: Array<{ path: string; content: string; encoding?: "utf8" | "base64" }>;
+  files: VercelUploadableSourceFile[];
 }): VercelSourceBundleDeploymentBody {
   return {
     name: input.projectName,
