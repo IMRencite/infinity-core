@@ -77,6 +77,9 @@ report.V44_1_MANUAL_ORCHESTRATOR_HTTP_QC =
   tick.status === 200 || tick.status === 202 ? "PASS" : "FAIL";
 report.orchestrator_status = tick.status;
 report.orchestrator_trigger = tick.body?.provenance?.trigger_type ?? tick.body?.trigger;
+report.onpv_publish_diagnostic = tick.body?.onpv_publish_diagnostic ?? null;
+report.onpv_autonomous_publish_candidate = tick.body?.onpv_autonomous_publish_candidate ?? null;
+report.orchestrator_jobs_created = tick.body?.jobs_created ?? null;
 const cycleId = tick.body?.cycle_id ?? null;
 report.V44_1_MANUAL_CYCLE_ID = cycleId;
 
