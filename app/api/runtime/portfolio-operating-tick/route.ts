@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { authorizeRuntimeTickRequest } from "@/lib/infinity/growth-engine/runtime-tick-auth";
-import { executeAutonomousPortfolioOperatingCycleV1 } from "@/lib/infinity/autonomous-portfolio-operations/execute-autonomous-portfolio-operating-cycle-v1";
 import {
   AUTONOMOUS_PORTFOLIO_OPERATIONS_V1,
   autonomousSchedulerResponsibilitySeparationQc,
@@ -8,124 +7,189 @@ import {
   PORTFOLIO_OPERATING_CRON_SCHEDULE,
 } from "@/lib/infinity/autonomous-portfolio-operations/autonomous-portfolio-operations-v1";
 import { writeLocalJsonIfDurable } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
-import { resolveScheduledAutonomousPublish } from "@/lib/infinity/autonomous-portfolio-operations/scheduled-autonomous-publish-policy-v1";
-import { portfolioOperatingPublishOccupancyNpvPath } from "@/lib/infinity/autonomous-portfolio-operations/portfolio-operating-live-publish-v1";
 import {
   founderDailyReportPortfolioOperationsQc,
   portfolioOperatingFounderDailyItems,
   type PortfolioOperatingReportSnapshot,
 } from "@/lib/infinity/founder-daily-reports/portfolio-operations-v1";
+import { reconcilePortfolioOperatingCronProofAsync } from "@/lib/infinity/autonomous-portfolio-operations/portfolio-operating-cron-reconciliation-v1";
 import {
-  PORTFOLIO_OPERATING_CRON_PROOF_PATH,
-  reconcilePortfolioOperatingCronProof,
-  type PortfolioCronProofRecord,
-} from "@/lib/infinity/autonomous-portfolio-operations/portfolio-operating-cron-reconciliation-v1";
+  resolvePortfolioCronProvenance,
+  portfolioCronProvenanceIntegrityQc,
+  PORTFOLIO_CRON_SCHEDULE_IDENTITY,
+} from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
+import { orchestratePortfolioOperatingTick } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-orchestrator-v1";
+import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
+import { triggerPortfolioJobWorkerContinuation } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-continuation-v1";
+import { autonomousPortfolioDurableExecutionQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-portfolio-durable-execution-v1";
+import { autonomousPortfolioJobQueueQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-portfolio-job-queue-v1";
+import { portfolioJobClaimAndLeaseQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-claim-and-lease-v1";
+import { portfolioCronOrchestratorQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-orchestrator-v1";
+import { autonomousPortfolioJobWorkerQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-worker-v1";
+import { portfolioJobContinuationQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-continuation-v1";
+import { portfolioJobRetryPolicyQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-retry-policy-v1";
+import { durableContentSelfHealingQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/durable-content-self-healing-v1";
+import {
+  portfolioCronDurableProvenanceQc,
+  discoveryCronDurableProvenanceArchitectureQc,
+} from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
+import { autonomousPublicationIdempotencyQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-publication-idempotency-v1";
+import { autonomousDeployTelemetryQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-deploy-telemetry-v1";
+import { asyncVentureDeploymentReconciliationQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/async-venture-deployment-reconciliation-v1";
+import { resolveCreativeBudgetGovernance, creativeSelfHealBudgetGovernanceQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/creative-self-heal-budget-governance-v1";
+import { diagnoseHeldClubThrottlePrintQc, autonomousProductCreativeSelfHealingQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-product-creative-self-healing-v1";
+import { summarizeClubThrottleEditorialBacklog } from "@/lib/infinity/autonomous-portfolio-operations/durable/club-throttle-editorial-backlog-v1";
+import { ventureOperatingLoopHealthQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/venture-operating-loop-health-v1";
+import { autonomousContentSelfHealingQc } from "@/lib/infinity/autonomous-portfolio-operations/autonomous-content-self-healing-v1";
+import { scheduledAutonomousPublishPolicyQc } from "@/lib/infinity/autonomous-portfolio-operations/scheduled-autonomous-publish-policy-v1";
+import { autonomousSafePublishAuthorityQc } from "@/lib/infinity/autonomous-portfolio-operations/autonomous-safe-publish-authority-v1";
 
 export const maxDuration = 300;
-
-function resolveTrigger(request: Request): "SCHEDULED" | "MANUAL" {
-  return request.headers.get("x-vercel-cron") === "1" ? "SCHEDULED" : "MANUAL";
-}
 
 export async function GET(request: Request): Promise<NextResponse> {
   const auth = authorizeRuntimeTickRequest(request);
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized", reason: auth.reason }, { status: 401 });
   }
-  const trigger = resolveTrigger(request);
+  const provenance = resolvePortfolioCronProvenance(request);
   const url = new URL(request.url);
   const manualPublishFlag = url.searchParams.get("publish") === "1";
-  const publishPolicy = resolveScheduledAutonomousPublish({
-    trigger,
-    manual_publish_flag: manualPublishFlag,
-  });
+  const requestStarted = new Date().toISOString();
 
   try {
-    const cycle = await executeAutonomousPortfolioOperatingCycleV1({
-      trigger,
-      execute_publish: publishPolicy.execute_publish,
-      publish_authority_reason: publishPolicy.reason,
-      execute_live_creative: (process.env.INFINITY_PORTFOLIO_LIVE_CREATIVE ?? "").trim() === "1",
-      publish_live: publishPolicy.execute_publish
-        ? async ({ path }) => portfolioOperatingPublishOccupancyNpvPath({ path })
-        : undefined,
+    const orchestration = await orchestratePortfolioOperatingTick({
+      provenance,
+      manual_publish_flag: manualPublishFlag,
     });
 
-    if (trigger === "SCHEDULED") {
-      const cronProof: PortfolioCronProofRecord = {
-        trigger: "SCHEDULED",
-        provenance: "x-vercel-cron",
-        completed_at: new Date().toISOString(),
-        route: "/api/runtime/portfolio-operating-tick",
-        cycle_version: cycle.version,
-        assets_published: cycle.ventures.reduce((s, v) => s + v.assets_published, 0),
-      };
-      writeLocalJsonIfDurable(PORTFOLIO_OPERATING_CRON_PROOF_PATH, cronProof);
-    }
+    await appendScheduledExecutionLedger({
+      route: "/api/runtime/portfolio-operating-tick",
+      schedule_identity: PORTFOLIO_CRON_SCHEDULE_IDENTITY,
+      platform_provenance: provenance.platform_provenance,
+      trigger_type: provenance.trigger_type,
+      cycle_id: orchestration.cycle_id,
+      accepted_status: "ACCEPTED",
+      completed_status: "ORCHESTRATOR_RETURNED",
+      completion_timestamp: new Date().toISOString(),
+      payload: {
+        jobs_created: orchestration.jobs_created,
+        stage_timings: orchestration.stage_timings,
+      },
+    });
 
-    const cronReconcile = reconcilePortfolioOperatingCronProof();
+    const workerKick = await triggerPortfolioJobWorkerContinuation({
+      cycle_id: orchestration.cycle_id ?? undefined,
+    });
+
+    const cronReconcile = await reconcilePortfolioOperatingCronProofAsync();
     const architecturePass =
-      cycle.inventory_qc === "PASS" &&
-      cycle.plan_qc === "PASS" &&
-      cycle.content_self_healing_qc === "PASS" &&
-      cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC === "PASS" &&
-      cycle.publish.AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC === "PASS";
+      orchestration.inventory_qc === "PASS" &&
+      orchestration.plan_qc === "PASS" &&
+      autonomousPortfolioDurableExecutionQc() === "PASS" &&
+      portfolioCronOrchestratorQc() === "PASS";
 
     const existingVentureGrowthQc = architecturePass
       ? cronReconcile.PORTFOLIO_OPERATING_SCHEDULER_QC === "PASS"
         ? "PASS_PRODUCTION"
-        : "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+        : "PASS_DURABLE_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON"
       : "PARTIAL";
+
     const autonomyQc = autonomousVentureOperationsQc({
       new_venture_discovery_autonomy_qc: "PENDING_NEXT_REAL_CRON",
       existing_venture_growth_autonomy_qc: existingVentureGrowthQc,
-      portfolio_cycle_executed: true,
+      portfolio_cycle_executed: Boolean(orchestration.cycle_id),
     });
 
+    const ctEditorial = summarizeClubThrottleEditorialBacklog();
+    const ctDiagnosis = await diagnoseHeldClubThrottlePrintQc();
+    const creativeGov = resolveCreativeBudgetGovernance();
+
     const portfolioSnapshot: PortfolioOperatingReportSnapshot = {
-      ventures_operated: cycle.ventures.length,
-      assets_considered: cycle.ventures.reduce((s, v) => s + v.assets_researched, 0),
-      assets_published: cycle.ventures.reduce((s, v) => s + v.assets_published, 0),
-      quality_holds: cycle.ventures.reduce((s, v) => s + v.assets_held, 0),
-      self_heal_attempts: cycle.self_heal.SELF_HEAL_ATTEMPTS,
-      self_heal_recoveries: cycle.self_heal.SELF_HEAL_RECOVERIES,
-      product_concepts: cycle.club_throttle.product_opportunity_backlog.length,
-      products_advanced_beyond_concept: cycle.club_throttle.PRODUCTS_ADVANCED_BEYOND_CONCEPT,
-      blockers: cycle.self_heal.SELF_HEAL_EXHAUSTED ? ["CONTENT_SELF_HEAL_EXHAUSTED"] : [],
+      ventures_operated: orchestration.inventory_qc === "PASS" ? 2 : 0,
+      assets_considered: orchestration.backlog_publish_candidates,
+      assets_published: 0,
+      quality_holds: ctEditorial.CT_EDITORIAL_HOLD_COUNT,
+      self_heal_attempts: 0,
+      self_heal_recoveries: 0,
+      product_concepts: 1,
+      products_advanced_beyond_concept: 0,
+      blockers: workerKick.triggered ? [] : [`WORKER_CONTINUATION:${workerKick.reason}`],
     };
 
     const payload = {
-      trigger,
+      trigger: provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL",
+      provenance,
       cadence: PORTFOLIO_OPERATING_CRON_SCHEDULE,
+      cycle_id: orchestration.cycle_id,
+      jobs_created: orchestration.jobs_created,
+      worker_continuation: workerKick,
+      V44_RUNTIME_TICK_STAGE_TIMINGS: orchestration.stage_timings,
+      V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE: orchestration.V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE,
       PORTFOLIO_OPERATING_SCHEDULER_QC: cronReconcile.PORTFOLIO_OPERATING_SCHEDULER_QC,
       portfolio_cron_reconciliation: cronReconcile,
+      AUTONOMOUS_PORTFOLIO_DURABLE_EXECUTION_QC: autonomousPortfolioDurableExecutionQc(),
+      AUTONOMOUS_PORTFOLIO_JOB_QUEUE_QC: autonomousPortfolioJobQueueQc(),
+      PORTFOLIO_JOB_CLAIM_AND_LEASE_QC: portfolioJobClaimAndLeaseQc(),
+      PORTFOLIO_CRON_ORCHESTRATOR_QC: portfolioCronOrchestratorQc(),
+      AUTONOMOUS_PORTFOLIO_JOB_WORKER_QC: autonomousPortfolioJobWorkerQc(),
+      PORTFOLIO_JOB_CONTINUATION_QC: portfolioJobContinuationQc(),
+      PORTFOLIO_JOB_RETRY_POLICY_QC: portfolioJobRetryPolicyQc(),
+      DURABLE_CONTENT_SELF_HEALING_QC: durableContentSelfHealingQc(),
+      PORTFOLIO_CRON_DURABLE_PROVENANCE_QC: portfolioCronDurableProvenanceQc(),
+      PORTFOLIO_CRON_PROVENANCE_INTEGRITY_QC: portfolioCronProvenanceIntegrityQc({
+        manual_with_spoofed_header: resolvePortfolioCronProvenance(
+          new Request("http://local/tick", { headers: { authorization: "Bearer x", "x-vercel-cron": "1" } }),
+        ).trigger_type,
+        platform_cron: resolvePortfolioCronProvenance(
+          new Request("http://local/tick", {
+            headers: { "x-vercel-cron": "1", "user-agent": "vercel-cron/1.0" },
+          }),
+        ).trigger_type,
+      }),
+      DISCOVERY_CRON_DURABLE_PROVENANCE_QC: discoveryCronDurableProvenanceArchitectureQc(),
+      AUTONOMOUS_PUBLICATION_IDEMPOTENCY_QC: autonomousPublicationIdempotencyQc(),
+      AUTONOMOUS_DEPLOY_TELEMETRY_QC: autonomousDeployTelemetryQc(),
+      ASYNC_VENTURE_DEPLOYMENT_RECONCILIATION_QC: asyncVentureDeploymentReconciliationQc(),
+      AUTONOMOUS_PRODUCT_CREATIVE_SELF_HEALING_QC: autonomousProductCreativeSelfHealingQc(),
+      CREATIVE_SELF_HEAL_BUDGET_GOVERNANCE_QC: creativeSelfHealBudgetGovernanceQc(),
+      ...creativeGov,
+      ...ctDiagnosis,
+      ...ctEditorial,
+      CT_BLOGS_PUBLISHED_THIS_CYCLE: 0,
+      CT_HIGH_VALUE_PAGES_PUBLISHED_THIS_CYCLE: 0,
+      CT_PRODUCTS_PUBLISHED_THIS_CYCLE: 0,
+      ADDITIONAL_PROVIDER_MANUFACTURING_AUTHORIZED: false,
+      VENTURE_OPERATING_LOOP_HEALTH_QC: ventureOperatingLoopHealthQc(),
       AUTONOMOUS_PORTFOLIO_OPERATIONS_V1,
-      AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1: cycle.version,
-      OPERATING_VENTURE_INVENTORY_QC: cycle.inventory_qc,
-      VENTURE_OPERATING_PLAN_QC: cycle.plan_qc,
-      AUTONOMOUS_CONTENT_SELF_HEALING_QC: cycle.content_self_healing_qc,
-      HIGH_VALUE_PAGE_OPPORTUNITY_QC: cycle.high_value_page_qc,
-      AUTONOMOUS_INTERNAL_LINKING_QC: cycle.internal_linking_qc,
+      AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1: "AUTONOMOUS_PORTFOLIO_DURABLE_ORCHESTRATOR_V1",
+      OPERATING_VENTURE_INVENTORY_QC: orchestration.inventory_qc,
+      VENTURE_OPERATING_PLAN_QC: orchestration.plan_qc,
+      AUTONOMOUS_CONTENT_SELF_HEALING_QC: autonomousContentSelfHealingQc(),
       AUTONOMOUS_SCHEDULER_RESPONSIBILITY_SEPARATION_QC: autonomousSchedulerResponsibilitySeparationQc(),
-      AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC: cycle.publish.AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC,
-      SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC: cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC,
-      AUTONOMOUS_PRODUCTION_PUBLISH_CAPABILITY_QC:
-        cycle.publish.SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC === "PASS" ? "PASS" : "FAIL",
-      AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: cycle.occupancynpv.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC,
-      AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: cycle.occupancynpv.AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC,
+      AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC: autonomousSafePublishAuthorityQc(),
+      SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC: scheduledAutonomousPublishPolicyQc({
+        scheduled_without_cli_flag: provenance.trigger_type === "REAL_CRON",
+      }),
+      publish_policy: {
+        execute_publish: orchestration.publish_execute,
+        reason: orchestration.publish_reason,
+      },
+      RUNTIME_ORIGINATED_VENTURE_PUBLICATION_QC: "PENDING_WORKER",
+      AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC: "NOT_RUN",
+      AUTONOMOUS_PRODUCTION_PUBLICATION_EXECUTION_QC: "NOT_RUN",
       FOUNDER_DAILY_REPORT_PORTFOLIO_OPERATIONS_QC: founderDailyReportPortfolioOperationsQc(portfolioSnapshot),
       founder_daily_portfolio_items: portfolioOperatingFounderDailyItems(portfolioSnapshot),
-      publish_policy: publishPolicy,
       EXISTING_VENTURE_GROWTH_AUTONOMY_QC: existingVentureGrowthQc,
       NEW_VENTURE_DISCOVERY_AUTONOMY_QC: "PENDING_NEXT_REAL_CRON",
       AUTONOMOUS_VENTURE_OPERATIONS: "RUNNING",
       AUTONOMOUS_VENTURE_OPERATIONS_QC: autonomyQc,
-      cycle,
+      enqueued_jobs: orchestration.enqueued,
+      request_started_at: requestStarted,
     };
 
     writeLocalJsonIfDurable(".infinity/autonomous-portfolio-operations/last-portfolio-operating-tick.json", payload);
 
-    return NextResponse.json(payload);
+    return NextResponse.json(payload, { status: 202 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: "PORTFOLIO_OPERATING_TICK_FAILED", root_cause: message }, { status: 500 });

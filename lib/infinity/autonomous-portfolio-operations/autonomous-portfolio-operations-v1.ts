@@ -204,7 +204,8 @@ export type ExistingVentureGrowthAutonomyQc =
   | "PASS_PRODUCTION"
   | "FAIL"
   | "PARTIAL"
-  | "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF";
+  | "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+  | "PASS_DURABLE_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON";
 
 export type AutonomousVentureOperationsQcInput = {
   new_venture_discovery_autonomy_qc: "PASS" | "FAIL" | "PENDING_NEXT_REAL_CRON";
@@ -216,7 +217,8 @@ function existingVentureGrowthIsPass(state: ExistingVentureGrowthAutonomyQc): bo
   return (
     state === "PASS" ||
     state === "PASS_PRODUCTION" ||
-    state === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+    state === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF" ||
+    state === "PASS_DURABLE_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON"
   );
 }
 
@@ -228,7 +230,8 @@ export function autonomousVentureOperationsQc(
   }
   if (
     input.new_venture_discovery_autonomy_qc === "PENDING_NEXT_REAL_CRON" ||
-    input.existing_venture_growth_autonomy_qc === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF"
+    input.existing_venture_growth_autonomy_qc === "PASS_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON_PROOF" ||
+    input.existing_venture_growth_autonomy_qc === "PASS_DURABLE_PRODUCTION_ARCHITECTURE_AWAITING_REAL_CRON"
   ) {
     return "PARTIAL_AWAITING_REAL_SCHEDULED_PROOFS";
   }

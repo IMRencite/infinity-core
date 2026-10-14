@@ -4,6 +4,8 @@ import { executePostLaunchOperatingCycle } from "@/lib/infinity/venture-operatin
 import { createProductionCloudRuntimeStore, executeCloudRuntimeWake } from "@/lib/infinity/cloud-runtime";
 import { projectVentureDiscoveryBusinessExecution } from "@/lib/infinity/venture-operating-scale/venture-discovery-business-execution-projection";
 import { writeLocalJsonIfDurable } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
+import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
+import { resolvePortfolioCronProvenance } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
 import { executeAutonomousPortfolioOperatingCycleV1 } from "@/lib/infinity/autonomous-portfolio-operations/execute-autonomous-portfolio-operating-cycle-v1";
 
 export const maxDuration = 60;
@@ -11,9 +13,8 @@ export const maxDuration = 60;
 const DISCOVERY_CRON_UTC = "0 12 * * *" as const;
 
 function resolveDiscoveryTrigger(request: Request): "SCHEDULED" | "MANUAL" {
-  const cron = request.headers.get("x-vercel-cron");
-  if (cron === "1") return "SCHEDULED";
-  return "MANUAL";
+  const provenance = resolvePortfolioCronProvenance(request);
+  return provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL";
 }
 
 export async function GET(request: Request): Promise<NextResponse> {
@@ -56,6 +57,17 @@ export async function GET(request: Request): Promise<NextResponse> {
       ".infinity/growth-engine/venture-discovery-scheduled-execution-last.json",
       scheduledExecutionRecord,
     );
+    await appendScheduledExecutionLedger({
+      route: "/api/runtime/venture-operating-cycle",
+      schedule_identity: DISCOVERY_CRON_UTC,
+      platform_provenance: resolvePortfolioCronProvenance(request).platform_provenance,
+      trigger_type: trigger === "SCHEDULED" ? "REAL_CRON" : "MANUAL",
+      cycle_id: cycleId,
+      accepted_status: "ACCEPTED",
+      completed_status: discovery.success ? "COMPLETED" : "FAILED",
+      completion_timestamp: completedAt,
+      payload: scheduledExecutionRecord,
+    });
 
     return NextResponse.json({
       host: trigger === "SCHEDULED" ? "vercel-cron" : "manual-auth",

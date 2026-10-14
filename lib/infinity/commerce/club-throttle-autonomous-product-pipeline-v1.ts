@@ -65,6 +65,8 @@ export async function runClubThrottleAutonomousProductPipeline(input: {
   cwd?: string;
   execute_live_creative?: boolean;
   env?: NodeJS.ProcessEnv;
+  /** Appended to compiled prompt for bounded print-QC repair iterations. */
+  creative_repair_suffix?: string;
 }): Promise<AutonomousProductPipelineResult> {
   const cwd = input.cwd ?? process.cwd();
   const env = input.env ?? process.env;
@@ -115,7 +117,7 @@ export async function runClubThrottleAutonomousProductPipeline(input: {
     };
   }
 
-  const prompt = compileConceptApparelPrompt(brief, chromaKeyPromptSuffix("green"));
+  const prompt = `${compileConceptApparelPrompt(brief, chromaKeyPromptSuffix("green"))}${input.creative_repair_suffix ? ` ${input.creative_repair_suffix}` : ""}`;
   const generated = await generateXaiImagineImages({
     prompt,
     n: 1,

@@ -34,6 +34,8 @@ export async function deployApprovedVentureProductionBundle(input: {
   venture_id: string;
   alias_production?: boolean;
   enforce_backlog_deploy_guard?: boolean;
+  /** Worker slices use short poll; durable jobs reconcile IN_PROGRESS deployments. */
+  poll_attempts?: number;
 }): Promise<VentureProductionDeployResult> {
   const target = resolveVentureDeployTarget(input.venture_id);
   if (!target) {
@@ -79,7 +81,7 @@ export async function deployApprovedVentureProductionBundle(input: {
       deploy: true,
       aliasProduction: input.alias_production !== false,
       enforceBacklogDeployGuard: input.enforce_backlog_deploy_guard !== false,
-      pollAttempts: 45,
+      pollAttempts: input.poll_attempts ?? 45,
       pollDelayMs: 8000,
     });
     return {

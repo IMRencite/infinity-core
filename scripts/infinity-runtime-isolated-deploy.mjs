@@ -231,7 +231,7 @@ mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
 const runtimeRoutes = ["communication-tick", "communication-attest", "club-throttle-fulfillment-tick"].concat(
   includeAutonomousLoops
-    ? ["tick", "organic-tick", "venture-operating-cycle", "portfolio-operating-tick", "opportunity-discovery-tick"]
+    ? ["tick", "organic-tick", "venture-operating-cycle", "portfolio-operating-tick", "portfolio-job-worker", "opportunity-discovery-tick"]
     : [],
   tracked.has("app/api/runtime/communication-coverage/route.ts") ? ["communication-coverage"] : [],
 );
@@ -246,6 +246,7 @@ const requiredTracked = [
         "app/api/runtime/organic-tick/route.ts",
         "app/api/runtime/venture-operating-cycle/route.ts",
         "app/api/runtime/portfolio-operating-tick/route.ts",
+        "app/api/runtime/portfolio-job-worker/route.ts",
         "app/api/runtime/opportunity-discovery-tick/route.ts",
       ]
     : [],
