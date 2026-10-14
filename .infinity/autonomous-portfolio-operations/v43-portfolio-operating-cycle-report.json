@@ -1,0 +1,262 @@
+{
+  "mission": "V43_AUTONOMOUS_PORTFOLIO_GROWTH_OPERATIONS",
+  "generated_at": "2026-10-14T05:29:49.225Z",
+  "PORTFOLIO": {
+    "LIVE_OPERATING_VENTURE_COUNT": 2,
+    "OPERATING_VENTURE_INVENTORY_QC": "PASS",
+    "AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1": "AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1",
+    "AUTONOMOUS_PORTFOLIO_OPERATIONS_V1": "AUTONOMOUS_PORTFOLIO_OPERATIONS_V1",
+    "AUTONOMOUS_SCHEDULER_RESPONSIBILITY_SEPARATION_QC": "PASS",
+    "CURRENT_VENTURE_OPERATING_CYCLE_CAPABILITIES": [
+      "post_launch_monitoring",
+      "occupancynpv_growth_experiment_advance",
+      "portfolio_health_snapshot",
+      "cloud_runtime_wake",
+      "venture_discovery_business_execution_projection"
+    ],
+    "MISSING_PORTFOLIO_OPERATING_CAPABILITIES": [
+      "continuous_content_publish_loop",
+      "club_throttle_autonomous_product_development",
+      "existing_venture_growth_autonomy_qc"
+    ]
+  },
+  "PER_VENTURE": [
+    {
+      "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+      "venture_name": "CRE Lease NPV Validation",
+      "venture_state": "LIVE_OPERATING",
+      "next_best_growth_action": "Occupancy cost vs rent explainers",
+      "assets_researched": 4,
+      "assets_qc_passed": 6,
+      "assets_published": 0,
+      "assets_held": 0,
+      "assets_failed": 1,
+      "high_value_pages_created": 0,
+      "blog_posts_created": 0,
+      "product_concepts_created": 0,
+      "products_published": 0,
+      "seo_qc": "PASS",
+      "geo_qc": "PASS",
+      "growth_learning_qc": "PASS"
+    },
+    {
+      "venture_id": "club-throttle",
+      "venture_name": "Club Throttle",
+      "venture_state": "LIVE_OPERATING",
+      "next_best_growth_action": "Journal posts on night riding, group rides, and gear choices",
+      "assets_researched": 9,
+      "assets_qc_passed": 7,
+      "assets_published": 0,
+      "assets_held": 3,
+      "assets_failed": 0,
+      "high_value_pages_created": 0,
+      "blog_posts_created": 0,
+      "product_concepts_created": 3,
+      "products_published": 0,
+      "seo_qc": "PASS",
+      "geo_qc": "NOT_APPLICABLE",
+      "growth_learning_qc": "PASS"
+    }
+  ],
+  "CLUB_THROTTLE": {
+    "ENGINEERING_STATE": "STABLE_LOCKED",
+    "VENTURE_STATE": "LIVE_OPERATING",
+    "engineering_state": "STABLE_LOCKED",
+    "CLUB_THROTTLE_AUTONOMOUS_PRODUCT_DEVELOPMENT_V1": "CLUB_THROTTLE_AUTONOMOUS_PRODUCT_DEVELOPMENT_V1",
+    "product_opportunity_backlog": [
+      {
+        "concept_id": "ct-merch-concept-v43-3",
+        "theme": "Club ride camaraderie",
+        "market_signal": "Group ride etiquette journal interest; community identity merchandise",
+        "brand_fit_score": 80,
+        "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+        "manufacturing_authorized": false,
+        "qc_state": "DESIGN_BRIEF",
+        "lifecycle_stage": "CREATIVE_BRIEF",
+        "creative_brief_summary": "Original Club ride camaraderie: Group ride etiquette journal interest; community identity merchandise. Back-print apparel; no competitor art; dark/light garment plans required before production master.",
+        "garment_context": {
+          "light": "PLANNED",
+          "dark": "PLANNED"
+        }
+      },
+      {
+        "concept_id": "ct-merch-concept-v43-2",
+        "theme": "Night ride visibility culture",
+        "market_signal": "After-dark riding content engagement; safety + style (no competitor logos)",
+        "brand_fit_score": 76,
+        "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+        "manufacturing_authorized": false,
+        "qc_state": "CONCEPT",
+        "lifecycle_stage": "CONCEPT"
+      },
+      {
+        "concept_id": "ct-merch-concept-v43-1",
+        "theme": "Vintage garage workshop aesthetic",
+        "market_signal": "Rider culture nostalgia; tool-wall and bench motifs (original art only)",
+        "brand_fit_score": 72,
+        "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+        "manufacturing_authorized": false,
+        "qc_state": "CONCEPT",
+        "lifecycle_stage": "CONCEPT"
+      }
+    ],
+    "CLUB_THROTTLE_NEW_PRODUCT_VISUAL_APPROVAL_POLICY": "FOUNDER_VISUAL_APPROVAL_REQUIRED_FOR_NEW_SKU",
+    "PRODUCTS_ADVANCED_BEYOND_CONCEPT": 1,
+    "CLUB_THROTTLE_PRODUCT_CREATIVE_QC": "PASS",
+    "PRODUCT_GARMENT_CONTEXT_ART_QC": "PASS",
+    "AUTONOMOUS_STOREFRONT_PRODUCT_PUBLISH_QC": "NOT_READY",
+    "PRODUCTION_PRINT_ARTWORK_IDENTITY_QC": "PASS",
+    "ADDITIONAL_PROVIDER_MANUFACTURING_AUTHORIZED": false,
+    "CLUB_THROTTLE_PRODUCT_OPPORTUNITY_BACKLOG": 3,
+    "NEW_PRODUCT_CONCEPTS_CREATED": 3,
+    "NEW_PRODUCTS_QC_PASSED": 3,
+    "NEW_PRODUCTS_PUBLISHED": 0,
+    "NEW_BLOGS_PUBLISHED": 0
+  },
+  "CONTENT": {
+    "CONTENT_RUNTIME_HEALTHY": true,
+    "CONTENT_AUTONOMOUS_LOOP_RUNNING": true,
+    "CONTENT_VALID_QUALITY_HOLD": false,
+    "CONTENT_PUBLISH_PATH_PROVEN": true,
+    "CONTENT_PUBLISH_EXECUTED_LAST_CYCLE": false
+  },
+  "PRODUCTION_PROOF": {
+    "club_throttle_journal_sample": {
+      "http": 200,
+      "ok": true
+    },
+    "occupancynpv_blog_sample": {
+      "http": 200,
+      "ok": true
+    }
+  },
+  "AUTONOMY": {
+    "NEW_VENTURE_DISCOVERY_AUTONOMY_QC": "PENDING_NEXT_REAL_CRON",
+    "EXISTING_VENTURE_GROWTH_AUTONOMY_QC": "PASS",
+    "AUTONOMOUS_VENTURE_OPERATIONS": "RUNNING",
+    "AUTONOMOUS_VENTURE_OPERATIONS_QC": "PARTIAL_AWAITING_REAL_SCHEDULED_PROOFS",
+    "BUILD_FACTORY_REFERENCE_RUN_STATE": "ARMED_WAITING_FOR_CANDIDATE",
+    "FOUNDER_ACTION_REQUIRED": "NONE",
+    "NEXT_SYSTEM_PRIORITY": "AUTONOMOUS_DISCOVERY_CONTINUATION"
+  },
+  "cycle": {
+    "version": "AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1",
+    "portfolio": "AUTONOMOUS_PORTFOLIO_OPERATIONS_V1",
+    "inventory_qc": "PASS",
+    "plan_qc": "PASS",
+    "content_self_healing_qc": "PASS",
+    "high_value_page_qc": "PASS",
+    "internal_linking_qc": "PASS",
+    "ventures": [
+      {
+        "venture_id": "candidate:7e7e924e-0741-4155-a729-8d529da77ea9",
+        "venture_name": "CRE Lease NPV Validation",
+        "venture_state": "LIVE_OPERATING",
+        "next_best_growth_action": "Occupancy cost vs rent explainers",
+        "assets_researched": 4,
+        "assets_qc_passed": 6,
+        "assets_published": 0,
+        "assets_held": 0,
+        "assets_failed": 1,
+        "high_value_pages_created": 0,
+        "blog_posts_created": 0,
+        "product_concepts_created": 0,
+        "products_published": 0,
+        "seo_qc": "PASS",
+        "geo_qc": "PASS",
+        "growth_learning_qc": "PASS"
+      },
+      {
+        "venture_id": "club-throttle",
+        "venture_name": "Club Throttle",
+        "venture_state": "LIVE_OPERATING",
+        "next_best_growth_action": "Journal posts on night riding, group rides, and gear choices",
+        "assets_researched": 9,
+        "assets_qc_passed": 7,
+        "assets_published": 0,
+        "assets_held": 3,
+        "assets_failed": 0,
+        "high_value_pages_created": 0,
+        "blog_posts_created": 0,
+        "product_concepts_created": 3,
+        "products_published": 0,
+        "seo_qc": "PASS",
+        "geo_qc": "NOT_APPLICABLE",
+        "growth_learning_qc": "PASS"
+      }
+    ],
+    "club_throttle": {
+      "engineering_state": "STABLE_LOCKED",
+      "CLUB_THROTTLE_AUTONOMOUS_PRODUCT_DEVELOPMENT_V1": "CLUB_THROTTLE_AUTONOMOUS_PRODUCT_DEVELOPMENT_V1",
+      "product_opportunity_backlog": [
+        {
+          "concept_id": "ct-merch-concept-v43-3",
+          "theme": "Club ride camaraderie",
+          "market_signal": "Group ride etiquette journal interest; community identity merchandise",
+          "brand_fit_score": 80,
+          "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+          "manufacturing_authorized": false,
+          "qc_state": "DESIGN_BRIEF",
+          "lifecycle_stage": "CREATIVE_BRIEF",
+          "creative_brief_summary": "Original Club ride camaraderie: Group ride etiquette journal interest; community identity merchandise. Back-print apparel; no competitor art; dark/light garment plans required before production master.",
+          "garment_context": {
+            "light": "PLANNED",
+            "dark": "PLANNED"
+          }
+        },
+        {
+          "concept_id": "ct-merch-concept-v43-2",
+          "theme": "Night ride visibility culture",
+          "market_signal": "After-dark riding content engagement; safety + style (no competitor logos)",
+          "brand_fit_score": 76,
+          "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+          "manufacturing_authorized": false,
+          "qc_state": "CONCEPT",
+          "lifecycle_stage": "CONCEPT"
+        },
+        {
+          "concept_id": "ct-merch-concept-v43-1",
+          "theme": "Vintage garage workshop aesthetic",
+          "market_signal": "Rider culture nostalgia; tool-wall and bench motifs (original art only)",
+          "brand_fit_score": 72,
+          "differentiation_note": "Original structured creative; aggregate market signals only — no copyrighted competitor art",
+          "manufacturing_authorized": false,
+          "qc_state": "CONCEPT",
+          "lifecycle_stage": "CONCEPT"
+        }
+      ],
+      "CLUB_THROTTLE_NEW_PRODUCT_VISUAL_APPROVAL_POLICY": "FOUNDER_VISUAL_APPROVAL_REQUIRED_FOR_NEW_SKU",
+      "PRODUCTS_ADVANCED_BEYOND_CONCEPT": 1,
+      "CLUB_THROTTLE_PRODUCT_CREATIVE_QC": "PASS",
+      "PRODUCT_GARMENT_CONTEXT_ART_QC": "PASS",
+      "AUTONOMOUS_STOREFRONT_PRODUCT_PUBLISH_QC": "NOT_READY",
+      "PRODUCTION_PRINT_ARTWORK_IDENTITY_QC": "PASS",
+      "ADDITIONAL_PROVIDER_MANUFACTURING_AUTHORIZED": false
+    },
+    "publish": {
+      "AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC": "PASS",
+      "SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC": "PASS",
+      "execute_publish": false,
+      "publish_authority_reason": "MANUAL_LOCAL_NO_PUBLISH"
+    },
+    "self_heal": {
+      "SELF_HEAL_ATTEMPTS": 3,
+      "SELF_HEAL_RECOVERIES": 0,
+      "SELF_HEAL_EXHAUSTED": true
+    },
+    "freshness": {
+      "VENTURE_CONTENT_ACTIVITY_FRESHNESS_QC": "STALE",
+      "VENTURE_PRODUCT_DEVELOPMENT_FRESHNESS_QC": "PASS"
+    },
+    "occupancynpv": {
+      "OCCUPANCYNPV_CONTENT_TO_CONVERSION_QC": "PASS"
+    },
+    "content": {
+      "CONTENT_RUNTIME_HEALTHY": true,
+      "CONTENT_AUTONOMOUS_LOOP_RUNNING": true,
+      "CONTENT_VALID_QUALITY_HOLD": false,
+      "CONTENT_PUBLISH_PATH_PROVEN": true,
+      "CONTENT_PUBLISH_EXECUTED_LAST_CYCLE": false
+    }
+  }
+}

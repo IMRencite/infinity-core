@@ -4,6 +4,7 @@ import { executePostLaunchOperatingCycle } from "@/lib/infinity/venture-operatin
 import { createProductionCloudRuntimeStore, executeCloudRuntimeWake } from "@/lib/infinity/cloud-runtime";
 import { projectVentureDiscoveryBusinessExecution } from "@/lib/infinity/venture-operating-scale/venture-discovery-business-execution-projection";
 import { writeLocalJsonIfDurable } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
+import { executeAutonomousPortfolioOperatingCycleV1 } from "@/lib/infinity/autonomous-portfolio-operations/execute-autonomous-portfolio-operating-cycle-v1";
 
 export const maxDuration = 60;
 
@@ -24,6 +25,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const trigger = resolveDiscoveryTrigger(request);
   try {
     const postLaunch = executePostLaunchOperatingCycle({ persist: false });
+    const portfolioGrowth = await executeAutonomousPortfolioOperatingCycleV1({ execute_publish: false });
     const cloud = await executeCloudRuntimeWake({
       source: "CRON_DAILY",
       store: createProductionCloudRuntimeStore(),
@@ -75,6 +77,17 @@ export async function GET(request: Request): Promise<NextResponse> {
         missionCreated: cloud.mission_created,
       },
       cloudRuntime: cloud.hq,
+      portfolio_operating_cycle: {
+        AUTONOMOUS_PORTFOLIO_OPERATING_CYCLE_V1: portfolioGrowth.version,
+        OPERATING_VENTURE_INVENTORY_QC: portfolioGrowth.inventory_qc,
+        EXISTING_VENTURE_GROWTH_AUTONOMY_QC:
+          portfolioGrowth.inventory_qc === "PASS" && portfolioGrowth.plan_qc === "PASS" ? "PASS" : "PARTIAL",
+        ventures: portfolioGrowth.ventures.map((v) => ({
+          venture_id: v.venture_id,
+          assets_published: v.assets_published,
+          next_best_growth_action: v.next_best_growth_action,
+        })),
+      },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

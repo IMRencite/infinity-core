@@ -82,6 +82,7 @@ if (includeAutonomousLoops) {
     { path: "/api/runtime/organic-tick", schedule: "0 7 * * *" },
     { path: "/api/runtime/opportunity-discovery-tick", schedule: "0 6 * * 1" },
     { path: "/api/runtime/venture-operating-cycle", schedule: "0 12 * * *" },
+    { path: "/api/runtime/portfolio-operating-tick", schedule: "0 */6 * * *" },
   );
 }
 writeFileSync(join(dest, "vercel.json"), `${JSON.stringify({ crons: destCrons }, null, 2)}\n`);
@@ -229,7 +230,9 @@ if (!includeAutonomousLoops) {
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
 const runtimeRoutes = ["communication-tick", "communication-attest", "club-throttle-fulfillment-tick"].concat(
-  includeAutonomousLoops ? ["tick", "organic-tick", "venture-operating-cycle", "opportunity-discovery-tick"] : [],
+  includeAutonomousLoops
+    ? ["tick", "organic-tick", "venture-operating-cycle", "portfolio-operating-tick", "opportunity-discovery-tick"]
+    : [],
   tracked.has("app/api/runtime/communication-coverage/route.ts") ? ["communication-coverage"] : [],
 );
 const requiredTracked = [
@@ -242,6 +245,7 @@ const requiredTracked = [
         "app/api/runtime/tick/route.ts",
         "app/api/runtime/organic-tick/route.ts",
         "app/api/runtime/venture-operating-cycle/route.ts",
+        "app/api/runtime/portfolio-operating-tick/route.ts",
         "app/api/runtime/opportunity-discovery-tick/route.ts",
       ]
     : [],
@@ -289,6 +293,7 @@ const cronPaths = ["/api/runtime/communication-tick", "/api/runtime/club-throttl
         "/api/runtime/tick",
         "/api/runtime/organic-tick",
         "/api/runtime/venture-operating-cycle",
+        "/api/runtime/portfolio-operating-tick",
         "/api/runtime/opportunity-discovery-tick",
       ]
     : [],
@@ -300,6 +305,7 @@ if (missingCron.length) {
 }
 const requiredAutonomousRoutes = [
   "/api/runtime/opportunity-discovery-tick",
+  "/api/runtime/portfolio-operating-tick",
   "/api/runtime/venture-operating-cycle",
   "/api/runtime/tick",
   "/api/runtime/organic-tick",

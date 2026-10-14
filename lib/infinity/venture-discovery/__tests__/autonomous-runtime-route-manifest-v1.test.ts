@@ -5,6 +5,7 @@ describe("AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_V1", () => {
   it("passes when required discovery routes are present", () => {
     const result = verifyAutonomousRuntimeRouteManifest([
       "/api/runtime/opportunity-discovery-tick",
+      "/api/runtime/portfolio-operating-tick",
       "/api/runtime/venture-operating-cycle",
       "/api/runtime/tick",
       "/api/runtime/organic-tick",

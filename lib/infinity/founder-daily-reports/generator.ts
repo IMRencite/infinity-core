@@ -6,6 +6,7 @@ import {
   type FounderDailyReportSection,
   type FounderDailyReportSources,
 } from "./types";
+import { portfolioOperatingFounderDailyItems } from "./portfolio-operations-v1";
 
 export function reportDateInTimezone(now: string, timezone: string = FOUNDER_HQ_TIMEZONE): string {
   const date = new Date(now);
@@ -115,6 +116,22 @@ export function generateFounderDailyReport(sources: FounderDailyReportSources, p
   for (const deployment of deployments) {
     items.push(item("deploy", "COMPLETED", `Deployment ${deployment.id} → ${deployment.target} (${deployment.status})`, [deployment.id], `/dashboard/builds`));
   }
+  if (sources.portfolio_operating) {
+    const po = sources.portfolio_operating;
+    items.push(
+      ...portfolioOperatingFounderDailyItems({
+        ventures_operated: po.ventures_operated ?? 0,
+        assets_considered: po.assets_considered ?? 0,
+        assets_published: po.assets_published ?? 0,
+        quality_holds: po.quality_holds ?? 0,
+        self_heal_attempts: po.self_heal_attempts ?? 0,
+        self_heal_recoveries: po.self_heal_recoveries ?? 0,
+        product_concepts: po.product_concepts ?? 0,
+        products_advanced_beyond_concept: po.products_advanced_beyond_concept ?? 0,
+        blockers: po.blockers ?? [],
+      }),
+    );
+  }
   if (sources.organic_in_progress) {
     items.push(item("organic", "IN_PROGRESS", `Organic queue working ${sources.organic_in_progress} item${sources.organic_in_progress === 1 ? "" : "s"}`, ["organic-queue"]));
   }
@@ -141,6 +158,7 @@ export function generateFounderDailyReport(sources: FounderDailyReportSources, p
     { id: "sales", title: "Sales / Outreach", items: items.filter((row) => row.engine === "sales") },
     { id: "prospects", title: "Prospect Intelligence", items: items.filter((row) => row.engine === "prospects") },
     { id: "deployments", title: "Deployments", items: items.filter((row) => row.engine === "deploy") },
+    { id: "portfolio", title: "Portfolio Operations", items: items.filter((row) => row.engine === "portfolio") },
     { id: "attention", title: "Founder Attention Needed", items: attention },
   ].filter((section) => section.items.length);
   const summary = completed.length

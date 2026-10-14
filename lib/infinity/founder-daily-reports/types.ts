@@ -79,6 +79,17 @@ export type FounderDailyReportSources = {
   discovery_validate_candidate_count?: number;
   discovery_revalidation_due_count?: number;
   discovery_stagnated_validate_count?: number;
+  portfolio_operating?: {
+    ventures_operated?: number;
+    assets_considered?: number;
+    assets_published?: number;
+    quality_holds?: number;
+    self_heal_attempts?: number;
+    self_heal_recoveries?: number;
+    product_concepts?: number;
+    products_advanced_beyond_concept?: number;
+    blockers?: string[];
+  };
 };
 
 export type DailyNamedGate = { gate: string; result: "PASS" | "FAIL"; reasons: string[] };

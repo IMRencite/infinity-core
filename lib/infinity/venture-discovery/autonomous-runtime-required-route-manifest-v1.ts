@@ -4,6 +4,7 @@ export const AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_V1 =
 /** Mandatory infinity-runtime HTTP routes for autonomous venture operations. */
 export const REQUIRED_AUTONOMOUS_RUNTIME_ROUTES = [
   "/api/runtime/opportunity-discovery-tick",
+  "/api/runtime/portfolio-operating-tick",
   "/api/runtime/venture-operating-cycle",
   "/api/runtime/tick",
   "/api/runtime/organic-tick",
