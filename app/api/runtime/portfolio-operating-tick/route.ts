@@ -184,6 +184,9 @@ export async function GET(request: Request): Promise<NextResponse> {
       AUTONOMOUS_VENTURE_OPERATIONS: "RUNNING",
       AUTONOMOUS_VENTURE_OPERATIONS_QC: autonomyQc,
       enqueued_jobs: orchestration.enqueued,
+      onpv_autonomous_publish_candidate: orchestration.onpv_autonomous_publish_candidate,
+      onpv_publish_diagnostic: orchestration.onpv_publish_diagnostic,
+      backlog_publish_candidates: orchestration.backlog_publish_candidates,
       request_started_at: requestStarted,
     };
 

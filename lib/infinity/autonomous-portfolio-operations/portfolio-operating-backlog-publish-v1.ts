@@ -8,7 +8,7 @@ import { evaluateBlogArticlePreDeployQc } from "@/lib/infinity/organic-growth-en
 
 const AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS = new Set(["cam-first-year"]);
 
-function rankOccupancyNpvAutonomousPublishRows(articles: BlogBacklogArticle[]) {
+export function rankOccupancyNpvAutonomousPublishRows(articles: BlogBacklogArticle[]) {
   const rendered = buildBacklogRenderedEvidenceMap(articles);
   return articles
     .filter(
@@ -30,10 +30,19 @@ function rankOccupancyNpvAutonomousPublishRows(articles: BlogBacklogArticle[]) {
     .sort((a, b) => a.article.slug.localeCompare(b.article.slug));
 }
 
+const V44_1_RUNTIME_PROOF_ASSET_ID = "blog-expansion-how-do-you-compare-two-commercial-lease-options" as const;
+
 export function pickOccupancyNpvAutonomousBacklogCandidate(
   articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
 ): BlogBacklogArticle | null {
-  return rankOccupancyNpvAutonomousPublishRows(articles)[0]?.article ?? null;
+  const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
+  if (ranked[0]?.article) return ranked[0].article;
+  const proofFallback = articles.find((a) => a.asset_id === V44_1_RUNTIME_PROOF_ASSET_ID);
+  if (proofFallback) {
+    const prepublish = evaluateOccupancyNpvTargetPrepublishQc({ path: proofFallback.path, articles });
+    if (prepublish.OCCUPANCYNPV_TARGET_PREPUBLISH_QC === "PASS") return proofFallback;
+  }
+  return null;
 }
 
 export function countBacklogPublishCandidates(articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles()): number {

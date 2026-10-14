@@ -221,9 +221,12 @@ export async function runPortfolioJobWorker(input?: { cycle_id?: string; max_job
   continuation: { triggered: boolean; reason: string };
 }> {
   const holder = `worker:${Date.now()}`;
-  const jobs = await claimPortfolioJobs({ limit: input?.max_jobs ?? MAX_JOBS_PER_INVOCATION, holder });
-  const filtered = input?.cycle_id ? jobs.filter((j) => j.cycle_id === input.cycle_id) : jobs;
-  for (const job of filtered) {
+  const jobs = await claimPortfolioJobs({
+    limit: input?.max_jobs ?? MAX_JOBS_PER_INVOCATION,
+    holder,
+    cycle_id: input?.cycle_id,
+  });
+  for (const job of jobs) {
     await executeOneJob(job, holder);
   }
   const counts = input?.cycle_id
@@ -231,7 +234,7 @@ export async function runPortfolioJobWorker(input?: { cycle_id?: string; max_job
     : { queued: 0, running: 0, failed: 0, completed: 0 };
   const continuation =
     counts.queued > 0 ? await triggerPortfolioJobWorkerContinuation({ cycle_id: input?.cycle_id }) : { triggered: false, reason: "NO_REMAINING_JOBS" };
-  return { processed: filtered.length, remaining_queued: counts.queued, continuation };
+  return { processed: jobs.length, remaining_queued: counts.queued, continuation };
 }
 
 export function autonomousPortfolioJobWorkerQc(): "PASS" | "FAIL" {

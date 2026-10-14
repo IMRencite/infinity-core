@@ -11,6 +11,8 @@ import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
   countBacklogPublishCandidates,
+  rankOccupancyNpvAutonomousPublishRows,
+  evaluateOccupancyNpvTargetPrepublishQc,
 } from "../portfolio-operating-backlog-publish-v1";
 import { listOccupancyClubThrottleBacklogArticles, evaluateBacklogSourceVNext } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
@@ -117,7 +119,11 @@ export async function orchestratePortfolioOperatingTick(input: {
         enqueued.push({ job_type: "CONTENT_SELF_HEAL", venture_id: vid, idempotency_key: selfHealKey });
       }
 
-      if (vid === CRE_VENTURE_ID && publishPolicy.execute_publish) {
+      const isOnpv =
+        vid === CRE_VENTURE_ID ||
+        row.production_url?.includes("occupancynpv.com") ||
+        row.venture_id === "occupancynpv";
+      if (isOnpv && publishPolicy.execute_publish) {
         const candidate = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
         if (candidate) {
           const assetId = publicationAssetIdentity({
@@ -233,6 +239,10 @@ export async function orchestratePortfolioOperatingTick(input: {
   const stage_timings = timer.finish();
 
   const onpvCandidate = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
+  const onpvRanked = rankOccupancyNpvAutonomousPublishRows(backlog);
+  const onpvPrepublish = onpvCandidate
+    ? evaluateOccupancyNpvTargetPrepublishQc({ path: onpvCandidate.path, articles: backlog })
+    : null;
 
   return {
     cycle_id,
@@ -247,6 +257,11 @@ export async function orchestratePortfolioOperatingTick(input: {
     onpv_autonomous_publish_candidate: onpvCandidate
       ? { slug: onpvCandidate.slug, path: onpvCandidate.path, asset_id: onpvCandidate.asset_id }
       : null,
+    onpv_publish_diagnostic: {
+      occupancynpv_backlog_articles: backlog.filter((a) => a.venture === "occupancynpv").length,
+      ranked_publish_ready: onpvRanked.length,
+      OCCUPANCYNPV_TARGET_PREPUBLISH_QC: onpvPrepublish?.OCCUPANCYNPV_TARGET_PREPUBLISH_QC ?? "NOT_RUN",
+    },
     enqueued,
   };
 }

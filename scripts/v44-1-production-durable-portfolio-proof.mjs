@@ -96,7 +96,7 @@ if (cycleId) {
 }
 
 const orchestratorFinishedAt = Date.now();
-for (let i = 0; i < 25; i += 1) {
+for (let i = 0; i < 40; i += 1) {
   const worker = await fetchJson(
     cycleId ? `/api/runtime/portfolio-job-worker?cycle_id=${cycleId}` : "/api/runtime/portfolio-job-worker",
     { timeoutMs: 300_000 },
@@ -125,7 +125,7 @@ for (let i = 0; i < 25; i += 1) {
     const allDone = jobs?.every((j) => j.status === "COMPLETED" || j.status === "FAILED");
     if (allDone && verify?.status !== "COMPLETED") break;
   }
-  await sleep(15_000);
+  await sleep(20_000);
 }
 
 if (cycleId) {

@@ -13,6 +13,7 @@ export async function claimPortfolioJobs(input: {
   limit: number;
   holder?: string;
   lease_ms?: number;
+  cycle_id?: string;
 }): Promise<PortfolioJobRow[]> {
   const client = createPortfolioDurableSupabase();
   if (!client) return [];
@@ -22,12 +23,16 @@ export async function claimPortfolioJobs(input: {
   const nowIso = now.toISOString();
   const leaseExpires = new Date(now.getTime() + leaseMs).toISOString();
 
-  const { data: candidates } = await client
+  let query = client
     .from(PORTFOLIO_DURABLE_TABLES.jobs)
     .select("*")
     .in("status", ["QUEUED", "IN_PROGRESS"])
     .lte("eligible_at", nowIso)
-    .or(`lease_expires_at.is.null,lease_expires_at.lt."${nowIso}"`)
+    .or(`lease_expires_at.is.null,lease_expires_at.lt."${nowIso}"`);
+  if (input.cycle_id) {
+    query = query.eq("cycle_id", input.cycle_id);
+  }
+  const { data: candidates } = await query
     .order("priority", { ascending: false })
     .order("eligible_at", { ascending: true })
     .limit(input.limit);
