@@ -1,0 +1,19 @@
+{
+  "version": "V42_VALIDATED_DRAFT_FULL_STATE_SNAPSHOT",
+  "generated_at": "2026-10-14T04:19:54.451Z",
+  "draft_id": "4c3cd3c9-6ff0-47d6-a803-81771dffe21d",
+  "order_reference": "cto_55ca5b85df77c55813e0ac6e-v42-canonical-art-validation-draft",
+  "product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+  "quantity": 1,
+  "file_type": "back",
+  "canonical_art_url": "https://clubthrottle.com/storefront-merch/production-masters/lot_line-black-production-print-master-3600w.png",
+  "canonical_art_hash": "04031af621d20bd20e58dc07ddde29eb48e73da6bf8d358b7435c2011ee6cb07",
+  "provider_downloaded_art_hash": "04031af621d20bd20e58dc07ddde29eb48e73da6bf8d358b7435c2011ee6cb07",
+  "shipping_fingerprint": "ebfd61b120eefc0c",
+  "shipment_method_uid": "usps_ground_advantage",
+  "provider_required_files": [
+    "back"
+  ],
+  "missing_files": [],
+  "hold_state": false
+}
