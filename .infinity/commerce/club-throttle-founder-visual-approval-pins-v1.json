@@ -1,0 +1,20 @@
+{
+  "updated_at": "2026-10-14T01:04:19.795Z",
+  "pins": [
+    {
+      "version": "FOUNDER_VISUAL_APPROVAL_ARTIFACT_PIN_V1",
+      "venture": "CLUB_THROTTLE",
+      "sku": "LOT_LINE",
+      "garment_color": "black",
+      "design_revision": "SELECTIVE_DARK_GARMENT_KEYLINE_V1",
+      "asset_id": "lot_line-black-garment-adapted",
+      "local_asset_path": ".infinity/commerce/club-throttle-artwork/dark-garment-adaptations/lot_line-black-garment-adapted.png",
+      "sha256": "f45bf693fd3aa338e3b24e5598d45354f4347bdfd27351f3f22c243c10b4d8f1",
+      "width": 3600,
+      "height": 4727,
+      "transformation_recipe": "SOURCE_PRESERVE + SELECTIVE_DARK_GARMENT_KEYLINE_V1 + silhouette-adjacent clarification",
+      "approved_at": "2026-09-27T00:00:00.000Z",
+      "approval_type": "FOUNDER_VISUAL_DARK_GARMENT"
+    }
+  ]
+}

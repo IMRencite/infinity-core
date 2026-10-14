@@ -1,0 +1,113 @@
+{
+  "mission": "V40.2_CLUB_THROTTLE_ARTWORK_IDENTITY_REGRESSION",
+  "generated_at": "2026-10-14T01:04:29.509Z",
+  "CLUB_THROTTLE": {
+    "ENGINEERING_STATE": "ARTWORK_IDENTITY_REGRESSION",
+    "VENTURE_STATE": "LIVE_OPERATING",
+    "CLUB_THROTTLE_RUNTIME": "AUTONOMOUS_OPERATIONS",
+    "FULFILLMENT_STATE": "IN_PRODUCTION_MONITORING",
+    "FULFILLMENT_ARCHITECTURE_QC": "PASS",
+    "PROVIDER_CONFIGURATION_QC": "PASS",
+    "PRODUCTION_PRINT_ARTWORK_IDENTITY_QC": "FAIL",
+    "FOUNDER_PRODUCTION_ART_VISUAL_QC": "FAIL",
+    "CURRENT_PHYSICAL_REFERENCE_TYPE": "NON_CANONICAL_PRINT_AND_GARMENT_SAMPLE",
+    "PHYSICAL_PRODUCT_QUALITY_QC": "PENDING_NON_CANONICAL_SAMPLE_RECEIPT",
+    "FOUNDER_ACTION_REQUIRED": "REVIEW_ARTWORK_REGRESSION_AND_CURRENT_ORDER_OPTIONS",
+    "ADDITIONAL_PROVIDER_MANUFACTURING_AUTHORIZED": false
+  },
+  "CURRENT_ORDER": {
+    "COMMERCE_ORDER_ID": "cto_55ca5b85df77c55813e0ac6e",
+    "GELATO_ORDER_ID": "0e22864c-0246-443f-9b38-9d675b575dac",
+    "CURRENT_GELATO_FULFILLMENT_STATUS": "in_production",
+    "CURRENT_GELATO_FINANCIAL_STATUS": "paid",
+    "CURRENT_GELATO_TRACKING_STATE": "NO_TRACKING_YET",
+    "CURRENT_GELATO_PRODUCTION_TIMESTAMP": "2026-10-13T11:03:12+00:00"
+  },
+  "CURRENT_PRODUCTION_ART": {
+    "ORIGINAL_SUBMITTED_ART_URL": "https://club-throttle-3l1ct73vp-infinite-media-resources-imr.vercel.app/commerce-probe-gelato/candidate3-final-3600w-de2da007.png",
+    "PROVIDER_CACHED_ART_URL": "https://gelato-api-live.s3.eu-west-1.amazonaws.com/order/order_product_file/792977e2-2bad-4858-90d0-6f130ec3e7f9/file_original_back?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3QM3COBPXIYCO3KK%2F20261014%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20261014T010310Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Signature=2934e333078762332dfe0abc31b35109daf65f92e32619c3f17ac2f85805420f",
+    "CURRENT_GELATO_ART_FILE_TYPE": "image/png",
+    "CURRENT_GELATO_ART_SHA256": "de2da0075ce0667642af65d8a89c520ac12b2d32566440d39f4a8e560148a751",
+    "CURRENT_GELATO_ART_DIMENSIONS": "3600x4727",
+    "CURRENT_PROVIDER_ART_IDENTITY_QC": "PASS"
+  },
+  "APPROVED_ART": {
+    "APPROVED_ART_FILE": "C:/Users/Antivist/Desktop/Infinity/infinity-core/.infinity/commerce/club-throttle-artwork/dark-garment-adaptations/lot_line-black-garment-adapted.png",
+    "APPROVED_ART_SHA256": "f45bf693fd3aa338e3b24e5598d45354f4347bdfd27351f3f22c243c10b4d8f1",
+    "APPROVED_ART_DIMENSIONS": "3600x4727",
+    "APPROVED_ART_REVISION": "SELECTIVE_DARK_GARMENT_KEYLINE_V1",
+    "APPROVED_ART_TRANSFORMATION_RECIPE": "SOURCE_PRESERVE + SELECTIVE_DARK_GARMENT_KEYLINE_V1 + silhouette-adjacent clarification",
+    "FOUNDER_APPROVED_ART_VISUAL_CHARACTERISTICS_QC": "PASS"
+  },
+  "MISMATCH": {
+    "CURRENT_GELATO_ART_MATCHES_FOUNDER_APPROVED_ART": false,
+    "PRODUCTION_ARTWORK_IDENTITY_ROOT_CAUSE": "HIGH_RES_RASTER_BUILT_FROM_PRE_APPROVAL_SOURCE",
+    "PRODUCTION_ARTWORK_IDENTITY_ROOT_CAUSE_DETAIL": "V35–V38 fulfillment locked to candidate3-final-3600w-de2da007.png (resize of print-master-lot-line-recreation-candidate-3-v1) while founder-approved dark-garment keyline art lives in dark-garment-adaptations/*; manifest/catalog prioritized stale probe URL over APPROVED_DARK_GARMENT_ART pin.",
+    "PRODUCTION_ARTWORK_LINEAGE_QC": "PASS_DIAGNOSED",
+    "lineage_table": [
+      {
+        "label": "founder_approved_dark_garment",
+        "path": "C:/Users/Antivist/Desktop/Infinity/infinity-core/.infinity/commerce/club-throttle-artwork/dark-garment-adaptations/lot_line-black-garment-adapted.png",
+        "sha256": "f45bf693fd3aa338e3b24e5598d45354f4347bdfd27351f3f22c243c10b4d8f1",
+        "dimensions": "3600x4727",
+        "approved": true
+      },
+      {
+        "label": "candidate3_final_3600w",
+        "path": ".infinity/commerce/club-throttle-artwork/ct-lot-line-1/placement-candidates/gelato-gildan5000-large-back-recreation-candidate-3-final-3600w.png",
+        "sha256": "de2da0075ce0667642af65d8a89c520ac12b2d32566440d39f4a8e560148a751",
+        "dimensions": "3600x4727",
+        "approved": false
+      },
+      {
+        "label": "gelato_provider_cached_back",
+        "url": "https://gelato-api-live.s3.eu-west-1.amazonaws.com/order/order_product_file/792977e2-2bad-4858-90d0-6f130ec3e7f9/file_original_back?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA3QM3COBPXIYCO3KK%2F20261014%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20261014T010310Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Signature=2934e333078762332dfe0abc31b35109daf65f92e32619c3f17ac2f85805420f",
+        "sha256": "de2da0075ce0667642af65d8a89c520ac12b2d32566440d39f4a8e560148a751",
+        "dimensions": "3600x4727",
+        "approved": false
+      },
+      {
+        "label": "v37_validated_submission_url",
+        "url": "https://club-throttle-3l1ct73vp-infinite-media-resources-imr.vercel.app/commerce-probe-gelato/candidate3-final-3600w-de2da007.png",
+        "sha256_prefix": "de2da007",
+        "approved": false
+      }
+    ]
+  },
+  "CANDIDATE3_LINEAGE": {
+    "CANDIDATE3_RASTER_SOURCE_FILE": ".infinity/commerce/club-throttle-artwork/ct-lot-line-1/print-master-lot-line-recreation-candidate-3-v1.png",
+    "CANDIDATE3_RASTER_SOURCE_SHA256": "79537c84074978e635a0e3267e8cd1605944a060d108ad956c7e35926e9688bf",
+    "CANDIDATE3_RASTER_OUTPUT_SHA256": "de2da0075ce0667642af65d8a89c520ac12b2d32566440d39f4a8e560148a751",
+    "CANDIDATE3_RASTER_GENERATION_PATH": "scripts/build-lot-line-candidate3-final-3600w-provider.mjs",
+    "CANDIDATE3_RASTER_ART_REVISION": "CANDIDATE3_PRE_KEYLINE_RASTER"
+  },
+  "CURRENT_ORDER_OPTIONS": {
+    "CURRENT_ORDER_CANCEL_ELIGIBILITY": "UNLIKELY_IN_PRODUCTION",
+    "CURRENT_ORDER_EDIT_ELIGIBILITY": "UNSUPPORTED",
+    "CURRENT_ORDER_ARTWORK_REPLACE_ELIGIBILITY": "UNSUPPORTED",
+    "CURRENT_ORDER_HOLD_ELIGIBILITY": "UNLIKELY",
+    "CURRENT_ORDER_MUTATION_AUTHORIZED": false
+  },
+  "CORRECTED_MASTER": {
+    "CORRECTED_PRODUCTION_MASTER_PATH": ".infinity/commerce/club-throttle-artwork/v40.2/lot_line-black-production-print-master-3600w.png",
+    "CORRECTED_PRODUCTION_MASTER_SHA256": "04031af621d20bd20e58dc07ddde29eb48e73da6bf8d358b7435c2011ee6cb07",
+    "CORRECTED_PRODUCTION_MASTER_DIMENSIONS": "3600x4731",
+    "CORRECTED_PRODUCTION_MASTER_EFFECTIVE_DPI": 334.9,
+    "CORRECTED_PRODUCTION_MASTER_VISUAL_PARITY_QC": "PASS",
+    "note": "Built locally from founder-pinned dark-garment adapted source; NOT submitted to Gelato."
+  },
+  "PERMANENT_ART_QC": {
+    "FOUNDER_VISUAL_APPROVAL_ARTIFACT_PIN_QC": "PASS",
+    "COMMERCE_ART_ASSET_ROLE_SEPARATION_QC": "PASS",
+    "FUTURE_FULFILLMENT_ARTWORK_IDENTITY_QC": "PASS",
+    "CLUB_THROTTLE_ART_MANIFEST_IDENTITY_QC": "FAIL",
+    "DARK_GARMENT_APPROVED_ART_IDENTITY_QC": "PARTIAL",
+    "LIVE_STOREFRONT_PRODUCTION_ART_IDENTITY_MATRIX_QC": "PARTIAL",
+    "ART_ROW_AUDIT": {
+      "EXPECTED_ART_ROWS": 19,
+      "AUDITED_ART_ROWS": 19,
+      "PASS_ART_ROWS": 10,
+      "FAIL_ART_ROWS": 9
+    }
+  }
+}
