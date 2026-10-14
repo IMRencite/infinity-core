@@ -1,0 +1,305 @@
+{
+  "generated_at": "2026-10-09T18:17:32.804Z",
+  "pipeline": "CLUB_THROTTLE_STOREFRONT_MERCH_RENDER_PIPELINE_V2",
+  "profile": "GILDAN_5000_LARGE_BACK",
+  "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS",
+  "STOREFRONT_MERCHANDISING_ASSET_PIPELINE": "PASS",
+  "rows": [
+    {
+      "sku": "LOT_LINE",
+      "slug": "lot-line-tee",
+      "hero_back_public": "/storefront-merch/lot-line-hero-back.png",
+      "art_detail_public": "/storefront-merch/lot-line-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/lot-line-hero-back.png",
+        "/storefront-merch/lot-line-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "de2da0075ce0667642af65d8a89c520ac12b2d32566440d39f4a8e560148a751",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "CLEAN_RPM",
+      "slug": "clean-rpm-tee",
+      "hero_back_public": "/storefront-merch/clean-rpm-hero-back.png",
+      "art_detail_public": "/storefront-merch/clean-rpm-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/clean-rpm-hero-back.png",
+        "/storefront-merch/clean-rpm-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "5d5a37fe796d77b05fa075bdbb21081a2963cfd72963ff7a83ef310e04a2fa13",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "slug": "dualsport-dust-tee",
+      "hero_back_public": "/storefront-merch/dualsport-dust-hero-back.png",
+      "art_detail_public": "/storefront-merch/dualsport-dust-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/dualsport-dust-hero-back.png",
+        "/storefront-merch/dualsport-dust-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "9b3e77b4017a32571bdd8a4de615c4c9fb47aa4a5df30e8602bda1d365ee1bf4",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "KNEE_DOWN",
+      "slug": "knee-down-tee",
+      "hero_back_public": "/storefront-merch/knee-down-hero-back.png",
+      "art_detail_public": "/storefront-merch/knee-down-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/knee-down-hero-back.png",
+        "/storefront-merch/knee-down-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "72350650345de1cf3e4517e26308c37b37e91962568de19bb51dca456e9ebf8a",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "ZERO_CHILL_GARAGE",
+      "slug": "zero-chill-garage-tee",
+      "hero_back_public": "/storefront-merch/zero-chill-garage-hero-back.png",
+      "art_detail_public": "/storefront-merch/zero-chill-garage-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/zero-chill-garage-hero-back.png",
+        "/storefront-merch/zero-chill-garage-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "589f12bbb504cc89d30722ba7564d8202701d6fa2d6775e7663d1b1802ed8a31",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "APEX_LINE",
+      "slug": "apex-line-tee",
+      "hero_back_public": "/storefront-merch/apex-line-hero-back.png",
+      "art_detail_public": "/storefront-merch/apex-line-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/apex-line-hero-back.png",
+        "/storefront-merch/apex-line-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "b226ced89b81c753989aa8015b129d18eb4d5f399688ad00cf072bd9771e00da",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "BAGGER_SEND",
+      "slug": "bagger-send-tee",
+      "hero_back_public": "/storefront-merch/bagger-send-hero-back.png",
+      "art_detail_public": "/storefront-merch/bagger-send-art-detail.png",
+      "front_blank_public": "/storefront-merch/shared-front-blank.png",
+      "gallery_public": [
+        "/storefront-merch/bagger-send-hero-back.png",
+        "/storefront-merch/bagger-send-art-detail.png",
+        "/storefront-merch/shared-front-blank.png"
+      ],
+      "provider_asset_sha256": "9c4b410f70cb9892e03c2549accdc7ec65b286c2666c31c2315b00d8995ff738",
+      "STOREFRONT_MERCH_PLACEMENT_QC": "PASS",
+      "STOREFRONT_PRODUCT_IMAGE_QC": "PASS",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    }
+  ],
+  "category_images": {
+    "sport-track": "/storefront-merch/categories/sport-track-category.png",
+    "adventure-dualsport": "/storefront-merch/categories/adventure-dualsport-category.png",
+    "garage-culture": "/storefront-merch/categories/garage-culture-category.png",
+    "street-night": "/storefront-merch/categories/street-night-category.png",
+    "bagger-cruiser": "/storefront-merch/categories/bagger-cruiser-category.png"
+  },
+  "color_merch_rows": [
+    {
+      "sku": "LOT_LINE",
+      "slug": "lot-line-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "LOT_LINE|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/lot-line-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/lot-line-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "LOT_LINE",
+      "slug": "lot-line-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "LOT_LINE|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/lot-line-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/lot-line-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "LOT_LINE",
+      "slug": "lot-line-tee",
+      "garment_color": "dark-heather",
+      "merchandising_media_identity": "LOT_LINE|dark-heather|hero-back-v1",
+      "hero_back_public": "/storefront-merch/lot-line-dark-heather-hero-back.png",
+      "art_detail_public": "/storefront-merch/lot-line-dark-heather-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "CLEAN_RPM",
+      "slug": "clean-rpm-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "CLEAN_RPM|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/clean-rpm-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/clean-rpm-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "CLEAN_RPM",
+      "slug": "clean-rpm-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "CLEAN_RPM|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/clean-rpm-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/clean-rpm-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "slug": "dualsport-dust-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "DUALSPORT_DUST|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/dualsport-dust-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/dualsport-dust-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "slug": "dualsport-dust-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "DUALSPORT_DUST|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/dualsport-dust-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/dualsport-dust-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "slug": "dualsport-dust-tee",
+      "garment_color": "dark-heather",
+      "merchandising_media_identity": "DUALSPORT_DUST|dark-heather|hero-back-v1",
+      "hero_back_public": "/storefront-merch/dualsport-dust-dark-heather-hero-back.png",
+      "art_detail_public": "/storefront-merch/dualsport-dust-dark-heather-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "slug": "dualsport-dust-tee",
+      "garment_color": "natural",
+      "merchandising_media_identity": "DUALSPORT_DUST|natural|hero-back-v1",
+      "hero_back_public": "/storefront-merch/dualsport-dust-natural-hero-back.png",
+      "art_detail_public": "/storefront-merch/dualsport-dust-natural-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "KNEE_DOWN",
+      "slug": "knee-down-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "KNEE_DOWN|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/knee-down-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/knee-down-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "KNEE_DOWN",
+      "slug": "knee-down-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "KNEE_DOWN|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/knee-down-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/knee-down-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "ZERO_CHILL_GARAGE",
+      "slug": "zero-chill-garage-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "ZERO_CHILL_GARAGE|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/zero-chill-garage-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/zero-chill-garage-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "ZERO_CHILL_GARAGE",
+      "slug": "zero-chill-garage-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "ZERO_CHILL_GARAGE|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/zero-chill-garage-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/zero-chill-garage-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "ZERO_CHILL_GARAGE",
+      "slug": "zero-chill-garage-tee",
+      "garment_color": "natural",
+      "merchandising_media_identity": "ZERO_CHILL_GARAGE|natural|hero-back-v1",
+      "hero_back_public": "/storefront-merch/zero-chill-garage-natural-hero-back.png",
+      "art_detail_public": "/storefront-merch/zero-chill-garage-natural-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "APEX_LINE",
+      "slug": "apex-line-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "APEX_LINE|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/apex-line-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/apex-line-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "APEX_LINE",
+      "slug": "apex-line-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "APEX_LINE|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/apex-line-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/apex-line-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "BAGGER_SEND",
+      "slug": "bagger-send-tee",
+      "garment_color": "ash",
+      "merchandising_media_identity": "BAGGER_SEND|ash|hero-back-v1",
+      "hero_back_public": "/storefront-merch/bagger-send-ash-hero-back.png",
+      "art_detail_public": "/storefront-merch/bagger-send-ash-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "BAGGER_SEND",
+      "slug": "bagger-send-tee",
+      "garment_color": "black",
+      "merchandising_media_identity": "BAGGER_SEND|black|hero-back-v1",
+      "hero_back_public": "/storefront-merch/bagger-send-black-hero-back.png",
+      "art_detail_public": "/storefront-merch/bagger-send-black-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    },
+    {
+      "sku": "BAGGER_SEND",
+      "slug": "bagger-send-tee",
+      "garment_color": "dark-heather",
+      "merchandising_media_identity": "BAGGER_SEND|dark-heather|hero-back-v1",
+      "hero_back_public": "/storefront-merch/bagger-send-dark-heather-hero-back.png",
+      "art_detail_public": "/storefront-merch/bagger-send-dark-heather-hero-back.png",
+      "PRODUCT_HERO_GARMENT_RENDER_QC": "PASS"
+    }
+  ],
+  "color_merch_generated_at": "2026-10-14T02:47:27.069Z",
+  "COLOR_MERCH_MEDIA_REGISTRY_QC": "PASS",
+  "production_art_registry_ref": ".infinity/commerce/club-throttle-production-art-registry-v41.json",
+  "production_art_remediation_version": "V41"
+}
