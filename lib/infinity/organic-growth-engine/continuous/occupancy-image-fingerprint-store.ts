@@ -2,6 +2,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { OccupancyVentureImageFingerprint } from "./blog-image-relevance-and-distinctness-qc";
+import bundledFingerprints from "./occupancy-image-fingerprints.bundled.json";
 
 const MODULE_DIR = dirname(fileURLToPath(import.meta.url));
 
@@ -23,13 +24,13 @@ export type OccupancyImageFingerprintArtifact = {
 };
 
 export function readOccupancyImageFingerprints(): OccupancyImageFingerprintArtifact | null {
-  const path = existsSync(OCCUPANCY_IMAGE_FINGERPRINTS_PATH)
-    ? OCCUPANCY_IMAGE_FINGERPRINTS_PATH
-    : existsSync(OCCUPANCY_IMAGE_FINGERPRINTS_BUNDLED_PATH)
-      ? OCCUPANCY_IMAGE_FINGERPRINTS_BUNDLED_PATH
-      : null;
-  if (!path) return null;
-  return JSON.parse(readFileSync(path, "utf8")) as OccupancyImageFingerprintArtifact;
+  if (existsSync(OCCUPANCY_IMAGE_FINGERPRINTS_PATH)) {
+    return JSON.parse(readFileSync(OCCUPANCY_IMAGE_FINGERPRINTS_PATH, "utf8")) as OccupancyImageFingerprintArtifact;
+  }
+  if (existsSync(OCCUPANCY_IMAGE_FINGERPRINTS_BUNDLED_PATH)) {
+    return JSON.parse(readFileSync(OCCUPANCY_IMAGE_FINGERPRINTS_BUNDLED_PATH, "utf8")) as OccupancyImageFingerprintArtifact;
+  }
+  return bundledFingerprints as OccupancyImageFingerprintArtifact;
 }
 
 export function writeOccupancyImageFingerprints(artifact: OccupancyImageFingerprintArtifact): void {
