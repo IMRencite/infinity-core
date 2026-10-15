@@ -34,10 +34,13 @@ import {
   OCCUPANCYNPV_BLOG_ARTICLE_QUESTION,
   OCCUPANCYNPV_BLOG_INDEX_PATH,
   OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY,
+} from "./occupancynpv-blog-catalog-constants";
+import {
   occupancynpvActiveTags,
   occupancynpvPublishedBlogPosts,
 } from "./occupancynpv-blog-catalog";
 import { occupancynpvEntityCreative } from "./occupancynpv-blog-creative";
+import { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog-sequential-nav";
 
 export {
   OCCUPANCYNPV_BLOG_ARTICLE_ASSET_ID,
@@ -50,6 +53,7 @@ export {
   occupancynpvPublishedBlogPosts,
   occupancynpvTagCloud,
 } from "./occupancynpv-blog-catalog";
+export { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog-sequential-nav";
 
 const FEATURED_IMAGE = occupancynpvEntityCreative("article", OCCUPANCYNPV_BLOG_ARTICLE_QUESTION).src;
 const FEATURED_ALT = occupancynpvEntityCreative("article", OCCUPANCYNPV_BLOG_ARTICLE_QUESTION).alt;
@@ -243,17 +247,6 @@ export function occupancynpvBlogArticleFaqs(): SchemaFaqItem[] {
         "Rebuild annual debt service at the new index plus margin, then compare to trailing and projected NOI. Mark where DSCR falls below lender covenants and where cash after debt service turns negative. Pair that with maturity: a floating coupon that is manageable today can still fail at reset if spreads widen. Write the reset date beside the quoted margin so the workbook matches the term sheet, not a headline index alone.",
     },
   ];
-}
-
-export function occupancynpvBlogSequentialNavHtml(currentPath: string, posts = occupancynpvPublishedBlogPosts()): string {
-  const neighbors = sequentialBlogNeighbors(posts, currentPath);
-  const previous = neighbors.previous
-    ? `<a href="${neighbors.previous.path}" data-blog-seq-previous="true" aria-label=${JSON.stringify(`Previous blog: ${neighbors.previous.title}`)}><span>← Previous blog</span><strong>${neighbors.previous.title}</strong></a>`
-    : "";
-  const next = neighbors.next
-    ? `<a href="${neighbors.next.path}" data-blog-seq-next="true" aria-label=${JSON.stringify(`Next blog: ${neighbors.next.title}`)}><span>Next blog →</span><strong>${neighbors.next.title}</strong></a>`
-    : "";
-  return `<nav className="onpv-blog-seq" data-blog-sequential-nav="true" aria-label="Previous and next blog">${previous}${next}</nav>`;
 }
 
 export function occupancynpvBlogIndexCrumbs() {

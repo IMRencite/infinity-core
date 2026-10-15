@@ -13,7 +13,7 @@ import type { PlannedPage } from "@/lib/infinity/venture-website-architecture/ty
 import { occupancynpvFeaturedEditorialFor } from "./occupancynpv-featured-visuals";
 import { occupancynpvUniqueCreativeSvg } from "./occupancynpv-blog-creative";
 import { occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
-import { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog";
+import { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog-sequential-nav";
 import { occupancyCapRateV5Body } from "./occupancy-v5-body-cap-rate";
 import { occupancyLeaseCompareV5Body } from "./occupancy-v5-body-lease-compare";
 import { occupancyLeaseNumbersV5Body } from "./occupancy-v5-body-lease-numbers";

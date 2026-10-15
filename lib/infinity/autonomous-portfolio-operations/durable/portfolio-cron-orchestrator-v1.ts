@@ -14,7 +14,7 @@ import {
   rankOccupancyNpvAutonomousPublishRows,
   evaluateOccupancyNpvTargetPrepublishQc,
 } from "../portfolio-operating-backlog-publish-v1";
-import { listOccupancyClubThrottleBacklogArticles, evaluateBacklogSourceVNext } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
+import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
 import type { PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
@@ -130,15 +130,7 @@ export async function orchestratePortfolioOperatingTick(input: {
         row.production_url?.includes("occupancynpv.com") ||
         row.venture_id === "occupancynpv";
       if (isOnpv && publishPolicy.execute_publish) {
-        let candidate = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
-        if (!candidate) {
-          const proofArticle = backlog.find(
-            (a) => a.asset_id === "blog-expansion-how-do-you-compare-two-commercial-lease-options",
-          );
-          if (proofArticle && evaluateBacklogSourceVNext(proofArticle).publish_allowed) {
-            candidate = proofArticle;
-          }
-        }
+        const candidate = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
         if (candidate) {
           const assetId = publicationAssetIdentity({
             venture_id: "occupancynpv",

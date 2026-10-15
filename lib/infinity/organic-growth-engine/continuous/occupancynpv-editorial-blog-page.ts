@@ -8,7 +8,7 @@ import {
   renderLatestBlogsCarouselHtml,
 } from "./blog-ux";
 import { renderCanonicalArticleMain } from "./article-section-renderer";
-import { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog";
+import { occupancynpvBlogSequentialNavHtml } from "./occupancynpv-blog-sequential-nav";
 import { occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
 
 export function occupancynpvEditorialBlogPageSource(input: {

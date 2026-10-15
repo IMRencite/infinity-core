@@ -6,7 +6,7 @@ import {
   OCCUPANCYNPV_CAM_FIRST_YEAR_PATH,
   OCCUPANCYNPV_CAM_FIRST_YEAR_QUESTION,
   OCCUPANCYNPV_CAM_VISUALS,
-} from "./occupancynpv-cam-first-year-page";
+} from "./occupancynpv-cam-first-year-metadata";
 
 export type PublishedBlogStatus = "DRAFT" | "PUBLISHED" | "REFRESHED" | "UNPUBLISHED";
 
