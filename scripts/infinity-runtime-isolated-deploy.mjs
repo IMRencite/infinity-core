@@ -127,6 +127,7 @@ if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1") {
   writeFileSync(
     join(dest, "lib/infinity/commerce/club-throttle-storefront-compose.ts"),
     `export const CLUB_THROTTLE_STOREFRONT_PROJECT = "club-throttle" as const;
+export const CLUB_THROTTLE_ARTWORK_PATH = "/commerce-artwork/ride-past-midnight.svg" as const;
 export function composeClubThrottleStorefrontFiles() {
   throw new Error("FORBIDDEN_STOREFRONT_COMPOSE_IN_ISOLATED_RUNTIME");
 }

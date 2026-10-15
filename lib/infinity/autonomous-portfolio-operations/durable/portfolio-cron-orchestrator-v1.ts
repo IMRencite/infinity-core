@@ -53,6 +53,12 @@ export async function orchestratePortfolioOperatingTick(input: {
   stage_timings: ReturnType<ReturnType<typeof createPortfolioTickTimer>["finish"]>;
   V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE: typeof V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE;
   backlog_publish_candidates: number;
+  onpv_autonomous_publish_candidate: { slug: string; path: string; asset_id: string } | null;
+  onpv_publish_diagnostic: {
+    occupancynpv_backlog_articles: number;
+    ranked_publish_ready: number;
+    OCCUPANCYNPV_TARGET_PREPUBLISH_QC: string;
+  };
   enqueued: Array<{ job_type: string; venture_id: string; idempotency_key: string }>;
 }> {
   const timer = createPortfolioTickTimer();
