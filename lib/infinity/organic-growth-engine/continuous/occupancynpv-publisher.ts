@@ -384,12 +384,59 @@ export async function reconcileReadyOccupancyNpvDeployment(vercel: VercelDomainB
   return null;
 }
 
+async function pollOccupancyNpvDeploymentToReady(input: {
+  vercel: VercelDomainBindingAdapter;
+  deploymentId: string;
+  pollAttempts: number;
+  pollDelayMs: number;
+  aliasProduction: boolean;
+}): Promise<{
+  deployed: boolean;
+  aliased: boolean;
+  previewUrl: string | null;
+  safeError: string | null;
+  readyState: string;
+}> {
+  let previewUrl: string | null = null;
+  let deployed = false;
+  let aliased = false;
+  let safeError: string | null = null;
+  let readyState = "UNKNOWN";
+  for (let attempt = 0; attempt < input.pollAttempts; attempt += 1) {
+    const status = await input.vercel.getDeployment(input.deploymentId);
+    readyState = status.readyState;
+    if (status.url && status.url !== "UNKNOWN") previewUrl = `https://${status.url}`;
+    if (status.readyState === "READY") {
+      deployed = true;
+      if (input.aliasProduction) {
+        const alias = await input.vercel.assignDeploymentAlias(input.deploymentId, OCCUPANCYNPV_DOMAIN);
+        aliased = alias.ok;
+        deployed = alias.ok;
+        if (!alias.ok) safeError = alias.safeError ?? "VERCEL_ALIAS_FAILED";
+      } else {
+        aliased = false;
+      }
+      break;
+    }
+    if (status.readyState === "ERROR" || status.readyState === "CANCELED" || status.readyState === "MISSING") {
+      safeError = status.safeError ?? "VERCEL_DEPLOYMENT_FAILED";
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, input.pollDelayMs));
+  }
+  if (!deployed && !safeError) safeError = "VERCEL_DEPLOYMENT_NOT_READY";
+  return { deployed, aliased, previewUrl, safeError, readyState };
+}
+
 export async function deployOccupancyNpvOrganicLivePage(input: {
   deploy?: boolean;
   pollAttempts?: number;
   pollDelayMs?: number;
   /** When false, leave deployment on preview host only (no occupancynpv.com alias). */
   aliasProduction?: boolean;
+  /** Reconcile an existing Vercel deployment instead of POSTing a new bundle. */
+  priorDeploymentId?: string | null;
+  onDeploymentSubmitted?: (deployment_id: string) => Promise<void> | void;
 } = {}) {
   const aliasProduction = input.aliasProduction !== false;
   if (input.deploy !== false) {
@@ -425,11 +472,28 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
   let aliased = false;
   let safeError: string | null = pageReady ? null : "ORGANIC_LIVE_PAGE_NOT_IN_BUNDLE";
 
+  let providerPostCount = 0;
   if (!safeError && input.deploy !== false) {
     const vercel = new VercelDomainBindingAdapter();
     if (!vercel.tokenPresent()) {
       safeError = "VERCEL_TOKEN_MISSING";
     } else {
+      const priorId = input.priorDeploymentId?.trim();
+      if (priorId?.startsWith("dpl_")) {
+        deploymentId = priorId;
+        const polled = await pollOccupancyNpvDeploymentToReady({
+          vercel,
+          deploymentId: priorId,
+          pollAttempts: input.pollAttempts ?? 50,
+          pollDelayMs: input.pollDelayMs ?? 8000,
+          aliasProduction,
+        });
+        previewUrl = polled.previewUrl;
+        deployed = polled.deployed;
+        aliased = polled.aliased;
+        safeError = polled.safeError;
+        providerPostCount = vercel.deploymentCreates;
+      } else {
       const reconciled = aliasProduction ? await reconcileReadyOccupancyNpvDeployment(vercel) : null;
       if (reconciled) {
         return {
@@ -467,27 +531,21 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
         } else {
           deploymentId = created.id;
           previewUrl = created.url && created.url !== "UNKNOWN" ? `https://${created.url}` : null;
-          for (let attempt = 0; attempt < (input.pollAttempts ?? 50); attempt += 1) {
-            const status = await vercel.getDeployment(created.id);
-            if (status.url && status.url !== "UNKNOWN") previewUrl = `https://${status.url}`;
-            if (status.readyState === "READY") {
-              deployed = true;
-              if (aliasProduction) {
-                const alias = await vercel.assignDeploymentAlias(created.id, OCCUPANCYNPV_DOMAIN);
-                aliased = alias.ok;
-                deployed = alias.ok;
-                if (!alias.ok) safeError = alias.safeError ?? "VERCEL_ALIAS_FAILED";
-              }
-              break;
-            }
-            if (status.readyState === "ERROR" || status.readyState === "CANCELED") {
-              safeError = status.safeError ?? "VERCEL_DEPLOYMENT_FAILED";
-              break;
-            }
-            await new Promise((resolve) => setTimeout(resolve, input.pollDelayMs ?? 8000));
-          }
-          if (!deployed && !safeError) safeError = "VERCEL_DEPLOYMENT_NOT_READY";
+          await input.onDeploymentSubmitted?.(created.id);
+          const polled = await pollOccupancyNpvDeploymentToReady({
+            vercel,
+            deploymentId: created.id,
+            pollAttempts: input.pollAttempts ?? 50,
+            pollDelayMs: input.pollDelayMs ?? 8000,
+            aliasProduction,
+          });
+          deployed = polled.deployed;
+          aliased = polled.aliased;
+          previewUrl = polled.previewUrl ?? previewUrl;
+          safeError = polled.safeError;
         }
+      }
+      providerPostCount = vercel.deploymentCreates;
       }
     }
   }
@@ -518,5 +576,6 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     live_html: live.body,
     safe_error: safeError,
     exception: null,
+    provider_post_count: providerPostCount,
   };
 }

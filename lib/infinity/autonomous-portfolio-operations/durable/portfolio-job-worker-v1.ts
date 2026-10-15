@@ -21,7 +21,17 @@ import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/cl
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 import { patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
-import { countPortfolioJobsByCycle } from "./autonomous-portfolio-job-queue-v1";
+import { countPortfolioJobsByCycle, patchPortfolioJobFields } from "./autonomous-portfolio-job-queue-v1";
+import {
+  findVentureDeployJobForAsset,
+  frozenRevisionForOccupancyDeployJob,
+  listDeploymentIdsForJob,
+  mergeVentureDeployOutputLineage,
+  readPriorDeploymentIdFromLineage,
+  resolveAuthoritativeDeploymentId,
+  upstreamDeployBlocksProductionVerify,
+  classifyProductionVerifyHttpOutcome,
+} from "./venture-async-deploy-reconciliation-v1";
 
 export const AUTONOMOUS_PORTFOLIO_JOB_WORKER_V1 = "AUTONOMOUS_PORTFOLIO_JOB_WORKER_V1" as const;
 
@@ -85,16 +95,63 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"
             ? CRE_VENTURE_ID
             : job.venture_id;
-        const deploy = await executeBoundedVentureDeploy({ venture_id: deployVentureId });
+        const frozenRevision = frozenRevisionForOccupancyDeployJob(job);
+        const telemetryDeployments = await listDeploymentIdsForJob(job.job_id);
+        const authoritative = resolveAuthoritativeDeploymentId({
+          output_lineage: job.output_lineage,
+          telemetry_deployments: telemetryDeployments,
+        });
+        let priorDeploymentId = authoritative.authoritative_deployment_id ?? readPriorDeploymentIdFromLineage(job.output_lineage);
+        const allowFreshPost = Boolean((job.output_lineage as Record<string, unknown>)?.allow_fresh_provider_post);
+        if (allowFreshPost) priorDeploymentId = null;
+        const deploy = await executeBoundedVentureDeploy({
+          venture_id: deployVentureId,
+          prior_deployment_id: priorDeploymentId,
+          frozen_revision: frozenRevision,
+          persisted_deploy_lineage: mergeVentureDeployOutputLineage(job.output_lineage, {
+            asset_identity: frozenRevision.asset_id,
+            frozen_bundle_manifest_hash: frozenRevision.frozen_bundle_manifest_hash,
+            authoritative_deployment_id: priorDeploymentId,
+            superseded_deployment_ids: authoritative.superseded_deployment_ids,
+          }),
+          on_deployment_submitted: async (deployment_id) => {
+            await patchPortfolioJobFields(job.job_id, {
+              output_lineage: mergeVentureDeployOutputLineage(job.output_lineage, {
+                deployment_id,
+                authoritative_deployment_id: deployment_id,
+                submitted_at: new Date().toISOString(),
+                asset_identity: frozenRevision.asset_id,
+                frozen_bundle_manifest_hash: frozenRevision.frozen_bundle_manifest_hash,
+                superseded_deployment_ids: authoritative.superseded_deployment_ids,
+              }),
+            });
+          },
+        });
+        const outputPatch = mergeVentureDeployOutputLineage(job.output_lineage, {
+          deployment_id: deploy.deployment_id,
+          authoritative_deployment_id: deploy.deployment_id ?? priorDeploymentId,
+          production_url: deploy.phase === "COMPLETED" ? deploy.production_url : undefined,
+          asset_identity: frozenRevision.asset_id,
+          frozen_bundle_manifest_hash: deploy.frozen_bundle_manifest_hash ?? frozenRevision.frozen_bundle_manifest_hash,
+          superseded_deployment_ids: authoritative.superseded_deployment_ids,
+          provider_post_count: deploy.provider_post_count,
+        });
         await persistAutonomousDeployTelemetry({
           cycle_id: job.cycle_id,
           job_id: job.job_id,
           venture_id: job.venture_id,
           bundle_started_at: bundleStart,
           bundle_completed_at: new Date().toISOString(),
-          vercel_deployment_id: deploy.phase === "COMPLETED" ? deploy.deployment_id : deploy.deployment_id,
+          vercel_deployment_id: deploy.deployment_id,
           build_status: deploy.phase,
-          safe_payload: { path: lineage.path, canonical_url: lineage.canonical_url },
+          safe_payload: {
+            path: lineage.path,
+            canonical_url: lineage.canonical_url,
+            provider_post_count: deploy.provider_post_count,
+            authoritative_selection: authoritative.selection_reason,
+            superseded_deployment_ids: authoritative.superseded_deployment_ids,
+            superseded_classification: authoritative.superseded_deployment_ids.map(() => "SUPERSEDED_DUPLICATE_DEPLOYMENT"),
+          },
         });
         if (deploy.phase === "IN_PROGRESS") {
           const retry = classifyPortfolioJobRetry({
@@ -106,33 +163,64 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             status: "IN_PROGRESS",
             safe_error: deploy.safe_error,
             eligible_at: retry.eligible_at,
-            output_lineage: { deployment_id: deploy.deployment_id },
+            output_lineage: outputPatch,
           });
           return;
         }
         if (deploy.ok) {
           await patchPortfolioCycle(job.cycle_id, { assets_published: 1 });
         }
+        const terminalDeployFail =
+          deploy.safe_error === "VERCEL_DEPLOYMENT_FAILED" || deploy.safe_error === "VERCEL_DEPLOYMENT_CREATE_FAILED";
+        if (!deploy.ok && terminalDeployFail) {
+          outputPatch.allow_fresh_provider_post = true;
+          outputPatch.authoritative_deployment_id = null;
+          outputPatch.deployment_id = null;
+        }
         await completeJob(job, holder, {
           status: deploy.ok ? "COMPLETED" : "FAILED",
           safe_error: deploy.safe_error,
-          output_lineage: {
-            deployment_id: deploy.deployment_id,
-            production_url: deploy.production_url,
-          },
+          output_lineage: outputPatch,
         });
         return;
       }
       case "PRODUCTION_VERIFY": {
         const canonical_url = String(lineage.canonical_url ?? "");
         const expected_path = String(lineage.path ?? "");
+        const assetIdentity = String(lineage.asset_identity ?? "");
+        const upstream = await findVentureDeployJobForAsset({
+          cycle_id: job.cycle_id,
+          asset_identity: assetIdentity,
+        });
+        const upstreamGate = upstreamDeployBlocksProductionVerify(upstream);
+        if (upstreamGate.blocked) {
+          const retry = classifyPortfolioJobRetry({
+            job_type: "PRODUCTION_VERIFY",
+            safe_error: upstreamGate.reason,
+            attempt_count: job.attempt_count,
+          });
+          await completeJob(job, holder, {
+            status: retry.disposition === "TERMINAL" ? "FAILED" : "QUEUED",
+            safe_error: upstreamGate.reason,
+            eligible_at: retry.eligible_at,
+            output_lineage: {
+              upstream_venture_deploy_status: upstream?.status ?? null,
+              upstream_deployment_id: readPriorDeploymentIdFromLineage(upstream?.output_lineage),
+            },
+          });
+          return;
+        }
         const proof = await verifyOccupancyNpvProductionPublication({ canonical_url, expected_path });
+        const outcome = classifyProductionVerifyHttpOutcome({
+          http_status: proof.http_status,
+          upstream_blocked: false,
+        });
         if (proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS") {
           await registerSuccessfulPublication({
             venture_id: "occupancynpv",
-            asset_identity: String(lineage.asset_identity ?? ""),
+            asset_identity: assetIdentity,
             canonical_path: expected_path,
-            content_revision: String(lineage.asset_identity ?? ""),
+            content_revision: assetIdentity,
             production_url: canonical_url,
             payload: { proof },
           });
@@ -145,9 +233,23 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           production_get_status: proof.http_status ?? null,
           safe_payload: { canonical_url, expected_path },
         });
+        if (!outcome.terminal) {
+          const retry = classifyPortfolioJobRetry({
+            job_type: "PRODUCTION_VERIFY",
+            safe_error: outcome.safe_error,
+            attempt_count: job.attempt_count,
+          });
+          await completeJob(job, holder, {
+            status: "QUEUED",
+            safe_error: outcome.safe_error,
+            eligible_at: retry.eligible_at,
+            output_lineage: proof as unknown as Record<string, unknown>,
+          });
+          return;
+        }
         await completeJob(job, holder, {
           status: proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS" ? "COMPLETED" : "FAILED",
-          safe_error: proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS" ? null : "PRODUCTION_VERIFY_FAILED",
+          safe_error: proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS" ? null : outcome.safe_error ?? "PRODUCTION_VERIFY_FAILED",
           output_lineage: proof as unknown as Record<string, unknown>,
         });
         return;

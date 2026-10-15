@@ -84,6 +84,25 @@ export async function enqueuePortfolioJob(input: EnqueuePortfolioJobInput): Prom
   return { job_id: data?.job_id ?? row.job_id, skipped: false };
 }
 
+export async function patchPortfolioJobFields(
+  job_id: string,
+  patch: {
+    output_lineage?: Record<string, unknown>;
+    status?: PortfolioJobStatus;
+    safe_error?: string | null;
+    eligible_at?: string;
+    completed_at?: string | null;
+  },
+): Promise<boolean> {
+  const client = createPortfolioDurableSupabase();
+  if (!client) return false;
+  const { error } = await client
+    .from(PORTFOLIO_DURABLE_TABLES.jobs)
+    .update({ ...patch, updated_at: new Date().toISOString() })
+    .eq("job_id", job_id);
+  return !error;
+}
+
 export async function countPortfolioJobsByCycle(cycle_id: string): Promise<{
   queued: number;
   running: number;

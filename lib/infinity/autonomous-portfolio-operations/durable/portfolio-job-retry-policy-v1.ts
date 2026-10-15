@@ -35,7 +35,11 @@ const BY_TYPE: Partial<Record<PortfolioJobTypeV1, Partial<PortfolioJobRetryPolic
     retry_delay_ms: 45_000,
     retryable_errors: [...DEFAULT.retryable_errors, "BUNDLE_BUILD_SLOW"],
   },
-  PRODUCTION_VERIFY: { max_attempts: 5, retry_delay_ms: 30_000 },
+  PRODUCTION_VERIFY: {
+    max_attempts: 5,
+    retry_delay_ms: 30_000,
+    retryable_errors: [...DEFAULT.retryable_errors, "UPSTREAM_DEPLOYMENT_NOT_READY", "UPSTREAM_VENTURE_DEPLOY_MISSING"],
+  },
   PRODUCT_CREATIVE: { max_attempts: 2, retry_delay_ms: 120_000 },
   CREATIVE_SELF_HEAL: { max_attempts: 3, retry_delay_ms: 90_000 },
   CONTENT_SELF_HEAL: { max_attempts: 3, retry_delay_ms: 45_000 },
@@ -59,7 +63,12 @@ export function classifyPortfolioJobRetry(input: {
   const policy = resolvePortfolioJobRetryPolicy(input.job_type);
   const err = input.safe_error ?? "";
   const now = Date.now();
-  if (err === "DEPLOY_IN_PROGRESS" || err === "VERCEL_DEPLOYMENT_NOT_READY") {
+  if (
+    err === "DEPLOY_IN_PROGRESS" ||
+    err === "VERCEL_DEPLOYMENT_NOT_READY" ||
+    err === "UPSTREAM_DEPLOYMENT_NOT_READY" ||
+    err === "UPSTREAM_VENTURE_DEPLOY_MISSING"
+  ) {
     return {
       disposition: "IN_PROGRESS",
       eligible_at: new Date(now + policy.retry_delay_ms).toISOString(),

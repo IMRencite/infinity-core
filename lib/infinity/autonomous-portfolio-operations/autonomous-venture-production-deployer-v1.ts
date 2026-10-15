@@ -5,6 +5,10 @@ import { executeClubThrottleProductionDeployment } from "@/lib/infinity/commerce
 import { autonomousExistingVentureDeployAuthorityQc } from "./autonomous-existing-venture-deploy-authority-v1";
 import { auditPortfolioDeployCredentials } from "./portfolio-deploy-credentials-v1";
 import { resolveVentureDeployTarget, ventureDeployTargetIdentityQc } from "./venture-deploy-target-identity-v1";
+import {
+  assertPriorDeploymentBundleIdentityParity,
+  type FrozenVentureDeployRevision,
+} from "./durable/venture-async-deploy-reconciliation-v1";
 
 export const AUTONOMOUS_VENTURE_PRODUCTION_DEPLOYER_V1 = "AUTONOMOUS_VENTURE_PRODUCTION_DEPLOYER_V1" as const;
 
@@ -15,6 +19,7 @@ export type VentureProductionDeployResult = {
   production_url: string | null;
   safe_error: string | null;
   aliased: boolean;
+  provider_post_count?: number;
 };
 
 export async function preparePortfolioVentureDeployEnvironment(input?: {
@@ -36,6 +41,10 @@ export async function deployApprovedVentureProductionBundle(input: {
   enforce_backlog_deploy_guard?: boolean;
   /** Worker slices use short poll; durable jobs reconcile IN_PROGRESS deployments. */
   poll_attempts?: number;
+  prior_deployment_id?: string | null;
+  frozen_revision?: FrozenVentureDeployRevision;
+  persisted_deploy_lineage?: Record<string, unknown>;
+  on_deployment_submitted?: (deployment_id: string) => Promise<void> | void;
 }): Promise<VentureProductionDeployResult> {
   const target = resolveVentureDeployTarget(input.venture_id);
   if (!target) {
@@ -77,12 +86,32 @@ export async function deployApprovedVentureProductionBundle(input: {
   }
 
   if (target.deploy_adapter === "occupancynpv_organic_bundle") {
+    const prior = input.prior_deployment_id?.trim() || null;
+    if (prior && input.frozen_revision) {
+      const parity = assertPriorDeploymentBundleIdentityParity({
+        prior_deployment_id: prior,
+        revision: input.frozen_revision,
+        persisted: input.persisted_deploy_lineage,
+      });
+      if (!parity.ok) {
+        return {
+          ok: false,
+          venture_id: input.venture_id,
+          deployment_id: prior,
+          production_url: null,
+          safe_error: parity.safe_error,
+          aliased: false,
+          provider_post_count: 0,
+        };
+      }
+    }
     const deployed = await deployOccupancyNpvOrganicLivePage({
       deploy: true,
       aliasProduction: input.alias_production !== false,
-      enforceBacklogDeployGuard: input.enforce_backlog_deploy_guard !== false,
       pollAttempts: input.poll_attempts ?? 45,
       pollDelayMs: 8000,
+      priorDeploymentId: prior,
+      onDeploymentSubmitted: input.on_deployment_submitted,
     });
     return {
       ok: Boolean(deployed.deployed),
@@ -91,6 +120,7 @@ export async function deployApprovedVentureProductionBundle(input: {
       production_url: deployed.live_url ?? `https://${target.production_alias}`,
       safe_error: deployed.safe_error,
       aliased: deployed.aliased,
+      provider_post_count: deployed.provider_post_count ?? 0,
     };
   }
 
