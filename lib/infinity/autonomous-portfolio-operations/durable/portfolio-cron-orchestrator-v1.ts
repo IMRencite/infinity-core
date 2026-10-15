@@ -14,7 +14,6 @@ import {
   rankOccupancyNpvAutonomousPublishRows,
   evaluateOccupancyNpvTargetPrepublishQc,
 } from "../portfolio-operating-backlog-publish-v1";
-import { evaluateBacklogSourceVNext } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { listOccupancyClubThrottleBacklogArticles, evaluateBacklogSourceVNext } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
