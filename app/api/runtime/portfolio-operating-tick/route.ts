@@ -186,6 +186,11 @@ export async function GET(request: Request): Promise<NextResponse> {
       enqueued_jobs: orchestration.enqueued,
       onpv_autonomous_publish_candidate: orchestration.onpv_autonomous_publish_candidate,
       onpv_publish_diagnostic: orchestration.onpv_publish_diagnostic,
+      venture_next_best_growth_actions: orchestration.venture_next_best_growth_actions,
+      VENTURE_NEXT_BEST_GROWTH_ACTION_QC: orchestration.VENTURE_NEXT_BEST_GROWTH_ACTION_QC,
+      VENTURE_SEO_AUTHORITY_EXPANSION_QC: orchestration.VENTURE_SEO_AUTHORITY_EXPANSION_QC,
+      VENTURE_GEO_AUTHORITY_EXPANSION_QC: orchestration.VENTURE_GEO_AUTHORITY_EXPANSION_QC,
+      AUTONOMOUS_CONTENT_CREATION_AUTHORITY_QC: "PASS",
       backlog_publish_candidates: orchestration.backlog_publish_candidates,
       request_started_at: requestStarted,
     };

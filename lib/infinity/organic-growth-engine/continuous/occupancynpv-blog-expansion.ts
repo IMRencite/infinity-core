@@ -18,6 +18,7 @@ import { occupancyCapRateV5Body } from "./occupancy-v5-body-cap-rate";
 import { occupancyLeaseCompareV5Body } from "./occupancy-v5-body-lease-compare";
 import { occupancyLeaseNumbersV5Body } from "./occupancy-v5-body-lease-numbers";
 import { occupancyOccupancyVsRentV5Body } from "./occupancy-v5-body-occupancy-vs-rent";
+import { occupancyGrossVsNetLeaseV5Body } from "./occupancy-v5-body-gross-vs-net-lease";
 import { renderCanonicalArticleMain } from "./article-section-renderer";
 
 function permalink(category: string, slug: string): string {
@@ -89,6 +90,22 @@ export const OCCUPANCYNPV_EXPANSION_POSTS: OccupancyNpvBlogPost[] = [
     tags: ["Leasing", "NPV", "Comparison"],
     published: "2026-09-23",
   }),
+  {
+    ...article({
+      slug: "gross-lease-vs-net-lease-for-tenants",
+      category: "leasing",
+      title: "What is the difference between a gross lease and a net lease for tenants?",
+      excerpt:
+        "Gross leases bundle operating costs into the rent quote; net leases separate base rent from CAM, tax, and insurance recoveries. Compare occupancy cost, not headline rent alone.",
+      image: occupancynpvFeaturedEditorialFor("gross-lease-vs-net-lease-for-tenants").path,
+      tags: ["Gross Lease", "Net Lease", "Occupancy Costs", "Leasing"],
+      published: "2026-10-15",
+    }),
+    asset_id: "blog-expansion-gross-lease-vs-net-lease-for-tenants",
+    modified: "2026-10-15",
+    reading_time: "14 min read",
+    categories: ["leasing"],
+  },
 ];
 
 const SHARED_LINKS = [
@@ -174,8 +191,9 @@ function draftFrom(input: {
     visible_faqs: input.faqs,
     speakable_selectors: ["h1", "[data-direct-answer]"],
     date_published: input.post.published,
-    date_modified: "2026-09-25",
+    date_modified: input.post.modified ?? "2026-09-25",
     page_kind: "BLOG_ARTICLE",
+    origin: "https://occupancynpv.com",
   };
 }
 
@@ -413,12 +431,13 @@ Practical next steps: align the years, discount both paths, and open the compare
 }
 
 export function occupancynpvExpansionDrafts(): OrganicDraft[] {
-  const [cap, occ, numbers, compare] = OCCUPANCYNPV_EXPANSION_POSTS;
+  const [cap, occ, numbers, compare, grossNet] = OCCUPANCYNPV_EXPANSION_POSTS;
   return [
     draftFrom({ post: cap!, ...occupancyCapRateV5Body() }),
     draftFrom({ post: occ!, ...occupancyOccupancyVsRentV5Body() }),
     draftFrom({ post: numbers!, ...occupancyLeaseNumbersV5Body() }),
     draftFrom({ post: compare!, ...occupancyLeaseCompareV5Body() }),
+    draftFrom({ post: grossNet!, ...occupancyGrossVsNetLeaseV5Body() }),
   ];
 }
 

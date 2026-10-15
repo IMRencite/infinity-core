@@ -26,6 +26,15 @@ import { publicationAssetIdentity, readPublicationRegistry } from "./autonomous-
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 import type { OperatingVentureInventoryRow } from "../autonomous-portfolio-operations-v1";
+import {
+  buildVentureNextBestGrowthActionsV1,
+  ventureNextBestGrowthActionQc,
+} from "../venture-next-best-growth-action-engine-v1";
+import {
+  analyzeVentureAuthorityExpansionV1,
+  ventureGeoAuthorityExpansionQc,
+  ventureSeoAuthorityExpansionQc,
+} from "../venture-authority-expansion-engine-v1";
 
 export const PORTFOLIO_CRON_ORCHESTRATOR_V1 = "PORTFOLIO_CRON_ORCHESTRATOR_V1" as const;
 
@@ -63,6 +72,10 @@ export async function orchestratePortfolioOperatingTick(input: {
     OCCUPANCYNPV_TARGET_PREPUBLISH_QC: string;
   };
   enqueued: Array<{ job_type: string; venture_id: string; idempotency_key: string }>;
+  venture_next_best_growth_actions: ReturnType<typeof buildVentureNextBestGrowthActionsV1>;
+  VENTURE_NEXT_BEST_GROWTH_ACTION_QC: "PASS" | "FAIL";
+  VENTURE_SEO_AUTHORITY_EXPANSION_QC: "PASS" | "FAIL";
+  VENTURE_GEO_AUTHORITY_EXPANSION_QC: "PASS" | "FAIL";
 }> {
   const timer = createPortfolioTickTimer();
   const inventory = buildOperatingVentureInventory();
@@ -71,6 +84,12 @@ export async function orchestratePortfolioOperatingTick(input: {
   const live = inventory.filter((r) => r.state === "LIVE_OPERATING");
   const plans = live.map(buildVentureOperatingPlanV1);
   const planQc = ventureOperatingPlanQc(plans, inventory);
+  const ventureNextBest = buildVentureNextBestGrowthActionsV1();
+  const authorityReports = live.map((row) =>
+    analyzeVentureAuthorityExpansionV1({
+      venture_id: resolveOperatingVentureId(row),
+    }),
+  );
   timer.mark("plans_ms");
 
   const trigger: PortfolioOperatingTrigger = input.provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL";
@@ -83,7 +102,11 @@ export async function orchestratePortfolioOperatingTick(input: {
   const cycle = await createPortfolioOperatingCycle({
     provenance: input.provenance,
     venture_count: live.length,
-    payload: { inventory_qc: inventoryQc, plan_qc: planQc },
+    payload: {
+      inventory_qc: inventoryQc,
+      plan_qc: planQc,
+      venture_next_best: ventureNextBest,
+    },
   });
   const cycle_id = cycle?.cycle_id ?? null;
   timer.mark("content_ms");
@@ -272,6 +295,10 @@ export async function orchestratePortfolioOperatingTick(input: {
       OCCUPANCYNPV_TARGET_PREPUBLISH_QC: onpvPrepublish?.OCCUPANCYNPV_TARGET_PREPUBLISH_QC ?? "NOT_RUN",
     },
     enqueued,
+    venture_next_best_growth_actions: ventureNextBest,
+    VENTURE_NEXT_BEST_GROWTH_ACTION_QC: ventureNextBestGrowthActionQc(ventureNextBest),
+    VENTURE_SEO_AUTHORITY_EXPANSION_QC: ventureSeoAuthorityExpansionQc(authorityReports),
+    VENTURE_GEO_AUTHORITY_EXPANSION_QC: ventureGeoAuthorityExpansionQc(authorityReports),
   };
 }
 

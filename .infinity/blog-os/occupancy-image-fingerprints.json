@@ -1,0 +1,63 @@
+{
+  "generated_at": "2026-10-15T06:11:30.563Z",
+  "provider": "xai",
+  "model": "grok-imagine-image-2.0",
+  "fingerprints": [
+    {
+      "slug": "how-interest-rates-affect-commercial-property-values",
+      "src": "/media/blog/occ-v2-interest-rates-capital.webp",
+      "path": "/blog/valuation/how-interest-rates-affect-commercial-property-values/",
+      "sha256": "e403aa1cc51b8a495a016a60293aaaac082e8aa98698475a4fbcbaa0799b2bee",
+      "perceptual_hash": "ffe7e7470000f09c",
+      "brief_id": "occ-v2-interest-rates-capital"
+    },
+    {
+      "slug": "how-is-cap-rate-calculated-for-a-building",
+      "src": "/media/blog/occ-v2-cap-rate-valuation.webp",
+      "path": "/blog/valuation/how-is-cap-rate-calculated-for-a-building/",
+      "sha256": "070ae7b7748002913b8a0e39d5fae51f946a519fd422b78e103797d5ee7f1565",
+      "perceptual_hash": "e7e70200001f3f7e",
+      "brief_id": "occ-v2-cap-rate-valuation"
+    },
+    {
+      "slug": "what-is-occupancy-cost-versus-rent",
+      "src": "/media/blog/occ-v2-occupancy-cost-rent.webp",
+      "path": "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
+      "sha256": "c9b5aa008678c4884eaca70e1ce025734c2cec04f14b2dee49622c6eb3d29c2b",
+      "perceptual_hash": "e0e0e0c018103c78",
+      "brief_id": "occ-v2-occupancy-cost-rent"
+    },
+    {
+      "slug": "what-numbers-do-you-need-to-compare-two-leases",
+      "src": "/media/blog/occ-v2-lease-numbers-packets.webp",
+      "path": "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
+      "sha256": "4800ec6e5b3d251118a48d1691f70554b462dfd5429c5ad3b5c858b40183d785",
+      "perceptual_hash": "c0808080b8b8b8b8",
+      "brief_id": "occ-v2-lease-numbers-packets"
+    },
+    {
+      "slug": "how-do-you-compare-two-commercial-lease-options",
+      "src": "/media/blog/occ-v2-lease-options-properties.webp",
+      "path": "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
+      "sha256": "1cf6b2bc87b57e56863c086fb5381a0ba66c01d845c1bc12bde7dcc2d97c3ac3",
+      "perceptual_hash": "d0feda80e0fafa80",
+      "brief_id": "occ-v2-lease-options-properties"
+    },
+    {
+      "slug": "gross-lease-vs-net-lease-for-tenants",
+      "src": "/media/blog/occ-v2-gross-net-structure.webp",
+      "path": "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+      "sha256": "42cc5ac53b65c528b3fb40702a617f86b0e1fe1cbca35136c8278dbed78b8069",
+      "perceptual_hash": "3f313100008f0fff",
+      "brief_id": "occ-v2-gross-net-structure"
+    },
+    {
+      "slug": "cam-first-year",
+      "src": "/media/blog/occ-v2-cam-operations.webp",
+      "path": "/blog/occupancy-costs/cam-first-year/",
+      "sha256": "555ff3b16b5aaff7f68dcc9e39c4557d659af2ccec5b3a6ac5884c4e218af3fc",
+      "perceptual_hash": "07020002c6ff2707",
+      "brief_id": "occ-v2-cam-operations"
+    }
+  ]
+}
