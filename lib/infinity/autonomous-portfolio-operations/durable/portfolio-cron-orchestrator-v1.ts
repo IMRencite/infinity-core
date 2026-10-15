@@ -14,7 +14,10 @@ import {
   rankOccupancyNpvAutonomousPublishRows,
   evaluateOccupancyNpvTargetPrepublishQc,
 } from "../portfolio-operating-backlog-publish-v1";
-import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
+import {
+  evaluateBacklogSourceVNext,
+  listOccupancyClubThrottleBacklogArticles,
+} from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
 import type { PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
