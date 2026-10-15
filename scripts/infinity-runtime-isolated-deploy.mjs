@@ -37,7 +37,7 @@ if (!typecheckOnly && (!token || !team)) {
 }
 
 const root = process.cwd();
-const dest = join(tmpdir(), "infinity-runtime-isolated-v8");
+const dest = join(tmpdir(), process.env.INFINITY_RUNTIME_ISOLATED_DEST ?? "infinity-runtime-isolated-v8");
 const emergency = process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1";
 const gitStatus = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
 const dirtyEntries = (gitStatus.stdout || "").split(/\r?\n/).map((row) => row.trim()).filter(Boolean);
@@ -57,6 +57,20 @@ const files = [
 for (const file of files) {
   if (existsSync(join(root, file))) cpSync(join(root, file), join(dest, file));
 }
+const occupancynpvVentureDeployComposeSources = [
+  "lib/infinity/occupancynpv-product/npv.ts",
+  "app/occupancynpv/app/layout.tsx",
+  "app/occupancynpv/app/occupancynpv-improvement-chrome.tsx",
+  "app/occupancynpv/app/page.tsx",
+  "app/occupancynpv/app/login/page.tsx",
+  "app/occupancynpv/app/checkout/complete/page.tsx",
+  "app/occupancynpv/app/workspaces/[id]/page.tsx",
+  "app/occupancynpv/app/workspaces/[id]/comparison-result-presentation.ts",
+  "app/occupancynpv/app/workspaces/[id]/comparison-result-dialog.tsx",
+  "app/occupancynpv/app/workspaces/[id]/comparison-summary-card.tsx",
+  "app/occupancynpv/app/workspaces/[id]/result-metric.tsx",
+  "app/occupancynpv/app/workspaces/[id]/sensitivity-table.tsx",
+];
 if (!existsSync(join(dest, "next-env.d.ts"))) {
   writeFileSync(join(dest, "next-env.d.ts"), `/// <reference types="next" />\n/// <reference types="next/image-types/global" />\n`);
 }
@@ -95,6 +109,16 @@ if (existsSync(destPkgPath)) {
 }
 
 cpSync(join(root, "lib"), join(dest, "lib"), { recursive: true });
+for (const rel of occupancynpvVentureDeployComposeSources) {
+  const from = join(root, rel);
+  if (!existsSync(from)) continue;
+  const to = join(dest, rel);
+  mkdirSync(join(to, ".."), { recursive: true });
+  cpSync(from, to);
+  const mirrored = join(dest, "lib/infinity/venture-operating-scale/onpv-runtime-compose-sources", rel);
+  mkdirSync(join(mirrored, ".."), { recursive: true });
+  cpSync(from, mirrored);
+}
 if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1") {
   const bindingsFrom = join(root, ".infinity/commerce/club-throttle-gelato-variant-bindings.json");
   if (existsSync(bindingsFrom)) {
@@ -230,6 +254,11 @@ if (!includeAutonomousLoops) {
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
 const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
+const semanticNavFrozenFrom = join(root, ".infinity/semantic-nav-width-muted-text-deploy-successor.json");
+if (tracked.has(".infinity/semantic-nav-width-muted-text-deploy-successor.json") && existsSync(semanticNavFrozenFrom)) {
+  mkdirSync(join(dest, ".infinity"), { recursive: true });
+  cpSync(semanticNavFrozenFrom, join(dest, ".infinity/semantic-nav-width-muted-text-deploy-successor.json"));
+}
 const runtimeRoutes = ["communication-tick", "communication-attest", "club-throttle-fulfillment-tick"].concat(
   includeAutonomousLoops
     ? ["tick", "organic-tick", "venture-operating-cycle", "portfolio-operating-tick", "portfolio-job-worker", "opportunity-discovery-tick"]
@@ -382,6 +411,28 @@ writeFileSync(
   join(dest, "proxy.ts"),
   `import { NextResponse, type NextRequest } from "next/server";\nexport function proxy(_request: NextRequest) {\n  return NextResponse.next();\n}\nexport const config = { matcher: ["/api/runtime/:path*"] };\n`,
 );
+if (includeAutonomousLoops && existsSync(join(dest, "next.config.ts"))) {
+  let nextConfigBody = readFileSync(join(dest, "next.config.ts"), "utf8");
+  if (!nextConfigBody.includes("occupancynpvVentureDeployComposeTracing")) {
+    const tracePaths = [
+      "./lib/infinity/market-validation-experiment/semantic-nav-width-muted-text-deploy-successor.bundled.json",
+      "./lib/infinity/venture-operating-scale/onpv-runtime-compose-sources.bundled.json",
+      "./.infinity/semantic-nav-width-muted-text-deploy-successor.json",
+      "./lib/infinity/venture-operating-scale/onpv-runtime-compose-sources/**",
+      ...occupancynpvVentureDeployComposeSources.map((rel) => `./${rel.replace(/\\/g, "/")}`),
+    ].map((rel) => `"${rel}"`);
+    nextConfigBody = nextConfigBody.replace(
+      "const nextConfig: NextConfig = {",
+      `const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/api/runtime/portfolio-job-worker": [
+      ${tracePaths.join(",\n      ")}
+    ],
+  }, /* occupancynpvVentureDeployComposeTracing */`,
+    );
+    writeFileSync(join(dest, "next.config.ts"), nextConfigBody);
+  }
+}
 mkdirSync(join(dest, ".vercel"), { recursive: true });
 writeFileSync(
   join(dest, ".vercel/project.json"),

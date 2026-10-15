@@ -1,9 +1,11 @@
-import { existsSync, readFileSync } from "node:fs";
 import {
   CRE_SEMANTIC_NAV_WIDTH_AND_MUTED_TEXT_SUCCESSOR_ARTIFACT_ID,
   CRE_SEMANTIC_NAV_WIDTH_AND_MUTED_TEXT_SUCCESSOR_SOURCE_DIGEST,
 } from "@/lib/infinity/market-validation-experiment/constants";
-import { FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH } from "@/lib/infinity/market-validation-experiment/resolve-frozen-semantic-nav-width-muted-text-bundle";
+import {
+  FrozenBundleSnapshotMissingError,
+  readFrozenSemanticNavWidthMutedTextDeploySuccessorSnapshot,
+} from "@/lib/infinity/market-validation-experiment/read-frozen-semantic-nav-width-muted-text-deploy-successor-snapshot";
 import { occupancynpvPrivacyPolicyPageSource, occupancynpvTermsOfServicePageSource } from "./occupancynpv-legal-surface-pages";
 import { OCCUPANCYNPV_LEGAL_SURFACE_REPAIR_REASON, OCCUPANCYNPV_LEGAL_SURFACE_REPAIR_SITE_CONTRACT } from "./constants";
 import { premiumAuthorityArtifactIdFor } from "./compose-authority-artifact";
@@ -42,13 +44,7 @@ export function composeOccupancynpvLegalSurfaceRepairFiles(files: AuthorityFile[
   return { files: next, changedPaths };
 }
 
-export class FrozenBundleSnapshotMissingError extends Error {
-  readonly error_class = "FROZEN_BUNDLE_SNAPSHOT_MISSING" as const;
-  constructor(message = "FROZEN_BUNDLE_SNAPSHOT_MISSING") {
-    super(message);
-    this.name = "FrozenBundleSnapshotMissingError";
-  }
-}
+export { FrozenBundleSnapshotMissingError } from "@/lib/infinity/market-validation-experiment/read-frozen-semantic-nav-width-muted-text-deploy-successor-snapshot";
 
 export function reconstructOccupancynpvLegalSurfaceSuccessor(): {
   artifactId: string;
@@ -61,23 +57,8 @@ export function reconstructOccupancynpvLegalSurfaceSuccessor(): {
   routes: number;
   immutable: true;
 } {
-  if (!existsSync(FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH)) {
-    throw new FrozenBundleSnapshotMissingError();
-  }
-  const snapshot = JSON.parse(readFileSync(FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH, "utf8")) as {
-    artifactId?: string;
-    digest?: string;
-    routes?: number;
-    pageLoop?: { files?: AuthorityFile[] };
-  };
-  if (snapshot.artifactId !== CRE_SEMANTIC_NAV_WIDTH_AND_MUTED_TEXT_SUCCESSOR_ARTIFACT_ID) {
-    throw new Error(`legal_predecessor_id_drift:${snapshot.artifactId}`);
-  }
-  if (snapshot.digest !== CRE_SEMANTIC_NAV_WIDTH_AND_MUTED_TEXT_SUCCESSOR_SOURCE_DIGEST) {
-    throw new Error(`legal_predecessor_digest_drift:${snapshot.digest}`);
-  }
-  const predecessorFiles = snapshot.pageLoop?.files ?? [];
-  if (predecessorFiles.length === 0) throw new Error("FROZEN_BUNDLE_FILES_MISSING");
+  const snapshot = readFrozenSemanticNavWidthMutedTextDeploySuccessorSnapshot();
+  const predecessorFiles = (snapshot.pageLoop?.files ?? []) as AuthorityFile[];
   const composed = composeOccupancynpvLegalSurfaceRepairFiles(predecessorFiles);
   return {
     artifactId: occupancynpvLegalSurfaceSuccessorArtifactId(),

@@ -34,18 +34,18 @@ function blocked() {
 }
 
 describe("occupancynpv publisher throw v55", () => {
-  it("known bad missing predecessor is FROZEN_BUNDLE_SNAPSHOT_MISSING", () => {
+  it("classifies FrozenBundleSnapshotMissingError for deploy preparation", () => {
+    const classified = classifyPublishThrow(new FrozenBundleSnapshotMissingError());
+    expect(classified.reason).toBe("FROZEN_BUNDLE_SNAPSHOT_MISSING");
+    expect(classified.stage).toBe("DEPLOY_PREPARATION");
+  });
+
+  it("serverless bundled predecessor allows legal reconstruct without cwd snapshot", () => {
     const prev = process.cwd();
-    const empty = mkdtempSync(join(tmpdir(), "organic-pub-missing-"));
+    const empty = mkdtempSync(join(tmpdir(), "organic-pub-bundled-"));
     process.chdir(empty);
     try {
-      expect(() => reconstructOccupancynpvLegalSurfaceSuccessor()).toThrow(FrozenBundleSnapshotMissingError);
-      const classified = classifyPublishThrow(new FrozenBundleSnapshotMissingError());
-      expect(classified.reason).toBe("FROZEN_BUNDLE_SNAPSHOT_MISSING");
-      expect(classified.stage).toBe("DEPLOY_PREPARATION");
-      const safe = composeOccupancyNpvOrganicLiveFilesSafe();
-      expect(safe.ok).toBe(false);
-      expect(safe.reason).toBe("FROZEN_BUNDLE_SNAPSHOT_MISSING");
+      expect(() => reconstructOccupancynpvLegalSurfaceSuccessor()).not.toThrow();
     } finally {
       process.chdir(prev);
     }

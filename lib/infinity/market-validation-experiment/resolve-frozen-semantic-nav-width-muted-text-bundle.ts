@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { readFrozenSemanticNavWidthMutedTextDeploySuccessorSnapshot } from "./read-frozen-semantic-nav-width-muted-text-deploy-successor-snapshot";
 import {
   CRE_HOMEPAGE_HERO_LINK_CONTRAST_SUCCESSOR_ARTIFACT_ID,
   CRE_HUB_QUESTION_BOARD_LAYOUT_SUCCESSOR_ARTIFACT_ID,
@@ -86,10 +87,7 @@ export function resolveFrozenSemanticNavWidthMutedTextDeploymentBundle(): {
     mutedOverall: extra.mutedOverall ?? null,
   });
 
-  if (!existsSync(FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH)) {
-    return fail("FROZEN_BUNDLE_SNAPSHOT_MISSING");
-  }
-  const snapshot = JSON.parse(readFileSync(FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH, "utf8")) as {
+  let snapshot: {
     artifactId?: string;
     digest?: string;
     routes?: number;
@@ -100,6 +98,15 @@ export function resolveFrozenSemanticNavWidthMutedTextDeploymentBundle(): {
     muted?: { overall?: string };
     pageLoop?: { overall?: string; files?: FrozenFile[] };
   };
+  try {
+    snapshot = readFrozenSemanticNavWidthMutedTextDeploySuccessorSnapshot();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.includes("FROZEN_BUNDLE_SNAPSHOT")) {
+      return fail("FROZEN_BUNDLE_SNAPSHOT_MISSING");
+    }
+    throw err;
+  }
   const artifactId = snapshot.artifactId ?? "";
   if (
     artifactId !== lockedArtifact ||

@@ -1,15 +1,30 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { CRE_OCCUPANCYNPV_LEGAL_SURFACE_SUCCESSOR_ARTIFACT_ID } from "@/lib/infinity/market-validation-experiment/constants";
 import { premiumAuthorityArtifactIdFor } from "@/lib/infinity/venture-website-architecture/compose-authority-artifact";
 import { digestOfAuthorityFiles } from "@/lib/infinity/venture-website-architecture/cre-successor";
 import { applyCustomerFacingPageGutterCss } from "@/lib/infinity/public-venture-design/rendered-layout/customer-facing-gutter";
 import { composeOccupancynpvPaymentSafetyRollbackFiles } from "./occupancynpv-payment-safety-rollback-surface";
+import onpvRuntimeComposeSourcesBundled from "./onpv-runtime-compose-sources.bundled.json";
 
 export const OCCUPANCYNPV_PAID_PRODUCT_SITE_CONTRACT = "occupancynpv_paid_product_durable_persistence_v1" as const;
 
+const INFINITY_REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), "../../..");
+const ONPV_RUNTIME_COMPOSE_SOURCE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "onpv-runtime-compose-sources");
+
 function repo(rel: string): string {
-  return readFileSync(join(process.cwd(), rel), "utf8");
+  const bundled = (onpvRuntimeComposeSourcesBundled as Record<string, string>)[rel];
+  if (typeof bundled === "string" && bundled.length > 0) return bundled;
+  const candidates = [
+    join(process.cwd(), rel),
+    join(INFINITY_REPO_ROOT, rel),
+    join(ONPV_RUNTIME_COMPOSE_SOURCE_ROOT, rel),
+  ];
+  for (const path of candidates) {
+    if (existsSync(path)) return readFileSync(path, "utf8");
+  }
+  throw new Error(`REPO_SOURCE_MISSING:${rel}`);
 }
 
 function occupancynpvServerSource(): string {

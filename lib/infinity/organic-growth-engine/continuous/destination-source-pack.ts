@@ -1,5 +1,9 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import {
+  frozenSemanticNavWidthMutedTextDeploySuccessorMaterialized,
+  SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOY_SUCCESSOR_BUNDLED_PATH,
+} from "@/lib/infinity/market-validation-experiment/read-frozen-semantic-nav-width-muted-text-deploy-successor-snapshot";
 import { FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH } from "@/lib/infinity/market-validation-experiment/resolve-frozen-semantic-nav-width-muted-text-bundle";
 import { CRE_VERCEL_PROJECT_LIVE_NAME, OCCUPANCYNPV_DOMAIN } from "@/lib/infinity/venture-operating-scale/constants";
 
@@ -59,13 +63,18 @@ export function destinationPredecessorCandidates(cwd = process.cwd()): string[] 
   return [
     FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH,
     join(cwd, FROZEN_SEMANTIC_NAV_WIDTH_MUTED_TEXT_SNAPSHOT_PATH),
+    SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOY_SUCCESSOR_BUNDLED_PATH,
     OCCUPANCYNPV_DESTINATION_PREDECESSOR_BUNDLE,
     join(cwd, OCCUPANCYNPV_DESTINATION_PREDECESSOR_BUNDLE),
   ];
 }
 
 export function resolveDestinationPredecessorPath(cwd = process.cwd()): string | null {
-  return destinationPredecessorCandidates(cwd).find((path) => existsSync(path)) ?? null;
+  const file = destinationPredecessorCandidates(cwd).find((path) => existsSync(path));
+  if (file) return file;
+  return frozenSemanticNavWidthMutedTextDeploySuccessorMaterialized(cwd)
+    ? SEMANTIC_NAV_WIDTH_MUTED_TEXT_DEPLOY_SUCCESSOR_BUNDLED_PATH
+    : null;
 }
 
 export function evaluateAutonomousDeployableDependencyCheck(cwd = process.cwd()): {
@@ -88,7 +97,8 @@ export function destinationSourcesPresent(cwd = process.cwd()): {
   paid_product: boolean;
   missing: string[];
 } {
-  const predecessor = resolveDestinationPredecessorPath(cwd) != null;
+  const predecessor =
+    resolveDestinationPredecessorPath(cwd) != null || frozenSemanticNavWidthMutedTextDeploySuccessorMaterialized(cwd);
   const missingPaid = OCCUPANCYNPV_PAID_PRODUCT_SOURCE_PATHS.filter((path) => !existsSync(join(cwd, path)));
   return {
     predecessor,
@@ -157,7 +167,10 @@ export function classifyPublishThrow(error: unknown): ClassifiedPublishThrow {
       },
     };
   }
-  if (err.name === "DestinationSourceMissingError" || /DESTINATION_SOURCE_MISSING|ENOENT/.test(err.message)) {
+  if (
+    err.name === "DestinationSourceMissingError" ||
+    /DESTINATION_SOURCE_MISSING|REPO_SOURCE_MISSING|ENOENT/.test(err.message)
+  ) {
     return {
       reason: "DESTINATION_SOURCE_MISSING",
       stage: "DEPLOY_PREPARATION",
