@@ -23,6 +23,7 @@ import {
   listOccupancyClubThrottleBacklogArticles,
 } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
+import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
 import { isPortfolioScheduledTrigger, type PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
 import { createPortfolioTickTimer, V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE } from "./portfolio-tick-instrumentation-v1";
@@ -107,6 +108,7 @@ export async function orchestratePortfolioOperatingTick(input: {
   });
   timer.mark("research_ms");
 
+  const runtimeIdentity = vercelRuntimeIdentity();
   const cycle = await createPortfolioOperatingCycle({
     provenance: input.provenance,
     venture_count: live.length,
@@ -114,6 +116,8 @@ export async function orchestratePortfolioOperatingTick(input: {
       inventory_qc: inventoryQc,
       plan_qc: planQc,
       venture_next_best: ventureNextBest,
+      runtime_deployment_id: runtimeIdentity.deployment_id,
+      runtime_release_sha: runtimeIdentity.release_sha ?? runtimeIdentity.git_sha,
     },
   });
   const cycle_id = cycle?.cycle_id ?? null;
