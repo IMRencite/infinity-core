@@ -34,10 +34,10 @@ describe("portfolio operating backlog publish hygiene", () => {
     expect(pick?.slug).toBe("how-to-ride-after-dark");
   });
 
-  it("ranks net-new ONPV free-rent before published lease cluster pages", () => {
+  it("excludes production-published ONPV free-rent from new-publication ranking", () => {
     const articles = listOccupancyClubThrottleBacklogArticles();
     const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
-    expect(ranked[0]?.article.slug).toBe("how-free-rent-affects-occupancy-cost-for-tenants");
+    expect(ranked.some((row) => row.article.slug === "how-free-rent-affects-occupancy-cost-for-tenants")).toBe(false);
   });
 
   it("persists after-dark refresh probe when deploy gates pass", () => {
