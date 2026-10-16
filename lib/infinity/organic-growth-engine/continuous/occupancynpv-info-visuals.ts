@@ -6,6 +6,7 @@ export type OccupancyInfoVisualSlug =
   | "what-numbers-do-you-need-to-compare-two-leases"
   | "what-is-occupancy-cost-versus-rent"
   | "gross-lease-vs-net-lease-for-tenants"
+  | "expense-stop-vs-base-year-for-tenants"
   | "cam-first-year"
   | "how-interest-rates-affect-commercial-property-values";
 
@@ -25,6 +26,18 @@ export function occupancyInfoVisualHtml(slug: OccupancyInfoVisualSlug): string {
       <tr><td>Stabilized NOI</td><td>$120,000</td></tr>
       <tr><td>Going-in cap rate</td><td>6.0%</td></tr>
       <tr><td>Indicated value</td><td>$120,000 ÷ 0.06 = $2,000,000</td></tr>
+    </tbody>
+  </table>
+</div>`;
+    case "expense-stop-vs-base-year-for-tenants":
+      return `<div className="onpv-info-visual" data-onpv-info-visual="table" role="region" aria-label="Expense stop versus base year">
+  <p className="onpv-table-label">Illustrative recovery mechanics (hypothetical)</p>
+  <table className="onpv-info-table">
+    <thead><tr><th scope="col">Mechanism</th><th scope="col">What moves</th><th scope="col">Tenant risk note</th></tr></thead>
+    <tbody>
+      <tr><td>Expense stop</td><td>Recoveries capped at stop level in lease</td><td>Landlord may absorb overruns above stop</td></tr>
+      <tr><td>Base year</td><td>Bill share of expenses above documented base year</td><td>Year-one CAM can understate later steps</td></tr>
+      <tr><td>Occupancy-cost row</td><td>Label stop or base year beside CAM estimate</td><td>Face rent alone misleads</td></tr>
     </tbody>
   </table>
 </div>`;
@@ -114,6 +127,7 @@ export function slugFromOccupancyPath(path: string): OccupancyInfoVisualSlug | n
   const allowed: OccupancyInfoVisualSlug[] = [
     "how-is-cap-rate-calculated-for-a-building",
     "gross-lease-vs-net-lease-for-tenants",
+    "expense-stop-vs-base-year-for-tenants",
     "how-do-you-compare-two-commercial-lease-options",
     "what-numbers-do-you-need-to-compare-two-leases",
     "what-is-occupancy-cost-versus-rent",

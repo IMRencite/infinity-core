@@ -19,6 +19,7 @@ import { occupancyLeaseCompareV5Body } from "./occupancy-v5-body-lease-compare";
 import { occupancyLeaseNumbersV5Body } from "./occupancy-v5-body-lease-numbers";
 import { occupancyOccupancyVsRentV5Body } from "./occupancy-v5-body-occupancy-vs-rent";
 import { occupancyGrossVsNetLeaseV5Body } from "./occupancy-v5-body-gross-vs-net-lease";
+import { occupancyExpenseStopBaseYearV5Body } from "./occupancy-v5-body-expense-stop-base-year";
 import { renderCanonicalArticleMain } from "./article-section-renderer";
 
 function permalink(category: string, slug: string): string {
@@ -106,15 +107,41 @@ export const OCCUPANCYNPV_EXPANSION_POSTS: OccupancyNpvBlogPost[] = [
     reading_time: "14 min read",
     categories: ["leasing"],
   },
+  {
+    ...article({
+      slug: "expense-stop-vs-base-year-for-tenants",
+      category: "leasing",
+      title: "What is the difference between an expense stop and a base year for tenants?",
+      excerpt:
+        "An expense stop caps tenant recoveries at a stated level; a base year bills tenant share of operating expenses above a documented baseline year. Both change occupancy cost while face rent stays flat.",
+      image: occupancynpvFeaturedEditorialFor("expense-stop-vs-base-year-for-tenants").path,
+      tags: ["Expense Stop", "Base Year", "CAM", "Recoveries", "Leasing"],
+      published: "2026-10-15",
+    }),
+    asset_id: "blog-expansion-expense-stop-vs-base-year-for-tenants",
+    modified: "2026-10-15",
+    reading_time: "12 min read",
+    categories: ["leasing"],
+    draft: true,
+    unpublished: true,
+  },
 ];
 
 const SHARED_LINKS = [
-  "/blog/occupancy-costs/cam-first-year/",
+  "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
+  "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+  "/blog/leasing/expense-stop-vs-base-year-for-tenants/",
+  "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
+  "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
+  "/compare-commercial-leases",
   "/blog/valuation/how-interest-rates-affect-commercial-property-values/",
   "/commercial-lease-npv/how-is-cap-rate-calculated/",
-  "/compare-commercial-leases",
-  "/lease-comparison/what-numbers-do-you-need-to-compare-two-commercial-leases/",
 ];
+
+function internalLinksForExpansionPost(post: OccupancyNpvBlogPost): string[] {
+  const self = post.path.replace(/\/+$/, "").toLowerCase();
+  return SHARED_LINKS.filter((link) => link.replace(/\/+$/, "").toLowerCase() !== self);
+}
 
 function plan(input: {
   plan_id: string;
@@ -186,7 +213,7 @@ function draftFrom(input: {
     schema: ["Organization", "WebSite", "WebPage", "BlogPosting", "BreadcrumbList", "SpeakableSpecification", "FAQPage"],
     canonical: input.post.path,
     breadcrumbs: ["Blog", input.post.primaryCategory ?? input.post.category, input.post.title],
-    internal_links: SHARED_LINKS.slice(0, 4),
+    internal_links: internalLinksForExpansionPost(input.post),
     word_count: input.body.split(/\s+/).length,
     visible_faqs: input.faqs,
     speakable_selectors: ["h1", "[data-direct-answer]"],
@@ -431,13 +458,14 @@ Practical next steps: align the years, discount both paths, and open the compare
 }
 
 export function occupancynpvExpansionDrafts(): OrganicDraft[] {
-  const [cap, occ, numbers, compare, grossNet] = OCCUPANCYNPV_EXPANSION_POSTS;
+  const [cap, occ, numbers, compare, grossNet, expenseStop] = OCCUPANCYNPV_EXPANSION_POSTS;
   return [
     draftFrom({ post: cap!, ...occupancyCapRateV5Body() }),
     draftFrom({ post: occ!, ...occupancyOccupancyVsRentV5Body() }),
     draftFrom({ post: numbers!, ...occupancyLeaseNumbersV5Body() }),
     draftFrom({ post: compare!, ...occupancyLeaseCompareV5Body() }),
     draftFrom({ post: grossNet!, ...occupancyGrossVsNetLeaseV5Body() }),
+    draftFrom({ post: expenseStop!, ...occupancyExpenseStopBaseYearV5Body() }),
   ];
 }
 

@@ -2,6 +2,7 @@ import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { occupancynpvAutonomousBacklogAssetMeta } from "@/lib/infinity/organic-growth-engine/continuous/occupancynpv-autonomous-backlog-v1";
+import { pickOccupancyNpvAutonomousBacklogCandidate } from "./portfolio-operating-backlog-publish-v1";
 
 export const VENTURE_AUTHORITY_EXPANSION_ENGINE_V1 = "VENTURE_AUTHORITY_EXPANSION_ENGINE_V1" as const;
 
@@ -24,26 +25,35 @@ export function analyzeVentureAuthorityExpansionV1(input: { venture_id: string }
   const backlog = listOccupancyClubThrottleBacklogArticles();
   if (input.venture_id === CRE_VENTURE_ID || input.venture_id === "occupancynpv") {
     const meta = occupancynpvAutonomousBacklogAssetMeta();
-    const gaps: AuthorityGap[] = [
-      {
+    const nextPublish = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
+    const internalLinkGap: AuthorityGap = {
+      gap_id: "onpv-lease-recovery-cluster",
+      work_type: "INTERNAL_LINK_UPDATE",
+      reason: "Strengthen pillar links between occupancy-cost, leasing checklist, gross vs net, and compare tool",
+      recommended_action: "Maintain contextual internal-link cluster across lease authority pages",
+    };
+    const gaps: AuthorityGap[] = [internalLinkGap];
+    if (nextPublish) {
+      gaps.unshift({
+        gap_id: `onpv-publish-${nextPublish.slug}`,
+        work_type: nextPublish.slug.includes("compare") ? "DECISION_SUPPORT_PAGE" : "EVERGREEN_GUIDE",
+        reason: "Unpublished backlog asset passes quality gates",
+        recommended_action: `Publish ${nextPublish.title}`,
+      });
+    } else {
+      gaps.push({
         gap_id: "onpv-gross-vs-net-structure",
-        work_type: "EVERGREEN_GUIDE",
-        reason: "Tenants search gross vs net lease structure; distinct from live lease-compare NPV article",
-        recommended_action: `Build and publish ${meta.topic}`,
-      },
-      {
-        gap_id: "onpv-lease-recovery-cluster",
-        work_type: "INTERNAL_LINK",
-        reason: "Strengthen pillar links between occupancy-cost, leasing checklist, and compare tool",
-        recommended_action: "Wire internal links on next leasing publication",
-      },
-      {
-        gap_id: "onpv-geo-direct-answer",
-        work_type: "GEO_AUTHORITY_ACTION",
-        reason: "Direct-answer blocks for AI citation on lease structure questions",
-        recommended_action: "Maintain speakable direct-answer + FAQ schema on new leasing guides",
-      },
-    ];
+        work_type: "CONTENT_REFRESH",
+        reason: "Gross vs net guide is published; refresh cluster links and conversion paths",
+        recommended_action: `Maintain ${meta.topic} cluster authority`,
+      });
+    }
+    gaps.push({
+      gap_id: "onpv-geo-direct-answer",
+      work_type: "GEO_AUTHORITY_ACTION",
+      reason: "Direct-answer blocks for AI citation on lease structure questions",
+      recommended_action: "Maintain speakable direct-answer + FAQ schema on leasing guides",
+    });
     return {
       venture_id: CRE_VENTURE_ID,
       gaps_identified: gaps,

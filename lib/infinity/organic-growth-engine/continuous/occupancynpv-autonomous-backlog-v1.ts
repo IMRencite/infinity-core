@@ -2,6 +2,7 @@ import type { OccupancyNpvBlogPost } from "./occupancynpv-blog-catalog";
 import type { OrganicDraft } from "./quality";
 import { occupancynpvFeaturedEditorialFor } from "./occupancynpv-featured-visuals";
 import { occupancyGrossVsNetLeaseV5Body } from "./occupancy-v5-body-gross-vs-net-lease";
+import { occupancyExpenseStopBaseYearV5Body } from "./occupancy-v5-body-expense-stop-base-year";
 
 export const ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_ASSET_ID =
   "blog-expansion-gross-lease-vs-net-lease-for-tenants" as const;
@@ -9,14 +10,21 @@ export const ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_ASSET_ID =
 export const ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_PATH =
   "/blog/leasing/gross-lease-vs-net-lease-for-tenants/" as const;
 
+export const ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_ASSET_ID =
+  "blog-expansion-expense-stop-vs-base-year-for-tenants" as const;
+
+export const ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_PATH =
+  "/blog/leasing/expense-stop-vs-base-year-for-tenants/" as const;
+
 const SHARED_LINKS = [
   "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
+  "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
   "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
   "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
   "/compare-commercial-leases",
 ];
 
-function article(): OccupancyNpvBlogPost {
+function grossArticle(): OccupancyNpvBlogPost {
   const slug = "gross-lease-vs-net-lease-for-tenants";
   const featured = occupancynpvFeaturedEditorialFor(slug);
   return {
@@ -36,6 +44,31 @@ function article(): OccupancyNpvBlogPost {
     image_alt: featured.alt,
     featured: false,
     reading_time: "14 min read",
+    draft: true,
+    unpublished: true,
+  };
+}
+
+function expenseStopBaseYearArticle(): OccupancyNpvBlogPost {
+  const slug = "expense-stop-vs-base-year-for-tenants";
+  const featured = occupancynpvFeaturedEditorialFor(slug);
+  return {
+    asset_id: ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_ASSET_ID,
+    slug,
+    path: ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_PATH,
+    title: "What is the difference between an expense stop and a base year for tenants?",
+    excerpt:
+      "An expense stop caps tenant recoveries at a stated level; a base year bills tenant share of operating expenses above a documented baseline year. Both change occupancy cost while face rent stays flat.",
+    published: "2026-10-15",
+    modified: "2026-10-15",
+    primaryCategory: "Leasing",
+    category: "leasing",
+    categories: ["leasing"],
+    tags: ["Expense Stop", "Base Year", "CAM", "Recoveries", "Leasing"],
+    image: featured.path,
+    image_alt: featured.alt,
+    featured: false,
+    reading_time: "12 min read",
     draft: true,
     unpublished: true,
   };
@@ -77,24 +110,30 @@ function draftFrom(post: OccupancyNpvBlogPost, bodyPack: ReturnType<typeof occup
   };
 }
 
+function draftFromExpenseStop(post: OccupancyNpvBlogPost): OrganicDraft {
+  const bodyPack = occupancyExpenseStopBaseYearV5Body();
+  return draftFrom(post, bodyPack as ReturnType<typeof occupancyGrossVsNetLeaseV5Body>);
+}
+
 export function occupancynpvAutonomousBacklogPosts(): OccupancyNpvBlogPost[] {
-  return [article()];
+  return [expenseStopBaseYearArticle(), grossArticle()];
 }
 
 export function occupancynpvAutonomousBacklogDrafts(): OrganicDraft[] {
-  const post = article();
-  return [draftFrom(post, occupancyGrossVsNetLeaseV5Body())];
+  const expensePost = expenseStopBaseYearArticle();
+  const grossPost = grossArticle();
+  return [draftFromExpenseStop(expensePost), draftFrom(grossPost, occupancyGrossVsNetLeaseV5Body())];
 }
 
 export function occupancynpvAutonomousBacklogAssetMeta() {
-  const post = article();
+  const post = expenseStopBaseYearArticle();
   return {
     asset_id: post.asset_id!,
     topic: post.title,
-    asset_type: "EVERGREEN_GUIDE" as const,
+    asset_type: "DECISION_SUPPORT_PAGE" as const,
     category: post.primaryCategory ?? "Leasing",
     reason:
-      "Distinct leasing-structure authority gap: tenants confuse gross headline rent with occupancy cost; unpublished and not duplicating live lease-compare article.",
+      "Distinct recovery-mechanics authority gap: tenants confuse expense stops with base years; unpublished and complements gross/net and CAM cluster.",
     canonical_path: post.path,
   };
 }

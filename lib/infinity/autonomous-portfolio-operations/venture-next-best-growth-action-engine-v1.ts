@@ -8,10 +8,10 @@ import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
+  rankClubThrottleAutonomousContentRefreshRows,
   rankOccupancyNpvAutonomousPublishRows,
 } from "./portfolio-operating-backlog-publish-v1";
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
-import { occupancynpvAutonomousBacklogAssetMeta } from "@/lib/infinity/organic-growth-engine/continuous/occupancynpv-autonomous-backlog-v1";
 import { summarizeClubThrottleEditorialBacklog } from "./durable/club-throttle-editorial-backlog-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 
@@ -28,28 +28,30 @@ export type VentureNextBestGrowthAction = {
 };
 
 function resolveOnpvAction(backlog = listOccupancyClubThrottleBacklogArticles()): VentureNextBestGrowthAction {
-  const meta = occupancynpvAutonomousBacklogAssetMeta();
   const ranked = rankOccupancyNpvAutonomousPublishRows(backlog);
   const pick = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
   const authority = analyzeVentureAuthorityExpansionV1({ venture_id: CRE_VENTURE_ID });
-  if (pick?.asset_id === meta.asset_id) {
+  if (pick) {
     return {
       venture_id: CRE_VENTURE_ID,
       venture_name: "OccupancyNPV",
-      next_best_growth_action: `Publish ${meta.topic}`,
-      selected_work_type: meta.asset_type,
-      selection_reason: meta.reason,
-      expected_strategic_value: "Leasing-structure authority + conversion path to compare tools",
+      next_best_growth_action: `Publish ${pick.title}`,
+      selected_work_type:
+        pick.slug.includes("compare") || pick.slug.includes("expense-stop")
+          ? "DECISION_SUPPORT_PAGE"
+          : "EVERGREEN_GUIDE",
+      selection_reason: "Unpublished backlog asset passes autonomous publish gates",
+      expected_strategic_value: "CRE authority + conversion path to compare tools",
       opportunities_researched: authority.gaps_identified.length + ranked.length,
     };
   }
   return {
     venture_id: CRE_VENTURE_ID,
     venture_name: "OccupancyNPV",
-    next_best_growth_action: authority.top_gap?.recommended_action ?? "Expand CRE authority cluster",
-    selected_work_type: authority.top_gap?.work_type ?? "SEO_AUTHORITY_ACTION",
-    selection_reason: authority.top_gap?.reason ?? "Ranked authority gap",
-    expected_strategic_value: "Close topical gap in occupancy economics education",
+    next_best_growth_action: authority.top_gap?.recommended_action ?? "Maintain lease authority cluster",
+    selected_work_type: authority.top_gap?.work_type ?? "INTERNAL_LINK_UPDATE",
+    selection_reason: authority.top_gap?.reason ?? "No unpublished publish candidate; cluster maintenance",
+    expected_strategic_value: "Strengthen internal linking and conversion without duplicate publish",
     opportunities_researched: authority.gaps_identified.length,
   };
 }
@@ -66,6 +68,18 @@ function resolveClubThrottleAction(): VentureNextBestGrowthAction {
       selected_work_type: editorial.CT_EDITORIAL_HOLD_COUNT > 0 ? "JOURNAL_POST" : "EVERGREEN_RIDING_GUIDE",
       selection_reason: `${editorial.CT_EDITORIAL_PUBLISH_ELIGIBLE_COUNT} eligible editorial assets in backlog`,
       expected_strategic_value: "Rider-native authority + collection discovery",
+      opportunities_researched: editorial.CT_EDITORIAL_BACKLOG_COUNT + authority.gaps_identified.length,
+    };
+  }
+  const refresh = rankClubThrottleAutonomousContentRefreshRows(listOccupancyClubThrottleBacklogArticles());
+  if (refresh[0]) {
+    return {
+      venture_id: CLUB_THROTTLE_VENTURE_ID,
+      venture_name: "Club Throttle",
+      next_best_growth_action: `Deploy editorial refresh for ${refresh[0].article.slug}`,
+      selected_work_type: "CONTENT_REFRESH",
+      selection_reason: "Repaired held editorial passes gates; durable VENTURE_DEPLOY refresh",
+      expected_strategic_value: "Restore human-first editorial quality on live journal URLs",
       opportunities_researched: editorial.CT_EDITORIAL_BACKLOG_COUNT + authority.gaps_identified.length,
     };
   }

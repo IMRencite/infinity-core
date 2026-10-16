@@ -10,9 +10,12 @@ import { resolveScheduledAutonomousPublish } from "../scheduled-autonomous-publi
 import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-policy-v1";
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
+  pickClubThrottleAutonomousBacklogCandidate,
+  clubThrottleBacklogCandidateWorkType,
   countBacklogPublishCandidates,
   rankOccupancyNpvAutonomousPublishRows,
   evaluateOccupancyNpvTargetPrepublishQc,
+  evaluateOnpvInternalLinkClusterQc,
 } from "../portfolio-operating-backlog-publish-v1";
 import {
   evaluateBacklogSourceVNext,
@@ -200,25 +203,75 @@ export async function orchestratePortfolioOperatingTick(input: {
               }
             }
           }
+        } else {
+          const clusterQc = evaluateOnpvInternalLinkClusterQc(backlog);
+          if (clusterQc.ONPV_INTERNAL_LINK_CLUSTER_QC === "PASS") {
+            const refreshKey = "refresh:onpv-lease-internal-link-cluster:v1";
+            const refreshDeploy = await enqueuePortfolioJob({
+              cycle_id,
+              venture_id: vid,
+              job_type: "VENTURE_DEPLOY",
+              idempotency_key: refreshKey,
+              priority: 70,
+              input_lineage: {
+                work_type: "INTERNAL_LINK_UPDATE",
+                path: "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+                canonical_url: "https://occupancynpv.com/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+                asset_identity: refreshKey,
+              },
+            });
+            if (refreshDeploy.job_id) {
+              jobsCreated += 1;
+              enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: vid, idempotency_key: refreshKey });
+            }
+          }
         }
       }
 
       if (vid === CLUB_THROTTLE_VENTURE_ID) {
-        const ctBacklog = backlog.filter((a) => a.venture === "club-throttle");
-        const eligible = ctBacklog.filter((a) => evaluateBacklogSourceVNext(a).publish_allowed).length;
-        const blogKey = `blog-build:club-throttle:${cycle_id.slice(0, 8)}`;
-        if (eligible > 0) {
-          const blog = await enqueuePortfolioJob({
+        const ctCandidate = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
+        if (ctCandidate) {
+          const workType = clubThrottleBacklogCandidateWorkType(ctCandidate);
+          const assetId = publicationAssetIdentity({
+            venture_id: "club-throttle",
+            canonical_path: ctCandidate.path,
+            content_revision: ctCandidate.slug,
+          });
+          const deployKey = workType === "CONTENT_REFRESH" ? `refresh:${assetId}` : `deploy:${assetId}`;
+          const deploy = await enqueuePortfolioJob({
             cycle_id,
             venture_id: CLUB_THROTTLE_VENTURE_ID,
-            job_type: "BLOG_BUILD",
-            idempotency_key: blogKey,
-            priority: 50,
-            input_lineage: { eligible_count: eligible },
+            job_type: "VENTURE_DEPLOY",
+            idempotency_key: deployKey,
+            priority: 80,
+            input_lineage: {
+              work_type: workType,
+              path: ctCandidate.path,
+              canonical_url: ctCandidate.canonical_url,
+              asset_identity: assetId,
+            },
           });
-          if (blog.job_id) {
+          if (deploy.job_id) {
             jobsCreated += 1;
-            enqueued.push({ job_type: "BLOG_BUILD", venture_id: CLUB_THROTTLE_VENTURE_ID, idempotency_key: blogKey });
+            enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: CLUB_THROTTLE_VENTURE_ID, idempotency_key: deployKey });
+            const verifyKey = `verify:${assetId}`;
+            const verify = await enqueuePortfolioJob({
+              cycle_id,
+              venture_id: CLUB_THROTTLE_VENTURE_ID,
+              job_type: "PRODUCTION_VERIFY",
+              idempotency_key: verifyKey,
+              priority: 75,
+              input_lineage: {
+                work_type: workType,
+                path: ctCandidate.path,
+                canonical_url: ctCandidate.canonical_url,
+                asset_identity: assetId,
+              },
+            });
+            if (verify.job_id) {
+              jobsCreated += 1;
+              enqueued.push({ job_type: "PRODUCTION_VERIFY", venture_id: CLUB_THROTTLE_VENTURE_ID, idempotency_key: verifyKey });
+            }
           }
         }
         const creativeGov = resolveCreativeBudgetGovernance();

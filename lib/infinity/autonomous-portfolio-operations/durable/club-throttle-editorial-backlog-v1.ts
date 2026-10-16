@@ -11,10 +11,12 @@ export function summarizeClubThrottleEditorialBacklog(): {
   const articles = listOccupancyClubThrottleBacklogArticles().filter((a) => a.venture === "club-throttle");
   let eligible = 0;
   let hold = 0;
+  const publishedStates = new Set(["PUBLISHED", "REFRESHED"]);
   for (const article of articles) {
     const gate = evaluateBacklogSourceVNext(article);
-    if (gate.publish_allowed) eligible += 1;
-    else hold += 1;
+    const unpublished = !publishedStates.has(article.registry_state);
+    if (gate.publish_allowed && unpublished) eligible += 1;
+    else if (!gate.publish_allowed) hold += 1;
   }
   return {
     CT_EDITORIAL_BACKLOG_COUNT: articles.length,

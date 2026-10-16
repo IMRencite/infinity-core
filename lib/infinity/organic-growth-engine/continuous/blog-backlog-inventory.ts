@@ -42,6 +42,7 @@ const ONPV_SOURCE_BY_SLUG: Record<string, string[]> = {
   "what-numbers-do-you-need-to-compare-two-leases": ["occupancy-v5-body-lease-numbers.ts", "occupancynpv-blog-expansion.ts"],
   "how-do-you-compare-two-commercial-lease-options": ["occupancy-v5-body-lease-compare.ts", "occupancynpv-blog-expansion.ts"],
   "gross-lease-vs-net-lease-for-tenants": ["occupancy-v5-body-gross-vs-net-lease.ts", "occupancynpv-autonomous-backlog-v1.ts"],
+  "expense-stop-vs-base-year-for-tenants": ["occupancy-v5-body-expense-stop-base-year.ts", "occupancynpv-autonomous-backlog-v1.ts"],
   "how-is-cap-rate-calculated": ["occupancy-v5-body-cap-rate.ts", "occupancynpv-live-page.ts"],
 };
 
@@ -143,7 +144,9 @@ export function listOccupancyClubThrottleBacklogArticles(): BlogBacklogArticle[]
     registry_state: "COMPOSE_ONLY" as const,
     asset_id: draft.canonical.includes("gross-lease-vs-net")
       ? "blog-expansion-gross-lease-vs-net-lease-for-tenants"
-      : `autonomous-${draft.canonical.replace(/\/+$/, "").split("/").pop()}`,
+      : draft.canonical.includes("expense-stop-vs-base-year")
+        ? "blog-expansion-expense-stop-vs-base-year-for-tenants"
+        : `autonomous-${draft.canonical.replace(/\/+$/, "").split("/").pop()}`,
     draft,
     backlog_scope: "AUTHORIZED_BACKLOG" as const,
   }));

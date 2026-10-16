@@ -88,6 +88,19 @@ export const OCCUPANCY_BLOG_IMAGE_BRIEFS: OccupancyBlogImageBrief[] = [
     portrait_primary: false,
   },
   {
+    slug: "expense-stop-vs-base-year-for-tenants",
+    visual_concept_id: "occ-v2-expense-stop-base-year",
+    primary_subject: "LEASE_RECOVERY_MECHANICS",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+    public_path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Commercial lease packets with expense recovery clauses highlighted beside an occupancy-cost worksheet.",
+    required_visual_elements: ["lease packets", "worksheet or checklist", "recovery context"],
+    forbidden: ["portrait", "readable clause text"],
+    generation_prompt:
+      "Editorial photograph: walnut meeting table with two commercial lease folders, printed occupancy-cost worksheet, and highlighter marking recovery language sections. Tenant reviewing expense stop versus base year mechanics. No people. No readable text.",
+    portrait_primary: false,
+  },
+  {
     slug: "gross-lease-vs-net-lease-for-tenants",
     visual_concept_id: "occ-v2-gross-net-structure",
     primary_subject: "LEASE_NUMBERS_COMPARISON",

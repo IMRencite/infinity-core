@@ -79,7 +79,11 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
       }
       case "VENTURE_DEPLOY": {
         const expectedPath = String(lineage.path ?? "");
-        if (expectedPath) {
+        const isOnpvDeploy =
+          job.venture_id === CRE_VENTURE_ID ||
+          job.venture_id === "occupancynpv" ||
+          String(job.venture_id).includes("7e7e924e");
+        if (expectedPath && isOnpvDeploy) {
           const prepublish = evaluateOccupancyNpvTargetPrepublishQc({ path: expectedPath });
           if (prepublish.OCCUPANCYNPV_TARGET_PREPUBLISH_QC !== "PASS") {
             await completeJob(job, holder, {

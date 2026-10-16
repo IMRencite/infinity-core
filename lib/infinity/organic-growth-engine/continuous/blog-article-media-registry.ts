@@ -43,6 +43,7 @@ export const BLOG_AUTHORIZED_BACKLOG_PATHS = [
   "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
   "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
   "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+  "/blog/leasing/expense-stop-vs-base-year-for-tenants/",
   "/blog/occupancy-costs/cam-first-year/",
 ] as const;
 

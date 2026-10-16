@@ -69,6 +69,15 @@ export const OCCUPANCYNPV_FEATURED_EDITORIAL: OccupancyFeaturedEditorial[] = [
     asset_file: "occ-v2-lease-numbers-packets.webp",
   },
   {
+    slug: "expense-stop-vs-base-year-for-tenants",
+    path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Commercial lease packets with expense recovery clauses highlighted beside an occupancy-cost worksheet.",
+    subject: "Lease packets and a worksheet comparing expense stop and base year recovery language",
+    question: "What is the difference between an expense stop and a base year for tenants?",
+    visual_role: "FEATURED_EDITORIAL_IMAGE",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+  },
+  {
     slug: "gross-lease-vs-net-lease-for-tenants",
     path: "/media/blog/occ-v2-gross-net-structure.webp",
     alt: "Lease proposal folders and a calculator on a desk for gross versus net comparison.",
