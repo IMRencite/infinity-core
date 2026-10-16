@@ -109,6 +109,18 @@ if (existsSync(destPkgPath)) {
 }
 
 cpSync(join(root, "lib"), join(dest, "lib"), { recursive: true });
+const publicVisualFrom = join(root, "public/visual");
+if (existsSync(publicVisualFrom)) {
+  const publicVisualDest = join(dest, "public/visual");
+  mkdirSync(publicVisualDest, { recursive: true });
+  cpSync(publicVisualFrom, publicVisualDest, { recursive: true });
+}
+const publicMediaFrom = join(root, "public/media");
+if (existsSync(publicMediaFrom)) {
+  const publicMediaDest = join(dest, "public/media");
+  mkdirSync(publicMediaDest, { recursive: true });
+  cpSync(publicMediaFrom, publicMediaDest, { recursive: true });
+}
 for (const rel of occupancynpvVentureDeployComposeSources) {
   const from = join(root, rel);
   if (!existsSync(from)) continue;
