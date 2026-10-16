@@ -48,7 +48,7 @@ export async function diagnoseHeldClubThrottlePrintQc(cwd = process.cwd()): Prom
 
 function repairPromptSuffix(failureReasons: string[]): string {
   const hints: string[] = [
-    "Flat isolated artwork only on chroma green #00FF00 background.",
+    "Flat isolated PRINT ART ONLY on uniform chroma magenta RGB(255,0,255) outside the artwork.",
     "No embedded garment mockup, no shirt photo, no mannequin.",
     "Large bold silhouette with clean negative space for back print.",
     "No rectangular matte panel, no semi-transparent full-canvas wash.",
@@ -102,7 +102,6 @@ export async function runBoundedCreativeSelfHeal(input: {
     concept: input.concept,
     cwd: input.cwd,
     execute_live_creative: true,
-    creative_repair_suffix: repairPromptSuffix(input.failure_reasons),
   });
   const pass = pipeline.CLUB_THROTTLE_PRODUCT_CREATIVE_QC === "PASS";
   let print_failure_reasons = input.failure_reasons;

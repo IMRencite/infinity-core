@@ -1,6 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { latestRealCronLedgerForRoute } from "./durable/autonomous-runtime-scheduled-execution-ledger-v1";
+import {
+  createPortfolioDurableSupabase,
+  PORTFOLIO_DURABLE_TABLES,
+} from "./durable/portfolio-durable-supabase-v1";
 
 export const PORTFOLIO_OPERATING_CRON_PROOF_PATH =
   ".infinity/autonomous-portfolio-operations/last-scheduled-portfolio-cron.json" as const;
@@ -33,6 +37,27 @@ export async function reconcilePortfolioOperatingCronProofAsync(cwd = process.cw
   V44_PORTFOLIO_CRON_STATUS: "PASS" | "PENDING_NEXT_REAL_CRON";
   PORTFOLIO_OPERATING_SCHEDULER_QC: "PASS" | "PENDING_NEXT_REAL_CRON";
 }> {
+  const client = createPortfolioDurableSupabase();
+  const { data: platformConfirmedCycle } = client
+    ? await client
+        .from(PORTFOLIO_DURABLE_TABLES.cycles)
+        .select("cycle_id,triggered_at,cron_provenance")
+        .eq("trigger_type", "REAL_CRON_PLATFORM_CONFIRMED")
+        .order("triggered_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
+  if (platformConfirmedCycle) {
+    const prov = platformConfirmedCycle.cron_provenance as { platform_provenance?: string };
+    return {
+      V44_REAL_PORTFOLIO_CRON_AVAILABLE: true,
+      V44_PORTFOLIO_CRON_CYCLE_ID: platformConfirmedCycle.cycle_id,
+      V44_PORTFOLIO_CRON_TIMESTAMP: platformConfirmedCycle.triggered_at,
+      V44_PORTFOLIO_CRON_PROVENANCE: prov.platform_provenance ?? "vercel-platform:cron-job-confirmed",
+      V44_PORTFOLIO_CRON_STATUS: "PASS",
+      PORTFOLIO_OPERATING_SCHEDULER_QC: "PASS",
+    };
+  }
   const ledger = await latestRealCronLedgerForRoute("/api/runtime/portfolio-operating-tick");
   if (ledger && ledger.trigger_type === "REAL_CRON") {
     return {

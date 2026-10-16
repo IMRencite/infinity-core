@@ -21,7 +21,7 @@ import {
 } from "./autonomous-product-creative-self-healing-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
-import { patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
+import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
 import { countPortfolioJobsByCycle, patchPortfolioJobFields } from "./autonomous-portfolio-job-queue-v1";
 import {
@@ -353,6 +353,9 @@ export async function runPortfolioJobWorker(input?: { cycle_id?: string; max_job
     : { queued: 0, running: 0, failed: 0, completed: 0 };
   const continuation =
     counts.queued > 0 ? await triggerPortfolioJobWorkerContinuation({ cycle_id: input?.cycle_id }) : { triggered: false, reason: "NO_REMAINING_JOBS" };
+  if (input?.cycle_id) {
+    await reconcilePortfolioCycleTerminalState(input.cycle_id);
+  }
   return { processed: jobs.length, remaining_queued: counts.queued, continuation };
 }
 

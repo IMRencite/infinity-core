@@ -23,7 +23,7 @@ import {
 } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
-import type { PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
+import { isPortfolioScheduledTrigger, type PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
 import { createPortfolioTickTimer, V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE } from "./portfolio-tick-instrumentation-v1";
 import { publicationAssetIdentity, readPublicationRegistry } from "./autonomous-publication-idempotency-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
@@ -95,7 +95,9 @@ export async function orchestratePortfolioOperatingTick(input: {
   );
   timer.mark("plans_ms");
 
-  const trigger: PortfolioOperatingTrigger = input.provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL";
+  const trigger: PortfolioOperatingTrigger = isPortfolioScheduledTrigger(input.provenance.trigger_type)
+    ? "SCHEDULED"
+    : "MANUAL";
   const publishPolicy = resolveScheduledAutonomousPublish({
     trigger,
     manual_publish_flag: Boolean(input.manual_publish_flag),

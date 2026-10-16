@@ -5,7 +5,10 @@ import { createProductionCloudRuntimeStore, executeCloudRuntimeWake } from "@/li
 import { projectVentureDiscoveryBusinessExecution } from "@/lib/infinity/venture-operating-scale/venture-discovery-business-execution-projection";
 import { writeLocalJsonIfDurable } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
-import { resolvePortfolioCronProvenance } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
+import {
+  isPortfolioScheduledTrigger,
+  resolvePortfolioCronProvenance,
+} from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
 import { executeAutonomousPortfolioOperatingCycleV1 } from "@/lib/infinity/autonomous-portfolio-operations/execute-autonomous-portfolio-operating-cycle-v1";
 
 export const maxDuration = 60;
@@ -14,7 +17,7 @@ const DISCOVERY_CRON_UTC = "0 12 * * *" as const;
 
 function resolveDiscoveryTrigger(request: Request): "SCHEDULED" | "MANUAL" {
   const provenance = resolvePortfolioCronProvenance(request);
-  return provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL";
+  return isPortfolioScheduledTrigger(provenance.trigger_type) ? "SCHEDULED" : "MANUAL";
 }
 
 export async function GET(request: Request): Promise<NextResponse> {

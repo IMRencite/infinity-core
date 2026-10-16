@@ -4,7 +4,11 @@ import {
   PORTFOLIO_DURABLE_TABLES,
   portfolioDurablePostgresConfigured,
 } from "./portfolio-durable-supabase-v1";
-import type { PortfolioCronProvenance } from "./portfolio-cron-provenance-v1";
+import {
+  classifyPortfolioCronPlatformOrigin,
+  type PortfolioCronProvenance,
+} from "./portfolio-cron-provenance-v1";
+import { countPortfolioJobsByCycle } from "./autonomous-portfolio-job-queue-v1";
 
 export const AUTONOMOUS_PORTFOLIO_DURABLE_EXECUTION_V1 = "AUTONOMOUS_PORTFOLIO_DURABLE_EXECUTION_V1" as const;
 
@@ -95,6 +99,77 @@ export async function getPortfolioCycle(cycle_id: string): Promise<PortfolioCycl
   if (!client) return null;
   const { data } = await client.from(PORTFOLIO_DURABLE_TABLES.cycles).select("*").eq("cycle_id", cycle_id).maybeSingle();
   return (data as PortfolioCycleRow | null) ?? null;
+}
+
+export async function reconcilePortfolioCycleTerminalState(cycle_id: string): Promise<{
+  reconciled: boolean;
+  status: PortfolioCycleStatus;
+  counts: Awaited<ReturnType<typeof countPortfolioJobsByCycle>>;
+}> {
+  const counts = await countPortfolioJobsByCycle(cycle_id);
+  const pending = counts.queued + counts.running;
+  const totalTerminal = counts.completed + counts.failed;
+  if (pending > 0 || totalTerminal === 0) {
+    return { reconciled: false, status: "RUNNING", counts };
+  }
+  const status: PortfolioCycleStatus =
+    counts.failed > 0 && counts.completed === 0 ? "FAILED" : counts.failed > 0 ? "PARTIAL" : "COMPLETED";
+  await patchPortfolioCycle(cycle_id, {
+    status,
+    completed_at: new Date().toISOString(),
+    jobs_completed: counts.completed,
+    jobs_failed: counts.failed,
+  });
+  return { reconciled: true, status, counts };
+}
+
+export async function applyPortfolioPlatformConfirmedCronProvenance(input: {
+  cycle_id: string;
+  cron_provenance: Record<string, unknown>;
+  vercel_request_id?: string | null;
+  vercel_request_type?: string | null;
+}): Promise<{ updated: boolean; trigger_type: string; platform_origin_qc: string }> {
+  const authValidated = input.cron_provenance.authorization_validated === true;
+  const classified = classifyPortfolioCronPlatformOrigin({
+    authorization_validated: authValidated,
+    vercel_request_type: input.vercel_request_type ?? null,
+    route_matches: true,
+    deployment_matches: true,
+    timestamp_matches: true,
+  });
+  if (classified.trigger_type !== "REAL_CRON_PLATFORM_CONFIRMED") {
+    return {
+      updated: false,
+      trigger_type: String(input.cron_provenance.trigger_type ?? "MANUAL"),
+      platform_origin_qc: classified.platform_origin_qc,
+    };
+  }
+  const client = createPortfolioDurableSupabase();
+  if (!client) {
+    return { updated: false, trigger_type: "UNKNOWN", platform_origin_qc: "PENDING" };
+  }
+  const provenance = {
+    ...input.cron_provenance,
+    trigger_type: classified.trigger_type,
+    platform_provenance: classified.platform_provenance,
+    platform_origin_qc: classified.platform_origin_qc,
+    vercel_request_id: input.vercel_request_id ?? null,
+    vercel_request_type: input.vercel_request_type ?? null,
+    authorization_validated: authValidated,
+  };
+  await client
+    .from(PORTFOLIO_DURABLE_TABLES.cycles)
+    .update({
+      trigger_type: classified.trigger_type,
+      cron_provenance: provenance,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("cycle_id", input.cycle_id);
+  return {
+    updated: true,
+    trigger_type: classified.trigger_type,
+    platform_origin_qc: classified.platform_origin_qc,
+  };
 }
 
 export function autonomousPortfolioDurableExecutionQc(): "PASS" | "FAIL" {

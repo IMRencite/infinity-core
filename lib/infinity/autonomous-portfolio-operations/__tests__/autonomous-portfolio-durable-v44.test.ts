@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  cronAuthVsProvenanceSeparationQc,
   portfolioCronProvenanceIntegrityQc,
   resolvePortfolioCronProvenance,
 } from "../durable/portfolio-cron-provenance-v1";
@@ -15,25 +16,42 @@ import { V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE } from "../durable/portfolio-
 import { creativeSelfHealBudgetGovernanceQc } from "../durable/creative-self-heal-budget-governance-v1";
 
 describe("AUTONOMOUS_PORTFOLIO_DURABLE_V44", () => {
-  it("does not treat manual Bearer + x-vercel-cron header as REAL_CRON", () => {
-    const manual = resolvePortfolioCronProvenance(
+  it("authenticated cron-shaped request is not platform-confirmed REAL_CRON", () => {
+    const secret = "test-cron-secret";
+    const manualBearer = resolvePortfolioCronProvenance(
       new Request("http://localhost/api/runtime/portfolio-operating-tick", {
-        headers: { authorization: "Bearer secret", "x-vercel-cron": "1" },
+        headers: { authorization: `Bearer ${secret}` },
       }),
+      { CRON_SECRET: secret },
     );
-    const real = resolvePortfolioCronProvenance(
+    const manualUa = resolvePortfolioCronProvenance(
       new Request("http://localhost/api/runtime/portfolio-operating-tick", {
-        headers: { "x-vercel-cron": "1", "user-agent": "vercel-cron/1.0" },
+        headers: { "user-agent": "vercel-cron/1.0" },
       }),
+      { CRON_SECRET: secret },
     );
-    expect(manual.trigger_type).toBe("MANUAL");
-    expect(real.trigger_type).toBe("REAL_CRON");
+    const cronShaped = resolvePortfolioCronProvenance(
+      new Request("http://localhost/api/runtime/portfolio-operating-tick", {
+        headers: {
+          authorization: `Bearer ${secret}`,
+          "user-agent": "vercel-cron/1.0",
+        },
+      }),
+      { CRON_SECRET: secret },
+    );
+    expect(manualBearer.trigger_type).toBe("MANUAL");
+    expect(manualUa.trigger_type).toBe("MANUAL");
+    expect(cronShaped.trigger_type).toBe("AUTHENTICATED_CRON_SHAPED");
+    expect(cronShaped.authorization_validated).toBe(true);
+    expect(cronShaped.platform_origin_qc).toBe("PENDING");
     expect(
       portfolioCronProvenanceIntegrityQc({
-        manual_with_spoofed_header: manual.trigger_type,
-        platform_cron: real.trigger_type,
+        manual_bearer_only: manualBearer.trigger_type,
+        manual_ua_only: manualUa.trigger_type,
+        bearer_plus_vercel_ua: cronShaped.trigger_type,
       }),
     ).toBe("PASS");
+    expect(cronAuthVsProvenanceSeparationQc()).toBe("PASS");
   });
 
   it("passes durable architecture QC gates", () => {

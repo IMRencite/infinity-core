@@ -15,13 +15,19 @@ import {
 import { reconcilePortfolioOperatingCronProofAsync } from "@/lib/infinity/autonomous-portfolio-operations/portfolio-operating-cron-reconciliation-v1";
 import {
   resolvePortfolioCronProvenance,
-  portfolioCronProvenanceIntegrityQc,
   PORTFOLIO_CRON_SCHEDULE_IDENTITY,
+  mapProvenanceToLedgerTriggerType,
+  isPortfolioScheduledTrigger,
+  realCronProvenancePolicyQc,
+  cronAuthVsProvenanceSeparationQc,
 } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
 import { orchestratePortfolioOperatingTick } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-orchestrator-v1";
 import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
 import { triggerPortfolioJobWorkerContinuation } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-continuation-v1";
-import { autonomousPortfolioDurableExecutionQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-portfolio-durable-execution-v1";
+import {
+  autonomousPortfolioDurableExecutionQc,
+  reconcilePortfolioCycleTerminalState,
+} from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-portfolio-durable-execution-v1";
 import { autonomousPortfolioJobQueueQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-portfolio-job-queue-v1";
 import { portfolioJobClaimAndLeaseQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-job-claim-and-lease-v1";
 import { portfolioCronOrchestratorQc } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-orchestrator-v1";
@@ -66,7 +72,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       route: "/api/runtime/portfolio-operating-tick",
       schedule_identity: PORTFOLIO_CRON_SCHEDULE_IDENTITY,
       platform_provenance: provenance.platform_provenance,
-      trigger_type: provenance.trigger_type,
+      trigger_type: mapProvenanceToLedgerTriggerType(provenance.trigger_type),
       cycle_id: orchestration.cycle_id,
       accepted_status: "ACCEPTED",
       completed_status: "ORCHESTRATOR_RETURNED",
@@ -80,6 +86,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     const workerKick = await triggerPortfolioJobWorkerContinuation({
       cycle_id: orchestration.cycle_id ?? undefined,
     });
+
+    const cycleTerminal =
+      orchestration.cycle_id != null
+        ? await reconcilePortfolioCycleTerminalState(orchestration.cycle_id)
+        : { reconciled: false, status: "RUNNING" as const, counts: null };
 
     const cronReconcile = await reconcilePortfolioOperatingCronProofAsync();
     const architecturePass =
@@ -117,7 +128,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     };
 
     const payload = {
-      trigger: provenance.trigger_type === "REAL_CRON" ? "SCHEDULED" : "MANUAL",
+      trigger: isPortfolioScheduledTrigger(provenance.trigger_type) ? "SCHEDULED" : "MANUAL",
       provenance,
       cadence: PORTFOLIO_OPERATING_CRON_SCHEDULE,
       cycle_id: orchestration.cycle_id,
@@ -136,16 +147,12 @@ export async function GET(request: Request): Promise<NextResponse> {
       PORTFOLIO_JOB_RETRY_POLICY_QC: portfolioJobRetryPolicyQc(),
       DURABLE_CONTENT_SELF_HEALING_QC: durableContentSelfHealingQc(),
       PORTFOLIO_CRON_DURABLE_PROVENANCE_QC: portfolioCronDurableProvenanceQc(),
-      PORTFOLIO_CRON_PROVENANCE_INTEGRITY_QC: portfolioCronProvenanceIntegrityQc({
-        manual_with_spoofed_header: resolvePortfolioCronProvenance(
-          new Request("http://local/tick", { headers: { authorization: "Bearer x", "x-vercel-cron": "1" } }),
-        ).trigger_type,
-        platform_cron: resolvePortfolioCronProvenance(
-          new Request("http://local/tick", {
-            headers: { "x-vercel-cron": "1", "user-agent": "vercel-cron/1.0" },
-          }),
-        ).trigger_type,
-      }),
+      CRON_REQUEST_AUTH_QC: provenance.authorization_validated ? "PASS" : "FAIL",
+      CRON_PLATFORM_PROVENANCE_QC: provenance.platform_origin_qc,
+      REAL_CRON_PROVENANCE_POLICY_QC: realCronProvenancePolicyQc(),
+      CRON_AUTH_VS_PROVENANCE_SEPARATION_QC: cronAuthVsProvenanceSeparationQc(),
+      CRON_SECRET_REPLAY_CAN_MIMIC_REQUEST: true,
+      PORTFOLIO_CYCLE_TERMINAL_RECONCILE: cycleTerminal,
       DISCOVERY_CRON_DURABLE_PROVENANCE_QC: discoveryCronDurableProvenanceArchitectureQc(),
       AUTONOMOUS_PUBLICATION_IDEMPOTENCY_QC: autonomousPublicationIdempotencyQc(),
       AUTONOMOUS_DEPLOY_TELEMETRY_QC: autonomousDeployTelemetryQc(),
@@ -168,7 +175,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       AUTONOMOUS_SCHEDULER_RESPONSIBILITY_SEPARATION_QC: autonomousSchedulerResponsibilitySeparationQc(),
       AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_QC: autonomousSafePublishAuthorityQc(),
       SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_QC: scheduledAutonomousPublishPolicyQc({
-        scheduled_without_cli_flag: provenance.trigger_type === "REAL_CRON",
+        scheduled_without_cli_flag: isPortfolioScheduledTrigger(provenance.trigger_type),
       }),
       publish_policy: {
         execute_publish: orchestration.publish_execute,
