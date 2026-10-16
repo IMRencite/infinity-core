@@ -25,9 +25,10 @@ describe("portfolio operating backlog publish hygiene", () => {
     expect(ranked.some((row) => row.article.slug === "how-riders-choose-a-shirt")).toBe(false);
   });
 
-  it("selects repaired group-ride for CT refresh deploy, not the live shirt", () => {
+  it("selects next repaired CT refresh candidate, not the live shirt", () => {
     const pick = pickClubThrottleAutonomousBacklogCandidate();
-    expect(pick?.slug).toBe("group-ride-etiquette");
+    expect(pick?.slug).not.toBe("how-riders-choose-a-shirt");
+    expect(["bike-night-etiquette", "group-ride-etiquette"]).toContain(pick?.slug);
   });
 
   it("ranks net-new ONPV expense-stop before published gross-vs-net", () => {

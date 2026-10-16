@@ -10,6 +10,8 @@ import { executeBoundedVentureDeploy } from "./async-venture-deployment-reconcil
 import { persistAutonomousDeployTelemetry } from "./autonomous-deploy-telemetry-v1";
 import { registerSuccessfulPublication } from "./autonomous-publication-idempotency-v1";
 import { verifyOccupancyNpvProductionPublication } from "../occupancynpv-production-publish-proof-v1";
+import { verifyClubThrottleProductionPublication } from "../club-throttle-production-publish-proof-v1";
+import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import { evaluateOccupancyNpvTargetPrepublishQc } from "../portfolio-operating-backlog-publish-v1";
 import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
 import { recordVentureGrowthLearning } from "../venture-growth-learning-loop-v1";
@@ -214,14 +216,25 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           });
           return;
         }
-        const proof = await verifyOccupancyNpvProductionPublication({ canonical_url, expected_path });
+        const isClubThrottle = job.venture_id === CLUB_THROTTLE_VENTURE_ID;
+        const refreshMarkers =
+          isClubThrottle && expected_path.includes("group-ride-etiquette")
+            ? ["sodium lights turning chrome orange", "judged when the last rider gets home"]
+            : undefined;
+        const proof = isClubThrottle
+          ? await verifyClubThrottleProductionPublication({
+              canonical_url,
+              expected_path,
+              content_markers: refreshMarkers,
+            })
+          : await verifyOccupancyNpvProductionPublication({ canonical_url, expected_path });
         const outcome = classifyProductionVerifyHttpOutcome({
           http_status: proof.http_status,
           upstream_blocked: false,
         });
         if (proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS") {
           await registerSuccessfulPublication({
-            venture_id: "occupancynpv",
+            venture_id: isClubThrottle ? "club-throttle" : "occupancynpv",
             asset_identity: assetIdentity,
             canonical_path: expected_path,
             content_revision: assetIdentity,
