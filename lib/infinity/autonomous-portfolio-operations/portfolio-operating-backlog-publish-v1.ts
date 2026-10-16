@@ -144,6 +144,54 @@ export function pickClubThrottleAutonomousBacklogCandidate(
   return rankClubThrottleAutonomousContentRefreshRows(articles)[0]?.article ?? null;
 }
 
+export const CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG = "how-to-ride-after-dark" as const;
+
+/** Minimal cycle diagnostic so null picker results expose exact gate/pre-deploy state. */
+export function buildClubThrottleAutonomousPublishCycleDiagnostic(
+  articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
+): {
+  publish_lane_ready_count: number;
+  refresh_lane_ready_count: number;
+  ct_refresh_probe: {
+    slug: string;
+    registry_state: BlogBacklogArticle["registry_state"];
+    refresh_lane_excluded: boolean;
+    publish_allowed: boolean;
+    deploy_allowed: boolean;
+    reasons: string[];
+  } | null;
+} {
+  const publishRanked = rankClubThrottleAutonomousPublishRows(articles);
+  const refreshRanked = rankClubThrottleAutonomousContentRefreshRows(articles);
+  const rendered = buildBacklogRenderedEvidenceMap(articles);
+  const probeArticle =
+    articles.find((a) => a.slug === CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG && a.venture === "club-throttle") ?? null;
+  if (!probeArticle) {
+    return {
+      publish_lane_ready_count: publishRanked.length,
+      refresh_lane_ready_count: refreshRanked.length,
+      ct_refresh_probe: null,
+    };
+  }
+  const gate = evaluateBacklogSourceVNext(probeArticle);
+  const pre = evaluateBlogArticlePreDeployQc({
+    article: probeArticle,
+    rendered: rendered[probeArticle.path] ?? null,
+  });
+  return {
+    publish_lane_ready_count: publishRanked.length,
+    refresh_lane_ready_count: refreshRanked.length,
+    ct_refresh_probe: {
+      slug: probeArticle.slug,
+      registry_state: probeArticle.registry_state,
+      refresh_lane_excluded: CLUB_THROTTLE_AUTONOMOUS_REFRESH_EXCLUDED_SLUGS.has(probeArticle.slug),
+      publish_allowed: gate.publish_allowed,
+      deploy_allowed: pre.deploy_allowed,
+      reasons: [...new Set([...gate.reasons, ...pre.reasons])],
+    },
+  };
+}
+
 export function clubThrottleBacklogCandidateWorkType(
   article: BlogBacklogArticle,
 ): "NEW_PUBLICATION" | "CONTENT_REFRESH" {

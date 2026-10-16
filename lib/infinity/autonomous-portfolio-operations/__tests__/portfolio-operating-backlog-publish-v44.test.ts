@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildClubThrottleAutonomousPublishCycleDiagnostic,
   evaluateOnpvInternalLinkClusterQc,
   pickClubThrottleAutonomousBacklogCandidate,
   rankClubThrottleAutonomousPublishRows,
@@ -37,5 +38,24 @@ describe("portfolio operating backlog publish hygiene", () => {
     const articles = listOccupancyClubThrottleBacklogArticles();
     const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
     expect(ranked[0]?.article.slug).toBe("how-free-rent-affects-occupancy-cost-for-tenants");
+  });
+
+  it("persists after-dark refresh probe when deploy gates pass", () => {
+    const diagnostic = buildClubThrottleAutonomousPublishCycleDiagnostic();
+    expect(diagnostic.ct_refresh_probe?.slug).toBe("how-to-ride-after-dark");
+    expect(diagnostic.ct_refresh_probe?.publish_allowed).toBe(true);
+    expect(diagnostic.ct_refresh_probe?.deploy_allowed).toBe(true);
+    expect(pickClubThrottleAutonomousBacklogCandidate()?.slug).toBe("how-to-ride-after-dark");
+  });
+
+  it("persists exact deploy failure reasons when after-dark draft is missing", () => {
+    const articles = listOccupancyClubThrottleBacklogArticles();
+    const broken = articles.map((a) =>
+      a.slug === "how-to-ride-after-dark" ? { ...a, draft: null } : a,
+    );
+    const diagnostic = buildClubThrottleAutonomousPublishCycleDiagnostic(broken);
+    expect(diagnostic.ct_refresh_probe?.deploy_allowed).toBe(false);
+    expect(diagnostic.ct_refresh_probe?.reasons).toContain("NO_DRAFT");
+    expect(pickClubThrottleAutonomousBacklogCandidate(broken)).toBeNull();
   });
 });

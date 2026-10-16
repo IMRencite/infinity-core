@@ -11,6 +11,7 @@ import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
   pickClubThrottleAutonomousBacklogCandidate,
+  buildClubThrottleAutonomousPublishCycleDiagnostic,
   clubThrottleBacklogCandidateWorkType,
   countBacklogPublishCandidates,
   rankOccupancyNpvAutonomousPublishRows,
@@ -120,7 +121,9 @@ export async function orchestratePortfolioOperatingTick(input: {
 
   const backlog = listOccupancyClubThrottleBacklogArticles();
   const backlogPublishCandidates = countBacklogPublishCandidates(backlog);
+  const ctPublishDiagnostic = buildClubThrottleAutonomousPublishCycleDiagnostic(backlog);
   const enqueued: Array<{ job_type: string; venture_id: string; idempotency_key: string }> = [];
+  let ctDeployEnqueueSuppressed: { idempotency_key: string; reason: "IDEMPOTENCY_DUPLICATE" } | null = null;
   let jobsCreated = 0;
 
   if (cycle_id) {
@@ -255,6 +258,9 @@ export async function orchestratePortfolioOperatingTick(input: {
               asset_identity: assetId,
             },
           });
+          if (deploy.skipped && !deploy.job_id) {
+            ctDeployEnqueueSuppressed = { idempotency_key: deployKey, reason: "IDEMPOTENCY_DUPLICATE" };
+          }
           if (deploy.job_id) {
             jobsCreated += 1;
             enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: CLUB_THROTTLE_VENTURE_ID, idempotency_key: deployKey });
@@ -339,6 +345,8 @@ export async function orchestratePortfolioOperatingTick(input: {
             }
           : null,
         ct_publish_skip_reason: ctPublishSkipReason,
+        ct_publish_diagnostic: ctPublishDiagnostic,
+        ct_deploy_enqueue_suppressed: ctDeployEnqueueSuppressed,
         enqueued_job_types: enqueued.map((e) => e.job_type),
       },
     });
@@ -385,6 +393,8 @@ export async function orchestratePortfolioOperatingTick(input: {
         }
       : null,
     ct_publish_skip_reason: ctPublishSkipReason,
+    ct_publish_diagnostic: ctPublishDiagnostic,
+    ct_deploy_enqueue_suppressed: ctDeployEnqueueSuppressed,
     onpv_publish_diagnostic: {
       occupancynpv_backlog_articles: backlog.filter((a) => a.venture === "occupancynpv").length,
       ranked_publish_ready: onpvRanked.length,
