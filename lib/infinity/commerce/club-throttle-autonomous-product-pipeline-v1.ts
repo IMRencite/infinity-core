@@ -28,6 +28,14 @@ export const CLUB_THROTTLE_AUTONOMOUS_PRODUCT_PIPELINE_V1 = "CLUB_THROTTLE_AUTON
 
 const PIPELINE_ARTIFACT_ROOT = ".infinity/commerce/autonomous-product-pipeline";
 
+/** Vercel serverless cannot write under /var/task; use /tmp for attempt artifacts. */
+export function resolveClubThrottlePipelineArtifactRoot(cwd: string, env: NodeJS.ProcessEnv = process.env): string {
+  if (env.VERCEL === "1" || env.INFINITY_CLOUD_RUNTIME === "1") {
+    return join("/tmp", "infinity-commerce-autonomous-product-pipeline");
+  }
+  return join(cwd, PIPELINE_ARTIFACT_ROOT);
+}
+
 export type AutonomousProductPipelineResult = {
   concept_id: string;
   lifecycle_stage: ClubThrottleProductLifecycleStage;
@@ -98,6 +106,7 @@ export async function runClubThrottleAutonomousProductPipeline(input: {
 }): Promise<AutonomousProductPipelineResult> {
   const cwd = input.cwd ?? process.cwd();
   const env = input.env ?? process.env;
+  const artifactRoot = resolveClubThrottlePipelineArtifactRoot(cwd, env);
   const brief = conceptToBrief(input.concept);
   const authority = resolveRoutineCreativeAuthority({
     brand_fit_score: input.concept.brand_fit_score,
@@ -182,7 +191,7 @@ export async function runClubThrottleAutonomousProductPipeline(input: {
   const imageB64 = generated.images[0]!;
   const rawBytes = Buffer.from(imageB64, "base64");
   const rawHash = createHash("sha256").update(rawBytes).digest("hex");
-  const outDir = join(cwd, PIPELINE_ARTIFACT_ROOT, input.concept.concept_id);
+  const outDir = join(artifactRoot, input.concept.concept_id);
   const attemptDir = join(outDir, "attempts", attemptId);
   mkdirSync(attemptDir, { recursive: true });
   const rawPath = join(attemptDir, "raw-provider.png");

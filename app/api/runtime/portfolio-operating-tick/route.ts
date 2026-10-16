@@ -192,6 +192,8 @@ export async function GET(request: Request): Promise<NextResponse> {
       AUTONOMOUS_VENTURE_OPERATIONS_QC: autonomyQc,
       enqueued_jobs: orchestration.enqueued,
       onpv_autonomous_publish_candidate: orchestration.onpv_autonomous_publish_candidate,
+      ct_autonomous_publish_candidate: orchestration.ct_autonomous_publish_candidate,
+      ct_publish_skip_reason: orchestration.ct_publish_skip_reason,
       onpv_publish_diagnostic: orchestration.onpv_publish_diagnostic,
       venture_next_best_growth_actions: orchestration.venture_next_best_growth_actions,
       VENTURE_NEXT_BEST_GROWTH_ACTION_QC: orchestration.VENTURE_NEXT_BEST_GROWTH_ACTION_QC,

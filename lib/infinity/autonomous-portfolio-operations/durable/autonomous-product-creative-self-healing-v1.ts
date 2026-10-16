@@ -2,13 +2,18 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { evaluateApparelPrintProductionQc } from "@/lib/infinity/commerce/club-throttle-apparel-print-production-qc";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
-import { runClubThrottleAutonomousProductPipeline } from "@/lib/infinity/commerce/club-throttle-autonomous-product-pipeline-v1";
+import {
+  resolveClubThrottlePipelineArtifactRoot,
+  runClubThrottleAutonomousProductPipeline,
+} from "@/lib/infinity/commerce/club-throttle-autonomous-product-pipeline-v1";
 import type { ClubThrottleProductConcept } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 
 export const AUTONOMOUS_PRODUCT_CREATIVE_SELF_HEALING_V1 = "AUTONOMOUS_PRODUCT_CREATIVE_SELF_HEALING_V1" as const;
 
-const PIPELINE_ROOT = ".infinity/commerce/autonomous-product-pipeline";
+function pipelineRoot(cwd: string): string {
+  return resolveClubThrottlePipelineArtifactRoot(cwd, process.env);
+}
 
 export type HeldCreativeDiagnosis = {
   CT_HELD_PRODUCT_ID: string | null;
@@ -28,7 +33,7 @@ export async function diagnoseHeldClubThrottlePrintQc(cwd = process.cwd()): Prom
       CT_PRINT_QC_FAILURE_REASONS: [],
     };
   }
-  const rasterPath = join(cwd, PIPELINE_ROOT, top.concept_id, "grok-source-raster.png");
+  const rasterPath = join(pipelineRoot(cwd), top.concept_id, "grok-source-raster.png");
   if (!existsSync(rasterPath)) {
     return {
       CT_HELD_PRODUCT_ID: top.concept_id,
@@ -98,6 +103,16 @@ export async function runBoundedCreativeSelfHeal(input: {
     };
   }
 
+  if (input.failure_reasons.some((r) => r.includes("embedded") || r.includes("chroma_"))) {
+    return {
+      attempt_id: `${input.concept.concept_id}-self-heal-${input.attempt_index}`,
+      pass: false,
+      source_asset_hash: null,
+      print_failure_reasons: input.failure_reasons,
+      held_reason: "CT_PRINT_QC_QUALITY_HELD_NO_AUTO_PAID_RETRY",
+    };
+  }
+
   const pipeline = await runClubThrottleAutonomousProductPipeline({
     concept: input.concept,
     cwd: input.cwd,
@@ -106,7 +121,11 @@ export async function runBoundedCreativeSelfHeal(input: {
   const pass = pipeline.CLUB_THROTTLE_PRODUCT_CREATIVE_QC === "PASS";
   let print_failure_reasons = input.failure_reasons;
   if (!pass) {
-    const rasterPath = join(input.cwd ?? process.cwd(), PIPELINE_ROOT, input.concept.concept_id, "grok-source-raster.png");
+    const rasterPath = join(
+      pipelineRoot(input.cwd ?? process.cwd()),
+      input.concept.concept_id,
+      "grok-source-raster.png",
+    );
     if (existsSync(rasterPath)) {
       const printQc = await evaluateApparelPrintProductionQc(rasterPath);
       print_failure_reasons = printQc.reasons;

@@ -69,6 +69,8 @@ export async function orchestratePortfolioOperatingTick(input: {
   V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE: typeof V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE;
   backlog_publish_candidates: number;
   onpv_autonomous_publish_candidate: { slug: string; path: string; asset_id: string } | null;
+  ct_autonomous_publish_candidate: { slug: string; path: string; work_type: string } | null;
+  ct_publish_skip_reason: string | null;
   onpv_publish_diagnostic: {
     occupancynpv_backlog_articles: number;
     ranked_publish_ready: number;
@@ -313,7 +315,33 @@ export async function orchestratePortfolioOperatingTick(input: {
       }
     }
 
-    await patchPortfolioCycle(cycle_id, { jobs_created: jobsCreated, status: "RUNNING" });
+    const ctCandidateForReport = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
+    const ctPublishSkipReason = !publishPolicy.execute_publish
+      ? publishPolicy.reason
+      : !ctCandidateForReport
+        ? "NO_CT_BACKLOG_CANDIDATE_AFTER_DEPLOY_GUARDS"
+        : null;
+
+    await patchPortfolioCycle(cycle_id, {
+      jobs_created: jobsCreated,
+      status: "RUNNING",
+      payload: {
+        inventory_qc: inventoryQc,
+        plan_qc: planQc,
+        venture_next_best: ventureNextBest,
+        publish_execute: publishPolicy.execute_publish,
+        publish_reason: publishPolicy.reason,
+        ct_autonomous_publish_candidate: ctCandidateForReport
+          ? {
+              slug: ctCandidateForReport.slug,
+              path: ctCandidateForReport.path,
+              work_type: clubThrottleBacklogCandidateWorkType(ctCandidateForReport),
+            }
+          : null,
+        ct_publish_skip_reason: ctPublishSkipReason,
+        enqueued_job_types: enqueued.map((e) => e.job_type),
+      },
+    });
   }
 
   timer.mark("self_heal_ms");
@@ -330,7 +358,12 @@ export async function orchestratePortfolioOperatingTick(input: {
   const onpvPrepublish = onpvCandidate
     ? evaluateOccupancyNpvTargetPrepublishQc({ path: onpvCandidate.path, articles: backlog })
     : null;
-
+  const ctCandidateForReport = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
+  const ctPublishSkipReason = !publishPolicy.execute_publish
+    ? publishPolicy.reason
+    : !ctCandidateForReport
+      ? "NO_CT_BACKLOG_CANDIDATE_AFTER_DEPLOY_GUARDS"
+      : null;
   return {
     cycle_id,
     jobs_created: jobsCreated,
@@ -342,8 +375,16 @@ export async function orchestratePortfolioOperatingTick(input: {
     V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE,
     backlog_publish_candidates: backlogPublishCandidates,
     onpv_autonomous_publish_candidate: onpvCandidate
-      ? { slug: onpvCandidate.slug, path: onpvCandidate.path, asset_id: onpvCandidate.asset_id }
+      ? { slug: onpvCandidate.slug, path: onpvCandidate.path, asset_id: onpvCandidate.asset_id ?? onpvCandidate.slug }
       : null,
+    ct_autonomous_publish_candidate: ctCandidateForReport
+      ? {
+          slug: ctCandidateForReport.slug,
+          path: ctCandidateForReport.path,
+          work_type: clubThrottleBacklogCandidateWorkType(ctCandidateForReport),
+        }
+      : null,
+    ct_publish_skip_reason: ctPublishSkipReason,
     onpv_publish_diagnostic: {
       occupancynpv_backlog_articles: backlog.filter((a) => a.venture === "occupancynpv").length,
       ranked_publish_ready: onpvRanked.length,
