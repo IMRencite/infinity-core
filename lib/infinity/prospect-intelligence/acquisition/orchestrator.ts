@@ -9,9 +9,14 @@ import {
   liveSecEdgarEnabled,
   type RegisteredSource,
 } from "./registry";
+import { SEC_EDGAR_SOURCE_ID } from "./connectors/sec-edgar";
 import { emptySourceHealth, type ProspectAcquisitionPlan, type SourceHealthStatus } from "./types";
 
 const ACCESS: ProspectAccessRequest = { consumer: "prospect_intelligence" };
+
+export function secEdgarAcquisitionPayloadRevision(liveSec: boolean): string {
+  return liveSec ? "sec_edgar_live_company_tickers_v1" : "sec_edgar_fixture_v1";
+}
 
 const RATE_WINDOWS = new Map<string, number[]>();
 
@@ -182,10 +187,18 @@ export async function executeProspectAcquisitionTick(input: {
     health.last_attempt_at = now;
     try {
       markRate(registered.source.source_id, nowMs);
+      const liveSec = liveSecEdgarEnabled(env);
+      let discoveryCursor = cursor?.cursor ?? null;
+      if (registered.source.source_id === SEC_EDGAR_SOURCE_ID) {
+        const revision = secEdgarAcquisitionPayloadRevision(liveSec);
+        if (cursor?.payload_revision && cursor.payload_revision !== revision) {
+          discoveryCursor = null;
+        }
+      }
       const result = await registered.connector.discover({
         now,
         batch_size: batch,
-        cursor: cursor?.cursor ?? null,
+        cursor: discoveryCursor,
         geography: registered.config.geography,
         industries: registered.config.industry_scope,
       });
@@ -231,6 +244,10 @@ export async function executeProspectAcquisitionTick(input: {
         source_id: registered.source.source_id,
         scope: "discovery",
         cursor: result.next_cursor,
+        payload_revision:
+          registered.source.source_id === SEC_EDGAR_SOURCE_ID
+            ? secEdgarAcquisitionPayloadRevision(liveSec)
+            : cursor?.payload_revision ?? null,
         last_completed_at: now,
         last_record_seen: result.records.at(-1)?.source_record_id ?? cursor?.last_record_seen ?? null,
         next_due_at: new Date(nowMs + registered.config.discovery_cadence_ms).toISOString(),

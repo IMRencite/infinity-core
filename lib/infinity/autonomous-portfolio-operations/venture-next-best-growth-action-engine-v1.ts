@@ -37,7 +37,10 @@ function resolveOnpvAction(backlog = listOccupancyClubThrottleBacklogArticles())
       venture_name: "OccupancyNPV",
       next_best_growth_action: `Publish ${pick.title}`,
       selected_work_type:
-        pick.slug.includes("compare") || pick.slug.includes("expense-stop")
+        pick.slug.includes("compare") ||
+        pick.slug.includes("expense-stop") ||
+        pick.slug.includes("free-rent") ||
+        pick.slug.includes("gross-lease-vs-net")
           ? "DECISION_SUPPORT_PAGE"
           : "EVERGREEN_GUIDE",
       selection_reason: "Unpublished backlog asset passes autonomous publish gates",

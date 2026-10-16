@@ -25,15 +25,17 @@ describe("portfolio operating backlog publish hygiene", () => {
     expect(ranked.some((row) => row.article.slug === "how-riders-choose-a-shirt")).toBe(false);
   });
 
-  it("selects next repaired CT refresh candidate, not the live shirt", () => {
+  it("selects next repaired CT refresh candidate, not verified shirt or refreshed etiquette pages", () => {
     const pick = pickClubThrottleAutonomousBacklogCandidate();
     expect(pick?.slug).not.toBe("how-riders-choose-a-shirt");
-    expect(["bike-night-etiquette", "group-ride-etiquette"]).toContain(pick?.slug);
+    expect(pick?.slug).not.toBe("bike-night-etiquette");
+    expect(pick?.slug).not.toBe("group-ride-etiquette");
+    expect(pick?.slug).toBe("how-to-ride-after-dark");
   });
 
-  it("ranks net-new ONPV expense-stop before published gross-vs-net", () => {
+  it("ranks net-new ONPV free-rent before published lease cluster pages", () => {
     const articles = listOccupancyClubThrottleBacklogArticles();
     const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
-    expect(ranked[0]?.article.slug).toBe("expense-stop-vs-base-year-for-tenants");
+    expect(ranked[0]?.article.slug).toBe("how-free-rent-affects-occupancy-cost-for-tenants");
   });
 });

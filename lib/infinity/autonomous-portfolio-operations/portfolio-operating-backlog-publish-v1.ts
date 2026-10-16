@@ -9,7 +9,11 @@ import { evaluateBlogArticlePreDeployQc } from "@/lib/infinity/organic-growth-en
 const AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS = new Set(["cam-first-year"]);
 
 /** Live verified editorial — refresh deploy must not re-queue without a new content revision. */
-const CLUB_THROTTLE_AUTONOMOUS_REFRESH_EXCLUDED_SLUGS = new Set(["how-riders-choose-a-shirt"]);
+const CLUB_THROTTLE_AUTONOMOUS_REFRESH_EXCLUDED_SLUGS = new Set([
+  "how-riders-choose-a-shirt",
+  "bike-night-etiquette",
+  "group-ride-etiquette",
+]);
 
 const PUBLISHED_REGISTRY_STATES = new Set<BlogBacklogArticle["registry_state"]>(["PUBLISHED", "REFRESHED"]);
 

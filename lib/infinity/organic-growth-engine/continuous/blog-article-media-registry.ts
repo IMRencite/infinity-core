@@ -44,6 +44,7 @@ export const BLOG_AUTHORIZED_BACKLOG_PATHS = [
   "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
   "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
   "/blog/leasing/expense-stop-vs-base-year-for-tenants/",
+  "/blog/leasing/how-free-rent-affects-occupancy-cost-for-tenants/",
   "/blog/occupancy-costs/cam-first-year/",
 ] as const;
 

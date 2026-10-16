@@ -20,6 +20,7 @@ import { occupancyLeaseNumbersV5Body } from "./occupancy-v5-body-lease-numbers";
 import { occupancyOccupancyVsRentV5Body } from "./occupancy-v5-body-occupancy-vs-rent";
 import { occupancyGrossVsNetLeaseV5Body } from "./occupancy-v5-body-gross-vs-net-lease";
 import { occupancyExpenseStopBaseYearV5Body } from "./occupancy-v5-body-expense-stop-base-year";
+import { occupancyFreeRentEconomicsV5Body } from "./occupancy-v5-body-free-rent-economics";
 import { renderCanonicalArticleMain } from "./article-section-renderer";
 
 function permalink(category: string, slug: string): string {
@@ -125,12 +126,31 @@ export const OCCUPANCYNPV_EXPANSION_POSTS: OccupancyNpvBlogPost[] = [
     draft: true,
     unpublished: true,
   },
+  {
+    ...article({
+      slug: "how-free-rent-affects-occupancy-cost-for-tenants",
+      category: "leasing",
+      title: "How does free rent affect occupancy cost for tenants?",
+      excerpt:
+        "Free rent abates base rent in stated months, but CAM and other recoveries often still bill. Model abatement timing, TI, and recoveries on one occupancy-cost timeline before you trust net effective rent.",
+      image: occupancynpvFeaturedEditorialFor("how-free-rent-affects-occupancy-cost-for-tenants").path,
+      tags: ["Free Rent", "Concessions", "Occupancy Costs", "TI", "Leasing"],
+      published: "2026-10-16",
+    }),
+    asset_id: "blog-expansion-how-free-rent-affects-occupancy-cost-for-tenants",
+    modified: "2026-10-16",
+    reading_time: "13 min read",
+    categories: ["leasing"],
+    draft: true,
+    unpublished: true,
+  },
 ];
 
 const SHARED_LINKS = [
   "/blog/occupancy-costs/what-is-occupancy-cost-versus-rent/",
   "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
   "/blog/leasing/expense-stop-vs-base-year-for-tenants/",
+  "/blog/leasing/how-free-rent-affects-occupancy-cost-for-tenants/",
   "/blog/leasing/what-numbers-do-you-need-to-compare-two-leases/",
   "/blog/leasing/how-do-you-compare-two-commercial-lease-options/",
   "/compare-commercial-leases",
@@ -458,7 +478,7 @@ Practical next steps: align the years, discount both paths, and open the compare
 }
 
 export function occupancynpvExpansionDrafts(): OrganicDraft[] {
-  const [cap, occ, numbers, compare, grossNet, expenseStop] = OCCUPANCYNPV_EXPANSION_POSTS;
+  const [cap, occ, numbers, compare, grossNet, expenseStop, freeRent] = OCCUPANCYNPV_EXPANSION_POSTS;
   return [
     draftFrom({ post: cap!, ...occupancyCapRateV5Body() }),
     draftFrom({ post: occ!, ...occupancyOccupancyVsRentV5Body() }),
@@ -466,6 +486,7 @@ export function occupancynpvExpansionDrafts(): OrganicDraft[] {
     draftFrom({ post: compare!, ...occupancyLeaseCompareV5Body() }),
     draftFrom({ post: grossNet!, ...occupancyGrossVsNetLeaseV5Body() }),
     draftFrom({ post: expenseStop!, ...occupancyExpenseStopBaseYearV5Body() }),
+    draftFrom({ post: freeRent!, ...occupancyFreeRentEconomicsV5Body() }),
   ];
 }
 

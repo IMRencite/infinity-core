@@ -7,6 +7,7 @@ export type OccupancyInfoVisualSlug =
   | "what-is-occupancy-cost-versus-rent"
   | "gross-lease-vs-net-lease-for-tenants"
   | "expense-stop-vs-base-year-for-tenants"
+  | "how-free-rent-affects-occupancy-cost-for-tenants"
   | "cam-first-year"
   | "how-interest-rates-affect-commercial-property-values";
 
@@ -26,6 +27,18 @@ export function occupancyInfoVisualHtml(slug: OccupancyInfoVisualSlug): string {
       <tr><td>Stabilized NOI</td><td>$120,000</td></tr>
       <tr><td>Going-in cap rate</td><td>6.0%</td></tr>
       <tr><td>Indicated value</td><td>$120,000 ÷ 0.06 = $2,000,000</td></tr>
+    </tbody>
+  </table>
+</div>`;
+    case "how-free-rent-affects-occupancy-cost-for-tenants":
+      return `<div className="onpv-info-visual" data-onpv-info-visual="table" role="region" aria-label="Free rent versus CAM during abatement">
+  <p className="onpv-table-label">Illustrative abatement month (hypothetical)</p>
+  <table className="onpv-info-table">
+    <thead><tr><th scope="col">Line</th><th scope="col">Month with free base rent</th><th scope="col">Typical billing note</th></tr></thead>
+    <tbody>
+      <tr><td>Base rent</td><td>$0 (abated)</td><td>Per rent schedule</td></tr>
+      <tr><td>CAM / recoveries</td><td>Still estimated</td><td>Often not abated unless lease says so</td></tr>
+      <tr><td>Occupancy-cost row</td><td>CAM + other pass-throughs</td><td>Do not budget abatement headline only</td></tr>
     </tbody>
   </table>
 </div>`;
@@ -128,6 +141,7 @@ export function slugFromOccupancyPath(path: string): OccupancyInfoVisualSlug | n
     "how-is-cap-rate-calculated-for-a-building",
     "gross-lease-vs-net-lease-for-tenants",
     "expense-stop-vs-base-year-for-tenants",
+    "how-free-rent-affects-occupancy-cost-for-tenants",
     "how-do-you-compare-two-commercial-lease-options",
     "what-numbers-do-you-need-to-compare-two-leases",
     "what-is-occupancy-cost-versus-rent",

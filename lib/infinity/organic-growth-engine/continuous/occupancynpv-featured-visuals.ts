@@ -87,6 +87,15 @@ export const OCCUPANCYNPV_FEATURED_EDITORIAL: OccupancyFeaturedEditorial[] = [
     asset_file: "occ-v2-gross-net-structure.webp",
   },
   {
+    slug: "how-free-rent-affects-occupancy-cost-for-tenants",
+    path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Commercial lease abatement schedule and CAM estimate worksheets on a conference table.",
+    subject: "Lease concession schedule beside CAM estimate and TI allowance summary",
+    question: "How does free rent affect occupancy cost for tenants?",
+    visual_role: "FEATURED_EDITORIAL_IMAGE",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+  },
+  {
     slug: "how-do-you-compare-two-commercial-lease-options",
     path: "/media/blog/occ-v2-lease-options-properties.webp",
     alt: "Two different commercial building models and site photos laid out for side-by-side lease option evaluation.",

@@ -88,6 +88,19 @@ export const OCCUPANCY_BLOG_IMAGE_BRIEFS: OccupancyBlogImageBrief[] = [
     portrait_primary: false,
   },
   {
+    slug: "how-free-rent-affects-occupancy-cost-for-tenants",
+    visual_concept_id: "occ-v2-free-rent-abatement",
+    primary_subject: "LEASE_CONCESSION_SCHEDULE",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+    public_path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Commercial lease abatement schedule and CAM estimate worksheets on a conference table.",
+    required_visual_elements: ["rent schedule or concession summary", "CAM worksheet", "meeting table context"],
+    forbidden: ["portrait", "readable dollar amounts"],
+    generation_prompt:
+      "Editorial photograph: conference table with commercial lease rent schedule showing abatement months, separate CAM estimate printout, and TI allowance summary sheet. Tenant modeling free rent versus recoveries. No people. No readable text or numbers.",
+    portrait_primary: false,
+  },
+  {
     slug: "expense-stop-vs-base-year-for-tenants",
     visual_concept_id: "occ-v2-expense-stop-base-year",
     primary_subject: "LEASE_RECOVERY_MECHANICS",

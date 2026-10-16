@@ -132,6 +132,8 @@ export type AcquisitionCursor = {
   source_id: string;
   scope: string;
   cursor: string | null;
+  /** Distinguishes fixture vs live SEC ticker payloads so COMPLETE on a small fixture does not block live discovery. */
+  payload_revision?: string | null;
   last_completed_at: string | null;
   last_record_seen: string | null;
   next_due_at: string | null;

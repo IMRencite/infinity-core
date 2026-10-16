@@ -21,7 +21,11 @@ import {
   evaluateProspectSourceHealthGate,
   evaluateProspectSourcePolicyGate,
 } from "../acquisition/gates";
-import { executeProspectAcquisitionTick, resetAcquisitionRateWindows } from "../acquisition/orchestrator";
+import {
+  executeProspectAcquisitionTick,
+  resetAcquisitionRateWindows,
+  secEdgarAcquisitionPayloadRevision,
+} from "../acquisition/orchestrator";
 import { defaultAcquisitionRegistry } from "../acquisition/registry";
 import { UNKNOWN_POLICY, SEC_EDGAR_POLICY } from "../acquisition/policy";
 import { normalizeRawFields } from "../acquisition/normalize";
@@ -571,6 +575,46 @@ describe("Prospect Intelligence Acquisition V1", () => {
       expect(evaluateProspectIntelligencePublicPrivacyGate(JSON.stringify(pub)).result).toBe("PASS");
       expect(evaluateProspectIntelligenceRoomParityGate().result).toBe("PASS");
     });
+  });
+
+  it("resets SEC discovery cursor when fixture payload revision switches to live", async () => {
+    resetAcquisitionRateWindows();
+    const graph = createProspectGraph();
+    graph.acquisition.cursors[`${SEC_EDGAR_SOURCE_ID}:discovery`] = {
+      source_id: SEC_EDGAR_SOURCE_ID,
+      scope: "discovery",
+      cursor: null,
+      payload_revision: secEdgarAcquisitionPayloadRevision(false),
+      last_completed_at: "2020-01-01T00:00:00.000Z",
+      last_record_seen: "1652044",
+      next_due_at: null,
+      status: "COMPLETE",
+    };
+    const local = createProspectIntelligenceService(graph);
+    const extraFixture = {
+      ...SEC_EDGAR_FIXTURE,
+      "3": { cik_str: 999001, ticker: "IMRTEST", title: "Infinity Prospect Test Corp" },
+    };
+    const liveRegistry = registry({ cadenceMs: 1, secEnabled: true }).map((row) =>
+      row.source.source_id === SEC_EDGAR_SOURCE_ID
+        ? {
+            ...row,
+            connector: createSecEdgarConnector({
+              live: true,
+              fetchImpl: async () => new Response(JSON.stringify(extraFixture), { status: 200 }),
+            }),
+          }
+        : row,
+    );
+    await executeProspectAcquisitionTick({
+      service: local,
+      now: LATER,
+      registry: liveRegistry,
+      env: { PI_ACQUISITION_LIVE_SEC_EDGAR: "1", PI_ACQUISITION_DISABLED: "0" },
+    });
+    const cursor = local.graph.acquisition.cursors[`${SEC_EDGAR_SOURCE_ID}:discovery`];
+    expect(cursor?.payload_revision).toBe(secEdgarAcquisitionPayloadRevision(true));
+    expect(local.graph.acquisition.health[SEC_EDGAR_SOURCE_ID]?.records_seen ?? 0).toBeGreaterThan(0);
   });
 
   describe("public privacy", () => {

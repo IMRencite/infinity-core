@@ -43,6 +43,10 @@ const ONPV_SOURCE_BY_SLUG: Record<string, string[]> = {
   "how-do-you-compare-two-commercial-lease-options": ["occupancy-v5-body-lease-compare.ts", "occupancynpv-blog-expansion.ts"],
   "gross-lease-vs-net-lease-for-tenants": ["occupancy-v5-body-gross-vs-net-lease.ts", "occupancynpv-autonomous-backlog-v1.ts"],
   "expense-stop-vs-base-year-for-tenants": ["occupancy-v5-body-expense-stop-base-year.ts", "occupancynpv-autonomous-backlog-v1.ts"],
+  "how-free-rent-affects-occupancy-cost-for-tenants": [
+    "occupancy-v5-body-free-rent-economics.ts",
+    "occupancynpv-autonomous-backlog-v1.ts",
+  ],
   "how-is-cap-rate-calculated": ["occupancy-v5-body-cap-rate.ts", "occupancynpv-live-page.ts"],
 };
 
@@ -146,7 +150,9 @@ export function listOccupancyClubThrottleBacklogArticles(): BlogBacklogArticle[]
       ? "blog-expansion-gross-lease-vs-net-lease-for-tenants"
       : draft.canonical.includes("expense-stop-vs-base-year")
         ? "blog-expansion-expense-stop-vs-base-year-for-tenants"
-        : `autonomous-${draft.canonical.replace(/\/+$/, "").split("/").pop()}`,
+        : draft.canonical.includes("how-free-rent-affects-occupancy-cost")
+          ? "blog-expansion-how-free-rent-affects-occupancy-cost-for-tenants"
+          : `autonomous-${draft.canonical.replace(/\/+$/, "").split("/").pop()}`,
     draft,
     backlog_scope: "AUTHORIZED_BACKLOG" as const,
   }));
