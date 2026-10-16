@@ -2,6 +2,20 @@ import type { ClubThrottleConceptBrief } from "./club-throttle-concept-preflight
 import { chromaKeyPromptSuffix } from "./lot-line-chroma-key.ts";
 import type { ChromaKeyColor } from "./lot-line-chroma-key.ts";
 
+function sanitizeProviderContextText(text: string): string {
+  return text
+    .replace(/\bmerchandise\b/gi, "culture")
+    .replace(/\bmerch\b/gi, "culture")
+    .replace(/\bapparel\b/gi, "culture")
+    .replace(/\bgarment\b/gi, "culture")
+    .replace(/\bback[- ]print\b/gi, "graphic")
+    .replace(/\bshirt\b/gi, "culture")
+    .replace(/\bhoodie\b/gi, "culture")
+    .replace(/\bmockup\b/gi, "preview")
+    .replace(/\bwearing\b/gi, "riding")
+    .trim();
+}
+
 const GARMENT_SEMANTIC_TERMS = [
   "shirt",
   "t-shirt",
@@ -33,14 +47,17 @@ export function compileIsolatedGraphicProviderPrompt(
   keyColor: ChromaKeyColor,
 ): string {
   const chromaSuffix = chromaKeyPromptSuffix(keyColor);
+  const name = sanitizeProviderContextText(brief.name);
+  const hook = sanitizeProviderContextText(brief.commercial_hook);
+  const mood = sanitizeProviderContextText(brief.market_signals[0] ?? brief.commercial_hook);
   const themeLine =
     brief.design_mode === "TYPOGRAPHY_FIRST" || brief.design_mode === "PHRASE_FIRST"
-      ? `Bold original typography emblem for "${brief.name}". ${brief.commercial_hook}.`
-      : `Bold original illustration emblem for "${brief.name}". ${brief.commercial_hook}.`;
+      ? `Bold original typography emblem for "${name}". ${hook}.`
+      : `Bold original illustration emblem for "${name}". ${hook}.`;
   return [
     "Create one isolated standalone graphic emblem centered on the canvas.",
     themeLine,
-    `Visual mood: ${brief.market_signals[0] ?? brief.commercial_hook}.`,
+    `Visual mood: ${mood}.`,
     "Single cohesive graphic with clean closed boundary; high contrast; readable at distance.",
     "Composition fills the frame as one graphic object — not a small poster on empty space.",
     chromaSuffix,
