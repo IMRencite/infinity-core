@@ -73,6 +73,8 @@ export async function orchestratePortfolioOperatingTick(input: {
   onpv_autonomous_publish_candidate: { slug: string; path: string; asset_id: string } | null;
   ct_autonomous_publish_candidate: { slug: string; path: string; work_type: string } | null;
   ct_publish_skip_reason: string | null;
+  ct_publish_diagnostic: ReturnType<typeof buildClubThrottleAutonomousPublishCycleDiagnostic>;
+  ct_deploy_enqueue_suppressed: boolean;
   onpv_publish_diagnostic: {
     occupancynpv_backlog_articles: number;
     ranked_publish_ready: number;
