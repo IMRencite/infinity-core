@@ -9,6 +9,8 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 
+const emergencyCwdFromCli = process.argv.includes("--emergency-cwd");
+
 function loadEnv() {
   const envPath = join(process.cwd(), ".env.local");
   if (!existsSync(envPath)) return;
@@ -26,6 +28,11 @@ function loadEnv() {
 }
 
 loadEnv();
+if (emergencyCwdFromCli) {
+  process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY = "1";
+} else {
+  delete process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY;
+}
 
 const PROJECT = "infinity-runtime";
 const PROJECT_ID = "prj_wtUAxwdCx7V6ptAg2omUEWbHg6ox";

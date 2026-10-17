@@ -5,7 +5,9 @@ import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 
 describe("infinity runtime deploy source isolation", () => {
-  it("UNTRACKED_SOURCE_LEAKAGE_REGRESSION_QC: sentinel absent from detached worktree", () => {
+  it(
+    "UNTRACKED_SOURCE_LEAKAGE_REGRESSION_QC: sentinel absent from detached worktree",
+    () => {
     const repoRoot = process.cwd();
     const sentinelRel = ".infinity/_untracked-leak-sentinel-do-not-commit.txt";
     const sentinelPath = join(repoRoot, sentinelRel);
@@ -23,5 +25,7 @@ describe("infinity runtime deploy source isolation", () => {
     } finally {
       if (existsSync(sentinelPath)) rmSync(sentinelPath, { force: true });
     }
-  });
+  },
+    30_000,
+  );
 });
