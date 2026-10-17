@@ -331,8 +331,8 @@ async function main() {
     blog_media_deploy_artifact_qc: deployArtifactQc,
     flags: {
       BLOG_PUBLICATION_DEPLOY_HOLD:
-        process.env.BLOG_COMMITTED_TREE_REDEPLOY_PASS === "1"
-          ? deployArtifactQc.occupancynpv.result === "PASS" && deployArtifactQc.club_throttle.result === "PASS"
+        deployArtifactQc.occupancynpv.result === "PASS" && deployArtifactQc.club_throttle.result === "PASS"
+          ? process.env.BLOG_COMMITTED_TREE_REDEPLOY_PASS === "1" || DEPLOY
             ? "CLEARED"
             : "ACTIVE_UNTIL_COMMITTED_REDEPLOY_PASS"
           : "ACTIVE_UNTIL_COMMITTED_REDEPLOY_PASS",

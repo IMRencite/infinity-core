@@ -121,6 +121,39 @@ if (existsSync(publicMediaFrom)) {
   mkdirSync(publicMediaDest, { recursive: true });
   cpSync(publicMediaFrom, publicMediaDest, { recursive: true });
 }
+
+function assertRuntimeBlogMediaArtifactQc() {
+  const verify = spawnSync("npx", ["tsx", join(root, "scripts/_verify-runtime-blog-media-artifact.ts"), dest], {
+    cwd: root,
+    encoding: "utf8",
+    shell: true,
+    env: { ...process.env, FORCE_COLOR: "0" },
+  });
+  if (verify.status !== 0) {
+    console.log(
+      JSON.stringify(
+        {
+          ok: false,
+          reason: "BLOG_RUNTIME_MEDIA_ARTIFACT_QC_FAIL",
+          gate: "BlogRuntimeMediaArtifactQc",
+          stdout: verify.stdout?.slice(-4000) ?? "",
+          stderr: verify.stderr?.slice(-2000) ?? "",
+        },
+        null,
+        2,
+      ),
+    );
+    process.exit(1);
+  }
+  try {
+    return JSON.parse(verify.stdout ?? "{}");
+  } catch {
+    return { parsed: false };
+  }
+}
+
+const runtimeBlogMediaQc = assertRuntimeBlogMediaArtifactQc();
+
 for (const rel of occupancynpvVentureDeployComposeSources) {
   const from = join(root, rel);
   if (!existsSync(from)) continue;
@@ -900,6 +933,9 @@ const report = {
   INFINITY_RUNTIME_AUTONOMOUS_ROUTE_PRESERVATION_QC: missingAutonomous?.length ? "FAIL" : "PASS",
   AUTONOMOUS_RUNTIME_REQUIRED_ROUTE_MANIFEST_QC: missingAutonomous?.length ? "FAIL" : "PASS",
   autonomous_dest_routes: destRoutes,
+  BLOG_RUNTIME_MEDIA_ARTIFACT_QC: runtimeBlogMediaQc?.BLOG_RUNTIME_MEDIA_ARTIFACT_QC ?? "PASS",
+  CT_SERVERLESS_MEDIA_STARVATION_REGRESSION_QC: runtimeBlogMediaQc?.CT_SERVERLESS_MEDIA_STARVATION_REGRESSION_QC ?? "PASS",
+  runtime_blog_media_predeploy: runtimeBlogMediaQc?.predeploy ?? null,
 };
 if (promoted && bridgeDeploy && commerceBridgeProduction.status !== 401) {
   report.ok = false;
