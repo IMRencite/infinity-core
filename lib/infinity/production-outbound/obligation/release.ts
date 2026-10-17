@@ -12,6 +12,7 @@ import {
 import { CONVERSATION_PLANNER_VERSION } from "../conversation-planner";
 import { attachEvidenceClass, type GateEvidenceClass, type GatedEvidence } from "./evidence";
 import { COMMUNICATION_STALE_HEARTBEAT_MS } from "./pacing";
+import { loadBakedReleaseIdentity, resolveRuntimeReleaseSha } from "./release-identity";
 
 export const COMMUNICATION_INTENDED_RELEASE_SCOPE = "communication-intended-release-v1" as const;
 export const COMMUNICATION_CUTOVER_EPOCH_SCOPE = "communication-cutover-epoch-v1" as const;
@@ -109,17 +110,16 @@ export function vercelRuntimeIdentity(): {
   deployable_unit: "infinity-runtime";
   schema_version_required: string;
 } {
-  const bakedSha = process.env.COMMUNICATION_RELEASE_SHA || process.env.COMMUNICATION_INTENDED_GIT_SHA || "";
-  const vercelSha = process.env.VERCEL_GIT_COMMIT_SHA || "";
-  const sha = bakedSha || vercelSha || null;
+  const baked = loadBakedReleaseIdentity();
+  const sha = resolveRuntimeReleaseSha(baked) || process.env.VERCEL_GIT_COMMIT_SHA || null;
   return {
     git_sha: sha,
     deployment_id: process.env.VERCEL_DEPLOYMENT_ID ?? null,
     env: process.env.VERCEL_ENV ?? null,
-    release_sha: bakedSha || null,
-    release_tree_hash: process.env.COMMUNICATION_RELEASE_TREE_HASH || null,
-    build_graph_hash: process.env.COMMUNICATION_BUILD_GRAPH_HASH || null,
-    release_dirty: process.env.COMMUNICATION_RELEASE_DIRTY === "true",
+    release_sha: sha,
+    release_tree_hash: baked?.release_tree_hash || process.env.COMMUNICATION_RELEASE_TREE_HASH || null,
+    build_graph_hash: baked?.build_graph_hash || process.env.COMMUNICATION_BUILD_GRAPH_HASH || null,
+    release_dirty: baked?.release_dirty ?? process.env.COMMUNICATION_RELEASE_DIRTY === "true",
     deployable_unit: "infinity-runtime",
     schema_version_required: COMMUNICATION_SCHEMA_VERSION,
   };

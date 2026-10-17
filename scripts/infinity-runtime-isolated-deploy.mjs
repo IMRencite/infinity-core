@@ -892,7 +892,10 @@ const commerceBridgeSmoke = {
   ok: commerceBridgeStaged.ok,
   COMMERCE_BRIDGE_UNAUTHORIZED_REJECTION_QC: commerceBridgeStaged.status === 401 ? "PASS" : "FAIL",
 };
-const identityMatch = tickSafe.body?.release?.release_sha === sha || tickSafe.body?.identity?.release_sha === sha;
+const identityMatch =
+  tickSafe.body?.release?.release_sha === sha &&
+  tickSafe.body?.identity?.release_sha === sha &&
+  tickSafe.body?.identity?.git_sha === sha;
 const bridgeDeploy = process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1";
 const previewProtected =
   bridgeDeploy &&
