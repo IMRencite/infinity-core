@@ -90,6 +90,8 @@ function garmentWithPrintSvg(label: string, print: string): string {
 export function composeClubThrottleStorefrontFiles(cwd = process.cwd()): {
   files: ComposedStorefrontFile[];
   digest: string;
+  storefront_version: string;
+  compose_digest: string;
   logo_bound: boolean;
   founder_dirty_tree_deployed: false;
 } {
