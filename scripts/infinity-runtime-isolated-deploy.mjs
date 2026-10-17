@@ -4,7 +4,7 @@
  * Does not deploy OccupancyNPV, imros-public, or founder dirty app pages.
  */
 import { createHash } from "node:crypto";
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
@@ -650,9 +650,41 @@ const identity = {
   parent_git_sha: parentSha,
   parent_dirty: dirtyEntries.length > 0,
 };
+const prebuildIdentityPath = join(dest, "release-identity.json");
+let prebuildExistingSha = null;
+let prebuildAction = "NONE";
+if (existsSync(prebuildIdentityPath)) {
+  try {
+    prebuildExistingSha = JSON.parse(readFileSync(prebuildIdentityPath, "utf8")).release_sha?.trim() || null;
+    if (prebuildExistingSha && prebuildExistingSha !== sha) {
+      prebuildAction = "REGENERATE";
+      unlinkSync(prebuildIdentityPath);
+      const stalePublic = join(dest, "public", "release-identity.json");
+      if (existsSync(stalePublic)) unlinkSync(stalePublic);
+    }
+  } catch {
+    prebuildAction = "REGENERATE";
+    if (existsSync(prebuildIdentityPath)) unlinkSync(prebuildIdentityPath);
+  }
+}
 writeFileSync(join(dest, "release-identity.json"), `${JSON.stringify(identity, null, 2)}\n`);
 mkdirSync(join(dest, "public"), { recursive: true });
 writeFileSync(join(dest, "public", "release-identity.json"), `${JSON.stringify(identity, null, 2)}\n`);
+const readBackIdentity = JSON.parse(readFileSync(join(dest, "release-identity.json"), "utf8"));
+const releaseIdentityFileParityQc =
+  readBackIdentity.release_sha === sha && readBackIdentity.deployable_unit === "infinity-runtime" ? "PASS" : "FAIL";
+if (releaseIdentityFileParityQc !== "PASS") {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "RELEASE_IDENTITY_FILE_PARITY_FAILED",
+    RELEASE_IDENTITY_GENERATED_SHA: readBackIdentity.release_sha,
+    RELEASE_IDENTITY_EXPECTED_SHA: sha,
+    PREBUILD_RELEASE_IDENTITY_EXISTING_SHA: prebuildExistingSha,
+    PREBUILD_RELEASE_IDENTITY_SOURCE_SHA: sha,
+    PREBUILD_RELEASE_IDENTITY_ACTION: prebuildAction,
+  }, null, 2));
+  process.exit(1);
+}
 envKeys.COMMUNICATION_INTENDED_GIT_SHA = sha;
 envKeys.COMMUNICATION_RELEASE_SHA = sha;
 envKeys.COMMUNICATION_RELEASE_TREE_HASH = treeHash;
@@ -726,6 +758,23 @@ if (prebuiltSupported) {
   });
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
   if (built.status === 0) prebuiltUsed = true;
+  if (prebuiltUsed) {
+    const postBuildIdentity = existsSync(join(dest, "release-identity.json"))
+      ? JSON.parse(readFileSync(join(dest, "release-identity.json"), "utf8"))
+      : null;
+    const builtArtifactSha = postBuildIdentity?.release_sha?.trim() ?? "";
+    const builtArtifactReleaseIdentityQc = builtArtifactSha === sha ? "PASS" : "FAIL";
+    if (builtArtifactReleaseIdentityQc !== "PASS") {
+      console.log(JSON.stringify({
+        ok: false,
+        reason: "BUILT_ARTIFACT_RELEASE_IDENTITY_FAILED",
+        BUILT_ARTIFACT_RELEASE_SHA: builtArtifactSha,
+        DEPLOY_SOURCE_RELEASE_SHA: sha,
+        BUILT_ARTIFACT_RELEASE_IDENTITY_QC: builtArtifactReleaseIdentityQc,
+      }, null, 2));
+      process.exit(1);
+    }
+  }
 }
 const commerceBridgeBuiltRoute = existsSync(
   join(dest, ".next/server/app/api/infinity/commerce/club-throttle/stripe-paid/route.js"),
