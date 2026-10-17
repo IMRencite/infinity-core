@@ -5,7 +5,9 @@ export type OccupancyBlogVisualSubject =
   | "OCCUPANCY_COST_ECONOMICS"
   | "LEASE_NUMBERS_COMPARISON"
   | "LEASE_OPTIONS_TIMELINE"
-  | "CAM_OPERATIONS_BUDGET";
+  | "CAM_OPERATIONS_BUDGET"
+  | "LEASE_CONCESSION_SCHEDULE"
+  | "LEASE_RECOVERY_MECHANICS";
 
 export type OccupancyBlogImageBrief = {
   slug: string;

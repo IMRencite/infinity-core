@@ -65,7 +65,7 @@ export function v42DraftArtworkIdentityChainQc(input: {
   if (input.approved_source_sha !== CLUB_THROTTLE_V42_APPROVED_SOURCE_SHA256) return "FAIL";
   if (input.production_master_sha !== CLUB_THROTTLE_V42_PRODUCTION_MASTER_SHA256) return "FAIL";
   if (input.public_art_sha !== CLUB_THROTTLE_V42_PRODUCTION_MASTER_SHA256) return "FAIL";
-  if (input.public_art_sha === STALE_CANDIDATE3_SHA256) return "FAIL";
+  if (String(input.public_art_sha) === STALE_CANDIDATE3_SHA256) return "FAIL";
   if (input.provider_downloaded_sha && input.provider_downloaded_sha !== CLUB_THROTTLE_V42_PRODUCTION_MASTER_SHA256) {
     return "FAIL";
   }

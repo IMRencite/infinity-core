@@ -154,7 +154,7 @@ export function buildClubThrottleStorefrontCommerceCatalog(cwd = process.cwd()):
       name: "Gildan 5000 Heavy Cotton tee",
       colors: ["white"],
       print_method: "Direct-to-garment large back",
-    },
+    } as typeof CLUB_THROTTLE_CORE_TEE.garment,
     retail_usd: CLUB_THROTTLE_FOUNDER_SEVEN_RETAIL_USD,
   };
 }

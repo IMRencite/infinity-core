@@ -11,6 +11,11 @@ export type ExistingProductBackUpdateDiscovery = {
   placeholder_name: "back_art.png";
   documented_api_operations: string[];
   api_update_available: boolean;
+  api_put_shape?: {
+    method: string;
+    path: string;
+    body: Record<string, unknown>;
+  };
   dashboard_sequence: string[];
   calibration_intent: string;
   openapi_reference: string;

@@ -28,9 +28,9 @@ export async function postProcessClubThrottleProviderRaster(input: {
   if (!usedNative) {
     const cornerKey = await deriveBackgroundKeyFromCorners(input.rawPath);
     keyUsed = cornerKey ?? fallbackKey;
-    working = await applyEdgeConnectedChromaKeyToAlpha(working, keyUsed);
+    working = Buffer.from(await applyEdgeConnectedChromaKeyToAlpha(working, keyUsed));
   }
-  working = await stripRemainingBakedCheckerboardPixels(working);
+  working = Buffer.from(await stripRemainingBakedCheckerboardPixels(working));
   writeFileSync(input.processedPath, working);
   return { used_native_alpha: usedNative, key_used: keyUsed };
 }

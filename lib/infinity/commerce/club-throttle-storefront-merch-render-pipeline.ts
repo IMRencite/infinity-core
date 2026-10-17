@@ -78,6 +78,7 @@ async function renderFrontBlank(): Promise<Buffer> {
 
 export async function runClubThrottleStorefrontMerchAssetPipeline(cwd = process.cwd()): Promise<{
   STOREFRONT_MERCHANDISING_ASSET_PIPELINE: "PASS" | "FAIL";
+  PRODUCT_HERO_GARMENT_RENDER_QC: "PASS" | "FAIL";
   rows: StorefrontMerchAssetRow[];
   category_images: Record<string, string>;
 }> {

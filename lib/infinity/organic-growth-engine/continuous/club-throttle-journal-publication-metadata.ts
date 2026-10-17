@@ -132,7 +132,11 @@ export function evaluateClubThrottleDraftSchemaStack(draft: OrganicDraft, shell_
   };
 }
 
-export function evaluateArticleSchemaQc(draft: OrganicDraft, shell_html?: string): OrganicNamedGate {
+export function evaluateArticleSchemaQc(
+  draft: OrganicDraft,
+  shell_html?: string,
+  _featured_image_path?: string | null,
+): OrganicNamedGate {
   const { stack, gates, graph } = evaluateClubThrottleDraftSchemaStack(draft, shell_html);
   const reasons: string[] = [];
   if (stack.result !== "PASS") reasons.push(...stack.reasons);

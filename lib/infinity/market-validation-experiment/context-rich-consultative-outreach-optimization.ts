@@ -45,7 +45,18 @@ import { runInstrumentedMission } from "@/lib/infinity/mission-activity";
 import { evaluateMissionRoomActivityProjectionGate } from "@/lib/infinity/mission-activity/mission-room-activity-projection-gate";
 import { projectCommandActivity } from "@/lib/infinity/mission-activity/project";
 import type { CommandActivityView } from "@/lib/infinity/mission-activity/types";
-import { deriveInfinityDecisionCoreState } from "@/components/dashboard/operator-console/infinity-decision-core";
+function deriveInfinityDecisionCoreState(input: {
+  commandRoomStatus?: string | null;
+  nowInspectingStatus?: string | null;
+}): "ACTIVE_WORK" | "READY_BLOCKED" | "PRESENT_IDLE" | "FAILED" {
+  const status = input.commandRoomStatus ?? input.nowInspectingStatus ?? "";
+  if (status === "FAILED") return "FAILED";
+  if (status === "ACTIVE_WORK") return "ACTIVE_WORK";
+  if (status === "READY_BLOCKED" || status === "WAITING_EXTERNAL" || status === "WAITING_INTERNAL") {
+    return "READY_BLOCKED";
+  }
+  return "PRESENT_IDLE";
+}
 
 export const CONTEXT_RICH_CONSULTATIVE_OUTREACH_OPTIMIZATION_V1 =
   "CONTEXT_RICH_CONSULTATIVE_OUTREACH_OPTIMIZATION_V1" as const;

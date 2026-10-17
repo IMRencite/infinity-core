@@ -46,6 +46,7 @@ export function renderCanonicalArticleMain(input: {
   headings: string[];
   body: string;
   faqs?: Array<{ question: string; answer: string }>;
+  info_visual_html?: string;
 }): string {
   const sections = pairHeadingsToParagraphs(input.headings, input.body);
   const main = sections
@@ -60,7 +61,8 @@ export function renderCanonicalArticleMain(input: {
   const faqs = (input.faqs ?? [])
     .map((row) => `<h3>${row.question}</h3>\n            <p>${row.answer}</p>`)
     .join("\n            ");
-  return `${main}${faqs ? `\n            ${faqs}` : ""}`;
+  const infoVisual = input.info_visual_html?.trim() ? `\n            ${input.info_visual_html.trim()}` : "";
+  return `${main}${infoVisual}${faqs ? `\n            ${faqs}` : ""}`;
 }
 
 export function articleMainHasLeaks(html: string): boolean {
