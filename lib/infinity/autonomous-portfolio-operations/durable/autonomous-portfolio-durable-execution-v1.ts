@@ -96,9 +96,6 @@ export async function patchPortfolioCycle(
 
 /** Terminalize creative self-heal jobs that cannot run without live paid creative (quality-held lane). */
 export async function reconcileQualityHeldCreativeJobsForCycle(cycle_id: string): Promise<number> {
-  const { resolveCreativeBudgetGovernance } = await import("./creative-self-heal-budget-governance-v1");
-  const gov = resolveCreativeBudgetGovernance();
-  if (gov.LIVE_CREATIVE_ENABLED) return 0;
   const client = createPortfolioDurableSupabase();
   if (!client) return 0;
   const { data: rows } = await client
@@ -106,9 +103,10 @@ export async function reconcileQualityHeldCreativeJobsForCycle(cycle_id: string)
     .select("job_id,status,job_type,safe_error")
     .eq("cycle_id", cycle_id)
     .eq("job_type", "CREATIVE_SELF_HEAL")
-    .eq("status", "QUEUED");
+    .in("status", ["QUEUED", "IN_PROGRESS"]);
   let updated = 0;
   for (const row of rows ?? []) {
+    if (row.safe_error !== "PRINT_PRODUCTION_QC_HOLD" && row.status !== "QUEUED") continue;
     await client
       .from(PORTFOLIO_DURABLE_TABLES.jobs)
       .update({

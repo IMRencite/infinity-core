@@ -118,7 +118,13 @@ export function evaluateCtServerlessMediaStarvationRegressionQc(input: {
     if (!probe.CT_RUNTIME_PREDEPLOY_PUBLISH_ALLOWED) reasons.push("publish_allowed_expected_true");
     if (!probe.CT_RUNTIME_PREDEPLOY_DEPLOY_ALLOWED) reasons.push("deploy_allowed_expected_true", ...probe.CT_RUNTIME_PREDEPLOY_REASONS);
     if (probe.CT_RUNTIME_PICKED_CANDIDATE !== CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG) {
-      reasons.push(`expected_candidate_${CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG}`);
+      const refreshAlreadyCurrent =
+        probe.CT_RUNTIME_PICKED_CANDIDATE === null &&
+        probe.CT_RUNTIME_PREDEPLOY_DEPLOY_ALLOWED &&
+        artifact.CT_AFTER_DARK_RUNTIME_MEDIA_EXISTS;
+      if (!refreshAlreadyCurrent) {
+        reasons.push(`expected_candidate_${CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG}`);
+      }
     }
   }
   return {

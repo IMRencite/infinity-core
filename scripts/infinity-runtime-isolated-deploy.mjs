@@ -18,6 +18,7 @@ function loadEnv() {
     const sep = trimmed.indexOf("=");
     if (sep === -1) continue;
     const key = trimmed.slice(0, sep);
+    if (key === "INFINITY_RUNTIME_EMERGENCY_DIRTY") continue;
     let val = trimmed.slice(sep + 1);
     if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) val = val.slice(1, -1);
     process.env[key] = val;
