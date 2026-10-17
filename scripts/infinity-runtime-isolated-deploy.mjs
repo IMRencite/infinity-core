@@ -448,15 +448,29 @@ for (const route of runtimeRoutes) {
   if (existsSync(from)) cpSync(from, join(dest, "app/api/runtime", route), { recursive: true });
 }
 const commerceBridgeRel = "app/api/infinity/commerce/club-throttle/stripe-paid";
-const commerceBridgeFrom = join(root, commerceBridgeRel);
-if (existsSync(commerceBridgeFrom)) {
+const commerceBridgeRouteRel = `${commerceBridgeRel}/route.ts`;
+const commerceBridgeTracked = committedTrackedFiles.has(commerceBridgeRouteRel);
+if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1" && !commerceBridgeTracked) {
+  console.log(
+    JSON.stringify({
+      ok: false,
+      reason: "COMMERCE_BRIDGE_NOT_IN_COMMITTED_TREE",
+      gate: "CommerceBridgeSourceRouteGate",
+      commerceBridgeRel,
+      DEPLOY_SOURCE_COMMITTED_TREE_ONLY_QC: "PASS",
+    }),
+  );
+  process.exit(1);
+}
+if (commerceBridgeTracked) {
+  const commerceBridgeFrom = join(root, commerceBridgeRel);
   const commerceBridgeDest = join(dest, commerceBridgeRel);
   mkdirSync(join(commerceBridgeDest, ".."), { recursive: true });
   cpSync(commerceBridgeFrom, commerceBridgeDest, { recursive: true });
-}
-if (!existsSync(join(dest, commerceBridgeRel, "route.ts"))) {
-  console.log(JSON.stringify({ ok: false, reason: "COMMERCE_BRIDGE_SOURCE_ROUTE_MISSING", gate: "CommerceBridgeSourceRouteGate", commerceBridgeRel }));
-  process.exit(1);
+  if (!existsSync(join(dest, commerceBridgeRouteRel))) {
+    console.log(JSON.stringify({ ok: false, reason: "COMMERCE_BRIDGE_SOURCE_ROUTE_MISSING", gate: "CommerceBridgeSourceRouteGate", commerceBridgeRel }));
+    process.exit(1);
+  }
 }
 const gelatoVerifyRel = "app/api/runtime/commerce/club-throttle/verify-gelato";
 const gelatoVerifyFrom = join(root, gelatoVerifyRel);
