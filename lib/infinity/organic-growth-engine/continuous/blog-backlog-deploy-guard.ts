@@ -9,6 +9,7 @@ import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "./blog-ux";
 import type { BlogBacklogArticle } from "./blog-backlog-inventory";
 import { evaluateBacklogSourceVNext } from "./blog-backlog-inventory";
 import { evaluateBlogMediaCompletenessQc } from "./blog-media-completeness-qc";
+import { evaluateBlogMediaDeployArtifactQc } from "./blog-deploy-media-bundle";
 import type { OrganicQcResult } from "./types";
 
 function guardTriState(result: OrganicQcResult): "PASS" | "FAIL" | "NOT_RUN" {
@@ -39,6 +40,7 @@ export type BlogBacklogDeployGuardResult = {
   bundle_deploy_allowed: boolean;
   articles: BlogArticlePreDeployQc[];
   reasons: string[];
+  blog_media_deploy_artifact_qc: "PASS" | "FAIL" | "NOT_RUN";
 };
 
 export type RenderedBacklogEvidence = {
@@ -143,6 +145,7 @@ export function evaluateBlogBacklogDeployGuard(input: {
   articles: BlogBacklogArticle[];
   rendered_by_path?: Record<string, RenderedBacklogEvidence | null | undefined>;
   scoped_backlog_publication_authorized?: boolean;
+  deploy_files?: Array<{ path: string }>;
 }): BlogBacklogDeployGuardResult {
   const scoped = input.scoped_backlog_publication_authorized !== false;
   const backlog = input.articles.filter((a) => a.backlog_scope === "AUTHORIZED_BACKLOG" && a.draft);
@@ -161,9 +164,16 @@ export function evaluateBlogBacklogDeployGuard(input: {
     const liveAlreadyPublished = publishedRegistry.has(article.registry_state);
     if (!row.deploy_allowed && !liveAlreadyPublished) reasons.push(`ARTICLE_NOT_READY:${row.slug}`);
   }
+  let blog_media_deploy_artifact_qc: "PASS" | "FAIL" | "NOT_RUN" = "NOT_RUN";
+  if (input.deploy_files?.length) {
+    const artifact = evaluateBlogMediaDeployArtifactQc({ deploy_files: input.deploy_files });
+    blog_media_deploy_artifact_qc = artifact.result;
+    if (artifact.result !== "PASS") reasons.push("BLOG_MEDIA_DEPLOY_ARTIFACT_QC_FAIL", ...artifact.reasons);
+  }
   const bundle_deploy_allowed =
     scoped
     && articles.length > 0
+    && blog_media_deploy_artifact_qc !== "FAIL"
     && backlog.every((article, i) => articles[i]!.deploy_allowed || publishedRegistry.has(article.registry_state));
   return {
     gate: BLOG_BACKLOG_DEPLOY_GUARD,
@@ -171,6 +181,7 @@ export function evaluateBlogBacklogDeployGuard(input: {
     bundle_deploy_allowed,
     articles,
     reasons: [...new Set(reasons)],
+    blog_media_deploy_artifact_qc,
   };
 }
 

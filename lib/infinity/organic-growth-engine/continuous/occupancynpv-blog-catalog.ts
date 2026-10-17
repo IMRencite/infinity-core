@@ -13,6 +13,7 @@ import {
   listPublishedBlogRecords,
   publishedBlogRecordToCatalogPost,
 } from "./published-blog-inventory";
+import { postCategories, taxonomySlug } from "./blog-taxonomy";
 
 export type OccupancyNpvBlogPost = {
   asset_id?: string;
@@ -48,13 +49,26 @@ export function occupancynpvCamFirstYearCatalogPost(): OccupancyNpvBlogPost {
   return post;
 }
 
+function categoryDisplayFromSlug(slug: string): string {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function occupancynpvCategoryCounts(posts = occupancynpvPublishedBlogPosts()): Array<{ category: string; count: number }> {
-  const counts = new Map<string, number>();
+  const counts = new Map<string, { category: string; count: number }>();
   for (const post of posts.filter((row) => !row.draft && !row.unpublished)) {
-    const labels = [...new Set([post.primaryCategory ?? post.category, ...(post.categories ?? [])].filter(Boolean))];
-    for (const category of labels) counts.set(category, (counts.get(category) ?? 0) + 1);
+    for (const label of postCategories(post)) {
+      const slug = taxonomySlug(label);
+      if (!slug) continue;
+      const existing = counts.get(slug);
+      if (existing) existing.count += 1;
+      else counts.set(slug, { category: categoryDisplayFromSlug(slug), count: 1 });
+    }
   }
-  return [...counts.entries()].map(([category, count]) => ({ category, count })).sort((left, right) => right.count - left.count || left.category.localeCompare(right.category));
+  return [...counts.values()].sort((left, right) => right.count - left.count || left.category.localeCompare(right.category));
 }
 
 export function occupancynpvActiveCategories(posts = occupancynpvPublishedBlogPosts()): string[] {

@@ -51,6 +51,7 @@ import { OCCUPANCYNPV_LIVE_CAP_RATE_PATH } from "./urls";
 import { evaluateContentQualityFramework } from "./content-quality-framework";
 import { FIRST_LEASE_INPUTS_ROUTE } from "../obligation/opportunity";
 import { classifyPublishThrow } from "./destination-source-pack";
+import { evaluateBlogMediaDeployArtifactQc, mergeBlogMediaIntoDeployFiles } from "./blog-deploy-media-bundle";
 
 type ArtifactFile = { path: string; content: string; encoding?: "utf8" | "base64" };
 
@@ -260,6 +261,11 @@ export default nextConfig;
   files = upsert(files, "public/media/blog/cap-rates.svg", occupancynpvUniqueCreativeSvg("cap-rates"));
   files = upsert(files, "public/media/blog/commercial-real-estate.svg", occupancynpvUniqueCreativeSvg("commercial-real-estate"));
   files = upsert(files, "public/media/blog/topic-hub.svg", occupancynpvUniqueCreativeSvg("topic-hub"));
+  files = mergeBlogMediaIntoDeployFiles(files);
+  const mediaArtifact = evaluateBlogMediaDeployArtifactQc({ deploy_files: files });
+  if (mediaArtifact.result !== "PASS") {
+    throw new Error(`BLOG_MEDIA_DEPLOY_ARTIFACT_QC_FAIL:${mediaArtifact.reasons.join(",")}`);
+  }
   files = files.map((file) => ({
     ...file,
     content: file.content

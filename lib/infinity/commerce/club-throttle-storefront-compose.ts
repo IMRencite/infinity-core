@@ -11,6 +11,7 @@ import {
   listCanonicalProductsByCollection,
 } from "./canonical-product-inventory";
 import { seedCanonicalPublishedBlogInventory } from "@/lib/infinity/organic-growth-engine/continuous/published-blog-inventory";
+import { mergeBlogMediaIntoDeployFiles } from "@/lib/infinity/organic-growth-engine/continuous/blog-deploy-media-bundle";
 import { composeClubThrottleJournalFiles } from "@/lib/infinity/organic-growth-engine/continuous/club-throttle-journal";
 import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "@/lib/infinity/organic-growth-engine/continuous/blog-ux";
 import {
@@ -1077,6 +1078,21 @@ export async function POST() {
   const byPath = new Map<string, ComposedStorefrontFile>();
   for (const file of merged) byPath.set(file.path, file);
   merged = [...byPath.values()];
+  merged = mergeBlogMediaIntoDeployFiles(
+    merged.map((file) => {
+      if (file.content != null) {
+        return { path: file.path, content: file.content, encoding: file.encoding ?? "utf8" };
+      }
+      if (file.sourceAbs && existsSync(file.sourceAbs)) {
+        return {
+          path: file.path,
+          content: readFileSync(file.sourceAbs).toString("base64"),
+          encoding: "base64" as const,
+        };
+      }
+      return { path: file.path, content: file.content ?? "", encoding: file.encoding ?? "utf8" };
+    }),
+  );
 
   return {
     files: merged,
