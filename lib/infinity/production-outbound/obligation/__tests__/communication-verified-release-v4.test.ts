@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { evaluateConsultativeSalesLanguageGate } from "@/lib/infinity/always-closing-sales/consultative-sales";
-import { classifyIdentityField, evaluateCommunicationSchemaParityGate, evaluateRuntimeReleaseParityGateV4 } from "../release-identity";
+import {
+  classifyIdentityField,
+  evaluateCommunicationSchemaParityGate,
+  evaluateRuntimeReleaseParityGateV4,
+  resolveRuntimeReleaseSha,
+} from "../release-identity";
 import {
   evaluateHardSalesGates,
   evaluateSalesHardGateSatisfiabilityGate,
@@ -23,6 +28,26 @@ describe("communication verified release v4", () => {
     expect(classifyIdentityField("abc", null)).toBe("ABSENT");
     expect(classifyIdentityField("abc", "abc")).toBe("MATCH");
     expect(classifyIdentityField("abc", "def")).toBe("MISMATCH");
+  });
+
+  it("prefers isolated artifact release_sha over stale platform env (INFINITY_RUNTIME_RELEASE_IDENTITY_REGRESSION_QC)", () => {
+    const prior = process.env.COMMUNICATION_RELEASE_SHA;
+    const stale = "0fe86679be9452054850e5031e71ac1a8910b80a";
+    const deploySource = "3db2ae8bcfb906b4cea447b3d9570889bd0866e2";
+    process.env.COMMUNICATION_RELEASE_SHA = stale;
+    const sha = resolveRuntimeReleaseSha({
+      deployable_unit: "infinity-runtime",
+      release_sha: deploySource,
+      release_tree_hash: "tree",
+      release_dirty: false,
+      build_graph_hash: "graph",
+      schema_version_required: "communication-recovery-release-v8",
+      build_timestamp: "2026-09-20T00:00:00.000Z",
+      release_sequence: "v8",
+    });
+    expect(sha).toBe(deploySource);
+    expect(sha).not.toBe(stale);
+    process.env.COMMUNICATION_RELEASE_SHA = prior;
   });
 
   it("runtime parity fails closed on missing tree hash", () => {

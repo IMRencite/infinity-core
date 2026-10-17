@@ -37,6 +37,38 @@ export function taxonomySlug(label: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+/** Presentation label derived from canonical taxonomy slug (identity remains slug-driven). */
+export function taxonomyDisplayLabel(slugOrLabel: string): string {
+  const slug = taxonomySlug(slugOrLabel);
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function postPrimaryCategoryLabel(post: OccupancyNpvBlogPost): string {
+  return (post.primaryCategory ?? post.category).trim();
+}
+
+export function postPrimaryCategorySlug(post: OccupancyNpvBlogPost): string {
+  return taxonomySlug(postPrimaryCategoryLabel(post));
+}
+
+/** Category archive membership: primary category slug only (not tags or secondary categories). */
+export function postMatchesCategoryArchive(post: OccupancyNpvBlogPost, routeCategorySlug: string): boolean {
+  const slug = taxonomySlug(routeCategorySlug);
+  if (!slug) return false;
+  return postPrimaryCategorySlug(post) === slug;
+}
+
+/** Tag archive membership: normalized tag slugs only (not primary category). */
+export function postMatchesTagArchive(post: OccupancyNpvBlogPost, routeTagSlug: string): boolean {
+  const slug = taxonomySlug(routeTagSlug);
+  if (!slug) return false;
+  return post.tags.some((row) => taxonomySlug(row) === slug);
+}
+
 export function blogCategoryArchivePath(category: string): string {
   return `/blog/category/${taxonomySlug(category)}/`;
 }
@@ -63,12 +95,12 @@ export function postCategories(post: OccupancyNpvBlogPost): string[] {
 
 export function filterPostsByCategory(posts: OccupancyNpvBlogPost[], category: string): OccupancyNpvBlogPost[] {
   const slug = taxonomySlug(category);
-  return publishedBlogPosts(posts).filter((post) => postCategories(post).some((row) => taxonomySlug(row) === slug));
+  return publishedBlogPosts(posts).filter((post) => postMatchesCategoryArchive(post, slug));
 }
 
 export function filterPostsByTag(posts: OccupancyNpvBlogPost[], tag: string): OccupancyNpvBlogPost[] {
   const slug = taxonomySlug(tag);
-  return publishedBlogPosts(posts).filter((post) => post.tags.some((row) => taxonomySlug(row) === slug));
+  return publishedBlogPosts(posts).filter((post) => postMatchesTagArchive(post, slug));
 }
 
 export function paginateTaxonomyPosts<T>(posts: T[], page = 1, pageSize = 12): { items: T[]; page: number; pages: number } {

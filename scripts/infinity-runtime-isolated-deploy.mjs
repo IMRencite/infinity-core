@@ -722,7 +722,7 @@ if (prebuiltSupported) {
     cwd: dest,
     encoding: "utf8",
     shell: true,
-    env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
+    env: { ...process.env, ...envKeys, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
   });
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
   if (built.status === 0) prebuiltUsed = true;

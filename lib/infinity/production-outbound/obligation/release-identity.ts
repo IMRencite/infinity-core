@@ -22,6 +22,10 @@ function named(gate: string, result: NamedOutboundLoopGate["result"], reasons: s
 
 let baked: CommunicationReleaseIdentity | null = null;
 
+export function resetBakedReleaseIdentityCache(): void {
+  baked = null;
+}
+
 export function loadBakedReleaseIdentity(root = process.cwd()): CommunicationReleaseIdentity | null {
   if (baked) return baked;
   const candidates = [
@@ -40,11 +44,21 @@ export function loadBakedReleaseIdentity(root = process.cwd()): CommunicationRel
   return null;
 }
 
+export function resolveRuntimeReleaseSha(file: CommunicationReleaseIdentity | null): string {
+  const envSha = process.env.COMMUNICATION_RELEASE_SHA?.trim() ?? "";
+  const fileSha = file?.release_sha?.trim() ?? "";
+  // Isolated deploy writes release-identity.json into the artifact; it must win over stale platform env.
+  if (file?.deployable_unit === "infinity-runtime" && /^[0-9a-f]{40}$/i.test(fileSha)) {
+    return fileSha;
+  }
+  return envSha || fileSha;
+}
+
 export function runtimeReleaseIdentity(): CommunicationReleaseIdentity {
   const file = loadBakedReleaseIdentity();
   return {
     deployable_unit: "infinity-runtime",
-    release_sha: process.env.COMMUNICATION_RELEASE_SHA || file?.release_sha || "",
+    release_sha: resolveRuntimeReleaseSha(file),
     release_tree_hash: process.env.COMMUNICATION_RELEASE_TREE_HASH || file?.release_tree_hash || "",
     release_dirty: (process.env.COMMUNICATION_RELEASE_DIRTY || String(file?.release_dirty ?? "true")) === "true",
     build_graph_hash: process.env.COMMUNICATION_BUILD_GRAPH_HASH || file?.build_graph_hash || "",

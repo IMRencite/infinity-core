@@ -21,10 +21,13 @@ import {
   blogCategoryArchivePath,
   blogTagArchivePath,
   evaluateTaxonomyIndexation,
+  filterPostsByCategory,
+  filterPostsByTag,
   occupancynpvCategoryDescription,
   occupancynpvTagDescription,
   renderTaxonomyArchiveRollHtml,
   taxonomyChipHtml,
+  taxonomyDisplayLabel,
   taxonomySlug,
 } from "./blog-taxonomy";
 import {
@@ -97,27 +100,30 @@ export function occupancynpvBlogArticlePage(): PlannedPage {
 }
 
 export function occupancynpvBlogCategoryArchivePage(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): PlannedPage {
-  const path = blogCategoryArchivePath(category);
+  const slug = taxonomySlug(category);
+  const display = taxonomyDisplayLabel(slug);
+  const path = blogCategoryArchivePath(slug);
+  const published = occupancynpvPublishedBlogPosts();
   return {
     route: path.replace(/\/+$/, ""),
     role: "EDUCATIONAL_HUB",
     primaryIntent: "EDUCATIONAL",
     parentHub: "/blog",
-    title: `${category} — OccupancyNPV Blog`,
-    metaDescription: occupancynpvCategoryDescription(category),
+    title: `${display} — OccupancyNPV Blog`,
+    metaDescription: occupancynpvCategoryDescription(display),
     canonical: path,
     indexable: evaluateTaxonomyIndexation({
       kind: "category",
-      label: category,
-      published_count: occupancynpvPublishedBlogPosts().filter((post) => (post.primaryCategory ?? post.category) === category).length,
-      intro: occupancynpvCategoryDescription(category),
+      label: display,
+      published_count: filterPostsByCategory(published, slug).length,
+      intro: occupancynpvCategoryDescription(display),
       taxonomy_importance: "HIGH",
     }).state === "INDEX",
     schemaTypes: ["Organization", "WebSite", "WebPage", "CollectionPage", "BreadcrumbList", "ItemList"],
     patternId: "FOCUSED_HERO",
     ctaStrength: "CONTEXTUAL",
-    topicCluster: taxonomySlug(category),
-    pageOpportunityId: `occupancynpv-blog-category-${taxonomySlug(category)}`,
+    topicCluster: slug,
+    pageOpportunityId: `occupancynpv-blog-category-${slug}`,
   };
 }
 
@@ -266,10 +272,12 @@ export function occupancynpvBlogArticleCrumbs() {
 }
 
 export function occupancynpvBlogCategoryCrumbs(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
+  const slug = taxonomySlug(category);
+  const display = taxonomyDisplayLabel(slug);
   return [
     { name: "Home", item: "/" },
     { name: "Blog", item: OCCUPANCYNPV_BLOG_INDEX_PATH },
-    { name: category, item: blogCategoryArchivePath(category) },
+    { name: display, item: blogCategoryArchivePath(slug) },
   ];
 }
 
@@ -335,7 +343,7 @@ export function occupancynpvBlogIndexSchema() {
 
 export function occupancynpvBlogCategoryArchiveSchema(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY) {
   const page = occupancynpvBlogCategoryArchivePage(category);
-  const posts = occupancynpvPublishedBlogPosts().filter((post) => (post.primaryCategory ?? post.category) === category);
+  const posts = filterPostsByCategory(occupancynpvPublishedBlogPosts(), taxonomySlug(category));
   return buildConnectedSchemaGraph({
     origin: "https://occupancynpv.com",
     organization: occupancynpvOrganization(),
@@ -355,7 +363,7 @@ export function occupancynpvBlogCategoryArchiveSchema(category: string = OCCUPAN
 
 export function occupancynpvBlogTagArchiveSchema(tag: string) {
   const page = occupancynpvBlogTagArchivePage(tag);
-  const posts = occupancynpvPublishedBlogPosts().filter((post) => post.tags.includes(tag));
+  const posts = filterPostsByTag(occupancynpvPublishedBlogPosts(), tag);
   return buildConnectedSchemaGraph({
     origin: "https://occupancynpv.com",
     organization: occupancynpvOrganization(),
@@ -467,22 +475,24 @@ export function occupancynpvBlogArticleSource(): string {
 }
 
 export function occupancynpvBlogCategoryArchiveSource(category: string = OCCUPANCYNPV_BLOG_PRIMARY_CATEGORY): string {
+  const slug = taxonomySlug(category);
+  const display = taxonomyDisplayLabel(slug);
   const page = occupancynpvBlogCategoryArchivePage(category);
   const posts = occupancynpvPublishedBlogPosts();
-  const matching = posts.filter((post) => (post.primaryCategory ?? post.category) === category && !post.draft && !post.unpublished);
+  const matching = filterPostsByCategory(posts, slug);
   const crumbs = occupancynpvBlogCategoryCrumbs(category).map((row) => ({ href: row.item, label: row.name }));
   const body = `
         ${renderBlogHeroHtml({
           eyebrow: "Category",
-          title: category,
-          description: occupancynpvCategoryDescription(category),
-          image: occupancynpvEntityCreative("category", category).src,
-          image_alt: occupancynpvEntityCreative("category", category).alt,
+          title: display,
+          description: occupancynpvCategoryDescription(display),
+          image: occupancynpvEntityCreative("category", display).src,
+          image_alt: occupancynpvEntityCreative("category", display).alt,
         })}
         <section className="pv-section" data-section-type="INDEX">
           <div className="vg-container onpv-blog-layout" data-blog-layout="editorial" data-blog-archive="category" data-blog-archive-count="${matching.length}">
             <div className="onpv-blog-main">
-              ${renderTaxonomyArchiveRollHtml(matching, { kind: "category", slug: taxonomySlug(category) })}
+              ${renderTaxonomyArchiveRollHtml(matching, { kind: "category", slug })}
               <section data-section-type="RELATED_CONTENT">
                 <RelatedContent items={[
                   { href: "/blog/", label: "All blog posts" },
@@ -503,7 +513,7 @@ export function occupancynpvBlogCategoryArchiveSource(category: string = OCCUPAN
 export function occupancynpvBlogTagArchiveSource(tag: string): string {
   const page = occupancynpvBlogTagArchivePage(tag);
   const posts = occupancynpvPublishedBlogPosts();
-  const matching = posts.filter((post) => post.tags.includes(tag) && !post.draft && !post.unpublished);
+  const matching = filterPostsByTag(posts, tag);
   const crumbs = occupancynpvBlogTagCrumbs(tag).map((row) => ({ href: row.item, label: row.name }));
   const related = occupancynpvActiveTags().filter((row) => row.tag !== tag).slice(0, 4);
   const body = `

@@ -13,7 +13,7 @@ import {
   listPublishedBlogRecords,
   publishedBlogRecordToCatalogPost,
 } from "./published-blog-inventory";
-import { postCategories, taxonomySlug } from "./blog-taxonomy";
+import { postPrimaryCategorySlug, taxonomyDisplayLabel, taxonomySlug } from "./blog-taxonomy";
 
 export type OccupancyNpvBlogPost = {
   asset_id?: string;
@@ -49,30 +49,24 @@ export function occupancynpvCamFirstYearCatalogPost(): OccupancyNpvBlogPost {
   return post;
 }
 
-function categoryDisplayFromSlug(slug: string): string {
-  return slug
-    .split("-")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-export function occupancynpvCategoryCounts(posts = occupancynpvPublishedBlogPosts()): Array<{ category: string; count: number }> {
-  const counts = new Map<string, { category: string; count: number }>();
+export function occupancynpvCategoryCounts(posts = occupancynpvPublishedBlogPosts()): Array<{ category: string; slug: string; count: number }> {
+  const counts = new Map<string, { category: string; slug: string; count: number }>();
   for (const post of posts.filter((row) => !row.draft && !row.unpublished)) {
-    for (const label of postCategories(post)) {
-      const slug = taxonomySlug(label);
-      if (!slug) continue;
-      const existing = counts.get(slug);
-      if (existing) existing.count += 1;
-      else counts.set(slug, { category: categoryDisplayFromSlug(slug), count: 1 });
-    }
+    const slug = postPrimaryCategorySlug(post);
+    if (!slug) continue;
+    const existing = counts.get(slug);
+    if (existing) existing.count += 1;
+    else counts.set(slug, { category: taxonomyDisplayLabel(slug), slug, count: 1 });
   }
   return [...counts.values()].sort((left, right) => right.count - left.count || left.category.localeCompare(right.category));
 }
 
 export function occupancynpvActiveCategories(posts = occupancynpvPublishedBlogPosts()): string[] {
   return occupancynpvCategoryCounts(posts).map((row) => row.category);
+}
+
+export function occupancynpvActiveCategorySlugs(posts = occupancynpvPublishedBlogPosts()): string[] {
+  return occupancynpvCategoryCounts(posts).map((row) => row.slug);
 }
 
 export function occupancynpvActiveTags(posts = occupancynpvPublishedBlogPosts()): Array<{ tag: string; count: number }> {

@@ -26,7 +26,12 @@ import {
   OCCUPANCYNPV_BLOG_ARTICLE_PATH,
   OCCUPANCYNPV_BLOG_INDEX_PATH,
 } from "./occupancynpv-blog";
-import { occupancynpvActiveCategories, occupancynpvActiveTags, occupancynpvPublishedBlogPosts } from "./occupancynpv-blog-catalog";
+import {
+  occupancynpvActiveCategories,
+  occupancynpvActiveCategorySlugs,
+  occupancynpvActiveTags,
+  occupancynpvPublishedBlogPosts,
+} from "./occupancynpv-blog-catalog";
 import {
   occupancynpvCamFirstYearPublishedRecord,
   occupancynpvInterestRatePublishedRecord,
@@ -188,11 +193,11 @@ export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; 
       schema: occupancynpvBlogArticleSchema(),
     });
   }
-  for (const category of occupancynpvActiveCategories()) {
+  for (const categorySlug of occupancynpvActiveCategorySlugs()) {
     files = injectOccupancyNpvOrganicPage(files, {
-      route: blogCategoryArchivePath(category),
-      source: occupancynpvBlogCategoryArchiveSource(category),
-      schema: occupancynpvBlogCategoryArchiveSchema(category),
+      route: blogCategoryArchivePath(categorySlug),
+      source: occupancynpvBlogCategoryArchiveSource(categorySlug),
+      schema: occupancynpvBlogCategoryArchiveSchema(categorySlug),
     });
   }
   files = injectOccupancyNpvOrganicPage(files, {
