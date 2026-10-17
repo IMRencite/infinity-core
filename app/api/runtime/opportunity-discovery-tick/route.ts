@@ -102,7 +102,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       accepted_status: result.scanner_ok ? "ACCEPTED" : "PARTIAL",
       completed_status: result.scanner_ok ? "COMPLETED" : "FAILED",
       completion_timestamp: result.completed_at,
-      payload: { mode: "execute", scanner_run_id: result.run_id ?? null },
+      payload: { mode: "execute", scanner_run_id: result.discovery_run_id ?? null },
     });
 
     return NextResponse.json({
