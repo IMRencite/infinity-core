@@ -192,10 +192,10 @@ if (!includeAutonomousLoops) {
     process.exit(1);
   }
 }
-if (
+const installStorefrontComposeStub =
   process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1" &&
-  process.env.INFINITY_RUNTIME_STUB_STOREFRONT_COMPOSE === "1"
-) {
+  process.env.INFINITY_RUNTIME_STUB_STOREFRONT_COMPOSE === "1";
+if (installStorefrontComposeStub) {
   writeFileSync(
     join(dest, "lib/infinity/commerce/club-throttle-storefront-compose.ts"),
     `export const CLUB_THROTTLE_STOREFRONT_PROJECT = "club-throttle" as const;
@@ -760,7 +760,20 @@ if (prebuiltSupported) {
     env: { ...process.env, ...envKeys, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
   });
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
-  if (built.status === 0) prebuiltUsed = true;
+  if (built.status === 0) {
+    prebuiltUsed = true;
+  } else if (process.env.INFINITY_RUNTIME_ALLOW_REMOTE_BUILD_FALLBACK !== "1") {
+    const buildTail = `${built.stdout || ""}\n${built.stderr || ""}`.split(/\r?\n/).filter(Boolean).slice(-30);
+    console.log(JSON.stringify({
+      ok: false,
+      reason: "LOCAL_PREBUILD_FAILED",
+      gate: "INFINITY_RUNTIME_ISOLATED_NEXT_BUILD_QC",
+      errorCount: buildTail.filter((row) => /error TS\d+|Failed to compile|Error:/i.test(row)).length,
+      logTail: buildTail,
+      note: "Refusing remote-only deploy fallback that can surface misleading missing_name errors.",
+    }, null, 2));
+    process.exit(1);
+  }
   if (prebuiltUsed) {
     const postBuildIdentity = existsSync(join(dest, "release-identity.json"))
       ? JSON.parse(readFileSync(join(dest, "release-identity.json"), "utf8"))

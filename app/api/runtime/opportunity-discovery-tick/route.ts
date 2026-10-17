@@ -14,7 +14,10 @@ import {
   validationQueueHealth,
 } from "@/lib/infinity/venture-discovery/venture-candidate-validation-queue-v1";
 import { appendScheduledExecutionLedger } from "@/lib/infinity/autonomous-portfolio-operations/durable/autonomous-runtime-scheduled-execution-ledger-v1";
-import { resolvePortfolioCronProvenance } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
+import {
+  mapProvenanceToLedgerTriggerType,
+  resolvePortfolioCronProvenance,
+} from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
 
 export const maxDuration = 300;
 
@@ -95,7 +98,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       route: "/api/runtime/opportunity-discovery-tick",
       schedule_identity: OPPORTUNITY_SCANNER_CRON_SCHEDULE,
       platform_provenance: cronProvenance.platform_provenance,
-      trigger_type: cronProvenance.trigger_type,
+      trigger_type: mapProvenanceToLedgerTriggerType(cronProvenance.trigger_type),
       accepted_status: result.scanner_ok ? "ACCEPTED" : "PARTIAL",
       completed_status: result.scanner_ok ? "COMPLETED" : "FAILED",
       completion_timestamp: result.completed_at,
