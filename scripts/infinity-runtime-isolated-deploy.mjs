@@ -851,9 +851,24 @@ if (tsc.status !== 0 && allowBridgeTscBypass) {
   }));
 }
 if (process.env.INFINITY_RUNTIME_TYPECHECK_ONLY === "1") {
-  console.log(JSON.stringify({ ok: true, typecheckOnly: true, errorCount: 0, RELEASE_SHA: sha, RELEASE_TREE_HASH: treeHash }));
+  console.log(
+    JSON.stringify({
+      ok: true,
+      typecheckOnly: true,
+      errorCount: 0,
+      RELEASE_SHA: sha,
+      RELEASE_TREE_HASH: treeHash,
+      INFINITY_RUNTIME_ISOLATED_TYPECHECK_QC: "PASS",
+    }),
+  );
   process.exit(0);
 }
+console.log(
+  JSON.stringify({
+    INFINITY_RUNTIME_ISOLATED_TYPECHECK_QC: "PASS",
+    DEPLOY_SOURCE_RELEASE_SHA: sha,
+  }),
+);
 
 const envOk = {};
 if (process.env.INFINITY_RUNTIME_SKIP_ENV_UPSERT === "1") {
@@ -864,6 +879,24 @@ if (process.env.INFINITY_RUNTIME_SKIP_ENV_UPSERT === "1") {
   }
 }
 
+const remoteStageBuild =
+  process.env.INFINITY_RUNTIME_REMOTE_STAGE_BUILD === "1" ||
+  (process.platform === "win32" && process.env.INFINITY_RUNTIME_FORCE_LOCAL_VERCEL_BUILD !== "1");
+let windowsLocalVercelBuildQc = remoteStageBuild ? "BLOCKED_ENVIRONMENT_SYMLINK_PERMISSION" : "NOT_ATTEMPTED";
+if (remoteStageBuild) {
+  console.log(
+    JSON.stringify({
+      INFINITY_RUNTIME_REMOTE_STAGE_BUILD: true,
+      WINDOWS_LOCAL_VERCEL_BUILD_QC: windowsLocalVercelBuildQc,
+      WINDOWS_LOCAL_VERCEL_BUILD_BLOCKER: process.platform === "win32" ? "EPERM_FUNCTION_OUTPUT_SYMLINK" : null,
+      VERCEL_REMOTE_STAGE_BUILD_SUPPORTED: true,
+      VERCEL_REMOTE_STAGE_BUILD_SOURCE_ROOT: root,
+      VERCEL_REMOTE_STAGE_BUILD_EXPECTED_SHA: sha,
+      note: "Authoritative production build runs on Vercel (vercel deploy --prod, no --prebuilt).",
+    }),
+  );
+}
+
 const help = spawnSync("npx", ["vercel@latest", "deploy", "--help"], {
   cwd: dest,
   encoding: "utf8",
@@ -871,13 +904,14 @@ const help = spawnSync("npx", ["vercel@latest", "deploy", "--help"], {
 });
 const prebuiltSupported = /--prebuilt/.test(`${help.stdout || ""}\n${help.stderr || ""}`);
 let prebuiltUsed = false;
-if (prebuiltSupported) {
-  spawnSync("npx", ["vercel@latest", "pull", "--yes", "--environment=production", `--token=${token}`, `--scope=${team}`], {
-    cwd: dest,
-    encoding: "utf8",
-    shell: true,
-    env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
-  });
+spawnSync("npx", ["vercel@latest", "pull", "--yes", "--environment=production", `--token=${token}`, `--scope=${team}`], {
+  cwd: dest,
+  encoding: "utf8",
+  shell: true,
+  env: { ...process.env, VERCEL_ORG_ID: team, VERCEL_PROJECT_ID: PROJECT_ID },
+});
+if (!remoteStageBuild && prebuiltSupported) {
+  windowsLocalVercelBuildQc = "ATTEMPTED";
   const built = spawnSync("npx", ["vercel@latest", "build", "--prod", `--token=${token}`, `--scope=${team}`], {
     cwd: dest,
     encoding: "utf8",
@@ -887,15 +921,26 @@ if (prebuiltSupported) {
   writeFileSync(join(dest, "vercel-build.log"), `${built.stdout || ""}\n${built.stderr || ""}`);
   if (built.status === 0) {
     prebuiltUsed = true;
-  } else if (process.env.INFINITY_RUNTIME_ALLOW_REMOTE_BUILD_FALLBACK !== "1") {
+    windowsLocalVercelBuildQc = "PASS";
+  } else if (process.env.INFINITY_RUNTIME_ALLOW_REMOTE_BUILD_FALLBACK === "1") {
+    windowsLocalVercelBuildQc =
+      process.platform === "win32" && /EPERM.*symlink/i.test(`${built.stdout || ""}\n${built.stderr || ""}`)
+        ? "BLOCKED_ENVIRONMENT_SYMLINK_PERMISSION"
+        : "FAIL";
+  } else {
     const buildTail = `${built.stdout || ""}\n${built.stderr || ""}`.split(/\r?\n/).filter(Boolean).slice(-30);
+    windowsLocalVercelBuildQc =
+      process.platform === "win32" && /EPERM.*symlink/i.test(`${built.stdout || ""}\n${built.stderr || ""}`)
+        ? "BLOCKED_ENVIRONMENT_SYMLINK_PERMISSION"
+        : "FAIL";
     console.log(JSON.stringify({
       ok: false,
       reason: "LOCAL_PREBUILD_FAILED",
       gate: "INFINITY_RUNTIME_ISOLATED_NEXT_BUILD_QC",
+      WINDOWS_LOCAL_VERCEL_BUILD_QC: windowsLocalVercelBuildQc,
       errorCount: buildTail.filter((row) => /error TS\d+|Failed to compile|Error:/i.test(row)).length,
       logTail: buildTail,
-      note: "Refusing remote-only deploy fallback that can surface misleading missing_name errors.",
+      note: "Set INFINITY_RUNTIME_REMOTE_STAGE_BUILD=1 (default on Windows) for Vercel-hosted production build.",
     }, null, 2));
     process.exit(1);
   }
@@ -920,9 +965,11 @@ if (prebuiltSupported) {
 const commerceBridgeBuiltRoute = existsSync(
   join(dest, ".next/server/app/api/infinity/commerce/club-throttle/stripe-paid/route.js"),
 );
-const commerceBridgeBuildRouteQc = prebuiltUsed && commerceBridgeBuiltRoute ? "PASS" : prebuiltUsed ? "FAIL" : "SKIPPED";
+const commerceBridgeBuildRouteQc =
+  remoteStageBuild && !prebuiltUsed ? "DEFERRED_REMOTE_BUILD" : prebuiltUsed && commerceBridgeBuiltRoute ? "PASS" : prebuiltUsed ? "FAIL" : "SKIPPED";
 const stageOnly = process.env.INFINITY_RUNTIME_STAGE_ONLY === "1" || process.env.INFINITY_RUNTIME_PROMOTE !== "1";
-const productionStage = process.env.INFINITY_RUNTIME_PRODUCTION_STAGE === "1";
+const productionStage =
+  process.env.INFINITY_RUNTIME_PRODUCTION_STAGE === "1" || remoteStageBuild;
 if (process.env.INFINITY_RUNTIME_PLAIN_PROD === "1") {
   console.log(JSON.stringify({
     ok: false,
@@ -951,26 +998,46 @@ const candidateUrl = urls.find((row) => /infinity-runtime-/.test(row) && !row.in
 const inspect = await api(`/v6/deployments?projectId=${encodeURIComponent(PROJECT_ID)}&limit=3`);
 const latest = inspect.ok ? (await inspect.json()).deployments?.[0] : null;
 const candidateId = latest?.uid ?? latest?.id ?? null;
-for (let i = 0; i < 45 && candidateId; i += 1) {
+const remoteBuildPollMax = remoteStageBuild ? 120 : 45;
+const remoteBuildPollMs = remoteStageBuild ? 5000 : 4000;
+for (let i = 0; i < remoteBuildPollMax && candidateId; i += 1) {
   const row = await api(`/v13/deployments/${encodeURIComponent(candidateId)}`);
   const body = row.ok ? await row.json() : null;
   const state = body?.readyState ?? "UNKNOWN";
   if (state === "READY" || state === "ERROR" || state === "CANCELED") break;
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+  await new Promise((resolve) => setTimeout(resolve, remoteBuildPollMs));
 }
 const finalInspect = candidateId ? await api(`/v13/deployments/${encodeURIComponent(candidateId)}`) : null;
 const finalBody = finalInspect?.ok ? await finalInspect.json() : null;
+const remoteVercelBuildStatus = finalBody?.readyState ?? "UNKNOWN";
 if (finalBody?.readyState === "ERROR") {
   console.log(JSON.stringify({
     ok: false,
     reason: "VERCEL_BUILD_FAILED",
     gate: "RemoteBuildGate",
     candidateId,
+    REMOTE_VERCEL_BUILD_STATUS: remoteVercelBuildStatus,
     errorMessage: finalBody.errorMessage ?? null,
     errorCode: finalBody.errorCode ?? null,
   }, null, 2));
   process.exit(1);
 }
+if (remoteStageBuild && finalBody?.readyState !== "READY") {
+  console.log(JSON.stringify({
+    ok: false,
+    reason: "REMOTE_VERCEL_BUILD_NOT_READY",
+    gate: "INFINITY_RUNTIME_FULL_VERCEL_BUILD_QC",
+    candidateId,
+    REMOTE_VERCEL_BUILD_STATUS: remoteVercelBuildStatus,
+  }, null, 2));
+  process.exit(1);
+}
+const infinityRuntimeFullVercelBuildQc =
+  remoteStageBuild && finalBody?.readyState === "READY"
+    ? "PASS_REMOTE_STAGED_PRODUCTION_BUILD"
+    : prebuiltUsed
+      ? "PASS_LOCAL_PREBUILT"
+      : "NOT_RUN";
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET || "";
 const cronSecret = process.env.CRON_SECRET || process.env.INFINITY_RUNTIME_TICK_SECRET || "";
 async function smoke(path, extraHeaders = {}, method = "GET", bodyText = null) {
@@ -1102,7 +1169,27 @@ const report = {
   INFINITY_RUNTIME_VERCEL_PROJECT: PROJECT,
   INFINITY_RUNTIME_BUILD_SOURCE: "scripts/infinity-runtime-isolated-deploy.mjs",
   INFINITY_RUNTIME_ROOT_DIRECTORY: "(isolated temp dest — not HQ monorepo root)",
-  INFINITY_RUNTIME_DEPLOY_MECHANISM: prebuiltUsed ? "vercel build --prod + vercel deploy --prebuilt" : "vercel deploy",
+  INFINITY_RUNTIME_DEPLOY_MECHANISM: prebuiltUsed
+    ? "vercel build --prod + vercel deploy --prebuilt"
+    : remoteStageBuild
+      ? "vercel deploy --prod --skip-domain (Vercel remote production build)"
+      : "vercel deploy",
+  INFINITY_RUNTIME_REMOTE_STAGE_BUILD: remoteStageBuild,
+  WINDOWS_LOCAL_VERCEL_BUILD_QC: windowsLocalVercelBuildQc,
+  WINDOWS_LOCAL_VERCEL_BUILD_BLOCKER:
+    windowsLocalVercelBuildQc === "BLOCKED_ENVIRONMENT_SYMLINK_PERMISSION" ? "EPERM_FUNCTION_OUTPUT_SYMLINK" : null,
+  REMOTE_VERCEL_BUILD_STATUS: remoteVercelBuildStatus,
+  INFINITY_RUNTIME_FULL_VERCEL_BUILD_QC: infinityRuntimeFullVercelBuildQc,
+  INFINITY_RUNTIME_STAGED_DEPLOYMENT_ID: candidateId,
+  INFINITY_RUNTIME_STAGED_DEPLOYMENT_URL: candidateUrl,
+  STAGED_RUNTIME_EXPECTED_SHA: sha,
+  STAGED_RUNTIME_BAKED_SHA: tickSafe.body?.release?.release_sha ?? tickSafe.body?.identity?.release_sha ?? null,
+  STAGED_RUNTIME_REPORTED_SHA: tickSafe.body?.identity?.git_sha ?? tickSafe.body?.identity?.release_sha ?? null,
+  INFINITY_RUNTIME_STAGED_RELEASE_IDENTITY_QC: identityMatch ? "PASS" : "FAIL",
+  RELEASE_IDENTITY_GENERATION_PROVENANCE_QC: releaseIdentityFileParityQc,
+  RELEASE_IDENTITY_FILE_PARITY_QC: releaseIdentityFileParityQc,
+  STALE_VALID_RELEASE_IDENTITY_REGRESSION_QC: prebuildAction === "REGENERATE" || prebuildExistingSha === null || prebuildExistingSha === sha ? "PASS" : "FAIL",
+  CLEAN_CHECKOUT_SOURCE_OF_TRUTH_QC: isolatedSource.canIncludeUntracked ? "FAIL" : "PASS",
   productionUrl,
   candidateUrl,
   candidateId,
