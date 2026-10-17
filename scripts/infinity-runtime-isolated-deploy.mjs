@@ -36,10 +36,69 @@ if (!typecheckOnly && (!token || !team)) {
   process.exit(1);
 }
 
-const root = process.cwd();
+const repoRoot = process.cwd();
+const requestedReleaseSha = (process.env.INFINITY_RUNTIME_RELEASE_SHA || "").trim();
+const resolvedHead = (spawnSync("git", ["rev-parse", "HEAD"], { cwd: repoRoot, encoding: "utf8" }).stdout || "").trim();
+const releaseSha = requestedReleaseSha || resolvedHead;
+
+function materializeCommittedSourceTree(sha) {
+  if (process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1") {
+    return {
+      sourceRoot: repoRoot,
+      sha,
+      mechanism: "EMERGENCY_CWD",
+      canIncludeUntracked: true,
+      cleanup: () => {},
+    };
+  }
+  const worktreePath = join(tmpdir(), `infinity-runtime-src-${sha.replace(/[^a-f0-9]/gi, "").slice(0, 12)}`);
+  if (existsSync(worktreePath)) {
+    spawnSync("git", ["worktree", "remove", "--force", worktreePath], { cwd: repoRoot, encoding: "utf8", shell: true });
+  }
+  const add = spawnSync("git", ["worktree", "add", "--detach", worktreePath, sha], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: true,
+  });
+  if (add.status !== 0) {
+    console.log(
+      JSON.stringify({
+        ok: false,
+        reason: "GIT_WORKTREE_MATERIALIZE_FAILED",
+        gate: "DEPLOY_SOURCE_COMMITTED_TREE_ONLY_QC",
+        sha,
+        stderr: (add.stderr || "").slice(-2000),
+        stdout: (add.stdout || "").slice(-500),
+      }),
+    );
+    process.exit(1);
+  }
+  return {
+    sourceRoot: worktreePath,
+    sha,
+    mechanism: "GIT_DETACHED_WORKTREE",
+    canIncludeUntracked: false,
+    cleanup: () => {
+      spawnSync("git", ["worktree", "remove", "--force", worktreePath], { cwd: repoRoot, encoding: "utf8", shell: true });
+    },
+  };
+}
+
+const isolatedSource = materializeCommittedSourceTree(releaseSha);
+const root = isolatedSource.sourceRoot;
+console.log(
+  JSON.stringify({
+    ISOLATED_DEPLOY_SOURCE_ROOT: root,
+    ISOLATED_DEPLOY_COPY_MECHANISM: isolatedSource.mechanism,
+    ISOLATED_DEPLOY_SOURCE_SHA: isolatedSource.sha,
+    ISOLATED_DEPLOY_CAN_INCLUDE_UNTRACKED_FILES: isolatedSource.canIncludeUntracked,
+  }),
+);
+process.on("exit", () => isolatedSource.cleanup());
+
 const dest = join(tmpdir(), process.env.INFINITY_RUNTIME_ISOLATED_DEST ?? "infinity-runtime-isolated-v8");
 const emergency = process.env.INFINITY_RUNTIME_EMERGENCY_DIRTY === "1";
-const gitStatus = spawnSync("git", ["status", "--porcelain"], { cwd: root, encoding: "utf8" });
+const gitStatus = spawnSync("git", ["status", "--porcelain"], { cwd: repoRoot, encoding: "utf8" });
 const dirtyEntries = (gitStatus.stdout || "").split(/\r?\n/).map((row) => row.trim()).filter(Boolean);
 const uploadedDirty = dirtyEntries.filter((row) => /organic-growth-engine|blog-os|question-cluster/.test(row));
 if (existsSync(dest)) rmSync(dest, { recursive: true, force: true });
@@ -123,8 +182,8 @@ if (existsSync(publicMediaFrom)) {
 }
 
 function assertRuntimeBlogMediaArtifactQc() {
-  const verify = spawnSync("npx", ["tsx", join(root, "scripts/_verify-runtime-blog-media-artifact.ts"), dest], {
-    cwd: root,
+  const verify = spawnSync("npx", ["tsx", join(repoRoot, "scripts/_verify-runtime-blog-media-artifact.ts"), dest], {
+    cwd: repoRoot,
     encoding: "utf8",
     shell: true,
     env: { ...process.env, FORCE_COLOR: "0" },
@@ -153,6 +212,41 @@ function assertRuntimeBlogMediaArtifactQc() {
 }
 
 const runtimeBlogMediaQc = assertRuntimeBlogMediaArtifactQc();
+
+const requiredCommittedPaths = [
+  "lib/infinity/commerce/club-throttle-storefront-compose.ts",
+  "lib/infinity/production-outbound/obligation/release-identity.ts",
+  "public/visual/journal-hero-night-ride.webp",
+  "app/api/runtime/portfolio-operating-tick/route.ts",
+  "app/api/runtime/portfolio-job-worker/route.ts",
+];
+const missingCommitted = requiredCommittedPaths.filter((rel) => !existsSync(join(root, rel)));
+if (missingCommitted.length) {
+  console.log(
+    JSON.stringify({
+      ok: false,
+      reason: "ISOLATED_COMMITTED_SOURCE_MISSING_REQUIRED_FILES",
+      gate: "ISOLATED_COMMITTED_SOURCE_COMPLETENESS_QC",
+      missing: missingCommitted,
+      ISOLATED_COMMITTED_SOURCE_MISSING_REQUIRED_FILES: missingCommitted,
+    }),
+  );
+  process.exit(1);
+}
+
+if (process.env.INFINITY_RUNTIME_PREPARE_SOURCE_ONLY === "1") {
+  console.log(
+    JSON.stringify({
+      ok: true,
+      gate: "INFINITY_RUNTIME_PREPARE_SOURCE_ONLY",
+      ISOLATED_COMMITTED_SOURCE_COMPLETENESS_QC: "PASS",
+      DEPLOY_SOURCE_COMMITTED_TREE_ONLY_QC: isolatedSource.canIncludeUntracked ? "PARTIAL" : "PASS",
+      dest,
+      releaseSha: isolatedSource.sha,
+    }),
+  );
+  process.exit(0);
+}
 
 for (const rel of occupancynpvVentureDeployComposeSources) {
   const from = join(root, rel);
@@ -580,6 +674,7 @@ const envKeys = {
 
 const moduleCandidates = [
   process.env.INFINITY_RUNTIME_NODE_MODULES,
+  join(repoRoot, "node_modules"),
   join(root, "node_modules"),
   join(root, "..", "infinity-core", "node_modules"),
 ].filter(Boolean);
