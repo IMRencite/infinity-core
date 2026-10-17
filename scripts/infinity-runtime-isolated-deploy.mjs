@@ -94,6 +94,12 @@ function materializeCommittedSourceTree(sha) {
 
 const isolatedSource = materializeCommittedSourceTree(releaseSha);
 const root = isolatedSource.sourceRoot;
+const committedTrackedFiles = new Set(
+  (spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean),
+);
+const includeClubThrottleFulfillmentTick = committedTrackedFiles.has(
+  "app/api/runtime/club-throttle-fulfillment-tick/route.ts",
+);
 console.log(
   JSON.stringify({
     ISOLATED_DEPLOY_SOURCE_ROOT: root,
@@ -153,10 +159,10 @@ if (process.env.INFINITY_RUNTIME_STRIP_ORGANIC_GROWTH === "1") {
   );
   process.exit(1);
 }
-const destCrons = [
-  { path: "/api/runtime/communication-tick", schedule: "*/5 * * * *" },
-  { path: "/api/runtime/club-throttle-fulfillment-tick", schedule: "*/15 * * * *" },
-];
+const destCrons = [{ path: "/api/runtime/communication-tick", schedule: "*/5 * * * *" }];
+if (includeClubThrottleFulfillmentTick) {
+  destCrons.push({ path: "/api/runtime/club-throttle-fulfillment-tick", schedule: "*/15 * * * *" });
+}
 if (includeAutonomousLoops) {
   destCrons.push(
     { path: "/api/runtime/tick", schedule: "0 * * * *" },
@@ -403,13 +409,14 @@ if (!includeAutonomousLoops) {
   }
 }
 mkdirSync(join(dest, "app/api/runtime"), { recursive: true });
-const tracked = new Set((spawnSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).stdout || "").split(/\r?\n/).filter(Boolean));
+const tracked = committedTrackedFiles;
 const semanticNavFrozenFrom = join(root, ".infinity/semantic-nav-width-muted-text-deploy-successor.json");
 if (tracked.has(".infinity/semantic-nav-width-muted-text-deploy-successor.json") && existsSync(semanticNavFrozenFrom)) {
   mkdirSync(join(dest, ".infinity"), { recursive: true });
   cpSync(semanticNavFrozenFrom, join(dest, ".infinity/semantic-nav-width-muted-text-deploy-successor.json"));
 }
-const runtimeRoutes = ["communication-tick", "communication-attest", "club-throttle-fulfillment-tick"].concat(
+const runtimeRoutes = ["communication-tick", "communication-attest"].concat(
+  includeClubThrottleFulfillmentTick ? ["club-throttle-fulfillment-tick"] : [],
   includeAutonomousLoops
     ? ["tick", "organic-tick", "venture-operating-cycle", "portfolio-operating-tick", "portfolio-job-worker", "opportunity-discovery-tick"]
     : [],
@@ -418,8 +425,8 @@ const runtimeRoutes = ["communication-tick", "communication-attest", "club-throt
 const requiredTracked = [
   "app/api/runtime/communication-tick/route.ts",
   "app/api/runtime/communication-attest/route.ts",
-  "app/api/runtime/club-throttle-fulfillment-tick/route.ts",
 ].concat(
+  includeClubThrottleFulfillmentTick ? ["app/api/runtime/club-throttle-fulfillment-tick/route.ts"] : [],
   includeAutonomousLoops
     ? [
         "app/api/runtime/tick/route.ts",
@@ -468,7 +475,8 @@ if (existsSync(v36ParityFrom)) {
 const destRoutes = runtimeRoutes
   .filter((route) => existsSync(join(dest, "app/api/runtime", route, "route.ts")))
   .map((route) => `/api/runtime/${route}`);
-const cronPaths = ["/api/runtime/communication-tick", "/api/runtime/club-throttle-fulfillment-tick"].concat(
+const cronPaths = ["/api/runtime/communication-tick"].concat(
+  includeClubThrottleFulfillmentTick ? ["/api/runtime/club-throttle-fulfillment-tick"] : [],
   includeAutonomousLoops
     ? [
         "/api/runtime/tick",
