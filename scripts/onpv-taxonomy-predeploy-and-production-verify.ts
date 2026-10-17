@@ -139,7 +139,7 @@ async function main() {
     ONPV_DEPLOY_SOURCE_COMMITTED_TREE_ONLY_QC: deploySourceQc,
     ONPV_TAXONOMY_DEPLOYMENT_ID: deployment?.deployment_id ?? null,
     ONPV_TAXONOMY_RELEASE_SHA: releaseSha,
-    ONPV_TAXONOMY_RELEASE_DIRTY: Boolean(dirty.trim()),
+    ONPV_TAXONOMY_RELEASE_DIRTY: Boolean(sourceDirty),
     deployed: deployment?.deployed ?? false,
     ONPV_CATEGORY_MEMBERSHIP_FAILURE_COUNT: categoryFailures,
     ONPV_TAG_MEMBERSHIP_FAILURE_COUNT: tagMembershipFailures,
