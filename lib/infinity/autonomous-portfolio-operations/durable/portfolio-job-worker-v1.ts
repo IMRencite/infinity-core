@@ -286,8 +286,16 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           attempt_index: job.attempt_count,
           execute_live_creative: gov.LIVE_CREATIVE_ENABLED,
         });
+        const qualityHeldTerminal =
+          !gov.LIVE_CREATIVE_ENABLED ||
+          attempt.held_reason === "LIVE_CREATIVE_NOT_AUTHORIZED" ||
+          attempt.held_reason === "CT_PRINT_QC_QUALITY_HELD_NO_AUTO_PAID_RETRY";
         await completeJob(job, holder, {
-          status: attempt.pass ? "COMPLETED" : job.attempt_count >= gov.max_self_heal_attempts ? "FAILED" : "QUEUED",
+          status: attempt.pass
+            ? "COMPLETED"
+            : qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts
+              ? "FAILED"
+              : "QUEUED",
           safe_error: attempt.pass ? null : attempt.held_reason,
           eligible_at: new Date(Date.now() + 90_000).toISOString(),
           output_lineage: {

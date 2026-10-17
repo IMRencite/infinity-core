@@ -94,6 +94,34 @@ export async function patchPortfolioCycle(
     .eq("cycle_id", cycle_id);
 }
 
+/** Terminalize creative self-heal jobs that cannot run without live paid creative (quality-held lane). */
+export async function reconcileQualityHeldCreativeJobsForCycle(cycle_id: string): Promise<number> {
+  const { resolveCreativeBudgetGovernance } = await import("./creative-self-heal-budget-governance-v1");
+  const gov = resolveCreativeBudgetGovernance();
+  if (gov.LIVE_CREATIVE_ENABLED) return 0;
+  const client = createPortfolioDurableSupabase();
+  if (!client) return 0;
+  const { data: rows } = await client
+    .from(PORTFOLIO_DURABLE_TABLES.jobs)
+    .select("job_id,status,job_type,safe_error")
+    .eq("cycle_id", cycle_id)
+    .eq("job_type", "CREATIVE_SELF_HEAL")
+    .eq("status", "QUEUED");
+  let updated = 0;
+  for (const row of rows ?? []) {
+    await client
+      .from(PORTFOLIO_DURABLE_TABLES.jobs)
+      .update({
+        status: "FAILED",
+        safe_error: row.safe_error ?? "PRINT_PRODUCTION_QC_HOLD",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("job_id", row.job_id);
+    updated += 1;
+  }
+  return updated;
+}
+
 export async function getPortfolioCycle(cycle_id: string): Promise<PortfolioCycleRow | null> {
   const client = createPortfolioDurableSupabase();
   if (!client) return null;
@@ -106,6 +134,7 @@ export async function reconcilePortfolioCycleTerminalState(cycle_id: string): Pr
   status: PortfolioCycleStatus;
   counts: Awaited<ReturnType<typeof countPortfolioJobsByCycle>>;
 }> {
+  await reconcileQualityHeldCreativeJobsForCycle(cycle_id);
   const counts = await countPortfolioJobsByCycle(cycle_id);
   const pending = counts.queued + counts.running;
   const totalTerminal = counts.completed + counts.failed;

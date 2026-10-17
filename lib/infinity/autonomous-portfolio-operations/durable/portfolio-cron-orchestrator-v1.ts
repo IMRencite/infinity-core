@@ -22,6 +22,8 @@ import {
   evaluateBacklogSourceVNext,
   listOccupancyClubThrottleBacklogArticles,
 } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
+import { buildBacklogRenderedEvidenceMap } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-compose-evidence";
+import { resolveBacklogPublicationContentRevision } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-refresh-current-revision-v1";
 import { createPortfolioOperatingCycle, patchPortfolioCycle } from "./autonomous-portfolio-durable-execution-v1";
 import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
 import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
@@ -245,10 +247,15 @@ export async function orchestratePortfolioOperatingTick(input: {
         const ctCandidate = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
         if (ctCandidate) {
           const workType = clubThrottleBacklogCandidateWorkType(ctCandidate);
+          const ctRendered = buildBacklogRenderedEvidenceMap(backlog);
+          const contentRevision = resolveBacklogPublicationContentRevision(
+            ctCandidate,
+            ctRendered[ctCandidate.path] ?? null,
+          );
           const assetId = publicationAssetIdentity({
             venture_id: "club-throttle",
             canonical_path: ctCandidate.path,
-            content_revision: ctCandidate.slug,
+            content_revision: contentRevision,
           });
           const deployKey = workType === "CONTENT_REFRESH" ? `refresh:${assetId}` : `deploy:${assetId}`;
           const deploy = await enqueuePortfolioJob({
