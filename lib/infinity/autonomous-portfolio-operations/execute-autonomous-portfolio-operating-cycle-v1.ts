@@ -221,6 +221,8 @@ export async function executeAutonomousPortfolioOperatingCycleV1(input: {
         AUTONOMOUS_VISUAL_APPROVAL_ARTIFACT_PIN_QC: "HOLD",
         approval_policy: "CLUB_THROTTLE_AUTONOMOUS_CREATIVE_APPROVAL_POLICY_V1",
         source_asset_hash: null,
+        raw_asset_hash: null,
+        attempt_id: null,
         held_reason: error instanceof Error ? error.message : "CREATIVE_PIPELINE_ERROR",
       };
     }

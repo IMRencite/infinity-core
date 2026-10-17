@@ -12,7 +12,12 @@ export type CanonicalProductRecord = {
   price_usd: number | null;
   currency: "usd";
   primary_image: string;
-  primary_image_kind: "PROVIDER_GARMENT_MOCKUP" | "COMPOSED_GARMENT_DESIGN" | "RAW_ARTWORK" | "GENERIC_SILHOUETTE";
+  primary_image_kind:
+    | "PROVIDER_GARMENT_MOCKUP"
+    | "COMPOSED_GARMENT_DESIGN"
+    | "RAW_ARTWORK"
+    | "GENERIC_SILHOUETTE"
+    | "STOREFRONT_MERCHANDISING_RENDER";
   variant_ids: string[];
   released_at: string;
   source: "CANONICAL_INVENTORY";

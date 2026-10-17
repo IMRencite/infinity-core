@@ -41,7 +41,7 @@ export function mapProvenanceToLedgerTriggerType(
  */
 export function resolvePortfolioCronProvenance(
   request: Request,
-  env: NodeJS.ProcessEnv = process.env,
+  env: Record<string, string | undefined> = process.env as Record<string, string | undefined>,
 ): PortfolioCronProvenance {
   const userAgent = request.headers.get("user-agent");
   const cronHeader = request.headers.get("x-vercel-cron");

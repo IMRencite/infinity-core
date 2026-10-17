@@ -62,7 +62,7 @@ function mapVentureState(record: ReturnType<typeof mergeCanonicalVentureRecordsF
     return "LIVE_OPERATING";
   }
   if (record.operating_stage === "OPERATING") return "LIVE_OPERATING";
-  if (record.operating_stage === "BUILD") return "BUILDING";
+  if (record.operating_stage === "BUILDING") return "BUILDING";
   if (record.venture_status === "PAUSED") return "PAUSED";
   if (record.venture_status === "ARCHIVED") return "ARCHIVED";
   return record.public_launch_state === "YES" ? "LIVE_OPERATING" : "BUILDING";
@@ -196,7 +196,9 @@ export function ventureOperatingPlanQc(plans: VentureOperatingPlanV1[], inventor
 }
 
 export function autonomousSchedulerResponsibilitySeparationQc(): "PASS" | "FAIL" {
-  return PORTFOLIO_OPERATING_CRON_SCHEDULE !== OPPORTUNITY_DISCOVERY_CRON_SCHEDULE ? "PASS" : "FAIL";
+  const portfolioSchedule: string = PORTFOLIO_OPERATING_CRON_SCHEDULE;
+  const discoverySchedule: string = OPPORTUNITY_DISCOVERY_CRON_SCHEDULE;
+  return portfolioSchedule !== discoverySchedule ? "PASS" : "FAIL";
 }
 
 export type ExistingVentureGrowthAutonomyQc =

@@ -4,6 +4,16 @@
  */
 export const VERIFIED_COMMITTED_FIX_SAME_SESSION_POLICY_ID = "VERIFIED_COMMITTED_PRODUCTION_FIX_V1" as const;
 
+/** Commit exact repaired files before the next full isolated-runtime build iteration. */
+export const RUNTIME_FIX_COMMIT_BEFORE_NEXT_DIAGNOSTIC_V1 = "RUNTIME_FIX_COMMIT_BEFORE_NEXT_DIAGNOSTIC_V1" as const;
+
+export function runtimeFixCommitBeforeNextDiagnosticQc(input: {
+  required_fixes_committed: boolean;
+  no_accumulated_uncommitted_build_repairs: boolean;
+}): "PASS" | "FAIL" {
+  return input.required_fixes_committed && input.no_accumulated_uncommitted_build_repairs ? "PASS" : "FAIL";
+}
+
 export function evaluateVerifiedCommittedFixSameSessionPolicyQc(input: {
   committed_tree_only: boolean;
   required_tests_pass: boolean;

@@ -1,6 +1,6 @@
 export function authorizeRuntimeTickRequest(
   request: Request,
-  env: NodeJS.ProcessEnv = process.env,
+  env: Record<string, string | undefined> = process.env as Record<string, string | undefined>,
 ): { ok: boolean; reason: string } {
   const expected = env.CRON_SECRET || env.INFINITY_RUNTIME_TICK_SECRET;
   if (!expected) {

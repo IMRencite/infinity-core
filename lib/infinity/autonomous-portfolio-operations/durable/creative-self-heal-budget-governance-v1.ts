@@ -10,7 +10,9 @@ export type CreativeBudgetGovernance = {
   founder_blocker: string | null;
 };
 
-export function resolveCreativeBudgetGovernance(env: NodeJS.ProcessEnv = process.env): CreativeBudgetGovernance {
+export function resolveCreativeBudgetGovernance(
+  env: Record<string, string | undefined> = process.env as Record<string, string | undefined>,
+): CreativeBudgetGovernance {
   const hasXai = Boolean(env.XAI_API_KEY?.trim() || env.XAI_MANAGEMENT_API_KEY?.trim());
   const policyPresent = Boolean(env.INFINITY_CREATIVE_BUDGET_USD?.trim() || env.INFINITY_PORTFOLIO_CREATIVE_BUDGET_USD?.trim());
   const budgetUsd = Number(env.INFINITY_PORTFOLIO_CREATIVE_BUDGET_USD ?? env.INFINITY_CREATIVE_BUDGET_USD ?? "0");

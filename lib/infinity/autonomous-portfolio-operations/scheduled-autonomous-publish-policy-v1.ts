@@ -11,7 +11,7 @@ export function resolveScheduledAutonomousPublish(input: {
   trigger: PortfolioOperatingTrigger;
   /** Explicit CLI override for manual runs only. */
   manual_publish_flag?: boolean;
-  env?: NodeJS.ProcessEnv;
+  env?: Record<string, string | undefined>;
 }): {
   policy: typeof SCHEDULED_AUTONOMOUS_PUBLISH_POLICY_V1;
   authority: typeof AUTONOMOUS_SAFE_PUBLISH_AUTHORITY_V1;
