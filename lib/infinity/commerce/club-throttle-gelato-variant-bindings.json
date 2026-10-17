@@ -1,0 +1,960 @@
+{
+  "generated_at": "2026-10-11T17:32:27.714Z",
+  "bindings": [
+    {
+      "sku": "LOT_LINE",
+      "gelato_product_id": "d381a616-05cf-4908-b558-5aba03dc1560",
+      "superseded_gelato_product_id": "99913623-8656-42f9-a818-46fbf14b10eb",
+      "variants": {
+        "S": {
+          "variant_uid": "c3ada19c-d464-4ea6-874f-a69bc3f64b23",
+          "color": "white",
+          "size": "S"
+        },
+        "M": {
+          "variant_uid": "47a3861b-bea5-4ad2-88b4-23433e02edcf",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "f7213923-9c1c-46b7-a631-85586d8ed25c",
+          "color": "white",
+          "size": "L"
+        },
+        "XL": {
+          "variant_uid": "f64db27e-2f77-4cbf-a286-a9626f2297c9",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "86d4bd1c-52b9-44cd-a591-fa6ed398303d",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "black": {
+          "M": {
+            "variant_uid": "3fb6a21e-410c-4896-a99b-a9d6dedfa713",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "1a75101b-8b29-4006-b62e-86d479203d40",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "d50f8123-5db8-48d9-809f-437870ef6648",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "1a75101b-8b29-4006-b62e-86d479203d40",
+            "color": "black",
+            "size": "L"
+          },
+          "S": {
+            "variant_uid": "76b25119-ea29-4312-ba7d-258071abc2a1",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "1a75101b-8b29-4006-b62e-86d479203d40",
+            "color": "black",
+            "size": "S"
+          },
+          "XL": {
+            "variant_uid": "14d2e701-8e1e-4300-b51d-d7791da2e7ae",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "1a75101b-8b29-4006-b62e-86d479203d40",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "d2c494ad-e3d0-409e-9972-4f130cbbd786",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "1a75101b-8b29-4006-b62e-86d479203d40",
+            "color": "black",
+            "size": "2XL"
+          }
+        },
+        "ash": {
+          "M": {
+            "variant_uid": "29beabaa-0dce-4b45-b7c1-72b0fad51a72",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f5ede586-efd7-4436-a1ff-2b686b055a87",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "a8e76ec7-92f4-4101-bfd0-19d1044b26de",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f5ede586-efd7-4436-a1ff-2b686b055a87",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "5fcaa060-598a-46f8-beef-9b22aeeda0e9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f5ede586-efd7-4436-a1ff-2b686b055a87",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "5f0a8f46-b5e1-4d75-873d-1c6c99283e4e",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f5ede586-efd7-4436-a1ff-2b686b055a87",
+            "color": "ash",
+            "size": "2XL"
+          },
+          "S": {
+            "variant_uid": "2d6a5b5d-2520-426b-baba-8cf917d26c1b",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f5ede586-efd7-4436-a1ff-2b686b055a87",
+            "color": "ash",
+            "size": "S"
+          }
+        },
+        "dark-heather": {
+          "S": {
+            "variant_uid": "edad4e81-2780-42ff-904f-dadbc0312320",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "S",
+            "gelato_product_id": "d5a84418-b98f-47e2-8b28-087beac0d8d0"
+          },
+          "M": {
+            "variant_uid": "0c2745fa-6897-4e46-95c0-e9bb5418d169",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "M",
+            "gelato_product_id": "d5a84418-b98f-47e2-8b28-087beac0d8d0"
+          },
+          "L": {
+            "variant_uid": "b58766cf-36e4-450b-94b3-fc4dc1bec59c",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "L",
+            "gelato_product_id": "d5a84418-b98f-47e2-8b28-087beac0d8d0"
+          },
+          "XL": {
+            "variant_uid": "4768474d-512f-4e67-9cc9-528e812780d9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "XL",
+            "gelato_product_id": "d5a84418-b98f-47e2-8b28-087beac0d8d0"
+          },
+          "2XL": {
+            "variant_uid": "64ea8466-91e6-477f-b14e-bb44f15cc342",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "2XL",
+            "gelato_product_id": "d5a84418-b98f-47e2-8b28-087beac0d8d0"
+          }
+        }
+      }
+    },
+    {
+      "sku": "CLEAN_RPM",
+      "gelato_product_id": "c1a50563-b327-4668-9b22-76abf0bc7d40",
+      "superseded_gelato_product_id": "3f108c32-d821-4df7-9cf7-fc23c2a11745",
+      "variants": {
+        "S": {
+          "variant_uid": "b33474e2-7a16-4064-b660-30e6526c0b49",
+          "color": "white",
+          "size": "S"
+        },
+        "M": {
+          "variant_uid": "0b8531d5-361d-465d-bdcc-897da8741c7f",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "eda4c692-5ad1-4d1a-a9f3-b5f442d8f052",
+          "color": "white",
+          "size": "L"
+        },
+        "XL": {
+          "variant_uid": "745311b3-2e0c-4200-b594-1808f9fe87bc",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "505eaa94-544c-4554-9526-fb8ec120e4a2",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "ash": {
+          "S": {
+            "variant_uid": "f978f648-4666-4942-95b9-a81bcf0ccee9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "e5638f3d-4648-4024-9b2a-48aca26978a7",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "faf317d3-40a9-4e2a-99f9-732806becc66",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "e5638f3d-4648-4024-9b2a-48aca26978a7",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "e3879aea-2189-4dea-88be-29ceb52dd0a8",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "e5638f3d-4648-4024-9b2a-48aca26978a7",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "b3cb994b-1266-43d4-99b1-2ca2cfbf25bd",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "e5638f3d-4648-4024-9b2a-48aca26978a7",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "46bed88a-ef49-445b-9d2a-8f4b732fa102",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "e5638f3d-4648-4024-9b2a-48aca26978a7",
+            "color": "ash",
+            "size": "2XL"
+          }
+        },
+        "black": {
+          "S": {
+            "variant_uid": "cb1ab661-f946-401a-a274-f3f6d17fc725",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "edf6736a-a05d-4beb-bceb-dcb2098cba83",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "0d519db1-83b5-43f2-a350-1640957d92d4",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "edf6736a-a05d-4beb-bceb-dcb2098cba83",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "8ca313bc-4a48-4d9b-9723-4ccd1d594966",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "edf6736a-a05d-4beb-bceb-dcb2098cba83",
+            "color": "black",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "453e5c80-5bb2-4f8b-8cb9-07bd4b9560fe",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "edf6736a-a05d-4beb-bceb-dcb2098cba83",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "f174b53d-8bfe-4ef5-8a49-85770cd91761",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "edf6736a-a05d-4beb-bceb-dcb2098cba83",
+            "color": "black",
+            "size": "2XL"
+          }
+        }
+      }
+    },
+    {
+      "sku": "DUALSPORT_DUST",
+      "gelato_product_id": "ac8d2549-7c7e-4de6-8202-01f2a566ccf9",
+      "superseded_gelato_product_id": "b0c01e64-abb6-465d-9796-105032430b0a",
+      "variants": {
+        "L": {
+          "variant_uid": "75d86865-6e1b-42ca-b167-fd2a30ee53c0",
+          "color": "white",
+          "size": "L"
+        },
+        "XL": {
+          "variant_uid": "cca02969-42d4-4b2d-9ab3-f70db5611625",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "5481205f-56f5-4363-a3e8-e4e340dd0ec7",
+          "color": "white",
+          "size": "2XL"
+        },
+        "S": {
+          "variant_uid": "e8540fae-fb3c-4df3-af62-892060c076ba",
+          "color": "white",
+          "size": "S"
+        },
+        "M": {
+          "variant_uid": "c500257f-8037-4fa4-9f4f-05b92f54bebf",
+          "color": "white",
+          "size": "M"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "black": {
+          "S": {
+            "variant_uid": "997583be-36b2-4368-bcdb-a17d01481fa8",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "3d305a34-78b7-48d6-a333-2763b2b684f4",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "a7429bb9-457d-47a4-8b26-90c9eaabd484",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "3d305a34-78b7-48d6-a333-2763b2b684f4",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "b804fbf9-d179-4c06-86d3-16fc22dc0489",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "3d305a34-78b7-48d6-a333-2763b2b684f4",
+            "color": "black",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "cc8ab704-e5aa-416f-9b04-65ba45977d5a",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "3d305a34-78b7-48d6-a333-2763b2b684f4",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "3430b257-97ca-4be9-b491-4873d094357a",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "3d305a34-78b7-48d6-a333-2763b2b684f4",
+            "color": "black",
+            "size": "2XL"
+          }
+        },
+        "ash": {
+          "S": {
+            "variant_uid": "71678892-d0b7-4d9f-af31-83082585ec8c",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4720b0d1-b006-4f7a-a2cc-1a169e10853a",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "a3f50a1d-6049-41d2-bb7a-ea4b664e8286",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4720b0d1-b006-4f7a-a2cc-1a169e10853a",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "f3b39033-601b-40d6-93a6-73a076a0cd8c",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4720b0d1-b006-4f7a-a2cc-1a169e10853a",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "c6d926c1-c645-4b57-bcc8-28ddd4b8c835",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4720b0d1-b006-4f7a-a2cc-1a169e10853a",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "8796147c-a740-406f-8785-7a2791b8a002",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4720b0d1-b006-4f7a-a2cc-1a169e10853a",
+            "color": "ash",
+            "size": "2XL"
+          }
+        },
+        "dark-heather": {
+          "S": {
+            "variant_uid": "ac9a74ca-82a0-486a-9b4c-ea693b6165d1",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "S",
+            "gelato_product_id": "1dbda27e-3e8a-43c5-b70a-f8f5ec2a0710"
+          },
+          "M": {
+            "variant_uid": "3bee3ef9-3c0b-4a51-8a8e-31200ae96e8d",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "M",
+            "gelato_product_id": "1dbda27e-3e8a-43c5-b70a-f8f5ec2a0710"
+          },
+          "L": {
+            "variant_uid": "7345c9e1-28bd-4f85-805d-c209a3f92726",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "L",
+            "gelato_product_id": "1dbda27e-3e8a-43c5-b70a-f8f5ec2a0710"
+          },
+          "XL": {
+            "variant_uid": "3a30937e-34b1-4ee3-85c0-3a0a86718acc",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "XL",
+            "gelato_product_id": "1dbda27e-3e8a-43c5-b70a-f8f5ec2a0710"
+          },
+          "2XL": {
+            "variant_uid": "98e4d186-3645-435e-8cca-da028603ca69",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "2XL",
+            "gelato_product_id": "1dbda27e-3e8a-43c5-b70a-f8f5ec2a0710"
+          }
+        },
+        "natural": {
+          "S": {
+            "variant_uid": "2c8abc5e-c312-4d1a-a02a-505ee1c745b0",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "S",
+            "gelato_product_id": "af876820-95ac-42b8-ab95-a3100f844bc0"
+          },
+          "M": {
+            "variant_uid": "b230c1f9-155e-4efc-89ad-5dbb536c2f1c",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "M",
+            "gelato_product_id": "af876820-95ac-42b8-ab95-a3100f844bc0"
+          },
+          "L": {
+            "variant_uid": "7677e440-417e-4b49-94a3-75fb6c56a5f7",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "L",
+            "gelato_product_id": "af876820-95ac-42b8-ab95-a3100f844bc0"
+          },
+          "XL": {
+            "variant_uid": "d71f5e1a-9bdf-4732-baa7-7490309577f4",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "XL",
+            "gelato_product_id": "af876820-95ac-42b8-ab95-a3100f844bc0"
+          },
+          "2XL": {
+            "variant_uid": "0e9c0fad-e761-49e5-a970-91193ecf0d63",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "2XL",
+            "gelato_product_id": "af876820-95ac-42b8-ab95-a3100f844bc0"
+          }
+        }
+      }
+    },
+    {
+      "sku": "KNEE_DOWN",
+      "gelato_product_id": "69391f6a-be94-407a-8b9f-414e5bcdec3f",
+      "superseded_gelato_product_id": "8755a8df-4827-43bd-9105-ce29078d78aa",
+      "variants": {
+        "M": {
+          "variant_uid": "adc50595-5eb3-4acd-a4bd-32fed9155564",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "1975410d-66bc-4bae-ad30-6cd1ade65d07",
+          "color": "white",
+          "size": "L"
+        },
+        "S": {
+          "variant_uid": "3b814cbd-f965-438a-ac5b-4eec970c8e93",
+          "color": "white",
+          "size": "S"
+        },
+        "XL": {
+          "variant_uid": "49abb919-e042-4514-b064-2e1242ec46e7",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "bdccf3c4-2656-42e1-883e-20fb58d1d30f",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "black": {
+          "XL": {
+            "variant_uid": "7b203723-650c-49e6-9302-9f989daac8dd",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "542efef5-b0ea-472d-b3b8-96ecec83ad05",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "d420a70d-f501-49a5-9fb6-aa68ec6aca82",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "542efef5-b0ea-472d-b3b8-96ecec83ad05",
+            "color": "black",
+            "size": "2XL"
+          },
+          "S": {
+            "variant_uid": "d5ad85d8-6396-48b8-9235-a4984c0b717e",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "542efef5-b0ea-472d-b3b8-96ecec83ad05",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "2bea0f22-2936-41e9-a071-b418aa98aa5e",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "542efef5-b0ea-472d-b3b8-96ecec83ad05",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "fae56ed6-55d2-4504-9c11-a3e926f41bd9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "542efef5-b0ea-472d-b3b8-96ecec83ad05",
+            "color": "black",
+            "size": "L"
+          }
+        },
+        "ash": {
+          "S": {
+            "variant_uid": "1f535b80-d5d1-4bc8-8a41-9a88e7336fe2",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f6857546-068a-4946-a840-d58125339cf2",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "9da0fdf5-e812-4201-b60e-6d18d68d9324",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f6857546-068a-4946-a840-d58125339cf2",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "2d09df38-069c-48e6-94cb-c28cab38ad32",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f6857546-068a-4946-a840-d58125339cf2",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "9f38b124-f5aa-4bed-8d5e-7c6ad90a42f2",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f6857546-068a-4946-a840-d58125339cf2",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "b72dfc6a-295b-47ac-86d7-8d24b45e2a62",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "f6857546-068a-4946-a840-d58125339cf2",
+            "color": "ash",
+            "size": "2XL"
+          }
+        }
+      }
+    },
+    {
+      "sku": "ZERO_CHILL_GARAGE",
+      "gelato_product_id": "cddf7f60-cf9c-49de-823a-60ca3ea3b74e",
+      "superseded_gelato_product_id": "e4a7a226-84d1-48a1-aea3-e4756534d4ac",
+      "variants": {
+        "S": {
+          "variant_uid": "7d29a9c5-6f17-4af3-a5e2-8b23635eeb15",
+          "color": "white",
+          "size": "S"
+        },
+        "M": {
+          "variant_uid": "cded165b-e87d-4665-9075-4bff5ded2707",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "11c894a1-0795-459c-8f74-1af5cb88f7a4",
+          "color": "white",
+          "size": "L"
+        },
+        "XL": {
+          "variant_uid": "a0f66316-dcf1-40f7-908e-f7ba17ba9b39",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "b4be41dc-fb00-4d90-826c-9316273f44dd",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "ash": {
+          "S": {
+            "variant_uid": "801bc98e-9b76-4215-8919-70728a142a30",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "20b54df5-0f34-4365-aaaf-a98ee9cdc68d",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "61fee998-d079-43f2-8adc-f2f79a047917",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "20b54df5-0f34-4365-aaaf-a98ee9cdc68d",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "56680938-8592-4b7c-9e7b-e9abd13c6381",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "20b54df5-0f34-4365-aaaf-a98ee9cdc68d",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "49766575-3982-47e7-9cac-392f8ea9a5c3",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "20b54df5-0f34-4365-aaaf-a98ee9cdc68d",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "dfc8d867-c00c-42b6-af6d-c95e4d55c973",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "20b54df5-0f34-4365-aaaf-a98ee9cdc68d",
+            "color": "ash",
+            "size": "2XL"
+          }
+        },
+        "black": {
+          "S": {
+            "variant_uid": "3211e5a3-91ec-496f-a27b-9ff309c46df5",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "676030bf-0113-420b-bfe4-d6e51bebdbe6",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "49c6709f-ae28-4be0-bb74-e6611d59c2ef",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "676030bf-0113-420b-bfe4-d6e51bebdbe6",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "d2bdaf37-2e24-4e06-b6db-4dcef77d9ac0",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "676030bf-0113-420b-bfe4-d6e51bebdbe6",
+            "color": "black",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "b58d4674-e41d-4a0d-98e0-eef463177b12",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "676030bf-0113-420b-bfe4-d6e51bebdbe6",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "c9e42ebf-bf12-4caa-908f-01677ff42674",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "676030bf-0113-420b-bfe4-d6e51bebdbe6",
+            "color": "black",
+            "size": "2XL"
+          }
+        },
+        "natural": {
+          "S": {
+            "variant_uid": "4a0e0596-aeb4-4199-9e48-25dbd84de0ee",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "S",
+            "gelato_product_id": "d2033631-160e-47d4-80ab-9f2d37b645d3"
+          },
+          "M": {
+            "variant_uid": "d4273a7e-d01f-48a7-b8f5-c8cc255ba9d1",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "M",
+            "gelato_product_id": "d2033631-160e-47d4-80ab-9f2d37b645d3"
+          },
+          "L": {
+            "variant_uid": "4a16bcc4-d657-4589-9f94-a7ee5d2c46ab",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "L",
+            "gelato_product_id": "d2033631-160e-47d4-80ab-9f2d37b645d3"
+          },
+          "XL": {
+            "variant_uid": "c26c6462-cbaa-4fa2-9d79-114cbfbb9cec",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "XL",
+            "gelato_product_id": "d2033631-160e-47d4-80ab-9f2d37b645d3"
+          },
+          "2XL": {
+            "variant_uid": "aaaa240f-0ebe-4803-9ecf-9dc3131ef70a",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_natural_gpr_0-4_gildan_5000",
+            "color": "natural",
+            "size": "2XL",
+            "gelato_product_id": "d2033631-160e-47d4-80ab-9f2d37b645d3"
+          }
+        }
+      }
+    },
+    {
+      "sku": "APEX_LINE",
+      "gelato_product_id": "c6beddef-3f87-44a8-aab9-5e488860d66c",
+      "superseded_gelato_product_id": "f8424c9d-460b-408b-9f3e-efa281c92c94",
+      "variants": {
+        "M": {
+          "variant_uid": "70dddef0-682a-4c38-ad1f-1c09a9d75098",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "66933fdb-ad67-4866-a74c-cb23c5570376",
+          "color": "white",
+          "size": "L"
+        },
+        "S": {
+          "variant_uid": "97cb2596-01c0-4d44-bfba-3337b3c56fff",
+          "color": "white",
+          "size": "S"
+        },
+        "XL": {
+          "variant_uid": "27178b57-8e79-4392-8465-ba621bb4cf28",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "54aaa760-1598-4a86-874a-a79c079eff6d",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "ash": {
+          "S": {
+            "variant_uid": "c242ff43-a205-43c0-ae52-2dea77f45243",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4d81d170-96d6-4e66-b97a-b4e70f52f17d",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "7e568ea7-f6f7-43eb-82b9-56d8e12adb68",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4d81d170-96d6-4e66-b97a-b4e70f52f17d",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "9f2f039b-43c2-4b7d-bad4-4b988d5584c9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4d81d170-96d6-4e66-b97a-b4e70f52f17d",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "393a5f9e-79ad-4c72-9906-5b17baf5d3dd",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4d81d170-96d6-4e66-b97a-b4e70f52f17d",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "990555fe-ae8f-4eaa-8e34-e3dc3903141c",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "4d81d170-96d6-4e66-b97a-b4e70f52f17d",
+            "color": "ash",
+            "size": "2XL"
+          }
+        },
+        "black": {
+          "S": {
+            "variant_uid": "2493e83c-8d2a-4f88-880c-c9b227a7602f",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "d3bc67c1-1ffa-4183-8d9d-647e3fb80b8e",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "a73b40b7-2c29-4aec-9264-333e47588c52",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "d3bc67c1-1ffa-4183-8d9d-647e3fb80b8e",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "68c8da27-a89b-4154-b933-008ff7f9a2ba",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "d3bc67c1-1ffa-4183-8d9d-647e3fb80b8e",
+            "color": "black",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "f4289f2a-304c-4326-b467-1a5416b9b407",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "d3bc67c1-1ffa-4183-8d9d-647e3fb80b8e",
+            "color": "black",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "9b126a10-3b5d-434a-88f0-a66e3aa16e4b",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "d3bc67c1-1ffa-4183-8d9d-647e3fb80b8e",
+            "color": "black",
+            "size": "2XL"
+          }
+        }
+      }
+    },
+    {
+      "sku": "BAGGER_SEND",
+      "gelato_product_id": "b3fce37e-85ad-492d-bdb8-d2e7c7e51faa",
+      "superseded_gelato_product_id": "49c1dd23-be91-4a86-ac44-5cfb2bfd7e51",
+      "variants": {
+        "S": {
+          "variant_uid": "9d1dc5bd-ffcc-40cb-9d89-96e3380cfdb2",
+          "color": "white",
+          "size": "S"
+        },
+        "M": {
+          "variant_uid": "72abe3a2-81c4-4793-903f-75eaa7cd0fe3",
+          "color": "white",
+          "size": "M"
+        },
+        "L": {
+          "variant_uid": "4e061616-de20-46fa-b59c-4de83bec28d4",
+          "color": "white",
+          "size": "L"
+        },
+        "XL": {
+          "variant_uid": "233042c5-e0cc-44b8-bb58-7279109ea900",
+          "color": "white",
+          "size": "XL"
+        },
+        "2XL": {
+          "variant_uid": "a57d36ea-21d6-4879-9e3c-94f442beba29",
+          "color": "white",
+          "size": "2XL"
+        }
+      },
+      "variant_count": 5,
+      "http_status": 200,
+      "variants_by_color": {
+        "black": {
+          "XL": {
+            "variant_uid": "1d79655c-faef-44c5-9174-c69db4f47325",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "af906fbf-cd10-43b3-abaa-3fd99da84684",
+            "color": "black",
+            "size": "XL"
+          },
+          "S": {
+            "variant_uid": "88f27403-a4a9-4a50-81e5-c7740d191161",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "af906fbf-cd10-43b3-abaa-3fd99da84684",
+            "color": "black",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "3b2f8d75-6745-4d3e-a6c7-bc7a91dc6769",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "af906fbf-cd10-43b3-abaa-3fd99da84684",
+            "color": "black",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "5a96357b-8813-437d-9028-962f6e53e431",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "af906fbf-cd10-43b3-abaa-3fd99da84684",
+            "color": "black",
+            "size": "L"
+          },
+          "2XL": {
+            "variant_uid": "810375c6-0b17-4c1a-893b-97482c3001bd",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_black_gpr_0-4_gildan_5000",
+            "gelato_product_id": "af906fbf-cd10-43b3-abaa-3fd99da84684",
+            "color": "black",
+            "size": "2XL"
+          }
+        },
+        "ash": {
+          "S": {
+            "variant_uid": "f79cdcaf-306e-4889-889c-cd7e53aebfa9",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "c1159d83-b2ef-4467-b34d-897cff4f862c",
+            "color": "ash",
+            "size": "S"
+          },
+          "M": {
+            "variant_uid": "85dd2496-164e-465e-914c-3eb5e41d8edc",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "c1159d83-b2ef-4467-b34d-897cff4f862c",
+            "color": "ash",
+            "size": "M"
+          },
+          "L": {
+            "variant_uid": "5d3b9be6-4869-441f-90c5-0787691552bb",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "c1159d83-b2ef-4467-b34d-897cff4f862c",
+            "color": "ash",
+            "size": "L"
+          },
+          "XL": {
+            "variant_uid": "aadc85c3-d7e0-4c7b-bb86-81d9da5ce6fa",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "c1159d83-b2ef-4467-b34d-897cff4f862c",
+            "color": "ash",
+            "size": "XL"
+          },
+          "2XL": {
+            "variant_uid": "138a7508-c9c6-406c-802d-5051a2d8cd16",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_ash_gpr_0-4_gildan_5000",
+            "gelato_product_id": "c1159d83-b2ef-4467-b34d-897cff4f862c",
+            "color": "ash",
+            "size": "2XL"
+          }
+        },
+        "dark-heather": {
+          "S": {
+            "variant_uid": "f0381b7f-3011-446f-94eb-27185e59d908",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_s_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "S",
+            "gelato_product_id": "25a19006-4548-4815-980f-5993f75a9c61"
+          },
+          "M": {
+            "variant_uid": "407ac801-ad43-4f52-a14d-d41e18a7f917",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_m_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "M",
+            "gelato_product_id": "25a19006-4548-4815-980f-5993f75a9c61"
+          },
+          "L": {
+            "variant_uid": "680f062d-f308-4824-8bef-07c053a74887",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_l_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "L",
+            "gelato_product_id": "25a19006-4548-4815-980f-5993f75a9c61"
+          },
+          "XL": {
+            "variant_uid": "dfd4bab2-7420-4070-92b4-9c444b4a7fff",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "XL",
+            "gelato_product_id": "25a19006-4548-4815-980f-5993f75a9c61"
+          },
+          "2XL": {
+            "variant_uid": "b3afe0a7-cf01-48a7-bebd-ee144edb896f",
+            "order_product_uid": "apparel_product_gca_t-shirt_gsc_crewneck_gcu_unisex_gqa_heavy-weight_gsi_2xl_gco_dark-heather_gpr_0-4_gildan_5000",
+            "color": "dark-heather",
+            "size": "2XL",
+            "gelato_product_id": "25a19006-4548-4815-980f-5993f75a9c61"
+          }
+        }
+      }
+    }
+  ]
+}
