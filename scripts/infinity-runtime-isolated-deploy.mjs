@@ -192,7 +192,10 @@ if (!includeAutonomousLoops) {
     process.exit(1);
   }
 }
-if (process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1") {
+if (
+  process.env.INFINITY_RUNTIME_COMMERCE_BRIDGE_DEPLOY === "1" &&
+  process.env.INFINITY_RUNTIME_STUB_STOREFRONT_COMPOSE === "1"
+) {
   writeFileSync(
     join(dest, "lib/infinity/commerce/club-throttle-storefront-compose.ts"),
     `export const CLUB_THROTTLE_STOREFRONT_PROJECT = "club-throttle" as const;
