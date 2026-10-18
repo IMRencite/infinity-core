@@ -5,7 +5,7 @@
  */
 import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { delimiter as pathDelimiter, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 
@@ -196,11 +196,15 @@ if (existsSync(publicMediaFrom)) {
 }
 
 function assertRuntimeBlogMediaArtifactQc() {
-  const verify = spawnSync("npx", ["tsx", join(repoRoot, "scripts/_verify-runtime-blog-media-artifact.ts"), dest], {
-    cwd: repoRoot,
+  const verify = spawnSync("npx", ["tsx", join(root, "scripts/_verify-runtime-blog-media-artifact.ts"), dest], {
+    cwd: root,
     encoding: "utf8",
     shell: true,
-    env: { ...process.env, FORCE_COLOR: "0" },
+    env: {
+      ...process.env,
+      FORCE_COLOR: "0",
+      NODE_PATH: [process.env.NODE_PATH, join(repoRoot, "node_modules")].filter(Boolean).join(pathDelimiter),
+    },
   });
   if (verify.status !== 0) {
     console.log(
@@ -586,13 +590,23 @@ writeFileSync(
 if (includeAutonomousLoops && existsSync(join(dest, "next.config.ts"))) {
   let nextConfigBody = readFileSync(join(dest, "next.config.ts"), "utf8");
   if (!nextConfigBody.includes("occupancynpvVentureDeployComposeTracing")) {
+    const portfolioCommerceTraceManifest = JSON.parse(
+      readFileSync(join(root, "lib/infinity/runtime-operations/runtime-file-dependency-manifest.v1.json"), "utf8"),
+    );
+    const portfolioCommerceTracePaths = (portfolioCommerceTraceManifest.shared_portfolio_commerce_trace_globs ?? []).map(
+      (rel) => `"${rel}"`,
+    );
     const tracePaths = [
       "./lib/infinity/market-validation-experiment/semantic-nav-width-muted-text-deploy-successor.bundled.json",
       "./lib/infinity/venture-operating-scale/onpv-runtime-compose-sources.bundled.json",
       "./.infinity/semantic-nav-width-muted-text-deploy-successor.json",
       "./lib/infinity/venture-operating-scale/onpv-runtime-compose-sources/**",
       ...occupancynpvVentureDeployComposeSources.map((rel) => `./${rel.replace(/\\/g, "/")}`),
+      ...portfolioCommerceTraceManifest.shared_portfolio_commerce_trace_globs ?? [],
     ].map((rel) => `"${rel}"`);
+    const portfolioOperatingTickTracePaths = portfolioCommerceTracePaths.length
+      ? portfolioCommerceTracePaths
+      : ['"./lib/infinity/commerce/canonical-variant-identity-v1.ts"'];
     nextConfigBody = nextConfigBody.replace(
       "const nextConfig: NextConfig = {",
       `const nextConfig: NextConfig = {
@@ -600,9 +614,29 @@ if (includeAutonomousLoops && existsSync(join(dest, "next.config.ts"))) {
     "/api/runtime/portfolio-job-worker": [
       ${tracePaths.join(",\n      ")}
     ],
-  }, /* occupancynpvVentureDeployComposeTracing */`,
+    "/api/runtime/portfolio-operating-tick": [
+      ${portfolioOperatingTickTracePaths.join(",\n      ")}
+    ],
+  }, /* occupancynpvVentureDeployComposeTracing portfolioCommerceTraceClosure */`,
     );
     writeFileSync(join(dest, "next.config.ts"), nextConfigBody);
+    const traceQc = spawnSync(
+      "npx",
+      ["tsx", join(root, "scripts/verify-portfolio-serverless-trace-closure.mjs"), dest],
+      { cwd: root, encoding: "utf8", shell: true, env: { ...process.env } },
+    );
+    if (traceQc.status !== 0) {
+      console.log(
+        JSON.stringify({
+          ok: false,
+          reason: "SERVERLESS_RUNTIME_FILE_TRACE_CLOSURE_QC_FAILED",
+          gate: "PortfolioCommerceTraceClosureGate",
+          stdout: (traceQc.stdout || "").slice(-2000),
+          stderr: (traceQc.stderr || "").slice(-2000),
+        }),
+      );
+      process.exit(1);
+    }
   }
 }
 mkdirSync(join(dest, ".vercel"), { recursive: true });
