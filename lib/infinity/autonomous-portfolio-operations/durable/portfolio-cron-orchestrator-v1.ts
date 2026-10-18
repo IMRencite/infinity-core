@@ -10,7 +10,6 @@ import { resolveScheduledAutonomousPublish } from "../scheduled-autonomous-publi
 import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-policy-v1";
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
-  pickClubThrottleAutonomousBacklogCandidate,
   buildClubThrottleAutonomousPublishCycleDiagnostic,
   clubThrottleBacklogCandidateWorkType,
   countBacklogPublishCandidates,
@@ -42,8 +41,24 @@ import {
   ventureGeoAuthorityExpansionQc,
   ventureSeoAuthorityExpansionQc,
 } from "../venture-authority-expansion-engine-v1";
+import {
+  blogSelfHealContinuityQc,
+  liveVentureContentContinuityQc,
+  resolveLiveVentureContentContinuityV1,
+  type VentureContentContinuityReport,
+} from "../live-venture-content-continuity-v1";
 
 export const PORTFOLIO_CRON_ORCHESTRATOR_V1 = "PORTFOLIO_CRON_ORCHESTRATOR_V1" as const;
+
+function resolveCtPublishSkipReason(input: {
+  publish_execute: boolean;
+  publish_reason: string;
+  continuity: VentureContentContinuityReport;
+}): string | null {
+  if (!input.publish_execute) return input.publish_reason;
+  if (input.continuity.deploy_candidate) return null;
+  return input.continuity.content_lane_stop_reason ?? "ACTIVE_CONTINUATION_IN_PROGRESS";
+}
 
 function resolveOperatingVentureId(row: OperatingVentureInventoryRow): string {
   if (
@@ -130,6 +145,14 @@ export async function orchestratePortfolioOperatingTick(input: {
   const backlog = listOccupancyClubThrottleBacklogArticles();
   const backlogPublishCandidates = countBacklogPublishCandidates(backlog);
   const ctPublishDiagnostic = buildClubThrottleAutonomousPublishCycleDiagnostic(backlog);
+  const ctContentContinuity = resolveLiveVentureContentContinuityV1({
+    venture_id: CLUB_THROTTLE_VENTURE_ID,
+    articles: backlog,
+  });
+  const onpvContentContinuity = resolveLiveVentureContentContinuityV1({
+    venture_id: CRE_VENTURE_ID,
+    articles: backlog,
+  });
   const enqueued: Array<{ job_type: string; venture_id: string; idempotency_key: string }> = [];
   let ctDeployEnqueueSuppressed: { idempotency_key: string; reason: "IDEMPOTENCY_DUPLICATE" } | null = null;
   let jobsCreated = 0;
@@ -155,6 +178,7 @@ export async function orchestratePortfolioOperatingTick(input: {
         enqueued.push({ job_type: "VENTURE_RESEARCH", venture_id: vid, idempotency_key: researchKey });
       }
 
+      const ventureContinuity = resolveLiveVentureContentContinuityV1({ venture_id: vid, articles: backlog });
       const selfHealKey = `content-self-heal:${vid}`;
       const selfHeal = await enqueuePortfolioJob({
         cycle_id,
@@ -162,7 +186,15 @@ export async function orchestratePortfolioOperatingTick(input: {
         job_type: "CONTENT_SELF_HEAL",
         idempotency_key: selfHealKey,
         priority: 45,
-        input_lineage: { execute_publish: false },
+        input_lineage: {
+          execute_publish:
+            publishPolicy.execute_publish && !ventureContinuity.daily_qualified_content_target_met,
+          self_heal_target_slug: ventureContinuity.self_heal_candidate_slug,
+          repairable_candidate_count: ventureContinuity.repairable_candidate_count,
+          discovery_ran: ventureContinuity.discovery_ran,
+          remaining_valid_opportunities: ventureContinuity.remaining_valid_opportunities,
+          content_lane_stop_reason: ventureContinuity.content_lane_stop_reason,
+        },
       });
       if (selfHeal.job_id) {
         jobsCreated += 1;
@@ -244,7 +276,7 @@ export async function orchestratePortfolioOperatingTick(input: {
       }
 
       if (vid === CLUB_THROTTLE_VENTURE_ID) {
-        const ctCandidate = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
+        const ctCandidate = publishPolicy.execute_publish ? ctContentContinuity.deploy_candidate : null;
         if (ctCandidate) {
           const workType = clubThrottleBacklogCandidateWorkType(ctCandidate);
           const ctRendered = buildBacklogRenderedEvidenceMap(backlog);
@@ -334,12 +366,12 @@ export async function orchestratePortfolioOperatingTick(input: {
       }
     }
 
-    const ctCandidateForReport = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
-    const ctPublishSkipReason = !publishPolicy.execute_publish
-      ? publishPolicy.reason
-      : !ctCandidateForReport
-        ? "NO_CT_BACKLOG_CANDIDATE_AFTER_DEPLOY_GUARDS"
-        : null;
+    const ctCandidateForReport = publishPolicy.execute_publish ? ctContentContinuity.deploy_candidate : null;
+    const ctPublishSkipReason = resolveCtPublishSkipReason({
+      publish_execute: publishPolicy.execute_publish,
+      publish_reason: publishPolicy.reason,
+      continuity: ctContentContinuity,
+    });
 
     await patchPortfolioCycle(cycle_id, {
       jobs_created: jobsCreated,
@@ -360,6 +392,11 @@ export async function orchestratePortfolioOperatingTick(input: {
         ct_publish_skip_reason: ctPublishSkipReason,
         ct_publish_diagnostic: ctPublishDiagnostic,
         ct_deploy_enqueue_suppressed: ctDeployEnqueueSuppressed,
+        ct_content_continuity: ctContentContinuity,
+        onpv_content_continuity: onpvContentContinuity,
+        LIVE_VENTURE_CONTENT_CONTINUITY_QC: liveVentureContentContinuityQc(ctContentContinuity),
+        BLOG_SELF_HEAL_CONTINUITY_QC: blogSelfHealContinuityQc(ctContentContinuity),
+        LIVE_VENTURE_PREMATURE_IDLE_QC: ctContentContinuity.LIVE_VENTURE_PREMATURE_IDLE_QC,
         enqueued_job_types: enqueued.map((e) => e.job_type),
       },
     });
@@ -379,12 +416,12 @@ export async function orchestratePortfolioOperatingTick(input: {
   const onpvPrepublish = onpvCandidate
     ? evaluateOccupancyNpvTargetPrepublishQc({ path: onpvCandidate.path, articles: backlog })
     : null;
-  const ctCandidateForReport = publishPolicy.execute_publish ? pickClubThrottleAutonomousBacklogCandidate(backlog) : null;
-  const ctPublishSkipReason = !publishPolicy.execute_publish
-    ? publishPolicy.reason
-    : !ctCandidateForReport
-      ? "NO_CT_BACKLOG_CANDIDATE_AFTER_DEPLOY_GUARDS"
-      : null;
+  const ctCandidateForReport = publishPolicy.execute_publish ? ctContentContinuity.deploy_candidate : null;
+  const ctPublishSkipReason = resolveCtPublishSkipReason({
+    publish_execute: publishPolicy.execute_publish,
+    publish_reason: publishPolicy.reason,
+    continuity: ctContentContinuity,
+  });
   return {
     cycle_id,
     jobs_created: jobsCreated,
@@ -408,6 +445,11 @@ export async function orchestratePortfolioOperatingTick(input: {
     ct_publish_skip_reason: ctPublishSkipReason,
     ct_publish_diagnostic: ctPublishDiagnostic,
     ct_deploy_enqueue_suppressed: ctDeployEnqueueSuppressed,
+    ct_content_continuity: ctContentContinuity,
+    onpv_content_continuity: onpvContentContinuity,
+    LIVE_VENTURE_CONTENT_CONTINUITY_QC: liveVentureContentContinuityQc(ctContentContinuity),
+    BLOG_SELF_HEAL_CONTINUITY_QC: blogSelfHealContinuityQc(ctContentContinuity),
+    LIVE_VENTURE_PREMATURE_IDLE_QC: ctContentContinuity.LIVE_VENTURE_PREMATURE_IDLE_QC,
     onpv_publish_diagnostic: {
       occupancynpv_backlog_articles: backlog.filter((a) => a.venture === "occupancynpv").length,
       ranked_publish_ready: onpvRanked.length,
