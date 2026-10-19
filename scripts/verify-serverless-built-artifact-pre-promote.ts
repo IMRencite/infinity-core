@@ -10,25 +10,31 @@ if (!dest) {
 }
 
 async function main() {
-const artifact = evaluateServerlessBuiltArtifactRuntimeDependencyQc({ cwd: dest, nextRoot: dest });
-const sourceTrace = evaluateServerlessRuntimeFileTraceClosureQc({ cwd: dest });
-const cold = await evaluateServerlessFunctionColdStartQc({ repoRoot: sourceRoot });
+  const artifact = evaluateServerlessBuiltArtifactRuntimeDependencyQc({ cwd: dest, nextRoot: dest });
+  const sourceTrace = evaluateServerlessRuntimeFileTraceClosureQc({ cwd: dest });
+  const cold = await evaluateServerlessFunctionColdStartQc({ repoRoot: sourceRoot });
 
-const report = {
-  SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC: artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC,
-  SOURCE_TRACE_QC: sourceTrace.SERVERLESS_RUNTIME_FILE_TRACE_CLOSURE_QC,
-  SERVERLESS_FUNCTION_COLD_START_QC: cold.SERVERLESS_FUNCTION_COLD_START_QC,
-  PORTFOLIO_BUILT_FUNCTION_COLD_START_QC: cold.PORTFOLIO_BUILT_FUNCTION_COLD_START_QC,
-  PORTFOLIO_JOB_WORKER_BUILT_ARTIFACT_QC: artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC,
-  PORTFOLIO_JOB_WORKER_COLD_START_QC: cold.PORTFOLIO_JOB_WORKER_COLD_START_QC,
-  STAGED_PORTFOLIO_RUNTIME_DEPENDENCY_MODE: "BUNDLED_MODULE",
-  STAGED_PORTFOLIO_REQUIRED_RUNTIME_FILE_COUNT: artifact.missing.length,
-  artifact,
-  cold,
-};
+  const report = {
+    SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC: artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC,
+    SOURCE_TRACE_QC: sourceTrace.SERVERLESS_RUNTIME_FILE_TRACE_CLOSURE_QC,
+    SERVERLESS_FUNCTION_COLD_START_QC: cold.SERVERLESS_FUNCTION_COLD_START_QC,
+    PORTFOLIO_BUILT_FUNCTION_COLD_START_QC: cold.PORTFOLIO_BUILT_FUNCTION_COLD_START_QC,
+    PORTFOLIO_JOB_WORKER_BUILT_ARTIFACT_QC: artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC,
+    PORTFOLIO_JOB_WORKER_COLD_START_QC: cold.PORTFOLIO_JOB_WORKER_COLD_START_QC,
+    STAGED_PORTFOLIO_RUNTIME_DEPENDENCY_MODE: "BUNDLED_MODULE",
+    STAGED_PORTFOLIO_REQUIRED_RUNTIME_FILE_COUNT: artifact.missing.length,
+    STAGED_PORTFOLIO_PRESENT_RUNTIME_FILE_COUNT: 0,
+    STAGED_PORTFOLIO_MISSING_RUNTIME_FILE_COUNT: artifact.missing.length,
+    STAGED_PORTFOLIO_COLD_START_QC: cold.PORTFOLIO_BUILT_FUNCTION_COLD_START_QC,
+    artifact,
+    cold,
+  };
 
-console.log(JSON.stringify(report, null, 2));
-const pass =
-  artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC === "PASS" &&
-  cold.SERVERLESS_FUNCTION_COLD_START_QC === "PASS";
-process.exit(pass ? 0 : 1);
+  console.log(JSON.stringify(report, null, 2));
+  const pass =
+    artifact.SERVERLESS_BUILT_ARTIFACT_RUNTIME_DEPENDENCY_QC === "PASS" &&
+    cold.SERVERLESS_FUNCTION_COLD_START_QC === "PASS";
+  process.exit(pass ? 0 : 1);
+}
+
+void main();
