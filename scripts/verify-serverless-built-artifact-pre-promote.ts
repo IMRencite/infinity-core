@@ -9,6 +9,7 @@ if (!dest) {
   process.exit(2);
 }
 
+async function main() {
 const artifact = evaluateServerlessBuiltArtifactRuntimeDependencyQc({ cwd: dest, nextRoot: dest });
 const sourceTrace = evaluateServerlessRuntimeFileTraceClosureQc({ cwd: dest });
 const cold = await evaluateServerlessFunctionColdStartQc({ repoRoot: sourceRoot });
