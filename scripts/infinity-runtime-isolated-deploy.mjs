@@ -1152,7 +1152,40 @@ const smokePass =
 let promoted = false;
 let productionUrl = "https://infinity-runtime.vercel.app";
 let promoteResult = null;
+let serverlessBuiltArtifactPrePromoteQc = null;
 if (smokePass && process.env.INFINITY_RUNTIME_PROMOTE === "1" && candidateId) {
+  const prePromote = spawnSync(
+    "npx",
+    ["tsx", join(root, "scripts/verify-serverless-built-artifact-pre-promote.ts"), dest, root],
+    {
+      cwd: root,
+      encoding: "utf8",
+      shell: true,
+      env: {
+        ...process.env,
+        FORCE_COLOR: "0",
+        NODE_PATH: [process.env.NODE_PATH, join(repoRoot, "node_modules")].filter(Boolean).join(pathDelimiter),
+      },
+    },
+  );
+  try {
+    serverlessBuiltArtifactPrePromoteQc = JSON.parse(prePromote.stdout ?? "{}");
+  } catch {
+    serverlessBuiltArtifactPrePromoteQc = { parse_error: true, stdout: (prePromote.stdout ?? "").slice(-2000) };
+  }
+  if (prePromote.status !== 0) {
+    console.log(
+      JSON.stringify({
+        ok: false,
+        reason: "SERVERLESS_BUILT_ARTIFACT_PRE_PROMOTE_QC_FAILED",
+        gate: "ServerlessBuiltArtifactPrePromoteGate",
+        candidateId,
+        serverlessBuiltArtifactPrePromoteQc,
+        stderr: (prePromote.stderr ?? "").slice(-2000),
+      }),
+    );
+    process.exit(1);
+  }
   const promote = await api(`/v10/projects/${encodeURIComponent(PROJECT_ID)}/promote/${encodeURIComponent(candidateId)}`, {
     method: "POST",
   });

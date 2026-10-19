@@ -3,6 +3,7 @@ import { join } from "node:path";
 import manifest from "./runtime-file-dependency-manifest.v1.json";
 
 export type RuntimeFileReadTiming = "MODULE_LOAD" | "REQUEST_TIME" | "BUILD_ONLY" | "TEST_ONLY";
+export type RuntimeDependencyType = "RUNTIME_DISK_FILE" | "BUNDLED_MODULE";
 
 export type RuntimeFileReadTarget = {
   repo_relative_path: string;
@@ -10,13 +11,21 @@ export type RuntimeFileReadTarget = {
   timing: RuntimeFileReadTiming;
 };
 
+export type RuntimeDependencySpec = {
+  dependency_type: RuntimeDependencyType;
+  originating_module: string;
+  cold_start_probe?: string;
+  repo_relative_path?: string;
+};
+
 export type RuntimeRouteFileDependencyManifest = {
   originating_modules: string[];
   module_load_read_targets: RuntimeFileReadTarget[];
+  runtime_dependencies?: RuntimeDependencySpec[];
 };
 
 export type RuntimeFileDependencyManifestDoc = {
-  schema: "RUNTIME_FILE_DEPENDENCY_MANIFEST_V1";
+  schema: string;
   routes: Record<string, RuntimeRouteFileDependencyManifest>;
   shared_portfolio_commerce_trace_globs: string[];
 };
@@ -42,4 +51,9 @@ export function moduleLoadPathsForRoute(route: string, cwd = process.cwd()): str
 
 export function sharedPortfolioCommerceTraceGlobs(cwd = process.cwd()): string[] {
   return [...loadRuntimeFileDependencyManifest(cwd).shared_portfolio_commerce_trace_globs];
+}
+
+export function runtimeDiskFileDependenciesForRoute(route: string, cwd = process.cwd()): RuntimeDependencySpec[] {
+  const row = loadRuntimeFileDependencyManifest(cwd).routes[route];
+  return (row?.runtime_dependencies ?? []).filter((d) => d.dependency_type === "RUNTIME_DISK_FILE");
 }
