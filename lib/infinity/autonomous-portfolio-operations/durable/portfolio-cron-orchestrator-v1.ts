@@ -102,6 +102,11 @@ export async function orchestratePortfolioOperatingTick(input: {
   VENTURE_NEXT_BEST_GROWTH_ACTION_QC: "PASS" | "FAIL";
   VENTURE_SEO_AUTHORITY_EXPANSION_QC: "PASS" | "FAIL";
   VENTURE_GEO_AUTHORITY_EXPANSION_QC: "PASS" | "FAIL";
+  ct_content_continuity: VentureContentContinuityReport;
+  onpv_content_continuity: VentureContentContinuityReport;
+  LIVE_VENTURE_CONTENT_CONTINUITY_QC: "PASS" | "FAIL";
+  BLOG_SELF_HEAL_CONTINUITY_QC: "PASS" | "FAIL";
+  LIVE_VENTURE_PREMATURE_IDLE_QC: "PASS" | "FAIL";
 }> {
   const timer = createPortfolioTickTimer();
   const inventory = buildOperatingVentureInventory();

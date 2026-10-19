@@ -190,9 +190,7 @@ export function resolveLiveVentureContentContinuityV1(input: {
       !dailyMet &&
       !discoveryRan &&
       !topRepair &&
-      stop !== "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN" &&
-      stop !== "TRUE_EXTERNAL_BLOCKER" &&
-      stop !== "VENTURE_SPECIFIC_AUTHORITY_BLOCKER"
+      stop !== "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN"
         ? "FAIL"
         : "PASS";
 
