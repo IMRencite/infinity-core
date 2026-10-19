@@ -47,7 +47,25 @@ describe("serverless runtime file trace closure v1", () => {
 
   it("PORTFOLIO_CANONICAL_VARIANT_TRACE_REGRESSION_QC fails when trace omits canonical variant file", () => {
     const cwd = mkdtempSync(join(tmpdir(), "trace-closure-"));
-    const rel = moduleLoadPathsForRoute("/api/runtime/portfolio-operating-tick")[0];
+    const rel = "lib/infinity/commerce/canonical-variant-identity-v1.ts";
+    mkdirSync(join(cwd, "lib/infinity/runtime-operations"), { recursive: true });
+    writeFileSync(
+      join(cwd, "lib/infinity/runtime-operations/runtime-file-dependency-manifest.v1.json"),
+      JSON.stringify({
+        schema: "RUNTIME_FILE_DEPENDENCY_MANIFEST_V1",
+        routes: {
+          "/api/runtime/portfolio-operating-tick": {
+            originating_modules: [],
+            module_load_read_targets: [{ repo_relative_path: rel, reader: "test", timing: "MODULE_LOAD" }],
+          },
+          "/api/runtime/portfolio-job-worker": {
+            originating_modules: [],
+            module_load_read_targets: [{ repo_relative_path: rel, reader: "test", timing: "MODULE_LOAD" }],
+          },
+        },
+        shared_portfolio_commerce_trace_globs: [`./${rel}`],
+      }),
+    );
     mkdirSync(join(cwd, "lib/infinity/commerce"), { recursive: true });
     writeFileSync(join(cwd, rel), "export const x = 1;\n");
     writeFileSync(
@@ -104,7 +122,25 @@ export default nextConfig;
 
   it("PORTFOLIO_CANONICAL_VARIANT_TRACE_REGRESSION_QC passes when both portfolio routes include commerce trace", () => {
     const cwd = mkdtempSync(join(tmpdir(), "trace-closure-pass-"));
-    const rel = moduleLoadPathsForRoute("/api/runtime/portfolio-operating-tick")[0];
+    const rel = "lib/infinity/commerce/canonical-variant-identity-v1.ts";
+    mkdirSync(join(cwd, "lib/infinity/runtime-operations"), { recursive: true });
+    writeFileSync(
+      join(cwd, "lib/infinity/runtime-operations/runtime-file-dependency-manifest.v1.json"),
+      JSON.stringify({
+        schema: "RUNTIME_FILE_DEPENDENCY_MANIFEST_V1",
+        routes: {
+          "/api/runtime/portfolio-operating-tick": {
+            originating_modules: [],
+            module_load_read_targets: [{ repo_relative_path: rel, reader: "test", timing: "MODULE_LOAD" }],
+          },
+          "/api/runtime/portfolio-job-worker": {
+            originating_modules: [],
+            module_load_read_targets: [{ repo_relative_path: rel, reader: "test", timing: "MODULE_LOAD" }],
+          },
+        },
+        shared_portfolio_commerce_trace_globs: [`./${rel}`],
+      }),
+    );
     mkdirSync(join(cwd, "lib/infinity/commerce"), { recursive: true });
     writeFileSync(join(cwd, rel), "export const x = 1;\n");
     writePassingNextConfig(cwd);
