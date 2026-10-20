@@ -228,10 +228,10 @@ describe("Archive design", () => {
 
 describe("Article Latest Blogs", () => {
   it("hides the carousel for a single post and excludes the current article when more exist", () => {
-    const live = occupancynpvPublishedBlogPosts();
-    expect(articleDiscoveryPosts(live, live[0]!.path)).toHaveLength(0);
-    expect(occupancynpvBlogArticleSource()).toContain("data-blog-discovery-empty");
     const posts = fixtureCatalog().filter((row) => !row.draft);
+    const soloPublished = [posts[0]!];
+    expect(articleDiscoveryPosts(soloPublished, soloPublished[0]!.path)).toHaveLength(0);
+    expect(occupancynpvBlogArticleSource()).toContain("data-blog-discovery-empty");
     const html = renderLatestBlogsCarouselHtml({ posts, excludePath: "/blog/valuation/b/", hideWhenNoDiscovery: true, surface: "article" });
     expect(html).not.toContain('href="/blog/valuation/b/"');
     expect(html).toContain("/blog/valuation/a/");
