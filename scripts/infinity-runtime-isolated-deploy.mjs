@@ -234,6 +234,8 @@ const runtimeBlogMediaQc = assertRuntimeBlogMediaArtifactQc();
 const requiredCommittedPaths = [
   "lib/infinity/commerce/club-throttle-storefront-compose.ts",
   "lib/infinity/production-outbound/obligation/release-identity.ts",
+  "lib/infinity/organic-growth-engine/continuous/club-throttle-journal-taxonomy-compose.ts",
+  "lib/infinity/organic-growth-engine/continuous/club-throttle-journal-taxonomy.tsx",
   "public/visual/journal-hero-night-ride.webp",
   "app/api/runtime/portfolio-operating-tick/route.ts",
   "app/api/runtime/portfolio-job-worker/route.ts",

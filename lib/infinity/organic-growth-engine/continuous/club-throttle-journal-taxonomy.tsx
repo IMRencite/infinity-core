@@ -343,12 +343,12 @@ export function evaluateClubThrottleJournalTaxonomyGates(input: {
   const sidebarStatic = evaluateBlogTaxonomySidebarStaticHtmlQc(input.html);
   const brokenSidebarClass = htmlHasBrokenSidebarClassNameAttribute(input.html);
   return {
-    BLOG_TAXONOMY_ARCHIVE_REQUIREMENT_QC: archiveRequirement,
+    BLOG_TAXONOMY_ARCHIVE_REQUIREMENT_QC: taxonomyGatePassFail(archiveRequirement),
     BLOG_TAXONOMY_FILTER_QC: { result: filterPass ? "PASS" : "FAIL", reasons: truth.reasons },
     BLOG_TAXONOMY_CARD_PARITY_QC: {
       result: input.html.includes("onpv-blog-row") && input.html.includes("onpv-blog-roll-card__cta") ? "PASS" : "FAIL",
     },
-    BLOG_TAXONOMY_SIDEBAR_QC: sidebarStatic,
+    BLOG_TAXONOMY_SIDEBAR_QC: taxonomyGatePassFail(sidebarStatic),
     BLOG_TAXONOMY_SIDEBAR_CLASS_QC: {
       result: brokenSidebarClass ? "FAIL" : "PASS",
       reasons: brokenSidebarClass ? ["SIDEBAR_CLASSNAME_IN_DOM_HTML"] : [],
