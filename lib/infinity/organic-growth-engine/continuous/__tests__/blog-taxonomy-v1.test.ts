@@ -231,7 +231,13 @@ describe("Article Latest Blogs", () => {
     const posts = fixtureCatalog().filter((row) => !row.draft);
     const soloPublished = [posts[0]!];
     expect(articleDiscoveryPosts(soloPublished, soloPublished[0]!.path)).toHaveLength(0);
-    expect(occupancynpvBlogArticleSource()).toContain("data-blog-discovery-empty");
+    const soloCarousel = renderLatestBlogsCarouselHtml({
+      posts: soloPublished,
+      excludePath: soloPublished[0]!.path,
+      hideWhenNoDiscovery: true,
+      surface: "article",
+    });
+    expect(soloCarousel).toContain("data-blog-discovery-empty");
     const html = renderLatestBlogsCarouselHtml({ posts, excludePath: "/blog/valuation/b/", hideWhenNoDiscovery: true, surface: "article" });
     expect(html).not.toContain('href="/blog/valuation/b/"');
     expect(html).toContain("/blog/valuation/a/");
