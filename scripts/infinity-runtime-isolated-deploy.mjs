@@ -734,6 +734,10 @@ const envKeys = {
   XAI_API_KEY: process.env.XAI_API_KEY,
   AI_PROVIDER_XAI_ENABLED: process.env.AI_PROVIDER_XAI_ENABLED || "true",
   AI_PROVIDER_ALLOW_LIVE_EXECUTION: process.env.AI_PROVIDER_ALLOW_LIVE_EXECUTION || "true",
+  RESEARCH_PROVIDER: process.env.RESEARCH_PROVIDER,
+  RESEARCH_ENABLED: process.env.RESEARCH_ENABLED ?? "true",
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
+  GEMINI_RESEARCH_MODEL: process.env.GEMINI_RESEARCH_MODEL,
 };
 
 const moduleCandidates = [
@@ -1117,6 +1121,20 @@ const tickCronContract = cronSecret
   : { path: "/api/runtime/communication-tick?mode=safe", status: 0, ok: false, body: null };
 const attestGet = await smoke("/api/runtime/communication-attest");
 const attestUnauth = await smoke("/api/runtime/communication-attest", {}, "POST");
+const deployQcSecret =
+  process.env.INFINITY_RUNTIME_DEPLOY_QC_SECRET ||
+  process.env.INFINITY_RUNTIME_TICK_SECRET ||
+  cronSecret;
+const portfolioModuleInitProbe = deployQcSecret
+  ? await smoke("/api/runtime/portfolio-operating-tick?mode=module-init-probe", {
+      authorization: `Bearer ${deployQcSecret}`,
+      "x-infinity-remote-module-init-probe": "v1",
+    })
+  : { path: "/api/runtime/portfolio-operating-tick?mode=module-init-probe", status: 0, ok: false, body: null };
+const portfolioModuleInitProbePass =
+  portfolioModuleInitProbe.status === 200 &&
+  portfolioModuleInitProbe.body?.REMOTE_FUNCTION_MODULE_INIT_QC === "PASS" &&
+  portfolioModuleInitProbe.body?.MODULE_INIT_PROBE_ORCHESTRATOR_INVOKED === false;
 const tickSmoke = {
   exists: tickExists,
   safe: tickSafe,
@@ -1144,7 +1162,8 @@ const previewProtected =
   commerceBridgeSmoke.staged.status === 200 &&
   !commerceBridgeSmoke.ok &&
   commerceBridgeBuildRouteQc === "PASS";
-const stagedRuntimeSmokePass = tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch);
+const stagedRuntimeSmokePass =
+  tickSmoke.ok && attestSmoke.ok && Boolean(identityMatch) && portfolioModuleInitProbePass;
 const smokePass =
   bridgeDeploy && commerceBridgeBuildRouteQc === "PASS" && previewProtected
     ? true
@@ -1260,7 +1279,18 @@ const report = {
   productionUrl,
   candidateUrl,
   candidateId,
-  stagedSmoke: { tick: tickSmoke, attest: attestSmoke, commerceBridge: commerceBridgeSmoke, pass: smokePass },
+  stagedSmoke: {
+    tick: tickSmoke,
+    attest: attestSmoke,
+    commerceBridge: commerceBridgeSmoke,
+    portfolioModuleInitProbe,
+    STAGED_REMOTE_MODULE_INIT_PROBE_QC: portfolioModuleInitProbePass ? "PASS" : "FAIL",
+    REMOTE_FUNCTION_MODULE_INIT_QC: portfolioModuleInitProbe.body?.REMOTE_FUNCTION_MODULE_INIT_QC ?? "NOT_RUN",
+    pass: smokePass,
+  },
+  STAGED_REMOTE_MODULE_INIT_PROBE_QC: portfolioModuleInitProbePass ? "PASS" : "FAIL",
+  STAGED_REMOTE_PROBE_DEPLOYMENT_ID: candidateId,
+  STAGED_REMOTE_PROBE_RELEASE_SHA: tickSafe.body?.identity?.release_sha ?? sha,
   commerceBridgeProduction: {
     ...commerceBridgeProduction,
     COMMERCE_BRIDGE_ROUTE_EXISTS_QC: commerceBridgeProduction.status !== 404 && commerceBridgeProduction.status !== 0 ? "PASS" : "FAIL",

@@ -49,10 +49,32 @@ import { ventureOperatingLoopHealthQc } from "@/lib/infinity/autonomous-portfoli
 import { autonomousContentSelfHealingQc } from "@/lib/infinity/autonomous-portfolio-operations/autonomous-content-self-healing-v1";
 import { scheduledAutonomousPublishPolicyQc } from "@/lib/infinity/autonomous-portfolio-operations/scheduled-autonomous-publish-policy-v1";
 import { autonomousSafePublishAuthorityQc } from "@/lib/infinity/autonomous-portfolio-operations/autonomous-safe-publish-authority-v1";
+import {
+  buildPortfolioModuleInitProbeResponse,
+  resolvePortfolioModuleInitProbeMode,
+} from "@/lib/infinity/runtime-operations/portfolio-module-init-probe-v1";
 
 export const maxDuration = 300;
 
 export async function GET(request: Request): Promise<NextResponse> {
+  const probeDecision = resolvePortfolioModuleInitProbeMode(request);
+  if (probeDecision.kind === "reject") {
+    return NextResponse.json(
+      { error: "MODULE_INIT_PROBE_REJECTED", reason: probeDecision.reason },
+      { status: probeDecision.status },
+    );
+  }
+  if (probeDecision.kind === "execute_probe") {
+    const deploymentId = process.env.VERCEL_DEPLOYMENT_ID ?? process.env.VERCEL_URL ?? null;
+    return NextResponse.json(
+      buildPortfolioModuleInitProbeResponse({
+        release_sha: process.env.COMMUNICATION_RELEASE_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+        deployment_id: deploymentId,
+      }),
+      { status: 200 },
+    );
+  }
+
   const auth = authorizeRuntimeTickRequest(request);
   if (!auth.ok) {
     return NextResponse.json({ error: "Unauthorized", reason: auth.reason }, { status: 401 });

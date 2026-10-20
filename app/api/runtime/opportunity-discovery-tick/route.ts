@@ -18,6 +18,10 @@ import {
   mapProvenanceToLedgerTriggerType,
   resolvePortfolioCronProvenance,
 } from "@/lib/infinity/autonomous-portfolio-operations/durable/portfolio-cron-provenance-v1";
+import {
+  assertResearchProviderExecutable,
+  loadResearchConfig,
+} from "@/lib/infinity/research/config";
 
 export const maxDuration = 300;
 
@@ -26,6 +30,28 @@ function resolveTickMode(request: Request): "health" | "execute" {
   const mode = url.searchParams.get("mode")?.trim().toLowerCase();
   if (mode === "health" || mode === "safe") return "health";
   return "execute";
+}
+
+function evaluateResearchProviderProductionConfigQc(): {
+  RESEARCH_PROVIDER_PRODUCTION_CONFIG_QC: "PASS" | "FAIL";
+  DISCOVERY_SCANNER_CONSTRUCTION_QC: "PASS" | "FAIL";
+  research_provider_id: string | null;
+} {
+  try {
+    const config = loadResearchConfig();
+    assertResearchProviderExecutable(config);
+    return {
+      RESEARCH_PROVIDER_PRODUCTION_CONFIG_QC: "PASS",
+      DISCOVERY_SCANNER_CONSTRUCTION_QC: "PASS",
+      research_provider_id: config.providerId,
+    };
+  } catch {
+    return {
+      RESEARCH_PROVIDER_PRODUCTION_CONFIG_QC: "FAIL",
+      DISCOVERY_SCANNER_CONSTRUCTION_QC: "FAIL",
+      research_provider_id: null,
+    };
+  }
 }
 
 function defaultOrgId(): string {
@@ -58,6 +84,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 
     if (mode === "health") {
       const freshness = await assessDiscoveryFreshness(admin, orgId, null);
+      const researchConfigQc = evaluateResearchProviderProductionConfigQc();
       return NextResponse.json({
         mode: "health",
         AUTONOMOUS_OPPORTUNITY_SCANNER_SCHEDULER_V1: "AUTONOMOUS_OPPORTUNITY_SCANNER_SCHEDULER_V1",
@@ -81,7 +108,8 @@ export async function GET(request: Request): Promise<NextResponse> {
         revalidation,
         queue_health: queueHealth,
         freshness,
-        note: "Health probe: no paid scanner execution.",
+        ...researchConfigQc,
+        note: "Health probe: no paid scanner execution; research config load only.",
       });
     }
 
