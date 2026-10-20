@@ -657,6 +657,7 @@ export function evaluateProductionQcGateCoverageRegressionQc(): {
   build_factory: ReturnType<typeof evaluateBuildFactoryQcWiringQc>;
   legacy_publication: ReturnType<typeof evaluateLegacyPublicationRenderEnforcementWiringQc>;
   bypass: ReturnType<typeof evaluateProductionQcBypassRegressionQc>;
+  serverless_runtime_trace: ReturnType<typeof evaluateServerlessRuntimeTraceCoverageQc>;
 } {
   const wiring = evaluateProductionQcGateWiringQc();
   const unregistered = evaluateUnregisteredProductionPathQc();
