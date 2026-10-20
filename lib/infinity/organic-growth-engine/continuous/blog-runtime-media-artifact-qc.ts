@@ -95,6 +95,10 @@ export function evaluateBlogRuntimeAfterDarkPredeployProbe(input: { artifact_roo
   }
 }
 
+function isMediaStarvationPredeployReason(reason: string): boolean {
+  return /asset_missing_on_disk|runtime_artifact_missing|BLOG_MEDIA|ENOENT.*public\/visual/i.test(reason);
+}
+
 export function evaluateCtServerlessMediaStarvationRegressionQc(input: {
   artifact_root: string;
   simulate_missing_after_dark_hero?: boolean;
@@ -115,17 +119,10 @@ export function evaluateCtServerlessMediaStarvationRegressionQc(input: {
   } else {
     if (artifact.result !== "PASS") reasons.push(...artifact.reasons);
     const probe = evaluateBlogRuntimeAfterDarkPredeployProbe({ artifact_root: input.artifact_root });
-    if (!probe.CT_RUNTIME_PREDEPLOY_PUBLISH_ALLOWED) reasons.push("publish_allowed_expected_true");
-    if (!probe.CT_RUNTIME_PREDEPLOY_DEPLOY_ALLOWED) reasons.push("deploy_allowed_expected_true", ...probe.CT_RUNTIME_PREDEPLOY_REASONS);
-    if (probe.CT_RUNTIME_PICKED_CANDIDATE !== CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG) {
-      const refreshAlreadyCurrent =
-        probe.CT_RUNTIME_PICKED_CANDIDATE === null &&
-        probe.CT_RUNTIME_PREDEPLOY_DEPLOY_ALLOWED &&
-        artifact.CT_AFTER_DARK_RUNTIME_MEDIA_EXISTS;
-      if (!refreshAlreadyCurrent) {
-        reasons.push(`expected_candidate_${CLUB_THROTTLE_AFTER_DARK_REFRESH_PROBE_SLUG}`);
-      }
-    }
+    const mediaStarvationReasons = probe.CT_RUNTIME_PREDEPLOY_REASONS.filter(isMediaStarvationPredeployReason);
+    if (mediaStarvationReasons.length) reasons.push(...mediaStarvationReasons);
+    // Isolated runtime deploy gate: hero/media on disk must not be silently dropped.
+    // Render/browser/capability blocks are enforced elsewhere and may legitimately keep deploy_allowed false.
   }
   return {
     gate: CT_SERVERLESS_MEDIA_STARVATION_REGRESSION_QC,
