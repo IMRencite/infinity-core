@@ -22,7 +22,7 @@ import {
   syncClubThrottleStripePublishableToVercel,
 } from "./club-throttle-embedded-checkout-env-v1.ts";
 import { evaluateClubThrottleProductionDeployGates } from "./club-throttle-production-deploy-gates-v1";
-import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/render-browser-evidence-v1";
+import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/public-page-capability-contract-v1";
 import type { PublicCapabilityQcBoundary } from "@/lib/infinity/organic-growth-engine/continuous/public-page-capability-contract-v1";
 const CLUB_THROTTLE_DEPLOY_EVIDENCE_PATH =
   ".infinity/blog-os/v52-club-throttle-production-deploy.json" as const;

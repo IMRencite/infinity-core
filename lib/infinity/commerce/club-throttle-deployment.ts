@@ -1,4 +1,4 @@
-import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/render-browser-evidence-v1";
+import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/public-page-capability-contract-v1";
 import { runClubThrottleProductionDeployment } from "./club-throttle-production-deployment-runner";
 
 export const CLUB_THROTTLE_DEPLOY_EVIDENCE_PATH =
