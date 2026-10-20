@@ -131,7 +131,8 @@ export async function deployApprovedVentureProductionBundle(input: {
   return {
     ok: Boolean(ct.deployed),
     venture_id: input.venture_id,
-    deployment_id: ct.evidence.deployment_id ?? null,
+    deployment_id:
+      typeof ct.evidence.deployment_id === "string" ? ct.evidence.deployment_id : null,
     production_url: ct.deploymentUrl ?? `https://${target.production_alias}`,
     safe_error: ct.safeError ?? null,
     aliased: Boolean(ct.deployed && ct.evidence.domain_points_to_latest_production === true),

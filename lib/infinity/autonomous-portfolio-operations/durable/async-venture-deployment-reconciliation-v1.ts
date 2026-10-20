@@ -33,7 +33,6 @@ export async function executeBoundedVentureDeploy(input: {
   const deployed = await deployApprovedVentureProductionBundle({
     venture_id: input.venture_id,
     alias_production: true,
-    enforce_backlog_deploy_guard: true,
     poll_attempts: input.short_poll === false ? 45 : 3,
     prior_deployment_id: input.prior_deployment_id ?? null,
     frozen_revision: input.frozen_revision,

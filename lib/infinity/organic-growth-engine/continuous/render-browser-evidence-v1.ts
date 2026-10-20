@@ -25,6 +25,9 @@ export type RenderBrowserEvidenceV1 = {
 
 export type ResponsiveBrowserEvidenceV1 = Partial<Record<RenderBrowserViewport, RenderBrowserEvidenceV1>>;
 
+/** @deprecated alias retained for CT deploy gate imports */
+export type ResponsiveCapabilityEvidenceV1 = ResponsiveBrowserEvidenceV1;
+
 export type RenderBrowserEvidenceBundleV1 = {
   preddeploy?: ResponsiveBrowserEvidenceV1;
   production?: ResponsiveBrowserEvidenceV1;
