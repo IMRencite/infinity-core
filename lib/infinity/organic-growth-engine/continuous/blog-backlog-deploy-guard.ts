@@ -4,8 +4,9 @@ import {
   evaluateArticleCanonicalQc,
   evaluateArticleSchemaQc,
 } from "./club-throttle-journal-publication-metadata";
-import { evaluateRenderedArticleVisualQc } from "./rendered-editorial-rhythm-gate";
 import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "./blog-ux";
+import type { ResponsiveBrowserEvidenceV1 } from "./render-browser-evidence-v1";
+import { evaluateRenderedPageQualityQc } from "./rendered-page-quality-v1";
 import type { BlogBacklogArticle } from "./blog-backlog-inventory";
 import { evaluateBacklogSourceVNext } from "./blog-backlog-inventory";
 import { evaluateBlogMediaCompletenessQc } from "./blog-media-completeness-qc";
@@ -48,6 +49,7 @@ export type RenderedBacklogEvidence = {
   main_html: string;
   expected_canonical: string;
   featured_image_path?: string;
+  browser_responsive_evidence?: ResponsiveBrowserEvidenceV1 | null;
 };
 
 function dimPass(value: "PASS" | "FAIL" | "NOT_RUN"): boolean {
@@ -104,14 +106,24 @@ export function evaluateBlogArticlePreDeployQc(input: {
       if (schema_qc !== "PASS") reasons.push("SCHEMA_QC_FAIL");
     }
 
-    const renderedVisual = evaluateRenderedArticleVisualQc({
+    const pageRender = evaluateRenderedPageQualityQc({
+      profile: "ARTICLE",
       shell_html: shell,
       main_html: input.rendered.main_html,
       editorial_css: OCCUPANCYNPV_BLOG_EDITORIAL_CSS,
+      boundary: "AUTONOMOUS_PUBLICATION_APPROVAL",
+      browser_evidence: input.rendered.browser_responsive_evidence ?? null,
+      functional_pass: true,
     });
-    rendered_qc = guardTriState(renderedVisual.result);
-    article_rendered_qc = guardTriState(renderedVisual.result);
-    if (rendered_qc !== "PASS") reasons.push("RENDERED_QC_FAIL");
+    if (pageRender.RENDERED_PAGE_QUALITY_QC === "FAIL_EVIDENCE_MISSING") {
+      rendered_qc = "FAIL";
+      article_rendered_qc = "FAIL";
+      reasons.push("RENDERED_QC_FAIL", ...pageRender.reasons);
+    } else {
+      rendered_qc = pageRender.RENDERED_PAGE_QUALITY_QC === "PASS" ? "PASS" : "FAIL";
+      article_rendered_qc = rendered_qc;
+      if (rendered_qc !== "PASS") reasons.push("RENDERED_QC_FAIL", ...pageRender.reasons);
+    }
   }
 
   const deploy_allowed =

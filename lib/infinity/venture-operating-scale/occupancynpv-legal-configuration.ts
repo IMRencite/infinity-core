@@ -42,6 +42,7 @@ import {
   OCCUPANCYNPV_DOMAIN,
 } from "./constants";
 import { OCCUPANCYNPV_PRODUCTION_ORIGIN, OCCUPANCYNPV_WWW_HOST } from "./cloudflare-dns-vercel-binding";
+import { occupancynpvLegacyProductionDeployBlockedReason } from "./occupancynpv-legacy-deployment-retired-v1";
 import {
   evaluateLegalConfigurationGate,
   FOUNDER_CONFIRMED_OCCUPANCYNPV_LEGAL_FACTS,
@@ -158,6 +159,10 @@ async function publishLegalSuccessor(input: {
   pollAttempts: number;
   pollDelayMs: number;
 }): Promise<{ ok: boolean; deploymentId: string; url: string; safeError: string | null }> {
+  const legacyBlock = occupancynpvLegacyProductionDeployBlockedReason();
+  if (legacyBlock) {
+    return { ok: false, deploymentId: "NONE", url: "NONE", safeError: legacyBlock };
+  }
   for (const file of input.files) {
     const uploaded = await input.vercel.uploadSourceFile(file);
     if (!uploaded.ok) {

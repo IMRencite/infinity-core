@@ -19,6 +19,7 @@ import {
   OCCUPANCYNPV_STRIPE_VENTURE,
 } from "./constants";
 import { OCCUPANCYNPV_PRODUCTION_ORIGIN } from "./cloudflare-dns-vercel-binding";
+import { occupancynpvLegacyProductionDeployBlockedReason } from "./occupancynpv-legacy-deployment-retired-v1";
 import {
   buildOccupancynpvCheckoutSessionRequest,
   checkoutReturnClaimsPaymentSuccess,
@@ -210,6 +211,13 @@ export async function executeOccupancynpvPaymentReactivation(input: {
   let deploymentId: string | null = null;
   let deployed = false;
   let safeError: string | null = null;
+  if (!stop && input.deploy !== false) {
+    const legacyBlock = occupancynpvLegacyProductionDeployBlockedReason();
+    if (legacyBlock) {
+      stop = "OCCUPANCYNPV_PAYMENT_REACTIVATION_FAILED";
+      safeError = legacyBlock;
+    }
+  }
   if (!stop && input.deploy !== false) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
     const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";

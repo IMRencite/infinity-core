@@ -10,7 +10,9 @@ import { evaluateBlogVisualValueGate } from "./blog-visual-value-gate";
 import { evaluateBlogVisualAssetQc } from "./blog-visual-asset-gates";
 import { evaluateBlogSectionProgressionGate } from "./blog-section-progression-gate";
 import { evaluateArticleSchemaQc } from "./club-throttle-journal-publication-metadata";
-import { evaluateRenderedArticleVisualQc } from "./rendered-editorial-rhythm-gate";
+import type { ResponsiveBrowserEvidenceV1 } from "./render-browser-evidence-v1";
+import { evaluateRenderedPageQualityQc } from "./rendered-page-quality-v1";
+import { OCCUPANCYNPV_BLOG_EDITORIAL_CSS } from "./blog-ux";
 import type { VentureImageAssetRecord } from "./venture-image-creative-v2";
 
 export const INFINITY_BLOG_PUBLICATION_GATE_VNEXT = "InfinityBlogPublicationGateVNext" as const;
@@ -28,6 +30,8 @@ export type InfinityBlogPublicationVNextInput = {
   image_record?: VentureImageAssetRecord;
   has_inline_table?: boolean;
   has_inline_diagram?: boolean;
+  browser_responsive_evidence?: ResponsiveBrowserEvidenceV1 | null;
+  editorial_css?: string;
 };
 
 export type InfinityBlogPublicationVNextResult = {
@@ -98,13 +102,18 @@ export function evaluateInfinityBlogPublicationGateVNext(
       );
     }
     if (input.main_html) {
-      dimensions.RENDERED_ARTICLE_VISUAL_QC = dim(
-        evaluateRenderedArticleVisualQc({
-          shell_html: input.shell_html,
-          main_html: input.main_html,
-          editorial_css: "",
-        }),
-      );
+      const renderQc = evaluateRenderedPageQualityQc({
+        profile: "ARTICLE",
+        shell_html: input.shell_html,
+        main_html: input.main_html,
+        editorial_css: input.editorial_css ?? OCCUPANCYNPV_BLOG_EDITORIAL_CSS,
+        boundary: "AUTONOMOUS_PUBLICATION_APPROVAL",
+        browser_evidence: input.browser_responsive_evidence ?? null,
+        functional_pass: true,
+      });
+      dimensions.RENDERED_ARTICLE_VISUAL_QC =
+        renderQc.RENDERED_PAGE_QUALITY_QC === "PASS" ? "PASS" : "FAIL";
+      if (renderQc.RENDERED_PAGE_QUALITY_QC !== "PASS") reasons.push(...renderQc.reasons);
     }
   }
 

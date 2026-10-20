@@ -1,3 +1,4 @@
+import { applyOccupancynpvLegacyDeployBlock } from "./occupancynpv-legacy-deployment-retired-v1";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { VercelDomainBindingAdapter } from "@/lib/infinity/commercialization/providers/vercel/domain-binding-adapter";
@@ -29,6 +30,7 @@ export async function executeOccupancynpvCustomerUiRepairDeployment(input: {
   let deploymentId: string | null = null;
   let deployed = false;
   let safeError: string | null = null;
+  safeError = applyOccupancynpvLegacyDeployBlock(input, safeError);
   if (input.deploy !== false) {
     for (const file of composed.files) {
       const uploaded = await vercel.uploadSourceFile(file);

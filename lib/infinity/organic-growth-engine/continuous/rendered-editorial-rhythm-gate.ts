@@ -14,12 +14,15 @@ export function evaluateRenderedEditorialRhythmGate(input: {
   main_html: string;
   editorial_css: string;
   spacing_measurements?: EditorialSpacingMeasurement | null;
+  browser_geometry_required?: boolean;
 }): OrganicNamedGate {
   const reasons: string[] = [];
   reasons.push(...editorialSpacingCssSignalsFail(input.editorial_css));
   if (!input.main_html.includes("<h2")) reasons.push("ORPHAN_HEADING");
   if (/>\s*<\/(?:div|section)>\s*<h2/.test(input.main_html)) reasons.push("EMPTY_CONTENT_BLOCK");
-  if (input.spacing_measurements) {
+  if (input.browser_geometry_required && !input.spacing_measurements) {
+    reasons.push("BROWSER_GEOMETRY_REQUIRED_BUT_MISSING");
+  } else if (input.spacing_measurements) {
     const spacing = evaluateEditorialSpacingQc(input.spacing_measurements);
     if (spacing.result !== "PASS") reasons.push(...spacing.reasons);
   }
@@ -33,6 +36,7 @@ export function evaluateRenderedArticleVisualQc(input: {
   main_html: string;
   editorial_css: string;
   spacing_measurements?: EditorialSpacingMeasurement | null;
+  browser_geometry_required?: boolean;
 }): OrganicNamedGate {
   const rhythm = evaluateRenderedEditorialRhythmGate(input);
   return named(RENDERED_ARTICLE_VISUAL_QC_GATE, rhythm.reasons);

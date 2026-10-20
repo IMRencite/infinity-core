@@ -15,9 +15,16 @@ import {
   renderFeaturedReadsBottomHtml,
   renderMainBlogRollHtml,
   renderBlogArticleShell,
+  renderBlogHeroHtml,
+  renderBlogSidebarHtml,
   LATEST_BLOGS_CAROUSEL_SCRIPT,
   OCCUPANCYNPV_BLOG_EDITORIAL_CSS,
 } from "./blog-ux";
+import {
+  clubThrottleJournalCategoryArchivePageSource,
+  clubThrottleJournalTagArchivePageSource,
+} from "./club-throttle-journal-taxonomy-compose";
+import { evaluateBlogIndexReadinessGate } from "./blog-quality";
 import { selectPopularOrFeaturedBlogs } from "@/lib/infinity/performance-intelligence-engine/popular-blogs";
 import { renderCanonicalArticleMain } from "./article-section-renderer";
 import { clubThrottleShirtV5Body } from "./club-throttle-v5-body-shirt";
@@ -442,19 +449,39 @@ export function evaluateClubThrottleJournalQuality(): { result: "PASS" | "FAIL";
   return { result: failed.length ? "FAIL" : "PASS", articles: drafts.length, failed };
 }
 
-export function clubThrottleJournalIndexHtml(): string {
+/** Main column only — sidebar is composed in the journal index page shell. */
+export function clubThrottleJournalIndexMainHtml(): string {
   const selection = selectPopularOrFeaturedBlogs({ posts: CLUB_THROTTLE_JOURNAL_POSTS });
   return `${renderMainBlogRollHtml(CLUB_THROTTLE_JOURNAL_POSTS)}
 ${renderFeaturedBlogsCarouselHtml(selection.posts, { public_label: selection.public_label, mode: selection.mode })}
-<section data-blog-featured-reads="true" data-blog-featured-reads-position="bottom">
-                <h2 className="onpv-blog-section-heading">Featured Reads</h2>
-                <ul className="onpv-blog-featured-reads">
-                  <li><a href="${permalink("apparel", "streetwear-vs-riding-gear")}">Streetwear versus riding gear</a><p>When a shirt is clothes and when you still need a jacket.</p></li>
-                  <li><a href="${permalink("night-riding", "how-to-ride-after-dark")}">How to ride after dark</a><p>A checklist that is not a stunt brief.</p></li>
-                  <li><a href="${permalink("rides", "group-ride-etiquette")}">Group-ride etiquette</a><p>Spacing, sweep, and how to leave without becoming a race.</p></li>
-                </ul>
-              </section>
-<script dangerouslySetInnerHTML={{ __html: ${JSON.stringify(LATEST_BLOGS_CAROUSEL_SCRIPT)} }} />`;
+${renderFeaturedReadsBottomHtml([
+  { href: permalink("apparel", "streetwear-vs-riding-gear"), label: "Streetwear versus riding gear", dek: "When a shirt is clothes and when you still need a jacket." },
+  { href: permalink("night-riding", "how-to-ride-after-dark"), label: "How to ride after dark", dek: "A checklist that is not a stunt brief." },
+  { href: permalink("rides", "group-ride-etiquette"), label: "Group-ride etiquette", dek: "Spacing, sweep, and how to leave without becoming a race." },
+])}`;
+}
+
+/** @deprecated Use clubThrottleJournalIndexMainHtml + index page shell. */
+export function clubThrottleJournalIndexHtml(): string {
+  return clubThrottleJournalIndexMainHtml();
+}
+
+export function evaluateClubThrottleJournalIndexComposedQc(indexPageSource: string): {
+  BLOG_INDEX_READINESS: ReturnType<typeof evaluateBlogIndexReadinessGate>;
+  CT_JOURNAL_SIDEBAR_QC: "PASS" | "FAIL";
+} {
+  const readiness = evaluateBlogIndexReadinessGate({
+    published: CLUB_THROTTLE_JOURNAL_POSTS.filter((post) => !post.draft && !post.unpublished),
+    index_html: indexPageSource,
+  });
+  const sidebarOk =
+    indexPageSource.includes('data-blog-sidebar="true"')
+    && indexPageSource.includes('data-blog-sidebar-shared="BlogSidebar"')
+    && indexPageSource.includes("data-blog-index-layout");
+  return {
+    BLOG_INDEX_READINESS: readiness,
+    CT_JOURNAL_SIDEBAR_QC: readiness.result === "PASS" && sidebarOk ? "PASS" : "FAIL",
+  };
 }
 
 export function composeClubThrottleJournalFiles(): Array<{ path: string; content: string }> {
@@ -466,11 +493,23 @@ export function composeClubThrottleJournalFiles(): Array<{ path: string; content
       content: `export const metadata = { title: "Journal · Club Throttle", alternates: { canonical: ${JSON.stringify(clubThrottleJournalIndexCanonical())} } };
 export default function JournalPage() {
   return (
-    <article className="sheet" data-blog-layout="editorial" data-content-surface="journal">
-      <p className="kicker">Journal</p>
-      <h1>Notes from the shop and the road</h1>
-      <p data-direct-answer="true">The journal is Club Throttle's blog: rider notes, garment decisions, and the rules of a night that is not a stunt.</p>
-      ${clubThrottleJournalIndexHtml()}
+    <article className="sheet" data-content-surface="journal">
+      ${renderBlogHeroHtml({
+        eyebrow: "Journal",
+        title: "Notes from the shop and the road",
+        description: "The journal is Club Throttle's blog: rider notes, garment decisions, and the rules of a night that is not a stunt.",
+        image: "/visual/journal-cover.svg",
+        image_alt: "Club Throttle Journal",
+      })}
+      <section className="pv-section" data-section-type="INDEX">
+        <div className="vg-container onpv-blog-layout" data-blog-layout="editorial" data-blog-index-layout="true">
+          <div className="onpv-blog-main" data-blog-index-main="true">
+            ${clubThrottleJournalIndexMainHtml()}
+          </div>
+          ${renderBlogSidebarHtml(CLUB_THROTTLE_JOURNAL_POSTS, undefined, { venture_id: "club-throttle", archive_root: "/journal" })}
+        </div>
+      </section>
+      <script dangerouslySetInnerHTML={{ __html: ${JSON.stringify(LATEST_BLOGS_CAROUSEL_SCRIPT)} }} />
     </article>
   );
 }
@@ -484,25 +523,11 @@ export default function BlogRedirect() { redirect("/journal/"); }
     },
     {
       path: "app/journal/category/[category]/page.tsx",
-      content: `import Link from "next/link";
-const POSTS = ${JSON.stringify(posts.map((row) => ({ title: row.title, path: row.path, category: row.primaryCategory, tags: row.tags })))};
-export default async function JournalCategory({ params }: { params: Promise<{ category: string }> }) {
-  const { category } = await params;
-  const rows = POSTS.filter((row) => row.category.replace(/\\s+/g, "-") === category);
-  return <article className="sheet" data-blog-archive="category"><h1>{category.replace(/-/g, " ")}</h1><ul>{rows.map((row) => <li key={row.path}><Link href={row.path}>{row.title}</Link></li>)}</ul></article>;
-}
-`,
+      content: clubThrottleJournalCategoryArchivePageSource(),
     },
     {
       path: "app/journal/tag/[tag]/page.tsx",
-      content: `import Link from "next/link";
-const POSTS = ${JSON.stringify(posts.map((row) => ({ title: row.title, path: row.path, tags: row.tags })))};
-export default async function JournalTag({ params }: { params: Promise<{ tag: string }> }) {
-  const { tag } = await params;
-  const rows = POSTS.filter((row) => row.tags.some((item) => item.replace(/\\s+/g, "-") === tag));
-  return <article className="sheet" data-blog-archive="tag"><h1>{tag.replace(/-/g, " ")}</h1><ul>{rows.map((row) => <li key={row.path}><Link href={row.path}>{row.title}</Link></li>)}</ul></article>;
-}
-`,
+      content: clubThrottleJournalTagArchivePageSource(),
     },
   ];
   drafts.forEach((draft) => {

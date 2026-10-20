@@ -4,6 +4,7 @@ import {
   evaluateBlogBacklogDeployGuard,
 } from "../blog-backlog-deploy-guard";
 import { buildBacklogRenderedEvidence } from "../blog-backlog-compose-evidence";
+import { goodResponsiveBrowserEvidence } from "../fixtures/render-browser-evidence-fixtures";
 import { clubThrottleShirtV5Body } from "../club-throttle-v5-body-shirt";
 import { clubThrottleAfterDarkV5Body } from "../club-throttle-v5-body-after-dark";
 import type { BlogBacklogArticle } from "../blog-backlog-inventory";
@@ -65,9 +66,21 @@ describe("BlogBacklogDeployGuard", () => {
     expect(row.reasons).toContain("RENDERED_QC_NOT_RUN");
   });
 
-  it("allows deploy when source, media, and composed rendered evidence pass for shirt fixture", () => {
+  it("blocks deploy when composed render lacks mandatory browser geometry", () => {
     const article = shirtArticle();
     const rendered = buildBacklogRenderedEvidence(article);
+    expect(rendered).not.toBeNull();
+    const row = evaluateBlogArticlePreDeployQc({ article, rendered });
+    expect(row.rendered_qc).toBe("FAIL");
+    expect(row.reasons).toContain("BROWSER_GEOMETRY_REQUIRED_BUT_MISSING");
+  });
+
+  it("allows deploy when source, media, browser geometry, and composed rendered evidence pass for shirt fixture", () => {
+    const article = shirtArticle();
+    const rendered = {
+      ...buildBacklogRenderedEvidence(article)!,
+      browser_responsive_evidence: goodResponsiveBrowserEvidence(),
+    };
     expect(rendered).not.toBeNull();
     const guard = evaluateBlogBacklogDeployGuard({
       articles: [article],
@@ -114,7 +127,10 @@ describe("BlogBacklogDeployGuard", () => {
       },
       backlog_scope: "AUTHORIZED_BACKLOG",
     };
-    const shirtRendered = buildBacklogRenderedEvidence(shirt)!;
+    const shirtRendered = {
+      ...buildBacklogRenderedEvidence(shirt)!,
+      browser_responsive_evidence: goodResponsiveBrowserEvidence(),
+    };
     const guard = evaluateBlogBacklogDeployGuard({
       articles: [shirt, heldPublished],
       rendered_by_path: { [shirt.path]: shirtRendered },

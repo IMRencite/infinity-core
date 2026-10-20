@@ -53,11 +53,20 @@ export function editorialSpacingCssSignalsFail(css: string): string[] {
   if (/\.onpv-blog-main\.pv-reading[^}]*gap:\s*var\(--blog-section-block-gap\)/.test(css)) {
     reasons.push("flex_gap_on_prose_children");
   }
+  if (
+    /\.onpv-blog-main[^}]*gap:\s*var\(--blog-section-block-gap\)/.test(css)
+    && /\.onpv-blog-main\.pv-reading[^}]*margin-bottom:\s*var\(--blog-section-block-gap\)/.test(css)
+  ) {
+    reasons.push("flex_gap_and_margin_double_stack");
+  }
   if (/\.onpv-blog-main[^}]*gap:\s*4rem|gap:\s*5rem|gap:\s*6rem/.test(css)) {
     reasons.push("excessive_main_column_gap");
   }
   if (!/\.onpv-blog-main\.pv-reading\s*>/.test(css)) {
     reasons.push("prose_child_spacing_rules_missing");
+  }
+  if (!/--blog-paragraph-gap:/.test(css)) {
+    reasons.push("paragraph_rhythm_token_missing");
   }
   return reasons;
 }

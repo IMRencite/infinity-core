@@ -10,6 +10,7 @@ import {
   persistOccupancynpvArtifactLineage,
 } from "./occupancynpv-artifact-lineage";
 import { composeOccupancynpvPaymentReactivationFiles } from "./occupancynpv-payment-reactivation-surface";
+import { applyOccupancynpvLegacyDeployBlock } from "./occupancynpv-legacy-deployment-retired-v1";
 
 export const OCCUPANCYNPV_BRAND_IDENTITY_DEPLOY_EVIDENCE_PATH =
   ".infinity/venture-operating-scale/occupancynpv-brand-identity-deployment.json" as const;
@@ -29,6 +30,7 @@ export async function executeOccupancynpvBrandIdentityDeployment(input: {
   let deploymentId: string | null = null;
   let deployed = false;
   let safeError: string | null = null;
+  safeError = applyOccupancynpvLegacyDeployBlock(input, safeError);
   if (input.deploy !== false) {
     for (const file of composed.files) {
       const uploaded = await vercel.uploadSourceFile(file);

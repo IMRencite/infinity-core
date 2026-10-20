@@ -14,6 +14,7 @@ import {
   CLUB_THROTTLE_JOURNAL_POSTS,
   clubThrottleJournalDrafts,
   composeClubThrottleJournalFiles,
+  evaluateClubThrottleJournalIndexComposedQc,
 } from "../club-throttle-journal";
 import { evaluateVentureIsolationGate } from "@/lib/infinity/venture-isolation/venture-isolation";
 
@@ -98,6 +99,14 @@ describe("Club Throttle journal publication metadata", () => {
     expect(qc.route.result).toBe("PASS");
     expect(qc.schema.result).toBe("PASS");
     expect(evaluateArticleSchemaQc(draft).result).toBe("PASS");
+  });
+
+  it("journal index compose preserves shared BlogSidebar discovery layout", () => {
+    const index = composeClubThrottleJournalFiles().find((file) => file.path === "app/journal/page.tsx")?.content ?? "";
+    const qc = evaluateClubThrottleJournalIndexComposedQc(index);
+    expect(qc.CT_JOURNAL_SIDEBAR_QC).toBe("PASS");
+    expect(index).toContain('data-blog-sidebar-shared="BlogSidebar"');
+    expect(index).toContain("data-blog-index-layout");
   });
 
   it("passes a second composed article with its own canonical", () => {

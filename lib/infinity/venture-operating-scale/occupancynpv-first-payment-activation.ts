@@ -25,6 +25,7 @@ import {
   OCCUPANCYNPV_STRIPE_VENTURE,
 } from "./constants";
 import { OCCUPANCYNPV_PRODUCTION_ORIGIN, OCCUPANCYNPV_WWW_HOST } from "./cloudflare-dns-vercel-binding";
+import { occupancynpvLegacyProductionDeployBlockedReason } from "./occupancynpv-legacy-deployment-retired-v1";
 import {
   buildOccupancynpvCheckoutSessionRequest,
   checkoutReturnClaimsPaymentSuccess,
@@ -150,6 +151,10 @@ async function publishSuccessor(input: {
   pollAttempts: number;
   pollDelayMs: number;
 }) {
+  const legacyBlock = occupancynpvLegacyProductionDeployBlockedReason();
+  if (legacyBlock) {
+    return { ok: false, deploymentId: "NONE", url: "NONE", safeError: legacyBlock };
+  }
   for (const file of input.files) {
     const uploaded = await input.vercel.uploadSourceFile(file);
     if (!uploaded.ok) return { ok: false, deploymentId: "NONE", url: "NONE", safeError: uploaded.safeError ?? "VERCEL_FILE_UPLOAD_FAILED" };

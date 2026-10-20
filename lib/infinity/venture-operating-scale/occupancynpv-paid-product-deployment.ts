@@ -1,3 +1,4 @@
+import { applyOccupancynpvLegacyDeployBlock } from "./occupancynpv-legacy-deployment-retired-v1";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { VercelDomainBindingAdapter } from "@/lib/infinity/commercialization/providers/vercel/domain-binding-adapter";
@@ -64,6 +65,7 @@ export async function executeOccupancynpvPaidProductDeployment(input: {
   let deploymentId: string | null = null;
   let deployed = false;
   let safeError: string | null = null;
+  safeError = applyOccupancynpvLegacyDeployBlock(input, safeError);
   let supabaseEnvPresent = false;
   if (input.deploy !== false) {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";

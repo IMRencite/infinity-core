@@ -1,3 +1,4 @@
+import { applyOccupancynpvLegacyDeployBlock } from "./occupancynpv-legacy-deployment-retired-v1";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { VercelDomainBindingAdapter } from "@/lib/infinity/commercialization/providers/vercel/domain-binding-adapter";
@@ -54,6 +55,7 @@ export async function executeOccupancynpvLiveOfferDeployment(input: {
   let deployed = false;
   let aliased = false;
   let safeError: string | null = artifactReady ? null : "ISOLATED_ARTIFACT_LIVE_OFFER_INCOMPLETE";
+  safeError = applyOccupancynpvLegacyDeployBlock(input, safeError);
   let predeployVisible = false;
   let liveVisible = false;
 

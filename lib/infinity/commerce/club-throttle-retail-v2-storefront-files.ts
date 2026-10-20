@@ -1,7 +1,10 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { ComposedStorefrontFile } from "./club-throttle-storefront-compose.ts";
-import { CANONICAL_VARIANT_IDENTITY_V1_STOREFRONT_SOURCE } from "./canonical-variant-identity-v1.storefront-embed.ts";
 
-const canonicalVariantIdentitySource = CANONICAL_VARIANT_IDENTITY_V1_STOREFRONT_SOURCE;
+const commerceDir = dirname(fileURLToPath(import.meta.url));
+const canonicalVariantIdentitySource = readFileSync(join(commerceDir, "canonical-variant-identity-v1.ts"), "utf8");
 
 /** Retail V2 — authoritative cart, customer account surfaces, shared cart storage. */
 export function clubThrottleRetailV2StorefrontFiles(): ComposedStorefrontFile[] {

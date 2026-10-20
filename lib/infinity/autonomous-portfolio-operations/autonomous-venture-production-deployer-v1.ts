@@ -38,7 +38,6 @@ export async function preparePortfolioVentureDeployEnvironment(input?: {
 export async function deployApprovedVentureProductionBundle(input: {
   venture_id: string;
   alias_production?: boolean;
-  enforce_backlog_deploy_guard?: boolean;
   /** Worker slices use short poll; durable jobs reconcile IN_PROGRESS deployments. */
   poll_attempts?: number;
   prior_deployment_id?: string | null;
@@ -127,7 +126,6 @@ export async function deployApprovedVentureProductionBundle(input: {
   const ct = await executeClubThrottleProductionDeployment({
     deploy: true,
     aliasProduction: input.alias_production !== false,
-    enforceBacklogDeployGuard: input.enforce_backlog_deploy_guard !== false,
     rebuildDarkGarmentArt: false,
   });
   return {
