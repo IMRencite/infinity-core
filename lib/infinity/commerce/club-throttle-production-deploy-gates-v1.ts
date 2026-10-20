@@ -5,7 +5,7 @@ import {
   type PublicCapabilityQcBoundary,
   VENTURE_REQUIRED_CAPABILITY_QC,
 } from "@/lib/infinity/organic-growth-engine/continuous/public-page-capability-contract-v1";
-import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/render-browser-evidence-v1";
+import type { ResponsiveCapabilityEvidenceV1 } from "@/lib/infinity/organic-growth-engine/continuous/public-page-capability-contract-v1";
 
 export const CT_PUBLIC_UI_CAPABILITY_QC_FAIL = "CT_PUBLIC_UI_CAPABILITY_QC_FAIL" as const;
 export const CT_DEPLOY_CAPABILITY_ENFORCEMENT_GATE = "CT_DEPLOY_CAPABILITY_ENFORCEMENT_GATE" as const;
