@@ -17,6 +17,12 @@ import {
   htmlHasBrokenSidebarClassNameAttribute,
 } from "./blog-taxonomy-archive-qc";
 import { clubThrottleJournalIndexCanonical, CLUB_THROTTLE_ORIGIN } from "./club-throttle-journal-publication-metadata";
+import type { OrganicNamedGate } from "./types";
+
+function taxonomyGatePassFail(gate: OrganicNamedGate): { result: "PASS" | "FAIL"; reasons?: string[] } {
+  return { result: gate.result === "PASS" ? "PASS" : "FAIL", reasons: gate.reasons };
+}
+
 export function clubThrottleCategoryArchivePath(categoryLabel: string): string {
   return `/journal/category/${taxonomySlug(categoryLabel)}/`;
 }
