@@ -47,6 +47,14 @@ import {
   resolveLiveVentureContentContinuityV1,
   type VentureContentContinuityReport,
 } from "../live-venture-content-continuity-v1";
+import {
+  candidateQuarantineKey,
+  isCandidateQuarantined,
+} from "../venture-candidate-quarantine-v1";
+import {
+  buildVentureDailyOutputCounters,
+  evaluateLiveVentureDailyOutputQc,
+} from "../venture-daily-output-v1";
 
 export const PORTFOLIO_CRON_ORCHESTRATOR_V1 = "PORTFOLIO_CRON_ORCHESTRATOR_V1" as const;
 
@@ -256,8 +264,12 @@ export async function orchestratePortfolioOperatingTick(input: {
             }
           }
         } else {
+          const qualifiedPublish = countBacklogPublishCandidates(backlog);
+          const blogFloorUnmet = !ventureContinuity.daily_blog_target_met;
+          const maintenanceAllowed =
+            ventureContinuity.daily_blog_target_met || qualifiedPublish === 0;
           const clusterQc = evaluateOnpvInternalLinkClusterQc(backlog);
-          if (clusterQc.ONPV_INTERNAL_LINK_CLUSTER_QC === "PASS") {
+          if (maintenanceAllowed && clusterQc.ONPV_INTERNAL_LINK_CLUSTER_QC === "PASS") {
             const refreshKey = "refresh:onpv-lease-internal-link-cluster:v1";
             const refreshDeploy = await enqueuePortfolioJob({
               cycle_id,
@@ -276,6 +288,8 @@ export async function orchestratePortfolioOperatingTick(input: {
               jobsCreated += 1;
               enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: vid, idempotency_key: refreshKey });
             }
+          } else if (blogFloorUnmet && qualifiedPublish === 0) {
+            /* Blog floor unmet with only non-gate-ready drafts: defer maintenance; CONTENT_SELF_HEAL continues repair lane. */
           }
         }
       }
@@ -335,7 +349,13 @@ export async function orchestratePortfolioOperatingTick(input: {
           }
         }
         const creativeGov = resolveCreativeBudgetGovernance();
-        const concepts = rankClubThrottleProductOpportunities();
+        const concepts = rankClubThrottleProductOpportunities().filter(
+          (c) =>
+            !isCandidateQuarantined({
+              venture_id: CLUB_THROTTLE_VENTURE_ID,
+              candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, concept_id: c.concept_id }),
+            }),
+        );
         if (concepts[0] && creativeGov.LIVE_CREATIVE_ENABLED) {
           const creativeKey = `creative-self-heal:${concepts[0].concept_id}`;
           const creative = await enqueuePortfolioJob({
@@ -402,6 +422,24 @@ export async function orchestratePortfolioOperatingTick(input: {
         LIVE_VENTURE_CONTENT_CONTINUITY_QC: liveVentureContentContinuityQc(ctContentContinuity),
         BLOG_SELF_HEAL_CONTINUITY_QC: blogSelfHealContinuityQc(ctContentContinuity),
         LIVE_VENTURE_PREMATURE_IDLE_QC: ctContentContinuity.LIVE_VENTURE_PREMATURE_IDLE_QC,
+        CT_LIVE_VENTURE_DAILY_OUTPUT_QC: evaluateLiveVentureDailyOutputQc({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          continuity: ctContentContinuity,
+          next_best: ventureNextBest.find((a) => a.venture_id === CLUB_THROTTLE_VENTURE_ID) ?? null,
+        }).result,
+        ONPV_LIVE_VENTURE_DAILY_OUTPUT_QC: evaluateLiveVentureDailyOutputQc({
+          venture_id: CRE_VENTURE_ID,
+          continuity: onpvContentContinuity,
+          next_best: ventureNextBest.find((a) => a.venture_id === CRE_VENTURE_ID) ?? null,
+        }).result,
+        ct_daily_output: buildVentureDailyOutputCounters({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          continuity: ctContentContinuity,
+        }),
+        onpv_daily_output: buildVentureDailyOutputCounters({
+          venture_id: CRE_VENTURE_ID,
+          continuity: onpvContentContinuity,
+        }),
         enqueued_job_types: enqueued.map((e) => e.job_type),
       },
     });

@@ -21,6 +21,12 @@ import {
 } from "./autonomous-product-creative-self-healing-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
+import {
+  candidateQuarantineKey,
+  quarantineCandidateQcExhausted,
+  CANDIDATE_RETRY_BUDGET,
+} from "../venture-candidate-quarantine-v1";
+import { evaluateStorefrontManufacturingSeparationQc } from "../venture-daily-output-v1";
 import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
 import { countPortfolioJobsByCycle, patchPortfolioJobFields } from "./autonomous-portfolio-job-queue-v1";
@@ -73,9 +79,21 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           execute_publish: Boolean(lineage.execute_publish),
           prior_attempts: job.attempt_count,
         });
+        const targetSlug = typeof lineage.self_heal_target_slug === "string" ? lineage.self_heal_target_slug : null;
+        if (out.SELF_HEAL_EXHAUSTED && targetSlug) {
+          quarantineCandidateQcExhausted({
+            venture_id: job.venture_id,
+            candidate_key: candidateQuarantineKey({ venture_id: job.venture_id, slug: targetSlug }),
+            failure_reasons: out.failure_gates.length ? out.failure_gates : ["QC_EXHAUSTED"],
+          });
+        }
         await completeJob(job, holder, {
           status: "COMPLETED",
-          output_lineage: out as unknown as Record<string, unknown>,
+          output_lineage: {
+            ...(out as unknown as Record<string, unknown>),
+            CANDIDATE_RETRY_BUDGET,
+            quarantined_slug: out.SELF_HEAL_EXHAUSTED ? targetSlug : null,
+          },
         });
         return;
       }
@@ -290,19 +308,39 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           !gov.LIVE_CREATIVE_ENABLED ||
           attempt.held_reason === "LIVE_CREATIVE_NOT_AUTHORIZED" ||
           attempt.held_reason === "CT_PRINT_QC_QUALITY_HELD_NO_AUTO_PAID_RETRY";
+        const printHold = diagnosis.CT_PRINT_QC_FAILURE_REASONS.length > 0 && !attempt.pass;
+        const storefrontSep = evaluateStorefrontManufacturingSeparationQc({
+          print_production_qc_hold: printHold,
+          storefront_listing_qc_pass: attempt.pass || printHold,
+        });
+        if (
+          !attempt.pass &&
+          (qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts)
+        ) {
+          quarantineCandidateQcExhausted({
+            venture_id: CLUB_THROTTLE_VENTURE_ID,
+            candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, concept_id: concept.concept_id }),
+            failure_reasons: attempt.print_failure_reasons.length
+              ? attempt.print_failure_reasons
+              : diagnosis.CT_PRINT_QC_FAILURE_REASONS,
+          });
+        }
         await completeJob(job, holder, {
           status: attempt.pass
             ? "COMPLETED"
             : qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts
               ? "FAILED"
               : "QUEUED",
-          safe_error: attempt.pass ? null : attempt.held_reason,
+          safe_error: attempt.pass ? null : attempt.held_reason ?? "PRINT_PRODUCTION_QC_HOLD",
           eligible_at: new Date(Date.now() + 90_000).toISOString(),
           output_lineage: {
             diagnosis,
             attempt,
             CT_CREATIVE_ATTEMPTS: job.attempt_count,
             CT_SELECTED_ARTWORK_ID: attempt.pass ? attempt.source_asset_hash : null,
+            STOREFRONT_MANUFACTURING_SEPARATION: storefrontSep,
+            STOREFRONT_PUBLICATION_ALLOWED: storefrontSep.STOREFRONT_READY && printHold,
+            MANUFACTURING_BLOCKED_BY_PRINT_HOLD: printHold,
           },
         });
         return;

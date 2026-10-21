@@ -14,6 +14,7 @@ import {
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { summarizeClubThrottleEditorialBacklog } from "./durable/club-throttle-editorial-backlog-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
+import { resolveLiveVentureContentContinuityV1 } from "./live-venture-content-continuity-v1";
 
 export const VENTURE_NEXT_BEST_GROWTH_ACTION_ENGINE_V1 = "VENTURE_NEXT_BEST_GROWTH_ACTION_ENGINE_V1" as const;
 
@@ -27,10 +28,38 @@ export type VentureNextBestGrowthAction = {
   opportunities_researched: number;
 };
 
-function resolveOnpvAction(backlog = listOccupancyClubThrottleBacklogArticles()): VentureNextBestGrowthAction {
+export function resolveOnpvNextBestGrowthActionV1(
+  input?: { daily_blog_target_met?: boolean; blogs_published_today?: number },
+  backlog = listOccupancyClubThrottleBacklogArticles(),
+): VentureNextBestGrowthAction {
+  return resolveOnpvAction(backlog, input);
+}
+
+function resolveOnpvAction(
+  backlog = listOccupancyClubThrottleBacklogArticles(),
+  input?: { daily_blog_target_met?: boolean; blogs_published_today?: number },
+): VentureNextBestGrowthAction {
   const ranked = rankOccupancyNpvAutonomousPublishRows(backlog);
   const pick = pickOccupancyNpvAutonomousBacklogCandidate(backlog);
   const authority = analyzeVentureAuthorityExpansionV1({ venture_id: CRE_VENTURE_ID });
+  const blogFloorMet = input?.daily_blog_target_met ?? (input?.blogs_published_today ?? 0) >= 1;
+  if (!blogFloorMet && ranked.length > 0 && pick) {
+    return {
+      venture_id: CRE_VENTURE_ID,
+      venture_name: "OccupancyNPV",
+      next_best_growth_action: `Publish ${pick.title}`,
+      selected_work_type:
+        pick.slug.includes("compare") ||
+        pick.slug.includes("expense-stop") ||
+        pick.slug.includes("free-rent") ||
+        pick.slug.includes("gross-lease-vs-net")
+          ? "DECISION_SUPPORT_PAGE"
+          : "EVERGREEN_GUIDE",
+      selection_reason: "Daily blog floor unmet; publish outranks maintenance",
+      expected_strategic_value: "CRE authority + conversion path to compare tools",
+      opportunities_researched: authority.gaps_identified.length + ranked.length,
+    };
+  }
   if (pick) {
     return {
       venture_id: CRE_VENTURE_ID,
@@ -48,11 +77,25 @@ function resolveOnpvAction(backlog = listOccupancyClubThrottleBacklogArticles())
       opportunities_researched: authority.gaps_identified.length + ranked.length,
     };
   }
+  if (!blogFloorMet && ranked.length > 0) {
+    return {
+      venture_id: CRE_VENTURE_ID,
+      venture_name: "OccupancyNPV",
+      next_best_growth_action: `Publish ${ranked[0]!.article.title}`,
+      selected_work_type: "EVERGREEN_GUIDE",
+      selection_reason: "Daily blog floor unmet; gate-qualified publish candidate available",
+      expected_strategic_value: "CRE authority before maintenance displacement",
+      opportunities_researched: authority.gaps_identified.length + ranked.length,
+    };
+  }
   return {
     venture_id: CRE_VENTURE_ID,
     venture_name: "OccupancyNPV",
     next_best_growth_action: authority.top_gap?.recommended_action ?? "Maintain lease authority cluster",
-    selected_work_type: authority.top_gap?.work_type ?? "INTERNAL_LINK_UPDATE",
+    selected_work_type:
+      blogFloorMet || ranked.length === 0
+        ? (authority.top_gap?.work_type ?? "INTERNAL_LINK_UPDATE")
+        : "EVERGREEN_GUIDE",
     selection_reason: authority.top_gap?.reason ?? "No unpublished publish candidate; cluster maintenance",
     expected_strategic_value: "Strengthen internal linking and conversion without duplicate publish",
     opportunities_researched: authority.gaps_identified.length,
@@ -125,7 +168,13 @@ function resolveGenericAction(row: OperatingVentureInventoryRow): VentureNextBes
 export function buildVentureNextBestGrowthActionsV1(): VentureNextBestGrowthAction[] {
   const live = buildOperatingVentureInventory().filter((r) => r.state === "LIVE_OPERATING");
   return live.map((row) => {
-    if (row.venture_id === CRE_VENTURE_ID || row.venture_id === "occupancynpv") return resolveOnpvAction();
+    if (row.venture_id === CRE_VENTURE_ID || row.venture_id === "occupancynpv") {
+      const continuity = resolveLiveVentureContentContinuityV1({ venture_id: CRE_VENTURE_ID });
+      return resolveOnpvAction(undefined, {
+        daily_blog_target_met: continuity.daily_blog_target_met,
+        blogs_published_today: continuity.blogs_published_today,
+      });
+    }
     if (row.venture_id === CLUB_THROTTLE_VENTURE_ID) return resolveClubThrottleAction();
     return resolveGenericAction(row);
   });

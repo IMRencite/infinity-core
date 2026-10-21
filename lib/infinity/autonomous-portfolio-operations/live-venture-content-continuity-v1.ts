@@ -14,6 +14,12 @@ import { analyzeVentureAuthorityExpansionV1 } from "./venture-authority-expansio
 import { summarizeClubThrottleEditorialBacklog } from "./durable/club-throttle-editorial-backlog-v1";
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
+import {
+  candidateQuarantineKey,
+  countQuarantinedCandidatesForVenture,
+  isCandidateQuarantined,
+} from "./venture-candidate-quarantine-v1";
+import { countBacklogPublishCandidates } from "./portfolio-operating-backlog-publish-v1";
 
 export const LIVE_VENTURE_CONTENT_CONTINUITY_V1 = "LIVE_VENTURE_CONTENT_CONTINUITY_V1" as const;
 
@@ -46,8 +52,30 @@ export type VentureContentContinuityReport = {
   blogs_published_today: number;
   content_lane_stop_reason: ContentLaneStopReason | null;
   deploy_candidate: BlogBacklogArticle | null;
+  daily_quarantined_candidates: number;
   LIVE_VENTURE_PREMATURE_IDLE_QC: "PASS" | "FAIL";
 };
+
+function filterQuarantinedRepairRows<T extends { article: BlogBacklogArticle }>(
+  venture_id: string,
+  rows: T[],
+): T[] {
+  return rows.filter(
+    (row) =>
+      !isCandidateQuarantined({
+        venture_id,
+        candidate_key: candidateQuarantineKey({ venture_id, slug: row.article.slug }),
+      }),
+  );
+}
+
+function pickNextSelfHealRepairRow(
+  venture_id: string,
+  repairable: ReturnType<typeof rankClubThrottleRepairableHeldRows>,
+) {
+  const eligible = filterQuarantinedRepairRows(venture_id, repairable);
+  return eligible[0] ?? null;
+}
 
 function isUnpublished(article: BlogBacklogArticle): boolean {
   return !PUBLISHED_REGISTRY.has(article.registry_state);
@@ -171,20 +199,24 @@ export function resolveLiveVentureContentContinuityV1(input: {
     const ready = rankClubThrottleAutonomousPublishRows(articles).length;
     const refresh = rankClubThrottleAutonomousContentRefreshRows(articles).length;
     const repairable = rankClubThrottleRepairableHeldRows(articles);
+    const repairableEligible = filterQuarantinedRepairRows(CLUB_THROTTLE_VENTURE_ID, repairable);
     const recovered = pickClubThrottleRepairRecoveredCandidate(articles);
     const deploy =
       pickClubThrottleAutonomousBacklogCandidate(articles) ?? recovered ?? null;
     const discovery = discoverClubThrottleContentOpportunityEvidence(articles);
-    const topRepair = repairable[0] ?? null;
+    const topRepair = pickNextSelfHealRepairRow(CLUB_THROTTLE_VENTURE_ID, repairable);
+    const quarantinedCount = countQuarantinedCandidatesForVenture(CLUB_THROTTLE_VENTURE_ID);
 
     let stop: ContentLaneStopReason | null = null;
     if (deploy) stop = null;
     else if (dailyMet && blogMet) stop = "DAILY_QUALIFIED_CONTENT_TARGET_MET";
-    else if (discovery.remaining_valid_opportunities === 0)
+    else if (discovery.remaining_valid_opportunities === 0 && repairableEligible.length === 0)
       stop = "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN";
-    else stop = "ACTIVE_CONTINUATION_IN_PROGRESS";
+    else if (topRepair || deploy || (!dailyMet && (ready > 0 || repairableEligible.length > 0)))
+      stop = "ACTIVE_CONTINUATION_IN_PROGRESS";
+    else stop = "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN";
 
-    const discoveryRan = !deploy && !dailyMet;
+    const discoveryRan = !deploy && (!dailyMet || !blogMet);
     const prematureIdle =
       !deploy &&
       !dailyMet &&
@@ -198,8 +230,9 @@ export function resolveLiveVentureContentContinuityV1(input: {
       venture_id: CLUB_THROTTLE_VENTURE_ID,
       ready_candidate_count: ready,
       refresh_ready_count: refresh,
-      repairable_candidate_count: repairable.length,
+      repairable_candidate_count: repairableEligible.length,
       self_heal_candidate_slug: topRepair?.article.slug ?? null,
+      daily_quarantined_candidates: quarantinedCount,
       self_heal_failure_reasons: topRepair?.reasons ?? [],
       discovery_ran: discoveryRan,
       ...discovery,
@@ -215,7 +248,8 @@ export function resolveLiveVentureContentContinuityV1(input: {
 
   if (input.venture_id === CRE_VENTURE_ID || input.venture_id === "occupancynpv") {
     const authority = analyzeVentureAuthorityExpansionV1({ venture_id: CRE_VENTURE_ID });
-    const onpvReady = articles.filter((a) => a.venture === "occupancynpv" && a.draft).length;
+    const onpvReady = countBacklogPublishCandidates(articles);
+    const onpvDrafts = articles.filter((a) => a.venture === "occupancynpv" && a.draft).length;
     return {
       venture_id: CRE_VENTURE_ID,
       ready_candidate_count: onpvReady,
@@ -224,7 +258,8 @@ export function resolveLiveVentureContentContinuityV1(input: {
       self_heal_candidate_slug: null,
       self_heal_failure_reasons: [],
       discovery_ran: true,
-      opportunities_examined: onpvReady + authority.gaps_identified.length,
+      opportunities_examined: onpvDrafts + authority.gaps_identified.length,
+      daily_quarantined_candidates: countQuarantinedCandidatesForVenture(CRE_VENTURE_ID),
       duplicates_rejected: 0,
       low_value_opportunities_rejected: 0,
       quality_infeasible_opportunities: 0,
@@ -260,6 +295,7 @@ export function resolveLiveVentureContentContinuityV1(input: {
     blogs_published_today: blogsToday,
     content_lane_stop_reason: null,
     deploy_candidate: null,
+    daily_quarantined_candidates: 0,
     LIVE_VENTURE_PREMATURE_IDLE_QC: "PASS",
   };
 }
@@ -271,7 +307,12 @@ export function liveVentureContentContinuityQc(report: VentureContentContinuityR
     return report.discovery_ran && report.opportunities_examined > 0 ? "PASS" : "FAIL";
   }
   if (report.content_lane_stop_reason === "ACTIVE_CONTINUATION_IN_PROGRESS") {
-    return report.self_heal_candidate_slug || report.remaining_valid_opportunities > 0 ? "PASS" : "FAIL";
+    const forward =
+      Boolean(report.deploy_candidate) ||
+      Boolean(report.self_heal_candidate_slug) ||
+      report.ready_candidate_count > 0 ||
+      (report.discovery_ran && report.remaining_valid_opportunities > 0);
+    return forward ? "PASS" : "FAIL";
   }
   return report.LIVE_VENTURE_PREMATURE_IDLE_QC === "PASS" ? "PASS" : "FAIL";
 }
