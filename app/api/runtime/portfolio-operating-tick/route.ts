@@ -53,6 +53,7 @@ import {
   buildPortfolioModuleInitProbeResponse,
   resolvePortfolioModuleInitProbeMode,
 } from "@/lib/infinity/runtime-operations/portfolio-module-init-probe-v1";
+import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
 
 export const maxDuration = 300;
 
@@ -65,11 +66,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     );
   }
   if (probeDecision.kind === "execute_probe") {
-    const deploymentId = process.env.VERCEL_DEPLOYMENT_ID ?? process.env.VERCEL_URL ?? null;
+    const runtimeIdentity = vercelRuntimeIdentity();
     return NextResponse.json(
       buildPortfolioModuleInitProbeResponse({
-        release_sha: process.env.COMMUNICATION_RELEASE_SHA ?? process.env.VERCEL_GIT_COMMIT_SHA ?? null,
-        deployment_id: deploymentId,
+        release_sha: runtimeIdentity.release_sha,
+        deployment_id: runtimeIdentity.deployment_id,
       }),
       { status: 200 },
     );

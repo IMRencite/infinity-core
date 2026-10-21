@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyRemoteModuleInitFalsePassRegression,
+  evaluateRemoteModuleInitReleaseIdentityQc,
   PORTFOLIO_MODULE_INIT_PROBE_HEADER,
   PORTFOLIO_MODULE_INIT_PROBE_HEADER_VALUE,
   resolvePortfolioModuleInitProbeMode,
@@ -51,5 +52,44 @@ describe("portfolio-module-init-probe-v1", () => {
       remote_function_module_init_qc: "PASS",
     });
     expect(r.PROMOTION_ALLOWED).toBe(true);
+  });
+
+  const parent = "9d6380bf35213cea4dd234582a3344f7785e29fb";
+  const child = "e272198e2f78bba41ff635da587b8599dae1a017";
+
+  it("regression A: probe identity must report child SHA when child is expected", () => {
+    expect(
+      evaluateRemoteModuleInitReleaseIdentityQc({
+        expected_release_sha: child,
+        probe_reported_release_sha: child,
+      }).REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC,
+    ).toBe("PASS");
+  });
+
+  it("regression B: stale project env parent SHA fails when child artifact is expected", () => {
+    expect(
+      evaluateRemoteModuleInitReleaseIdentityQc({
+        expected_release_sha: child,
+        probe_reported_release_sha: parent,
+      }).REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC,
+    ).toBe("FAIL");
+  });
+
+  it("regression C: expected deployment SHA mismatch blocks identity QC", () => {
+    expect(
+      evaluateRemoteModuleInitReleaseIdentityQc({
+        expected_release_sha: child,
+        probe_reported_release_sha: null,
+      }).REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC,
+    ).toBe("FAIL");
+  });
+
+  it("regression D: expected == reported passes identity QC", () => {
+    expect(
+      evaluateRemoteModuleInitReleaseIdentityQc({
+        expected_release_sha: parent,
+        probe_reported_release_sha: parent,
+      }).REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC,
+    ).toBe("PASS");
   });
 });

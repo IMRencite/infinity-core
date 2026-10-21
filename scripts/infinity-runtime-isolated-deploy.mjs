@@ -1133,10 +1133,15 @@ const portfolioModuleInitProbe = deployQcSecret
       "x-infinity-remote-module-init-probe": "v1",
     })
   : { path: "/api/runtime/portfolio-operating-tick?mode=module-init-probe", status: 0, ok: false, body: null };
-const portfolioModuleInitProbePass =
+const probeReportedReleaseSha = portfolioModuleInitProbe.body?.release_sha?.trim?.() ?? "";
+const remoteModuleInitReleaseIdentityQc =
+  probeReportedReleaseSha === sha && /^[0-9a-f]{40}$/i.test(probeReportedReleaseSha) ? "PASS" : "FAIL";
+const portfolioModuleInitExecutionPass =
   portfolioModuleInitProbe.status === 200 &&
   portfolioModuleInitProbe.body?.REMOTE_FUNCTION_MODULE_INIT_QC === "PASS" &&
   portfolioModuleInitProbe.body?.MODULE_INIT_PROBE_ORCHESTRATOR_INVOKED === false;
+const portfolioModuleInitProbePass =
+  portfolioModuleInitExecutionPass && remoteModuleInitReleaseIdentityQc === "PASS";
 const tickSmoke = {
   exists: tickExists,
   safe: tickSafe,
@@ -1288,9 +1293,12 @@ const report = {
     portfolioModuleInitProbe,
     STAGED_REMOTE_MODULE_INIT_PROBE_QC: portfolioModuleInitProbePass ? "PASS" : "FAIL",
     REMOTE_FUNCTION_MODULE_INIT_QC: portfolioModuleInitProbe.body?.REMOTE_FUNCTION_MODULE_INIT_QC ?? "NOT_RUN",
+    REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: remoteModuleInitReleaseIdentityQc,
+    STAGED_PROBE_REPORTED_RELEASE_SHA: probeReportedReleaseSha || null,
     pass: smokePass,
   },
   STAGED_REMOTE_MODULE_INIT_PROBE_QC: portfolioModuleInitProbePass ? "PASS" : "FAIL",
+  REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: remoteModuleInitReleaseIdentityQc,
   STAGED_REMOTE_PROBE_DEPLOYMENT_ID: candidateId,
   STAGED_REMOTE_PROBE_RELEASE_SHA: tickSafe.body?.identity?.release_sha ?? sha,
   commerceBridgeProduction: {

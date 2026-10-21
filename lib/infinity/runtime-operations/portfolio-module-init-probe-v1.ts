@@ -51,6 +51,24 @@ export function resolvePortfolioModuleInitProbeMode(
   return { kind: "execute_probe" };
 }
 
+export function evaluateRemoteModuleInitReleaseIdentityQc(input: {
+  expected_release_sha: string;
+  probe_reported_release_sha: string | null | undefined;
+}): { REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: "PASS" | "FAIL"; reasons: string[] } {
+  const reported = input.probe_reported_release_sha?.trim() ?? "";
+  const expected = input.expected_release_sha.trim();
+  if (!/^[0-9a-f]{40}$/i.test(expected)) {
+    return { REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: "FAIL", reasons: ["EXPECTED_SHA_INVALID"] };
+  }
+  if (!reported) {
+    return { REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: "FAIL", reasons: ["PROBE_RELEASE_SHA_ABSENT"] };
+  }
+  if (reported !== expected) {
+    return { REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: "FAIL", reasons: ["PROBE_RELEASE_SHA_MISMATCH"] };
+  }
+  return { REMOTE_MODULE_INIT_RELEASE_IDENTITY_QC: "PASS", reasons: [] };
+}
+
 export function buildPortfolioModuleInitProbeResponse(input: {
   release_sha?: string | null;
   deployment_id?: string | null;
