@@ -10,6 +10,7 @@ import { resolveScheduledAutonomousPublish } from "../scheduled-autonomous-publi
 import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-policy-v1";
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
+  pickOccupancyNpvAutonomousBuildCandidate,
   buildClubThrottleAutonomousPublishCycleDiagnostic,
   clubThrottleBacklogCandidateWorkType,
   countBacklogPublishCandidates,
@@ -17,6 +18,7 @@ import {
   evaluateOccupancyNpvTargetPrepublishQc,
   evaluateOnpvInternalLinkClusterQc,
 } from "../portfolio-operating-backlog-publish-v1";
+import { loadQuarantinedPortfolioCandidateRows } from "./durable-portfolio-candidate-state-v1";
 import {
   evaluateBacklogSourceVNext,
   listOccupancyClubThrottleBacklogArticles,
@@ -54,6 +56,8 @@ import {
 } from "../venture-candidate-quarantine-v1";
 import {
   buildVentureDailyOutputCounters,
+  evaluateLiveVentureDailyOutputFloorQc,
+  evaluateLiveVentureDailyOutputOrchestrationQc,
   evaluateLiveVentureDailyOutputQc,
 } from "../venture-daily-output-v1";
 
@@ -151,10 +155,13 @@ export async function orchestratePortfolioOperatingTick(input: {
       venture_next_best: ventureNextBest,
       runtime_deployment_id: runtimeIdentity.deployment_id,
       runtime_release_sha: runtimeIdentity.release_sha ?? runtimeIdentity.git_sha,
+      cycle_trigger_provenance_snapshot: input.provenance,
     },
   });
   const cycle_id = cycle?.cycle_id ?? null;
   timer.mark("content_ms");
+
+  await loadQuarantinedPortfolioCandidateRows([CLUB_THROTTLE_VENTURE_ID, CRE_VENTURE_ID]);
 
   const backlog = listOccupancyClubThrottleBacklogArticles();
   const backlogPublishCandidates = countBacklogPublishCandidates(backlog);
@@ -290,7 +297,27 @@ export async function orchestratePortfolioOperatingTick(input: {
               enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: vid, idempotency_key: refreshKey });
             }
           } else if (blogFloorUnmet && qualifiedPublish === 0) {
-            /* Blog floor unmet with only non-gate-ready drafts: defer maintenance; CONTENT_SELF_HEAL continues repair lane. */
+            const buildCandidate = pickOccupancyNpvAutonomousBuildCandidate(backlog);
+            if (buildCandidate) {
+              const buildKey = `blog-build:${buildCandidate.slug}`;
+              const buildJob = await enqueuePortfolioJob({
+                cycle_id,
+                venture_id: vid,
+                job_type: "BLOG_BUILD",
+                idempotency_key: buildKey,
+                priority: 72,
+                input_lineage: {
+                  slug: buildCandidate.slug,
+                  path: buildCandidate.path,
+                  canonical_url: buildCandidate.canonical_url,
+                  work_type: "NEW_PUBLICATION",
+                },
+              });
+              if (buildJob.job_id) {
+                jobsCreated += 1;
+                enqueued.push({ job_type: "BLOG_BUILD", venture_id: vid, idempotency_key: buildKey });
+              }
+            }
           }
         }
       }
@@ -423,10 +450,28 @@ export async function orchestratePortfolioOperatingTick(input: {
         LIVE_VENTURE_CONTENT_CONTINUITY_QC: liveVentureContentContinuityQc(ctContentContinuity),
         BLOG_SELF_HEAL_CONTINUITY_QC: blogSelfHealContinuityQc(ctContentContinuity),
         LIVE_VENTURE_PREMATURE_IDLE_QC: ctContentContinuity.LIVE_VENTURE_PREMATURE_IDLE_QC,
+        CT_LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC: evaluateLiveVentureDailyOutputOrchestrationQc({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          continuity: ctContentContinuity,
+          next_best: ventureNextBest.find((a) => a.venture_id === CLUB_THROTTLE_VENTURE_ID) ?? null,
+        }).result,
+        CT_LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC: evaluateLiveVentureDailyOutputFloorQc({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          continuity: ctContentContinuity,
+        }).result,
         CT_LIVE_VENTURE_DAILY_OUTPUT_QC: evaluateLiveVentureDailyOutputQc({
           venture_id: CLUB_THROTTLE_VENTURE_ID,
           continuity: ctContentContinuity,
           next_best: ventureNextBest.find((a) => a.venture_id === CLUB_THROTTLE_VENTURE_ID) ?? null,
+        }).result,
+        ONPV_LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC: evaluateLiveVentureDailyOutputOrchestrationQc({
+          venture_id: CRE_VENTURE_ID,
+          continuity: onpvContentContinuity,
+          next_best: ventureNextBest.find((a) => a.venture_id === CRE_VENTURE_ID) ?? null,
+        }).result,
+        ONPV_LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC: evaluateLiveVentureDailyOutputFloorQc({
+          venture_id: CRE_VENTURE_ID,
+          continuity: onpvContentContinuity,
         }).result,
         ONPV_LIVE_VENTURE_DAILY_OUTPUT_QC: evaluateLiveVentureDailyOutputQc({
           venture_id: CRE_VENTURE_ID,

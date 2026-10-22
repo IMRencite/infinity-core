@@ -7,6 +7,8 @@ import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic
 import { CANDIDATE_RETRY_BUDGET } from "./venture-candidate-quarantine-v1";
 
 export const LIVE_VENTURE_DAILY_OUTPUT_QC = "LIVE_VENTURE_DAILY_OUTPUT_QC" as const;
+export const LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC = "LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC" as const;
+export const LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC = "LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC" as const;
 export const DAILY_BLOG_FLOOR_QC = "DAILY_BLOG_FLOOR_QC" as const;
 
 export const DAILY_CONTENT_TARGET_MIN = 2 as const;
@@ -168,24 +170,17 @@ export function evaluateCtDailyShirtCounterSemanticsQc(input: {
   return input.daily_shirts_published === input.customer_visible_publication_events ? "PASS" : "FAIL";
 }
 
-export function evaluateLiveVentureDailyOutputQc(input: {
+export function evaluateLiveVentureDailyOutputOrchestrationQc(input: {
   venture_id: string;
   continuity: VentureContentContinuityReport;
   next_best?: VentureNextBestGrowthAction | null;
-}): { gate: typeof LIVE_VENTURE_DAILY_OUTPUT_QC; result: "PASS" | "FAIL"; reasons: string[] } {
+}): { gate: typeof LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC; result: "PASS" | "FAIL"; reasons: string[] } {
   const reasons: string[] = [];
   const backlog = listOccupancyClubThrottleBacklogArticles();
   const qualified =
     input.venture_id === CRE_VENTURE_ID || input.venture_id === "occupancynpv"
       ? countBacklogPublishCandidates(backlog)
       : input.continuity.ready_candidate_count;
-
-  const blogFloor = evaluateDailyBlogFloorQc({
-    daily_blog_published: input.continuity.blogs_published_today,
-    qualified_publish_candidates: qualified,
-    stop_reason: input.continuity.content_lane_stop_reason,
-  });
-  if (blogFloor.result === "FAIL") reasons.push(...blogFloor.reasons);
 
   if (
     input.next_best &&
@@ -209,9 +204,57 @@ export function evaluateLiveVentureDailyOutputQc(input: {
   }
 
   return {
-    gate: LIVE_VENTURE_DAILY_OUTPUT_QC,
+    gate: LIVE_VENTURE_DAILY_OUTPUT_ORCHESTRATION_QC,
     result: reasons.length ? "FAIL" : "PASS",
     reasons,
+  };
+}
+
+export function evaluateLiveVentureDailyOutputFloorQc(input: {
+  venture_id: string;
+  continuity: VentureContentContinuityReport;
+}): { gate: typeof LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC; result: "PASS" | "FAIL"; reasons: string[] } {
+  const reasons: string[] = [];
+  const backlog = listOccupancyClubThrottleBacklogArticles();
+  const qualified =
+    input.venture_id === CRE_VENTURE_ID || input.venture_id === "occupancynpv"
+      ? countBacklogPublishCandidates(backlog)
+      : input.continuity.ready_candidate_count;
+
+  const blogFloor = evaluateDailyBlogFloorQc({
+    daily_blog_published: input.continuity.blogs_published_today,
+    qualified_publish_candidates: qualified,
+    stop_reason: input.continuity.content_lane_stop_reason,
+  });
+  if (blogFloor.result === "FAIL") reasons.push(...blogFloor.reasons);
+
+  if (input.continuity.assets_published_today < DAILY_CONTENT_TARGET_MIN && !input.continuity.daily_qualified_content_target_met) {
+    if (
+      input.continuity.content_lane_stop_reason !== "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN" &&
+      input.continuity.content_lane_stop_reason !== "TRUE_EXTERNAL_BLOCKER"
+    ) {
+      reasons.push("DAILY_CONTENT_FLOOR_UNMET");
+    }
+  }
+
+  return {
+    gate: LIVE_VENTURE_DAILY_OUTPUT_FLOOR_QC,
+    result: reasons.length ? "FAIL" : "PASS",
+    reasons,
+  };
+}
+
+/** Aggregate label — PASS requires orchestration PASS; floor reported separately. */
+export function evaluateLiveVentureDailyOutputQc(input: {
+  venture_id: string;
+  continuity: VentureContentContinuityReport;
+  next_best?: VentureNextBestGrowthAction | null;
+}): { gate: typeof LIVE_VENTURE_DAILY_OUTPUT_QC; result: "PASS" | "FAIL"; reasons: string[] } {
+  const orchestration = evaluateLiveVentureDailyOutputOrchestrationQc(input);
+  return {
+    gate: LIVE_VENTURE_DAILY_OUTPUT_QC,
+    result: orchestration.result,
+    reasons: [...orchestration.reasons],
   };
 }
 
