@@ -9,6 +9,7 @@ import {
   hydrateClubThrottlePublishedRevisionDigests,
   isBacklogRefreshRevisionAlreadyCurrent,
 } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-refresh-current-revision-v1";
+import { evaluateOccupancyNpvInternalLinkMaintenancePreDeployQc } from "./occupancynpv-internal-link-maintenance-prepublish-v1";
 
 const AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS = new Set(["cam-first-year"]);
 
@@ -235,6 +236,7 @@ export function evaluateOnpvInternalLinkClusterQc(
 
 export function evaluateOccupancyNpvTargetPrepublishQc(input: {
   path: string;
+  work_type?: string;
   articles?: BlogBacklogArticle[];
 }): { OCCUPANCYNPV_TARGET_PREPUBLISH_QC: "PASS" | "FAIL"; reasons: string[] } {
   const articles = input.articles ?? listOccupancyClubThrottleBacklogArticles();
@@ -243,6 +245,19 @@ export function evaluateOccupancyNpvTargetPrepublishQc(input: {
     return { OCCUPANCYNPV_TARGET_PREPUBLISH_QC: "FAIL", reasons: ["ARTICLE_NOT_FOUND"] };
   }
   const rendered = buildBacklogRenderedEvidenceMap([article]);
+  if (
+    input.work_type === "INTERNAL_LINK_UPDATE" &&
+    PUBLISHED_REGISTRY_STATES.has(article.registry_state)
+  ) {
+    const maintenance = evaluateOccupancyNpvInternalLinkMaintenancePreDeployQc({
+      article,
+      rendered: rendered[article.path] ?? null,
+    });
+    return {
+      OCCUPANCYNPV_TARGET_PREPUBLISH_QC: maintenance.ONPV_INTERNAL_LINK_MAINTENANCE_PREPUBLISH_QC,
+      reasons: maintenance.reasons,
+    };
+  }
   const gate = evaluateBacklogSourceVNext(article);
   const pre = evaluateBlogArticlePreDeployQc({ article, rendered: rendered[article.path] ?? null });
   const reasons = [...gate.reasons, ...pre.reasons];
