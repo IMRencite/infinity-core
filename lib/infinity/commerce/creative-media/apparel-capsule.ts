@@ -1,4 +1,9 @@
-import { GELATO_HEAVYWEIGHT_TEE_TEMPLATE_ID, GELATO_OVERSIZED_HOODIE_TEMPLATE_ID, GELATO_STORE_ID } from "@/lib/infinity/commercialization/providers/gelato/founder-templates";
+import {
+  GELATO_HEAVYWEIGHT_TEE_TEMPLATE_ID,
+  GELATO_OVERSIZED_HOODIE_TEMPLATE_ID,
+  GELATO_STORE_ID_PENDING,
+  gelatoStoreIdOrPending,
+} from "@/lib/infinity/commercialization/providers/gelato/founder-templates";
 import { afterDarkCreativeDirections, type ApparelCreativeDirection } from "./apparel-creative-director";
 
 export type CapsuleProductStatus = "PLANNED" | "GENERATING" | "REFINING" | "APPROVED";
@@ -59,13 +64,14 @@ export function clubThrottleCapsuleProducts(): CapsuleProduct[] {
 }
 
 export function selectGelatoTemplateForCapsule(product: CapsuleProduct) {
+  const store_id = gelatoStoreIdOrPending();
   return {
-    store_id: GELATO_STORE_ID,
+    store_id,
     template_id: product.template_id,
     garment: product.garment,
     placeholders: product.placeholders,
     create_product: false,
-    reason: GELATO_STORE_ID === "PENDING_FOUNDER" ? "STORE_ID_PENDING_NO_CREATE" : "HIDDEN_CANARY_ONLY_WHEN_ART_APPROVED",
+    reason: store_id === GELATO_STORE_ID_PENDING ? "STORE_ID_PENDING_NO_CREATE" : "HIDDEN_CANARY_ONLY_WHEN_ART_APPROVED",
   };
 }
 

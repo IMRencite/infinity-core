@@ -12,7 +12,7 @@ import { evaluateCommerceDensity, evaluateKnownBadGiantProductCards } from "../.
 import { composeClubThrottleStorefrontFiles } from "../../club-throttle-storefront-compose";
 import { composeKickstandsUpConcept } from "../creative-trend-intelligence";
 import { evaluateCommercialCreativeQC, CLUB_THROTTLE_GEOMETRIC_KNOWN_BAD } from "../commercial-creative-qc";
-import { GELATO_STORE_ID } from "@/lib/infinity/commercialization/providers/gelato/founder-templates";
+import { GELATO_STORE_ID_PENDING, gelatoStoreIdOrPending } from "@/lib/infinity/commercialization/providers/gelato/founder-templates";
 
 describe("Grok apparel creative director", () => {
   it("rejects a shallow cool-shirt prompt and compiles a full brief", () => {
@@ -69,7 +69,7 @@ describe("Grok apparel creative director", () => {
     expect(capsule.some((row) => row.garment === "oversized hoodie")).toBe(true);
     expect(capsule.some((row) => row.garment === "heavyweight tee")).toBe(true);
     expect(selectGelatoTemplateForCapsule(capsule[0]).create_product).toBe(false);
-    expect(GELATO_STORE_ID).toBe("PENDING_FOUNDER");
+    expect(gelatoStoreIdOrPending()).toBe(GELATO_STORE_ID_PENDING);
     const planned = plannedCapsuleDirections();
     expect(Object.keys(planned)).toHaveLength(6);
     expect(Object.values(planned).every((rows) => rows.length >= 3)).toBe(true);

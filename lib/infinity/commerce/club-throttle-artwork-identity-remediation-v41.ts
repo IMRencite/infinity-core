@@ -146,6 +146,8 @@ export async function runClubThrottleArtworkIdentityRemediationV41(cwd = process
   const manifestPath = join(cwd, CLUB_THROTTLE_STOREFRONT_MERCH_MANIFEST_REL);
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8")) as {
     color_merch_rows: Array<Record<string, unknown>>;
+    production_art_registry_ref?: string;
+    production_art_remediation_version?: string;
   };
 
   const pins: FounderVisualApprovalPin[] = [];

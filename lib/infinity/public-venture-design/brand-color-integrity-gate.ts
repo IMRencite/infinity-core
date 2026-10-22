@@ -1,5 +1,7 @@
 import { BRAND_COLOR_INTEGRITY_GATE } from "./venture-brand-presentation-contract";
 
+export { BRAND_COLOR_INTEGRITY_GATE };
+
 export type Rgba = { r: number; g: number; b: number; a: number };
 
 /** Blue/cyan infinity symbol family (IMROS primary icon). */

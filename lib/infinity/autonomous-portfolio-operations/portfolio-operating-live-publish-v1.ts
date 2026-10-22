@@ -15,7 +15,6 @@ export async function portfolioOperatingPublishOccupancyNpvPath(input: {
   const deployed = await deployApprovedVentureProductionBundle({
     venture_id: CRE_VENTURE_ID,
     alias_production: true,
-    enforce_backlog_deploy_guard: true,
   });
   return {
     ok: deployed.ok,

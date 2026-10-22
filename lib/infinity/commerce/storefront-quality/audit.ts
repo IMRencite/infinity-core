@@ -19,16 +19,17 @@ export function auditClubThrottlePublicRoutes(): { routes: RouteAudit[]; thin: n
     .filter((file) => file.path.includes("/page.tsx") || file.path === "app/page.tsx")
     .map((file) => {
       const classes: RouteAudit["classes"] = [];
-      const words = file.content.split(/\s+/).length;
-      const hasImg = file.content.includes("<img") || file.content.includes("hero");
+      const content = file.content ?? "";
+      const words = content.split(/\s+/).length;
+      const hasImg = content.includes("<img") || content.includes("hero");
       const utility = /products\/page|sitemap|search\/page|cart\/page|blog\/page|t-shirts\/page/.test(file.path);
       if (!utility && words < 80) classes.push("THIN");
-      if (/will land here|coming soon|lorem/i.test(file.content)) classes.push("PLACEHOLDER");
-      if (LEAKS.some((leak) => file.content.toLowerCase().includes(leak)) || evaluateCustomerCopyGate(file.content).result === "FAIL") classes.push("INTERNAL_LANGUAGE_LEAK");
+      if (/will land here|coming soon|lorem/i.test(content)) classes.push("PLACEHOLDER");
+      if (LEAKS.some((leak) => content.toLowerCase().includes(leak)) || evaluateCustomerCopyGate(content).result === "FAIL") classes.push("INTERNAL_LANGUAGE_LEAK");
       if (!hasImg && !file.path.includes("privacy") && !file.path.includes("terms") && !file.path.includes("sitemap") && !file.path.includes("cart") && !file.path.includes("search") && !file.path.includes("products/page")) {
         classes.push("MISSING_VISUALS");
       }
-      if (file.path.includes("club-throttle-core-tee") && !file.content.includes("size-guide")) classes.push("MISSING_FACTS");
+      if (file.path.includes("club-throttle-core-tee") && !content.includes("size-guide")) classes.push("MISSING_FACTS");
       if (classes.length === 0) classes.push("COMPLETE");
       return { path: file.path, classes };
     });

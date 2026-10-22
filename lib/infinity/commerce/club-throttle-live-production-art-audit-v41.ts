@@ -53,7 +53,17 @@ export async function auditLiveProductionArtRegistryV41(cwd = process.cwd()): Pr
   ALL_PRODUCTION_MASTER_EXTERNAL_RETRIEVAL_QC: "PASS" | "FAIL";
 }> {
   const registry = loadProductionArtRegistryV41(cwd);
-  const rows = [];
+  const rows: Array<{
+    sku: string;
+    garment_color: string;
+    url: string;
+    expected_sha256: string;
+    live_sha256: string | null;
+    http_status: number;
+    dimensions: string;
+    identity_qc: "PASS" | "FAIL";
+    failure_reason: string | null;
+  }> = [];
   for (const row of registry?.rows ?? []) {
     const proof = await fetchProductionMasterLiveProof(row.provider_payload_url);
     const dim = `${proof.width}x${proof.height}`;
