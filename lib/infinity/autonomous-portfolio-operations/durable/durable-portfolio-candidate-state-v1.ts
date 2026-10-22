@@ -1,7 +1,19 @@
 import {
   createPortfolioDurableSupabase,
+  portfolioDurablePostgresConfigured,
   PORTFOLIO_DURABLE_TABLES,
 } from "./portfolio-durable-supabase-v1";
+
+export class DurablePortfolioCandidateStateUnavailableError extends Error {
+  constructor(message = "DURABLE_CANDIDATE_STATE_UNAVAILABLE") {
+    super(message);
+    this.name = "DurablePortfolioCandidateStateUnavailableError";
+  }
+}
+
+export function durableCandidateStateFailClosedRequired(env: NodeJS.ProcessEnv = process.env): boolean {
+  return portfolioDurablePostgresConfigured(env) && env.NODE_ENV !== "test";
+}
 
 export const DURABLE_PORTFOLIO_CANDIDATE_STATE_V1 = "DURABLE_PORTFOLIO_CANDIDATE_STATE_V1" as const;
 
@@ -118,8 +130,13 @@ export async function upsertPortfolioCandidateQuarantine(input: {
   };
   quarantineKeyCache.add(cacheKey(row));
   const client = createPortfolioDurableSupabase();
-  if (!client) return row;
-  await client.from(CANDIDATE_STATE_TABLE).upsert(
+  if (!client) {
+    if (durableCandidateStateFailClosedRequired()) {
+      throw new DurablePortfolioCandidateStateUnavailableError("QUARANTINE_WRITE_NO_DB_CLIENT");
+    }
+    return row;
+  }
+  const { error } = await client.from(CANDIDATE_STATE_TABLE).upsert(
     {
       venture_id: row.venture_id,
       lane: row.lane,
@@ -138,6 +155,11 @@ export async function upsertPortfolioCandidateQuarantine(input: {
     },
     { onConflict: "venture_id,lane,candidate_key" },
   );
+  if (error) {
+    if (durableCandidateStateFailClosedRequired()) {
+      throw new DurablePortfolioCandidateStateUnavailableError(`QUARANTINE_WRITE_FAILED:${error.message}`);
+    }
+  }
   return row;
 }
 
@@ -166,8 +188,13 @@ export async function incrementPortfolioCandidateFailureAttempt(input: {
     return Number(existing.attempt_count ?? 0);
   }
   const next = Number(existing?.attempt_count ?? 0) + 1;
-  if (!client) return next;
-  await client.from(CANDIDATE_STATE_TABLE).upsert(
+  if (!client) {
+    if (durableCandidateStateFailClosedRequired()) {
+      throw new DurablePortfolioCandidateStateUnavailableError("ATTEMPT_WRITE_NO_DB_CLIENT");
+    }
+    return next;
+  }
+  const { error } = await client.from(CANDIDATE_STATE_TABLE).upsert(
     {
       venture_id: input.venture_id,
       lane: input.lane,
@@ -182,6 +209,9 @@ export async function incrementPortfolioCandidateFailureAttempt(input: {
     },
     { onConflict: "venture_id,lane,candidate_key" },
   );
+  if (error && durableCandidateStateFailClosedRequired()) {
+    throw new DurablePortfolioCandidateStateUnavailableError(`ATTEMPT_WRITE_FAILED:${error.message}`);
+  }
   return next;
 }
 

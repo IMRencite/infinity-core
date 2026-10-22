@@ -560,7 +560,6 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
         return;
       }
       case "VENTURE_RESEARCH":
-      case "BLOG_BUILD":
       case "HIGH_VALUE_PAGE_BUILD":
       default: {
         await completeJob(job, holder, {

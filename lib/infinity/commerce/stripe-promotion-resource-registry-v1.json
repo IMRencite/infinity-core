@@ -1,0 +1,21 @@
+{
+  "schema": "STRIPE_PROMOTION_RESOURCE_REGISTRY_V1",
+  "mappings": [
+    {
+      "venture_id": "club-throttle",
+      "promotion_id": "ct-first-ride-2026",
+      "public_code": "RIDEFIRST",
+      "provider": "stripe",
+      "resource_version": "v1",
+      "infinity_resource_id": "club-throttle_RIDEFIRST_300OFF_v1",
+      "stripe_coupon_id": "club-throttle_RIDEFIRST_300OFF_v1",
+      "amount_off_cents": 300,
+      "currency": "usd",
+      "duration": "once",
+      "customer_facing_name": "RIDEFIRST",
+      "status": "ACTIVE",
+      "provisioned_at": "2026-10-12T06:13:11.783Z",
+      "last_reconciled_at": "2026-10-12T06:13:11.783Z"
+    }
+  ]
+}

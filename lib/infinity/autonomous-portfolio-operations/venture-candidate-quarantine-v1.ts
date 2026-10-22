@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { writeLocalJsonIfDurable } from "@/lib/infinity/hq-production-deployment/ephemeral-fs";
 import {
   countQuarantinedCandidatesInCacheForVenture,
+  durableCandidateStateFailClosedRequired,
   hydratePortfolioCandidateQuarantineCache,
   isPortfolioCandidateQuarantinedInCache,
   resetPortfolioCandidateQuarantineCacheForTests,
@@ -92,6 +93,9 @@ export function isCandidateQuarantined(input: {
     })
   ) {
     return true;
+  }
+  if (durableCandidateStateFailClosedRequired()) {
+    return false;
   }
   return loadStore().some(
     (r) =>
@@ -191,9 +195,14 @@ export function countQuarantinedCandidatesForVenture(venture_id: string, operati
   return countQuarantinedCandidatesInCacheForVenture(venture_id);
 }
 
-/** Test-only reset */
-export function resetCandidateQuarantineStoreForTests(): void {
+/** Test-only reset of process-local JSON/memory (simulates new invocation without durable cache). */
+export function resetCandidateQuarantineMemoryStoreForTests(): void {
   memoryStore = [];
-  resetPortfolioCandidateQuarantineCacheForTests();
   writeLocalJsonIfDurable(QUARANTINE_PATH, { records: [], updated_at: new Date().toISOString() });
+}
+
+/** Test-only full reset */
+export function resetCandidateQuarantineStoreForTests(): void {
+  resetCandidateQuarantineMemoryStoreForTests();
+  resetPortfolioCandidateQuarantineCacheForTests();
 }
