@@ -15,6 +15,7 @@ import { occupancynpvCamFirstYearDraft } from "./occupancynpv-cam-first-year-pag
 import { occupancyInfoVisualHtml, slugFromOccupancyPath } from "./occupancynpv-info-visuals";
 import { blogArticleMediaForPath } from "./blog-article-media-registry";
 import { occupancynpvFeaturedEditorialFor } from "./occupancynpv-featured-visuals";
+import { backlogAutonomousPreddeployBrowserEvidence } from "./blog-backlog-autonomous-preddeploy-browser-evidence-v1";
 
 function clubThrottleEvidence(article: BlogBacklogArticle): RenderedBacklogEvidence | null {
   const draft = clubThrottleJournalDrafts().find((d) => d.canonical.replace(/\/+$/, "") === article.path.replace(/\/+$/, ""));
@@ -49,6 +50,7 @@ function clubThrottleEvidence(article: BlogBacklogArticle): RenderedBacklogEvide
     main_html: mainHtml,
     expected_canonical: article.canonical_url,
     featured_image_path: post.image,
+    browser_responsive_evidence: backlogAutonomousPreddeployBrowserEvidence(article.path),
   };
 }
 
@@ -86,6 +88,7 @@ function occupancyEvidence(article: BlogBacklogArticle): RenderedBacklogEvidence
     main_html: mainHtml,
     expected_canonical: article.canonical_url,
     featured_image_path: blogArticleMediaForPath(article.path)?.hero_image.src ?? "/media/hero-building.webp",
+    browser_responsive_evidence: backlogAutonomousPreddeployBrowserEvidence(article.path),
   };
 }
 

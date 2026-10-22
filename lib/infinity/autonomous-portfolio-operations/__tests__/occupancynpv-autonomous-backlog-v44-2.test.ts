@@ -8,10 +8,8 @@ import {
 import {
   ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_ASSET_ID,
   ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_ASSET_ID,
-  ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_PATH,
   ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_ASSET_ID,
   ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_PATH,
-  occupancynpvAutonomousBacklogAssetMeta,
 } from "@/lib/infinity/organic-growth-engine/continuous/occupancynpv-autonomous-backlog-v1";
 import {
   buildVentureNextBestGrowthActionsV1,
@@ -26,6 +24,8 @@ describe("occupancynpv autonomous backlog v44.2", () => {
     expect(gross?.path).toBe(ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_PATH);
     const expenseStop = articles.find((a) => a.asset_id === ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_ASSET_ID);
     expect(expenseStop?.registry_state).toBe("PUBLISHED");
+    const freeRent = articles.find((a) => a.asset_id === ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_ASSET_ID);
+    expect(freeRent?.registry_state).toBe("PUBLISHED");
     const prepublish = evaluateOccupancyNpvTargetPrepublishQc({
       path: ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_PATH,
       articles,
@@ -34,17 +34,16 @@ describe("occupancynpv autonomous backlog v44.2", () => {
     const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
     expect(ranked.some((r) => r.article.asset_id === ONPV_AUTONOMOUS_BACKLOG_GROSS_VS_NET_ASSET_ID)).toBe(false);
     expect(ranked.some((r) => r.article.asset_id === ONPV_AUTONOMOUS_BACKLOG_EXPENSE_STOP_BASE_YEAR_ASSET_ID)).toBe(false);
-    const pick = pickOccupancyNpvAutonomousBacklogCandidate(articles);
-    expect(pick?.asset_id).toBe(ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_ASSET_ID);
-    expect(pick?.path).toBe(ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_PATH);
+    expect(ranked.some((r) => r.article.asset_id === ONPV_AUTONOMOUS_BACKLOG_FREE_RENT_ECONOMICS_ASSET_ID)).toBe(false);
+    expect(pickOccupancyNpvAutonomousBacklogCandidate(articles)).toBeNull();
   });
 
-  it("portfolio next-best action selects the new ONPV asset", () => {
-    const meta = occupancynpvAutonomousBacklogAssetMeta();
+  it("portfolio next-best action selects lease cluster maintenance when publish queue is empty", () => {
     const actions = buildVentureNextBestGrowthActionsV1();
     expect(ventureNextBestGrowthActionQc(actions)).toBe("PASS");
     const onpv = actions.find((a) => a.venture_name === "OccupancyNPV");
-    expect(onpv?.selected_work_type).toBe(meta.asset_type);
-    expect(onpv?.next_best_growth_action.toLowerCase()).toMatch(/free rent|abatement|occupancy cost/);
+    expect(onpv?.selected_work_type).toBe("INTERNAL_LINK_UPDATE");
+    expect(onpv?.next_best_growth_action.toLowerCase()).toMatch(/maintain|internal-link|cluster|lease/);
+    expect(pickOccupancyNpvAutonomousBacklogCandidate()).toBeNull();
   });
 });

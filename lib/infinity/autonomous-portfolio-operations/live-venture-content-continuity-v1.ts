@@ -6,7 +6,6 @@ import { buildBacklogRenderedEvidenceMap } from "@/lib/infinity/organic-growth-e
 import { evaluateBlogArticlePreDeployQc } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-deploy-guard";
 import { evaluateBacklogSourceVNext } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import {
-  pickClubThrottleAutonomousBacklogCandidate,
   rankClubThrottleAutonomousPublishRows,
   rankClubThrottleAutonomousContentRefreshRows,
 } from "./portfolio-operating-backlog-publish-v1";
@@ -209,15 +208,15 @@ export function resolveLiveVentureContentContinuityV1(input: {
     const repairable = rankClubThrottleRepairableHeldRows(articles);
     const repairableEligible = filterQuarantinedRepairRows(CLUB_THROTTLE_VENTURE_ID, repairable);
     const recovered = pickClubThrottleRepairRecoveredCandidate(articles);
-    const deploy =
-      pickClubThrottleAutonomousBacklogCandidate(articles) ?? recovered ?? null;
+    const newPublication = rankClubThrottleAutonomousPublishRows(articles)[0]?.article ?? null;
+    const deploy = newPublication ?? recovered ?? null;
     const discovery = discoverClubThrottleContentOpportunityEvidence(articles);
     const topRepair = pickNextSelfHealRepairRow(CLUB_THROTTLE_VENTURE_ID, repairable);
     const quarantinedCount = countQuarantinedCandidatesForVenture(CLUB_THROTTLE_VENTURE_ID);
 
     let stop: ContentLaneStopReason | null = null;
-    if (deploy) stop = null;
-    else if (dailyMet && blogMet) stop = "DAILY_QUALIFIED_CONTENT_TARGET_MET";
+    if (dailyMet && blogMet) stop = "DAILY_QUALIFIED_CONTENT_TARGET_MET";
+    else if (deploy) stop = null;
     else if (discovery.remaining_valid_opportunities === 0 && repairableEligible.length === 0)
       stop = "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN";
     else if (topRepair || deploy || (!dailyMet && (ready > 0 || repairableEligible.length > 0)))
@@ -248,7 +247,7 @@ export function resolveLiveVentureContentContinuityV1(input: {
       daily_blog_target_met: blogMet,
       assets_published_today: assetsToday,
       blogs_published_today: blogsToday,
-      content_lane_stop_reason: deploy ? null : stop,
+      content_lane_stop_reason: stop,
       deploy_candidate: deploy,
       LIVE_VENTURE_PREMATURE_IDLE_QC: prematureIdle,
     };

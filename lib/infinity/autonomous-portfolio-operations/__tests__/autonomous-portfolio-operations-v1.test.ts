@@ -116,11 +116,9 @@ describe("AUTONOMOUS_PORTFOLIO_OPERATIONS_V1", () => {
   });
 
   it("does not treat missing CLI publish as quality hold when backlog is ready", async () => {
-    const candidate = pickOccupancyNpvAutonomousBacklogCandidate();
-    expect(candidate).toBeTruthy();
     const cycle = await executeAutonomousPortfolioOperatingCycleV1({ execute_publish: false, trigger: "MANUAL" });
-    if (cycle.publish.execute_publish === false && cycle.content.CONTENT_PUBLISH_PATH_PROVEN) {
-      expect(cycle.content.CONTENT_VALID_QUALITY_HOLD).toBe(false);
-    }
+    expect(cycle.publish.execute_publish).toBe(false);
+    expect(cycle.content.CONTENT_VALID_QUALITY_HOLD).toBe(false);
+    expect(pickOccupancyNpvAutonomousBacklogCandidate()).toBeNull();
   });
 });

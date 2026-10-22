@@ -5,10 +5,7 @@ import {
 } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { buildBacklogRenderedEvidenceMap } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-compose-evidence";
 import { evaluateBlogArticlePreDeployQc } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-deploy-guard";
-import {
-  hydrateClubThrottlePublishedRevisionDigests,
-  isBacklogRefreshRevisionAlreadyCurrent,
-} from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-refresh-current-revision-v1";
+import { isBacklogRefreshRevisionAlreadyCurrent } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-refresh-current-revision-v1";
 import { evaluateOccupancyNpvInternalLinkMaintenancePreDeployQc } from "./occupancynpv-internal-link-maintenance-prepublish-v1";
 
 const AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS = new Set(["cam-first-year"]);
@@ -150,7 +147,6 @@ export function rankClubThrottleAutonomousPublishRows(articles: BlogBacklogArtic
 }
 
 export function rankClubThrottleAutonomousContentRefreshRows(articles: BlogBacklogArticle[]) {
-  hydrateClubThrottlePublishedRevisionDigests(articles);
   const rendered = buildBacklogRenderedEvidenceMap(articles);
   return articles
     .filter(
@@ -177,7 +173,6 @@ export function rankClubThrottleAutonomousContentRefreshRows(articles: BlogBackl
 export function pickClubThrottleAutonomousBacklogCandidate(
   articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
 ): BlogBacklogArticle | null {
-  hydrateClubThrottlePublishedRevisionDigests(articles);
   const publish = rankClubThrottleAutonomousPublishRows(articles)[0]?.article;
   if (publish) return publish;
   return rankClubThrottleAutonomousContentRefreshRows(articles)[0]?.article ?? null;
@@ -277,12 +272,13 @@ export function evaluateOccupancyNpvTargetPrepublishQc(input: {
   }
   const rendered = buildBacklogRenderedEvidenceMap([article]);
   if (
-    input.work_type === "INTERNAL_LINK_UPDATE" &&
+    (input.work_type === "INTERNAL_LINK_UPDATE" || input.work_type === undefined) &&
     PUBLISHED_REGISTRY_STATES.has(article.registry_state)
   ) {
     const maintenance = evaluateOccupancyNpvInternalLinkMaintenancePreDeployQc({
       article,
       rendered: rendered[article.path] ?? null,
+      articles,
     });
     return {
       OCCUPANCYNPV_TARGET_PREPUBLISH_QC: maintenance.ONPV_INTERNAL_LINK_MAINTENANCE_PREPUBLISH_QC,
