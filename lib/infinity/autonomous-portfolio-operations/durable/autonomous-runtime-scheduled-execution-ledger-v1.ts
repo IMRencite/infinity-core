@@ -13,7 +13,7 @@ export type ScheduledExecutionLedgerRow = {
   route: string;
   schedule_identity: string;
   platform_provenance: string;
-  trigger_type: "REAL_CRON" | "MANUAL";
+  trigger_type: "REAL_CRON" | "CRON_SHAPED" | "MANUAL";
   request_timestamp: string;
   cycle_id: string | null;
   accepted_status: string | null;
@@ -27,7 +27,7 @@ export async function appendScheduledExecutionLedger(input: {
   route: string;
   schedule_identity: string;
   platform_provenance: string;
-  trigger_type: "REAL_CRON" | "MANUAL";
+  trigger_type: "REAL_CRON" | "CRON_SHAPED" | "MANUAL";
   cycle_id?: string | null;
   accepted_status?: string;
   completed_status?: string | null;

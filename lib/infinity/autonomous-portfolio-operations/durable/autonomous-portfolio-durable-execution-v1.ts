@@ -66,6 +66,26 @@ export async function createPortfolioOperatingCycle(input: {
   return { ...row, completed_at: null, jobs_created: 0, jobs_completed: 0, jobs_failed: 0, assets_published: 0, products_advanced: 0, products_published: 0, research_spend: 0, creative_spend: 0, error_summary: null };
 }
 
+const IMMUTABLE_CYCLE_PAYLOAD_KEYS = [
+  "runtime_release_sha",
+  "runtime_deployment_id",
+  "cycle_trigger_provenance_snapshot",
+] as const;
+
+export function preserveImmutableCyclePayloadFields(
+  previous: Record<string, unknown>,
+  next: Record<string, unknown>,
+): Record<string, unknown> {
+  const merged = { ...previous, ...next };
+  for (const key of IMMUTABLE_CYCLE_PAYLOAD_KEYS) {
+    const prevVal = previous[key];
+    if (prevVal !== undefined && prevVal !== null && prevVal !== "") {
+      merged[key] = prevVal;
+    }
+  }
+  return merged;
+}
+
 export async function patchPortfolioCycle(
   cycle_id: string,
   patch: Partial<
@@ -88,10 +108,14 @@ export async function patchPortfolioCycle(
 ): Promise<void> {
   const client = createPortfolioDurableSupabase();
   if (!client) return;
-  await client
-    .from(PORTFOLIO_DURABLE_TABLES.cycles)
-    .update({ ...patch, updated_at: new Date().toISOString() })
-    .eq("cycle_id", cycle_id);
+  const { payload: incomingPayload, ...restPatch } = patch;
+  const updateRow: Record<string, unknown> = { ...restPatch, updated_at: new Date().toISOString() };
+  if (incomingPayload !== undefined) {
+    const existing = await getPortfolioCycle(cycle_id);
+    const previous = (existing?.payload ?? {}) as Record<string, unknown>;
+    updateRow.payload = preserveImmutableCyclePayloadFields(previous, incomingPayload);
+  }
+  await client.from(PORTFOLIO_DURABLE_TABLES.cycles).update(updateRow).eq("cycle_id", cycle_id);
 }
 
 /** Terminalize creative self-heal jobs that cannot run without live paid creative (quality-held lane). */

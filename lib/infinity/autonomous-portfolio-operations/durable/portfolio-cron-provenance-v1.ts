@@ -28,11 +28,13 @@ export function isPortfolioScheduledTrigger(trigger_type: PortfolioDurableTrigge
   return trigger_type === "REAL_CRON_PLATFORM_CONFIRMED";
 }
 
-/** Ledger rows keep REAL_CRON | MANUAL; REAL_CRON only after platform confirmation. */
+/** Ledger rows: REAL_CRON only after platform confirmation; cron-shaped auth stays honest CRON_SHAPED. */
 export function mapProvenanceToLedgerTriggerType(
   trigger_type: PortfolioDurableTriggerType,
-): "REAL_CRON" | "MANUAL" {
-  return trigger_type === "REAL_CRON_PLATFORM_CONFIRMED" ? "REAL_CRON" : "MANUAL";
+): "REAL_CRON" | "CRON_SHAPED" | "MANUAL" {
+  if (trigger_type === "REAL_CRON_PLATFORM_CONFIRMED") return "REAL_CRON";
+  if (trigger_type === "AUTHENTICATED_CRON_SHAPED") return "CRON_SHAPED";
+  return "MANUAL";
 }
 
 /**

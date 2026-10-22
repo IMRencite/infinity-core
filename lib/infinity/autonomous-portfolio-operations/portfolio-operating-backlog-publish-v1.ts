@@ -34,6 +34,37 @@ export const ONPV_LEASE_AUTHORITY_CLUSTER_PATHS = [
   "/compare-commercial-leases",
 ] as const;
 
+export function rankOccupancyNpvRepairableHeldRows(articles: BlogBacklogArticle[]) {
+  const rendered = buildBacklogRenderedEvidenceMap(articles);
+  return articles
+    .filter(
+      (a) =>
+        a.venture === "occupancynpv" &&
+        a.draft &&
+        a.backlog_scope === "AUTHORIZED_BACKLOG" &&
+        !AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS.has(a.slug) &&
+        isNewPublicationEligible(a),
+    )
+    .map((article) => ({
+      article,
+      gate: evaluateBacklogSourceVNext(article),
+      pre: evaluateBlogArticlePreDeployQc({
+        article,
+        rendered: rendered[article.path] ?? null,
+      }),
+    }))
+    .filter((row) => !row.gate.publish_allowed || !row.pre.deploy_allowed)
+    .sort((a, b) => a.article.slug.localeCompare(b.article.slug));
+}
+
+export function pickOccupancyNpvAutonomousBuildCandidate(
+  articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
+): BlogBacklogArticle | null {
+  const ready = pickOccupancyNpvAutonomousBacklogCandidate(articles);
+  if (ready) return null;
+  return rankOccupancyNpvRepairableHeldRows(articles)[0]?.article ?? null;
+}
+
 export function rankOccupancyNpvAutonomousPublishRows(articles: BlogBacklogArticle[]) {
   const rendered = buildBacklogRenderedEvidenceMap(articles);
   return articles
