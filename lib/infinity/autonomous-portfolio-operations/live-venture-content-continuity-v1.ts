@@ -143,6 +143,14 @@ export function discoverClubThrottleContentOpportunityEvidence(
   let selected: string | null = null;
 
   for (const row of repairable) {
+    if (
+      isCandidateQuarantined({
+        venture_id: CLUB_THROTTLE_VENTURE_ID,
+        candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, slug: row.article.slug }),
+      })
+    ) {
+      continue;
+    }
     if (PUBLISHED_REGISTRY.has(row.article.registry_state) && row.gate.publish_allowed) {
       duplicates_rejected += 1;
       continue;

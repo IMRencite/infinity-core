@@ -8,7 +8,7 @@ import { classifyPortfolioJobRetry } from "./portfolio-job-retry-policy-v1";
 import { executeDurableContentSelfHealJob } from "./durable-content-self-healing-v1";
 import { executeBoundedVentureDeploy } from "./async-venture-deployment-reconciliation-v1";
 import { persistAutonomousDeployTelemetry } from "./autonomous-deploy-telemetry-v1";
-import { registerSuccessfulPublication } from "./autonomous-publication-idempotency-v1";
+import { publicationAssetIdentity, registerSuccessfulPublication } from "./autonomous-publication-idempotency-v1";
 import { verifyOccupancyNpvProductionPublication } from "../occupancynpv-production-publish-proof-v1";
 import { verifyClubThrottleProductionPublication } from "../club-throttle-production-publish-proof-v1";
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
@@ -23,9 +23,17 @@ import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/cl
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 import {
   candidateQuarantineKey,
-  quarantineCandidateQcExhausted,
+  isCandidateQuarantined,
+  quarantineCandidateQcExhaustedAsync,
   CANDIDATE_RETRY_BUDGET,
 } from "../venture-candidate-quarantine-v1";
+import {
+  incrementPortfolioCandidateFailureAttempt,
+  readPortfolioCandidateAttemptCount,
+} from "./durable-portfolio-candidate-state-v1";
+import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
+import { rankOccupancyNpvAutonomousPublishRows } from "../portfolio-operating-backlog-publish-v1";
+import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import {
   evaluateAutonomousStorefrontPublicationAllowed,
   evaluateStorefrontManufacturingSeparationQc,
@@ -80,25 +88,125 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
   try {
     switch (job.job_type) {
       case "CONTENT_SELF_HEAL": {
+        const targetSlug = typeof lineage.self_heal_target_slug === "string" ? lineage.self_heal_target_slug : null;
+        const slugKey = targetSlug
+          ? candidateQuarantineKey({ venture_id: job.venture_id, slug: targetSlug })
+          : null;
+        const priorDurable =
+          slugKey && targetSlug
+            ? await readPortfolioCandidateAttemptCount({
+                venture_id: job.venture_id,
+                lane: "CONTENT_SLUG",
+                candidate_key: slugKey,
+              })
+            : 0;
         const out = executeDurableContentSelfHealJob({
           venture_id: job.venture_id,
           execute_publish: Boolean(lineage.execute_publish),
-          prior_attempts: job.attempt_count,
+          prior_attempts: priorDurable,
+          self_heal_target_slug: targetSlug,
         });
-        const targetSlug = typeof lineage.self_heal_target_slug === "string" ? lineage.self_heal_target_slug : null;
-        if (out.SELF_HEAL_EXHAUSTED && targetSlug) {
-          quarantineCandidateQcExhausted({
+        if (slugKey && targetSlug && out.SELF_HEAL_EXHAUSTED) {
+          await quarantineCandidateQcExhaustedAsync({
             venture_id: job.venture_id,
-            candidate_key: candidateQuarantineKey({ venture_id: job.venture_id, slug: targetSlug }),
+            candidate_key: slugKey,
             failure_reasons: out.failure_gates.length ? out.failure_gates : ["QC_EXHAUSTED"],
+            attempt_count: out.SELF_HEAL_ATTEMPTS,
+            last_cycle_id: job.cycle_id,
+            last_release_sha: vercelRuntimeIdentity().release_sha ?? vercelRuntimeIdentity().git_sha,
+            lane: "CONTENT_SLUG",
           });
+        } else if (slugKey && targetSlug && !out.deploy_ready) {
+          await incrementPortfolioCandidateFailureAttempt({
+            venture_id: job.venture_id,
+            lane: "CONTENT_SLUG",
+            candidate_key: slugKey,
+            failure_reasons: out.failure_gates,
+            last_cycle_id: job.cycle_id,
+            last_release_sha: vercelRuntimeIdentity().release_sha ?? vercelRuntimeIdentity().git_sha,
+          });
+        }
+        if (out.deploy_ready && targetSlug && Boolean(lineage.execute_publish)) {
+          const articles = listOccupancyClubThrottleBacklogArticles();
+          const candidate = articles.find((a) => a.slug === targetSlug);
+          if (candidate) {
+            const assetId = publicationAssetIdentity({
+              venture_id: candidate.venture === "occupancynpv" ? "occupancynpv" : "club-throttle",
+              canonical_path: candidate.path,
+              content_revision: candidate.slug,
+            });
+            const deployKey = `deploy:${assetId}`;
+            await enqueuePortfolioJob({
+              cycle_id: job.cycle_id,
+              venture_id: job.venture_id,
+              job_type: "VENTURE_DEPLOY",
+              idempotency_key: deployKey,
+              priority: 78,
+              input_lineage: {
+                path: candidate.path,
+                canonical_url: candidate.canonical_url,
+                asset_identity: assetId,
+                work_type: "NEW_PUBLICATION",
+              },
+            });
+          }
         }
         await completeJob(job, holder, {
           status: "COMPLETED",
           output_lineage: {
             ...(out as unknown as Record<string, unknown>),
             CANDIDATE_RETRY_BUDGET,
-            quarantined_slug: out.SELF_HEAL_EXHAUSTED ? targetSlug : null,
+            quarantined_slug: out.quarantined_slug ?? (out.SELF_HEAL_EXHAUSTED ? targetSlug : null),
+            alternate_topic_decision: out.alternate_topic_decision,
+          },
+        });
+        return;
+      }
+      case "BLOG_BUILD": {
+        const slug = String(lineage.slug ?? "");
+        const workType = String(lineage.work_type ?? "NEW_PUBLICATION");
+        const articles = listOccupancyClubThrottleBacklogArticles();
+        const article = articles.find((a) => a.slug === slug);
+        if (!article) {
+          await completeJob(job, holder, { status: "FAILED", safe_error: "BLOG_BUILD_SLUG_NOT_FOUND" });
+          return;
+        }
+        if (workType === "INTERNAL_LINK_UPDATE") {
+          await completeJob(job, holder, {
+            status: "FAILED",
+            safe_error: "NEW_PUBLISH_MAINTENANCE_CONTRACT_REJECTED",
+          });
+          return;
+        }
+        const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
+        const ready = ranked.find((r) => r.article.slug === slug);
+        if (ready) {
+          const assetId = publicationAssetIdentity({
+            venture_id: "occupancynpv",
+            canonical_path: article.path,
+            content_revision: article.slug,
+          });
+          await enqueuePortfolioJob({
+            cycle_id: job.cycle_id,
+            venture_id: job.venture_id,
+            job_type: "VENTURE_DEPLOY",
+            idempotency_key: `deploy:${assetId}`,
+            priority: 80,
+            input_lineage: {
+              path: article.path,
+              canonical_url: article.canonical_url,
+              asset_identity: assetId,
+              work_type: "NEW_PUBLICATION",
+            },
+          });
+        }
+        await completeJob(job, holder, {
+          status: ready ? "COMPLETED" : "FAILED",
+          safe_error: ready ? null : "BLOG_BUILD_QC_NOT_READY",
+          output_lineage: {
+            slug,
+            materialized: Boolean(ready),
+            full_publication_qc: workType === "NEW_PUBLICATION",
           },
         });
         return;
@@ -326,17 +434,59 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
         const publicationAllowed = evaluateAutonomousStorefrontPublicationAllowed({
           storefront_ready: storefrontSep.STOREFRONT_READY,
         });
-        if (
-          !listingPass &&
-          (qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts)
-        ) {
-          quarantineCandidateQcExhausted({
+        const conceptKey = candidateQuarantineKey({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          concept_id: concept.concept_id,
+        });
+        let cumulativeAttempts = await readPortfolioCandidateAttemptCount({
+          venture_id: CLUB_THROTTLE_VENTURE_ID,
+          lane: "SHIRT_CONCEPT",
+          candidate_key: conceptKey,
+        });
+        if (!listingPass) {
+          cumulativeAttempts = await incrementPortfolioCandidateFailureAttempt({
             venture_id: CLUB_THROTTLE_VENTURE_ID,
-            candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, concept_id: concept.concept_id }),
+            lane: "SHIRT_CONCEPT",
+            candidate_key: conceptKey,
+            revision_identity: attempt.source_asset_hash ?? null,
+            failure_reasons: attempt.print_failure_reasons,
+            last_cycle_id: job.cycle_id,
+            last_release_sha: vercelRuntimeIdentity().release_sha ?? vercelRuntimeIdentity().git_sha,
+          });
+        }
+        const shirtBudgetExhausted = cumulativeAttempts >= gov.max_self_heal_attempts;
+        if (!listingPass && (qualityHeldTerminal || shirtBudgetExhausted)) {
+          await quarantineCandidateQcExhaustedAsync({
+            venture_id: CLUB_THROTTLE_VENTURE_ID,
+            candidate_key: conceptKey,
             failure_reasons: attempt.print_failure_reasons.length
               ? attempt.print_failure_reasons
               : diagnosis.CT_PRINT_QC_FAILURE_REASONS,
+            attempt_count: cumulativeAttempts,
+            failure_class: "ART_QC",
+            last_cycle_id: job.cycle_id,
+            last_release_sha: vercelRuntimeIdentity().release_sha ?? vercelRuntimeIdentity().git_sha,
+            lane: "SHIRT_CONCEPT",
           });
+          const nextConcept = concepts.find(
+            (c) =>
+              c.concept_id !== concept.concept_id &&
+              !isCandidateQuarantined({
+                venture_id: CLUB_THROTTLE_VENTURE_ID,
+                candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, concept_id: c.concept_id }),
+                lane: "SHIRT_CONCEPT",
+              }),
+          );
+          if (nextConcept) {
+            await enqueuePortfolioJob({
+              cycle_id: job.cycle_id,
+              venture_id: CLUB_THROTTLE_VENTURE_ID,
+              job_type: "CREATIVE_SELF_HEAL",
+              idempotency_key: `creative-self-heal:${nextConcept.concept_id}`,
+              priority: 55,
+              input_lineage: { concept_id: nextConcept.concept_id },
+            });
+          }
         }
         if (listingPass && attempt.source_asset_hash) {
           const buildKey = `storefront-product-build:${concept.concept_id}:${attempt.source_asset_hash.slice(0, 16)}`;
@@ -356,7 +506,7 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
         await completeJob(job, holder, {
           status: listingPass
             ? "COMPLETED"
-            : qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts
+            : qualityHeldTerminal || shirtBudgetExhausted
               ? "FAILED"
               : "QUEUED",
           safe_error: listingPass ? null : attempt.held_reason ?? "STOREFRONT_LISTING_QC_FAIL",
@@ -364,7 +514,7 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           output_lineage: {
             diagnosis,
             attempt,
-            CT_CREATIVE_ATTEMPTS: job.attempt_count,
+            CT_CREATIVE_ATTEMPTS: cumulativeAttempts,
             CT_SELECTED_ARTWORK_ID: listingPass ? attempt.source_asset_hash : null,
             STOREFRONT_MANUFACTURING_SEPARATION: storefrontSep,
             STOREFRONT_PUBLICATION_ALLOWED: publicationAllowed,
