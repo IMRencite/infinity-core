@@ -20,6 +20,7 @@ import {
 } from "./club-throttle-apparel-color-v1.ts";
 import { auditClubThrottleVariantMap } from "./club-throttle-variant-map.ts";
 import { CLUB_THROTTLE_CORE_TEE, CLUB_THROTTLE_SIZE_CHART } from "./club-throttle-catalog.ts";
+import { listCustomerVisibleAutonomousStorefrontProducts } from "./club-throttle-autonomous-storefront-publication-v1.ts";
 
 export type StorefrontCommerceProduct = {
   sku: string;
@@ -78,7 +79,7 @@ export function buildClubThrottleStorefrontCommerceCatalog(cwd = process.cwd()):
     : {};
   const variant = auditClubThrottleVariantMap(cwd);
   const launchColors = discoverProviderBackedLaunchColors(cwd);
-  const products: StorefrontCommerceProduct[] = CLUB_THROTTLE_SEVEN_SHIRT_MERCH.map((merch) => {
+  const canonicalProducts: StorefrontCommerceProduct[] = CLUB_THROTTLE_SEVEN_SHIRT_MERCH.map((merch) => {
     const assets = merchRows.find((r) => r.sku === merch.sku);
     const hero = assets?.hero_back_public ?? "";
     const detail = assets?.art_detail_public ?? merch.public_asset_url;
@@ -142,6 +143,51 @@ export function buildClubThrottleStorefrontCommerceCatalog(cwd = process.cwd()):
       released_at: "2026-10-07",
     };
   });
+
+  const autonomousRows = listCustomerVisibleAutonomousStorefrontProducts(cwd);
+  const autonomousProducts: StorefrontCommerceProduct[] = autonomousRows.map((row) => {
+    const cats = categoriesForSku("LOT_LINE");
+    const styles = cats.map((c) => c.riding_style);
+    return {
+      sku: row.sku,
+      slug: row.slug,
+      product_id: row.product_id,
+      title: row.title,
+      price_usd: row.price_usd,
+      short_description: row.short_description,
+      design_story: row.design_story,
+      garment_color: row.default_color,
+      default_color: row.default_color,
+      colors: [
+        {
+          slug: row.default_color,
+          display_name: row.default_color,
+          swatch_hex: "#ffffff",
+          artwork_identity: row.source_artwork_hash,
+          sizes: row.checkout_sizes,
+          primary_image: row.public_hero_path,
+          hover_image: row.public_art_detail_path,
+        },
+      ],
+      garment_summary: "Gildan 5000 Heavy Cotton tee · Autonomous creative",
+      size_range_label:
+        row.checkout_sizes.length > 1 ?
+          `${row.checkout_sizes[0]}–${row.checkout_sizes[row.checkout_sizes.length - 1]}`
+        : "One size",
+      checkout_sizes: row.checkout_sizes,
+      shop_categories: ["all-tees"],
+      category_labels: ["All Tees"],
+      riding_style: styles,
+      search_blob: `${row.title} ${row.short_description} ${row.design_story} ${row.sku} autonomous`.toLowerCase(),
+      primary_image: row.public_hero_path,
+      hover_image: row.public_art_detail_path,
+      gallery: [row.public_hero_path, row.public_art_detail_path],
+      image_kind: "STOREFRONT_MERCHANDISING_RENDER",
+      released_at: row.publication_timestamp.slice(0, 10),
+    };
+  });
+
+  const products = [...canonicalProducts, ...autonomousProducts];
 
   return {
     products,

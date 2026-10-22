@@ -26,7 +26,13 @@ import {
   quarantineCandidateQcExhausted,
   CANDIDATE_RETRY_BUDGET,
 } from "../venture-candidate-quarantine-v1";
-import { evaluateStorefrontManufacturingSeparationQc } from "../venture-daily-output-v1";
+import {
+  evaluateAutonomousStorefrontPublicationAllowed,
+  evaluateStorefrontManufacturingSeparationQc,
+} from "../venture-daily-output-v1";
+import { enqueuePortfolioJob } from "./autonomous-portfolio-job-queue-v1";
+import { buildAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/commerce/club-throttle-autonomous-product-build-v1";
+import { publishAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/commerce/club-throttle-autonomous-storefront-publication-v1";
 import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
 import { countPortfolioJobsByCycle, patchPortfolioJobFields } from "./autonomous-portfolio-job-queue-v1";
@@ -308,13 +314,17 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           !gov.LIVE_CREATIVE_ENABLED ||
           attempt.held_reason === "LIVE_CREATIVE_NOT_AUTHORIZED" ||
           attempt.held_reason === "CT_PRINT_QC_QUALITY_HELD_NO_AUTO_PAID_RETRY";
-        const printHold = diagnosis.CT_PRINT_QC_FAILURE_REASONS.length > 0 && !attempt.pass;
+        const printHold = attempt.manufacturing_print_production_hold;
+        const listingPass = attempt.storefront_listing_pass;
         const storefrontSep = evaluateStorefrontManufacturingSeparationQc({
           print_production_qc_hold: printHold,
-          storefront_listing_qc_pass: attempt.pass || printHold,
+          storefront_listing_qc_pass: listingPass,
+        });
+        const publicationAllowed = evaluateAutonomousStorefrontPublicationAllowed({
+          storefront_ready: storefrontSep.STOREFRONT_READY,
         });
         if (
-          !attempt.pass &&
+          !listingPass &&
           (qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts)
         ) {
           quarantineCandidateQcExhausted({
@@ -325,22 +335,63 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
               : diagnosis.CT_PRINT_QC_FAILURE_REASONS,
           });
         }
+        if (listingPass && attempt.source_asset_hash) {
+          const buildKey = `storefront-product-build:${concept.concept_id}:${attempt.source_asset_hash.slice(0, 16)}`;
+          await enqueuePortfolioJob({
+            cycle_id: job.cycle_id,
+            venture_id: CLUB_THROTTLE_VENTURE_ID,
+            job_type: "STOREFRONT_PRODUCT_BUILD",
+            idempotency_key: buildKey,
+            priority: 60,
+            input_lineage: {
+              concept_id: concept.concept_id,
+              source_artwork_hash: attempt.source_asset_hash,
+              storefront_gate_qc: attempt.storefront_gate_qc,
+            },
+          });
+        }
         await completeJob(job, holder, {
-          status: attempt.pass
+          status: listingPass
             ? "COMPLETED"
             : qualityHeldTerminal || job.attempt_count >= gov.max_self_heal_attempts
               ? "FAILED"
               : "QUEUED",
-          safe_error: attempt.pass ? null : attempt.held_reason ?? "PRINT_PRODUCTION_QC_HOLD",
+          safe_error: listingPass ? null : attempt.held_reason ?? "STOREFRONT_LISTING_QC_FAIL",
           eligible_at: new Date(Date.now() + 90_000).toISOString(),
           output_lineage: {
             diagnosis,
             attempt,
             CT_CREATIVE_ATTEMPTS: job.attempt_count,
-            CT_SELECTED_ARTWORK_ID: attempt.pass ? attempt.source_asset_hash : null,
+            CT_SELECTED_ARTWORK_ID: listingPass ? attempt.source_asset_hash : null,
             STOREFRONT_MANUFACTURING_SEPARATION: storefrontSep,
-            STOREFRONT_PUBLICATION_ALLOWED: storefrontSep.STOREFRONT_READY && printHold,
+            STOREFRONT_PUBLICATION_ALLOWED: publicationAllowed,
             MANUFACTURING_BLOCKED_BY_PRINT_HOLD: printHold,
+            STOREFRONT_GATE_QC: attempt.storefront_gate_qc,
+          },
+        });
+        return;
+      }
+      case "STOREFRONT_PRODUCT_BUILD": {
+        const conceptId = String(lineage.concept_id ?? "");
+        const artHash = String(lineage.source_artwork_hash ?? "");
+        const concepts = rankClubThrottleProductOpportunities();
+        const concept = concepts.find((c) => c.concept_id === conceptId);
+        if (!concept || !artHash) {
+          await completeJob(job, holder, { status: "FAILED", safe_error: "STOREFRONT_BUILD_LINEAGE_INCOMPLETE" });
+          return;
+        }
+        const built = buildAutonomousClubThrottleStorefrontProduct({ concept, source_artwork_hash: artHash });
+        const published = await publishAutonomousClubThrottleStorefrontProduct({ built });
+        if (published.customer_visible && published.incremented_daily_counter) {
+          await patchPortfolioCycle(job.cycle_id, { products_published: 1 });
+        }
+        await completeJob(job, holder, {
+          status: published.customer_visible ? "COMPLETED" : "FAILED",
+          safe_error: published.customer_visible ? null : published.reason ?? "STOREFRONT_PUBLICATION_FAILED",
+          output_lineage: {
+            built,
+            publication: published,
+            CT_AUTONOMOUS_STOREFRONT_PUBLICATION_FUNCTION: "publishAutonomousClubThrottleStorefrontProduct",
           },
         });
         return;

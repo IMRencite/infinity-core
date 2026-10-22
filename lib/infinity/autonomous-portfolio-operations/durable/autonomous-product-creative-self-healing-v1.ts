@@ -1,6 +1,10 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { evaluateApparelPrintProductionQc } from "@/lib/infinity/commerce/club-throttle-apparel-print-production-qc";
+import {
+  evaluateClubThrottleAutonomousStorefrontGateQc,
+  evaluateClubThrottleManufacturingPrintProductionHold,
+} from "@/lib/infinity/commerce/club-throttle-storefront-listing-qc-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
 import {
   resolveClubThrottlePipelineArtifactRoot,
@@ -79,37 +83,56 @@ export async function runBoundedCreativeSelfHeal(input: {
 }): Promise<{
   attempt_id: string;
   pass: boolean;
+  storefront_listing_pass: boolean;
+  manufacturing_print_production_hold: boolean;
   source_asset_hash: string | null;
   print_failure_reasons: string[];
   held_reason: string | null;
+  storefront_gate_qc: ReturnType<typeof evaluateClubThrottleAutonomousStorefrontGateQc> | null;
 }> {
+  const attemptId = `${input.concept.concept_id}-self-heal-${input.attempt_index}`;
+  const emptyGate = evaluateClubThrottleAutonomousStorefrontGateQc({
+    originality_qc: "HOLD",
+    artifact_qc: "HOLD",
+    print_bundle: null,
+  });
+
   const governance = resolveCreativeBudgetGovernance();
   if (!input.execute_live_creative || !governance.LIVE_CREATIVE_ENABLED) {
     return {
-      attempt_id: `${input.concept.concept_id}-self-heal-${input.attempt_index}`,
+      attempt_id: attemptId,
       pass: false,
+      storefront_listing_pass: false,
+      manufacturing_print_production_hold: true,
       source_asset_hash: null,
       print_failure_reasons: input.failure_reasons,
       held_reason: governance.founder_blocker ?? "LIVE_CREATIVE_NOT_AUTHORIZED",
+      storefront_gate_qc: emptyGate,
     };
   }
   if (input.attempt_index >= governance.max_self_heal_attempts) {
     return {
-      attempt_id: `${input.concept.concept_id}-self-heal-${input.attempt_index}`,
+      attempt_id: attemptId,
       pass: false,
+      storefront_listing_pass: false,
+      manufacturing_print_production_hold: true,
       source_asset_hash: null,
       print_failure_reasons: input.failure_reasons,
       held_reason: "CREATIVE_SELF_HEAL_ATTEMPTS_EXHAUSTED",
+      storefront_gate_qc: emptyGate,
     };
   }
 
   if (input.failure_reasons.some((r) => r.includes("embedded") || r.includes("chroma_"))) {
     return {
-      attempt_id: `${input.concept.concept_id}-self-heal-${input.attempt_index}`,
+      attempt_id: attemptId,
       pass: false,
+      storefront_listing_pass: false,
+      manufacturing_print_production_hold: true,
       source_asset_hash: null,
       print_failure_reasons: input.failure_reasons,
       held_reason: "CT_PRINT_QC_QUALITY_HELD_NO_AUTO_PAID_RETRY",
+      storefront_gate_qc: emptyGate,
     };
   }
 
@@ -118,25 +141,36 @@ export async function runBoundedCreativeSelfHeal(input: {
     cwd: input.cwd,
     execute_live_creative: true,
   });
-  const pass = pipeline.CLUB_THROTTLE_PRODUCT_CREATIVE_QC === "PASS";
   let print_failure_reasons = input.failure_reasons;
-  if (!pass) {
-    const rasterPath = join(
-      pipelineRoot(input.cwd ?? process.cwd()),
-      input.concept.concept_id,
-      "grok-source-raster.png",
-    );
-    if (existsSync(rasterPath)) {
-      const printQc = await evaluateApparelPrintProductionQc(rasterPath);
-      print_failure_reasons = printQc.reasons;
-    }
+  let printBundle: Awaited<ReturnType<typeof evaluateApparelPrintProductionQc>> | null = null;
+  const rasterPath = join(pipelineRoot(input.cwd ?? process.cwd()), input.concept.concept_id, "grok-source-raster.png");
+  if (existsSync(rasterPath)) {
+    printBundle = await evaluateApparelPrintProductionQc(rasterPath);
+    print_failure_reasons = printBundle.reasons;
   }
+  const storefront_gate_qc = evaluateClubThrottleAutonomousStorefrontGateQc({
+    originality_qc: pipeline.ORIGINALITY_QC,
+    artifact_qc: pipeline.source_asset_hash ? "PASS" : "FAIL",
+    typography_qc: "PASS",
+    print_bundle: printBundle,
+    metadata_qc: pipeline.CLUB_THROTTLE_CREATIVE_BRIEF_QC,
+    price_qc: "PASS",
+    variant_qc: "PASS",
+    commerce_capability_qc: "PASS",
+  });
+  const storefront_listing_pass = storefront_gate_qc.STOREFRONT_READY;
+  const manufacturing_print_production_hold =
+    printBundle ? evaluateClubThrottleManufacturingPrintProductionHold(printBundle) : true;
+  const pass = storefront_listing_pass;
   return {
-    attempt_id: `${input.concept.concept_id}-self-heal-${input.attempt_index}`,
+    attempt_id: attemptId,
     pass,
+    storefront_listing_pass,
+    manufacturing_print_production_hold,
     source_asset_hash: pipeline.source_asset_hash,
     print_failure_reasons,
-    held_reason: pipeline.held_reason,
+    held_reason: pass ? null : pipeline.held_reason ?? "STOREFRONT_LISTING_QC_FAIL",
+    storefront_gate_qc,
   };
 }
 

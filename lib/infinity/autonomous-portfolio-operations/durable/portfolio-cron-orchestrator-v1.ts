@@ -31,6 +31,7 @@ import { createPortfolioTickTimer, V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE } f
 import { publicationAssetIdentity, readPublicationRegistry } from "./autonomous-publication-idempotency-v1";
 import { resolveCreativeBudgetGovernance } from "./creative-self-heal-budget-governance-v1";
 import { rankClubThrottleProductOpportunities } from "@/lib/infinity/commerce/club-throttle-autonomous-product-development-v1";
+import { countAutonomousShirtsPublishedOnUtcDay } from "@/lib/infinity/commerce/club-throttle-autonomous-storefront-publication-v1";
 import type { OperatingVentureInventoryRow } from "../autonomous-portfolio-operations-v1";
 import {
   buildVentureNextBestGrowthActionsV1,
@@ -435,6 +436,7 @@ export async function orchestratePortfolioOperatingTick(input: {
         ct_daily_output: buildVentureDailyOutputCounters({
           venture_id: CLUB_THROTTLE_VENTURE_ID,
           continuity: ctContentContinuity,
+          shirts_published_today: countAutonomousShirtsPublishedOnUtcDay(process.cwd(), new Date().toISOString()),
         }),
         onpv_daily_output: buildVentureDailyOutputCounters({
           venture_id: CRE_VENTURE_ID,

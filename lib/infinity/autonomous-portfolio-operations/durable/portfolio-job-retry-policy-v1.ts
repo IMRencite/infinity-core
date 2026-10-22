@@ -43,6 +43,7 @@ const BY_TYPE: Partial<Record<PortfolioJobTypeV1, Partial<PortfolioJobRetryPolic
   PRODUCT_CREATIVE: { max_attempts: 2, retry_delay_ms: 120_000 },
   CREATIVE_SELF_HEAL: { max_attempts: 3, retry_delay_ms: 90_000 },
   CONTENT_SELF_HEAL: { max_attempts: 3, retry_delay_ms: 45_000 },
+  STOREFRONT_PRODUCT_BUILD: { max_attempts: 2, retry_delay_ms: 60_000 },
 };
 
 export function resolvePortfolioJobRetryPolicy(jobType: PortfolioJobTypeV1): PortfolioJobRetryPolicy {

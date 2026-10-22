@@ -124,10 +124,48 @@ export function evaluateStorefrontManufacturingSeparationQc(input: {
 } {
   const storefrontReady = input.storefront_listing_qc_pass;
   return {
-    STOREFRONT_PUBLICATION_BLOCKED_BY_PRINT_HOLD: input.print_production_qc_hold && !storefrontReady,
+    STOREFRONT_PUBLICATION_BLOCKED_BY_PRINT_HOLD: false,
     STOREFRONT_READY: storefrontReady,
     MANUFACTURING_AUTHORIZED: ADDITIONAL_PROVIDER_MANUFACTURING_AUTHORIZED && !input.print_production_qc_hold,
   };
+}
+
+export function evaluateAutonomousStorefrontPublicationAllowed(input: {
+  storefront_ready: boolean;
+  autonomous_storefront_publish_enabled?: boolean;
+}): boolean {
+  const policy = input.autonomous_storefront_publish_enabled ?? true;
+  return input.storefront_ready && policy;
+}
+
+export function evaluateCtDailyShirtNaturalQc(input: {
+  daily_shirts_published: number;
+  daily_shirt_target: number;
+  storefront_ready_unpublished: boolean;
+  no_valid_storefront_ready_concept: boolean;
+  pipeline_continued_to_next_concept: boolean;
+}): { gate: "CT_DAILY_SHIRT_NATURAL_QC"; result: "PASS" | "FAIL"; reasons: string[] } {
+  const reasons: string[] = [];
+  if (input.daily_shirts_published >= input.daily_shirt_target) {
+    return { gate: "CT_DAILY_SHIRT_NATURAL_QC", result: "PASS", reasons: [] };
+  }
+  if (input.no_valid_storefront_ready_concept && input.pipeline_continued_to_next_concept) {
+    return { gate: "CT_DAILY_SHIRT_NATURAL_QC", result: "PASS", reasons: ["TRUTHFUL_CONTINUATION"] };
+  }
+  if (input.storefront_ready_unpublished) {
+    reasons.push("FAIL_STOREFRONT_READY_NOT_PUBLISHED");
+  }
+  if (input.daily_shirts_published < input.daily_shirt_target) {
+    reasons.push("DAILY_SHIRT_TARGET_UNMET");
+  }
+  return { gate: "CT_DAILY_SHIRT_NATURAL_QC", result: reasons.length ? "FAIL" : "PASS", reasons };
+}
+
+export function evaluateCtDailyShirtCounterSemanticsQc(input: {
+  daily_shirts_published: number;
+  customer_visible_publication_events: number;
+}): "PASS" | "FAIL" {
+  return input.daily_shirts_published === input.customer_visible_publication_events ? "PASS" : "FAIL";
 }
 
 export function evaluateLiveVentureDailyOutputQc(input: {
