@@ -24,6 +24,10 @@ export function listOnpvMaterializedBacklogDrafts(): OrganicDraft[] {
   return [...overlayDraftCache];
 }
 
+export function onpvMaterializedBacklogOverlayArticleCountForTests(): number {
+  return overlayArticleCache.length;
+}
+
 export function mergeOnpvMaterializedBacklogArticles(articles: BlogBacklogArticle[]): BlogBacklogArticle[] {
   const durableArticles = listDurableOnpvMaterializedArticlesFromCache();
   const combined = [...durableArticles, ...overlayArticleCache];
