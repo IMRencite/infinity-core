@@ -19,7 +19,7 @@ export const DURABLE_PORTFOLIO_CANDIDATE_STATE_V1 = "DURABLE_PORTFOLIO_CANDIDATE
 
 export const CANDIDATE_STATE_TABLE = "autonomous_portfolio_candidate_state" as const;
 
-export type PortfolioCandidateLane = "CONTENT_SLUG" | "SHIRT_CONCEPT" | "AUTHORITY_GAP";
+export type PortfolioCandidateLane = "CONTENT_SLUG" | "SHIRT_CONCEPT" | "AUTHORITY_GAP" | "ONPV_OPPORTUNITY";
 
 export type PortfolioCandidateTerminalState =
   | "ACTIVE"
