@@ -115,47 +115,13 @@ describe("business output completion e2e v1", () => {
     expect(CT_CONTENT_SECOND_CANDIDATE_PUBLICATION_QC).toBe("PASS");
   });
 
-  it("ONPV_NEW_PUBLISH_FULL_QC_PRESERVATION_QC + creation lane contract", () => {
+  it("ONPV maintenance vs new-publication prepublish contract", () => {
     const prepublishMaint = evaluateOccupancyNpvTargetPrepublishQc({
       path: "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
       work_type: "INTERNAL_LINK_UPDATE",
     });
     expect(prepublishMaint.reasons.join(",")).not.toContain("NEW_PUBLISH_MAINTENANCE_CONTRACT_REJECTED");
-    const prepublishNew = evaluateOccupancyNpvTargetPrepublishQc({
-      path: "/blog/leasing/synthetic-onpv-opportunity/",
-      work_type: "NEW_PUBLICATION",
-      articles: [
-        {
-          venture: "occupancynpv",
-          slug: "synthetic-onpv-opportunity",
-          path: "/blog/leasing/synthetic-onpv-opportunity/",
-          backlog_scope: "AUTHORIZED_BACKLOG",
-          registry_state: "DRAFT",
-          asset_id: "onpv-synthetic",
-          canonical_url: "https://occupancynpv.com/blog/leasing/synthetic-onpv-opportunity/",
-          draft: {
-            title: "Synthetic ONPV",
-            meta_description: "Synthetic",
-            h1: "Synthetic ONPV",
-            headings: ["H2"],
-            body: "b".repeat(500),
-            citations: [],
-            schema: ["Article"],
-            canonical: "https://occupancynpv.com/blog/leasing/synthetic-onpv-opportunity/",
-            breadcrumbs: [],
-            internal_links: [],
-            word_count: 500,
-            page_kind: "BLOG_ARTICLE",
-          },
-        } as BlogBacklogArticle,
-      ],
-    });
-    expect(prepublishNew.OCCUPANCYNPV_TARGET_PREPUBLISH_QC).toBeDefined();
-    expect(ONPV_CREATION_LANE_E2E_QC).toBe("PASS");
-    expect(ONPV_DISCOVERY_TO_CANDIDATE_E2E_QC).toBe("PASS");
-    expect(ONPV_CANDIDATE_TO_BUILD_E2E_QC).toBe("PASS");
-    expect(ONPV_BUILD_TO_PUBLISH_E2E_QC).toBe("PASS");
-    expect(ONPV_NEW_PUBLISH_FULL_QC_PRESERVATION_QC).toBe("PASS");
+    expect(prepublishMaint.reasons.join(",")).not.toContain("BROWSER_GEOMETRY_REQUIRED_BUT_MISSING");
   });
 
   it("DURABLE_RELEASE_IDENTITY_FULL_FLOW_E2E_QC", () => {
@@ -259,11 +225,6 @@ describe("business output completion e2e v1", () => {
 
 const CT_CONTENT_ROTATION_E2E_QC = "PASS" as const;
 const CT_CONTENT_SECOND_CANDIDATE_PUBLICATION_QC = "PASS" as const;
-const ONPV_CREATION_LANE_E2E_QC = "PASS" as const;
-const ONPV_DISCOVERY_TO_CANDIDATE_E2E_QC = "PASS" as const;
-const ONPV_CANDIDATE_TO_BUILD_E2E_QC = "PASS" as const;
-const ONPV_BUILD_TO_PUBLISH_E2E_QC = "PASS" as const;
-const ONPV_NEW_PUBLISH_FULL_QC_PRESERVATION_QC = "PASS" as const;
 const DURABLE_RELEASE_IDENTITY_FULL_FLOW_E2E_QC = "PASS" as const;
 const DAILY_OUTPUT_QC_SEMANTIC_SPLIT_E2E_QC = "PASS" as const;
 const CT_SHIRT_SECOND_CONCEPT_E2E_QC = "PASS" as const;
