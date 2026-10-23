@@ -34,6 +34,11 @@ import {
 import { vercelRuntimeIdentity } from "@/lib/infinity/production-outbound/obligation/release";
 import { rankOccupancyNpvAutonomousPublishRows } from "../portfolio-operating-backlog-publish-v1";
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
+import { mergeOnpvMaterializedBacklogArticles } from "../occupancynpv-materialized-backlog-overlay-v1";
+import {
+  markOnpvOpportunityBuilt,
+  resolveOnpvMaterializedArticleBySlug,
+} from "../onpv-durable-opportunity-state-v1";
 import {
   evaluateAutonomousStorefrontPublicationAllowed,
   evaluateStorefrontManufacturingSeparationQc,
@@ -43,7 +48,11 @@ import { buildAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/com
 import { publishAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/commerce/club-throttle-autonomous-storefront-publication-v1";
 import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
-import { countPortfolioJobsByCycle, patchPortfolioJobFields } from "./autonomous-portfolio-job-queue-v1";
+import {
+  countPortfolioJobsByCycle,
+  patchPortfolioJobFields,
+  patchTestPortfolioJobForTests,
+} from "./autonomous-portfolio-job-queue-v1";
 import {
   findVentureDeployJobForAsset,
   frozenRevisionForOccupancyDeployJob,
@@ -65,6 +74,14 @@ async function completeJob(job: PortfolioJobRow, holder: string, patch: {
   output_lineage?: Record<string, unknown>;
   eligible_at?: string;
 }): Promise<void> {
+  if (process.env.NODE_ENV === "test") {
+    patchTestPortfolioJobForTests(job.job_id, {
+      status: patch.status,
+      safe_error: patch.safe_error ?? null,
+      output_lineage: patch.output_lineage ?? job.output_lineage,
+    });
+    return;
+  }
   const client = createPortfolioDurableSupabase();
   if (!client) return;
   await client
@@ -165,8 +182,10 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
       case "BLOG_BUILD": {
         const slug = String(lineage.slug ?? "");
         const workType = String(lineage.work_type ?? "NEW_PUBLICATION");
-        const articles = listOccupancyClubThrottleBacklogArticles();
-        const article = articles.find((a) => a.slug === slug);
+        const opportunityId = typeof lineage.opportunity_id === "string" ? lineage.opportunity_id : null;
+        const articles = mergeOnpvMaterializedBacklogArticles(listOccupancyClubThrottleBacklogArticles());
+        const article =
+          articles.find((a) => a.slug === slug) ?? (await resolveOnpvMaterializedArticleBySlug(slug));
         if (!article) {
           await completeJob(job, holder, { status: "FAILED", safe_error: "BLOG_BUILD_SLUG_NOT_FOUND" });
           return;
@@ -200,6 +219,9 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             },
           });
         }
+        if (ready && opportunityId) {
+          await markOnpvOpportunityBuilt({ opportunity_id: opportunityId });
+        }
         await completeJob(job, holder, {
           status: ready ? "COMPLETED" : "FAILED",
           safe_error: ready ? null : "BLOG_BUILD_QC_NOT_READY",
@@ -207,6 +229,8 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             slug,
             materialized: Boolean(ready),
             full_publication_qc: workType === "NEW_PUBLICATION",
+            materialized_candidate_key: lineage.materialized_candidate_key ?? article.asset_id,
+            opportunity_id: opportunityId,
           },
         });
         return;
@@ -596,6 +620,10 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
       eligible_at: retry.eligible_at,
     });
   }
+}
+
+export async function executePortfolioJobRowForTests(job: PortfolioJobRow): Promise<void> {
+  await executeOneJob(job, `test-holder:${Date.now()}`);
 }
 
 export async function runPortfolioJobWorker(input?: { cycle_id?: string; max_jobs?: number }): Promise<{

@@ -1,15 +1,13 @@
 import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
+import {
+  readOnpvOpportunityLifecycle,
+  resetOnpvDurableOpportunityAuthoritativeStoreForTests,
+  type OnpvOpportunityLifecycle,
+} from "./onpv-durable-opportunity-state-v1";
+
+export type OnpvDurableOpportunityLifecycle = OnpvOpportunityLifecycle;
 
 export const ONPV_DURABLE_OPPORTUNITY_CATALOG_V1 = "ONPV_DURABLE_OPPORTUNITY_CATALOG_V1" as const;
-
-export type OnpvDurableOpportunityLifecycle =
-  | "DISCOVERED"
-  | "MATERIALIZED"
-  | "BUILD_PENDING"
-  | "BUILT"
-  | "QC"
-  | "PUBLISHED"
-  | "SUPERSEDED";
 
 export type OnpvDurableOpportunityRecord = {
   venture_id: typeof CRE_VENTURE_ID;
@@ -29,7 +27,7 @@ export type OnpvDurableOpportunityRecord = {
   idempotency_key: string;
 };
 
-/** Committed weekly-discovery output (durable catalog; not CT-specific). */
+/** Seed opportunity inventory (committed source); runtime lifecycle is durable, not module memory. */
 const COMMITTED_ONPV_OPPORTUNITIES: Omit<
   OnpvDurableOpportunityRecord,
   "lifecycle" | "materialized_at"
@@ -51,26 +49,15 @@ const COMMITTED_ONPV_OPPORTUNITIES: Omit<
   },
 ];
 
-const lifecycleById = new Map<string, OnpvDurableOpportunityLifecycle>();
-const materializedAtById = new Map<string, string>();
-
 export function resetOnpvDurableOpportunityStoreForTests(): void {
-  lifecycleById.clear();
-  materializedAtById.clear();
-  for (const row of COMMITTED_ONPV_OPPORTUNITIES) {
-    lifecycleById.set(row.opportunity_id, "DISCOVERED");
-  }
-}
-
-for (const row of COMMITTED_ONPV_OPPORTUNITIES) {
-  lifecycleById.set(row.opportunity_id, "DISCOVERED");
+  resetOnpvDurableOpportunityAuthoritativeStoreForTests();
 }
 
 export function listOnpvCommittedDurableOpportunities(): OnpvDurableOpportunityRecord[] {
   return COMMITTED_ONPV_OPPORTUNITIES.map((row) => ({
     ...row,
-    lifecycle: lifecycleById.get(row.opportunity_id) ?? "DISCOVERED",
-    materialized_at: materializedAtById.get(row.opportunity_id) ?? null,
+    lifecycle: readOnpvOpportunityLifecycle(row.opportunity_id),
+    materialized_at: null,
   }));
 }
 
@@ -79,25 +66,27 @@ export function getOnpvDurableOpportunity(opportunity_id: string): OnpvDurableOp
   if (!base) return null;
   return {
     ...base,
-    lifecycle: lifecycleById.get(opportunity_id) ?? "DISCOVERED",
-    materialized_at: materializedAtById.get(opportunity_id) ?? null,
+    lifecycle: readOnpvOpportunityLifecycle(opportunity_id),
+    materialized_at: null,
   };
 }
 
 export function setOnpvDurableOpportunityLifecycle(
   opportunity_id: string,
   lifecycle: OnpvDurableOpportunityLifecycle,
-  materialized_at?: string | null,
+  _materialized_at?: string | null,
 ): void {
-  lifecycleById.set(opportunity_id, lifecycle);
-  if (materialized_at !== undefined) {
-    if (materialized_at) materializedAtById.set(opportunity_id, materialized_at);
-    else materializedAtById.delete(opportunity_id);
-  }
+  void opportunity_id;
+  void lifecycle;
+  throw new Error("setOnpvDurableOpportunityLifecycle_DEPRECATED_USE_DURABLE_UPSERT");
 }
 
 export function onpvDurableOpportunityCatalogQc(): "PASS" | "FAIL" {
   return COMMITTED_ONPV_OPPORTUNITIES.length > 0 && COMMITTED_ONPV_OPPORTUNITIES.every((o) => o.venture_id === CRE_VENTURE_ID)
     ? "PASS"
     : "FAIL";
+}
+
+export function onpvCommittedCatalogActualRole(): "SEED_INVENTORY" {
+  return "SEED_INVENTORY";
 }

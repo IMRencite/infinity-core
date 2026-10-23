@@ -59,9 +59,59 @@ export type EnqueuePortfolioJobInput = {
   external_authority_state?: string | null;
 };
 
+const testPortfolioJobRows: PortfolioJobRow[] = [];
+
+export function resetTestPortfolioJobQueueForTests(): void {
+  testPortfolioJobRows.length = 0;
+}
+
+export function listTestPortfolioJobQueueForTests(): PortfolioJobRow[] {
+  return [...testPortfolioJobRows];
+}
+
+export function patchTestPortfolioJobForTests(
+  job_id: string,
+  patch: Partial<Pick<PortfolioJobRow, "status" | "output_lineage" | "safe_error">>,
+): void {
+  const row = testPortfolioJobRows.find((j) => j.job_id === job_id);
+  if (!row) return;
+  Object.assign(row, patch);
+}
+
 export async function enqueuePortfolioJob(input: EnqueuePortfolioJobInput): Promise<{ job_id: string | null; skipped: boolean }> {
+  if (process.env.NODE_ENV === "test") {
+    if (testPortfolioJobRows.some((j) => j.idempotency_key === input.idempotency_key)) {
+      return { job_id: null, skipped: true };
+    }
+    const policy = resolvePortfolioJobRetryPolicy(input.job_type);
+    const row: PortfolioJobRow = {
+      job_id: randomUUID(),
+      cycle_id: input.cycle_id,
+      venture_id: input.venture_id,
+      job_type: input.job_type,
+      idempotency_key: input.idempotency_key,
+      priority: input.priority ?? 50,
+      status: "QUEUED",
+      attempt_count: 0,
+      max_attempts: policy.max_attempts,
+      created_at: new Date().toISOString(),
+      eligible_at: new Date().toISOString(),
+      started_at: null,
+      completed_at: null,
+      lease_holder: null,
+      lease_expires_at: null,
+      input_lineage: input.input_lineage ?? {},
+      output_lineage: {},
+      safe_error: null,
+      external_authority_state: input.external_authority_state ?? null,
+    };
+    testPortfolioJobRows.push(row);
+    return { job_id: row.job_id, skipped: false };
+  }
   const client = createPortfolioDurableSupabase();
-  if (!client) return { job_id: null, skipped: true };
+  if (!client) {
+    return { job_id: null, skipped: true };
+  }
   const policy = resolvePortfolioJobRetryPolicy(input.job_type);
   const row = {
     job_id: randomUUID(),

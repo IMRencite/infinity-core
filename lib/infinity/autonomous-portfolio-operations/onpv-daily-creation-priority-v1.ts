@@ -1,4 +1,3 @@
-import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
 import type { BlogBacklogArticle } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import {
@@ -22,11 +21,11 @@ export type OnpvDailyCreationAction =
   | { kind: "MAINTENANCE_INTERNAL_LINK"; reason: string }
   | { kind: "NONE"; reason: string };
 
-export function resolveOnpvDailyCreationAction(input: {
+export async function resolveOnpvDailyCreationAction(input: {
   blog_floor_unmet: boolean;
   daily_blog_target_met: boolean;
   articles?: BlogBacklogArticle[];
-}): OnpvDailyCreationAction {
+}): Promise<OnpvDailyCreationAction> {
   const base = input.articles ?? listOccupancyClubThrottleBacklogArticles();
   const articles = mergeOnpvMaterializedBacklogArticles(base);
   const ready = pickOccupancyNpvAutonomousBacklogCandidate(articles);
@@ -36,7 +35,7 @@ export function resolveOnpvDailyCreationAction(input: {
   if (input.blog_floor_unmet) {
     const nextOpp = selectNextOnpvMaterializableOpportunity(articles);
     if (nextOpp) {
-      const materialized = materializeOccupancyNpvContentCandidate({ opportunity_id: nextOpp.opportunity_id });
+      const materialized = await materializeOccupancyNpvContentCandidate({ opportunity_id: nextOpp.opportunity_id });
       if (materialized.outcome === "MATERIALIZED" || materialized.outcome === "ALREADY_MATERIALIZED") {
         const merged = mergeOnpvMaterializedBacklogArticles(base);
         const candidate =
@@ -68,12 +67,12 @@ export function resolveOnpvDailyCreationAction(input: {
   return { kind: "NONE", reason: "CREATION_LANE_BLOCKED:" + proof.reasons.join(",") };
 }
 
-export function onpvMaintenancePreemptionRepairQc(): "PASS" | "FAIL" {
+export async function onpvMaintenancePreemptionRepairQc(): Promise<"PASS" | "FAIL"> {
   const articles = listOccupancyClubThrottleBacklogArticles();
   if (pickOccupancyNpvAutonomousBacklogCandidate(articles)) return "PASS";
   if (countBacklogPublishCandidates(articles) > 0) return "PASS";
   const hasOpp = selectNextOnpvMaterializableOpportunity(articles);
-  const action = resolveOnpvDailyCreationAction({
+  const action = await resolveOnpvDailyCreationAction({
     blog_floor_unmet: true,
     daily_blog_target_met: false,
     articles,
@@ -91,8 +90,8 @@ export function onpvDailyCreationPriorityContractDoc(): string {
   ].join("; ");
 }
 
-export function onpvMaintenancePreservationQc(): "PASS" | "FAIL" {
-  const actionFloorMet = resolveOnpvDailyCreationAction({
+export async function onpvMaintenancePreservationQc(): Promise<"PASS" | "FAIL"> {
+  const actionFloorMet = await resolveOnpvDailyCreationAction({
     blog_floor_unmet: false,
     daily_blog_target_met: true,
     articles: listOccupancyClubThrottleBacklogArticles(),
@@ -101,4 +100,24 @@ export function onpvMaintenancePreservationQc(): "PASS" | "FAIL" {
     return "PASS";
   }
   return "PASS";
+}
+
+export async function enqueueOnpvBlogBuildFromCreationAction(input: {
+  cycle_id: string;
+  venture_id: string;
+  creation: Extract<OnpvDailyCreationAction, { kind: "MATERIALIZE_AND_BUILD" | "BLOG_BUILD_REPAIR" }>;
+}): Promise<{ job_type: "BLOG_BUILD"; idempotency_key: string; input_lineage: Record<string, unknown> } | null> {
+  const buildKey = `blog-build:${input.creation.candidate.slug}`;
+  return {
+    job_type: "BLOG_BUILD",
+    idempotency_key: buildKey,
+    input_lineage: {
+      slug: input.creation.candidate.slug,
+      path: input.creation.candidate.path,
+      canonical_url: input.creation.candidate.canonical_url,
+      work_type: "NEW_PUBLICATION",
+      materialized_candidate_key: input.creation.candidate.asset_id,
+      opportunity_id: input.creation.kind === "MATERIALIZE_AND_BUILD" ? input.creation.opportunity_id : undefined,
+    },
+  };
 }

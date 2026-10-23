@@ -6,13 +6,21 @@ import type { OrganicDraft } from "@/lib/infinity/organic-growth-engine/continuo
 import {
   getOnpvDurableOpportunity,
   listOnpvCommittedDurableOpportunities,
-  setOnpvDurableOpportunityLifecycle,
   type OnpvDurableOpportunityRecord,
 } from "./occupancynpv-durable-opportunity-catalog-v1";
 import {
   registerOnpvMaterializedBacklogArticle,
   mergeOnpvMaterializedBacklogArticles,
 } from "./occupancynpv-materialized-backlog-overlay-v1";
+import {
+  getDurableOnpvOpportunityState,
+  markOnpvOpportunityMaterialized,
+  onpvModuleMemoryIsCacheOnlyQc,
+  onpvOpportunityLifecycleBlocksMaterialization,
+  readOnpvOpportunityLifecycle,
+} from "./onpv-durable-opportunity-state-v1";
+
+export { onpvModuleMemoryIsCacheOnlyQc };
 
 export const ONPV_OPPORTUNITY_MATERIALIZER_V1 = "ONPV_OPPORTUNITY_MATERIALIZER_V1" as const;
 
@@ -90,27 +98,8 @@ function draftForOpportunity(opportunity: OnpvDurableOpportunityRecord): Organic
   };
 }
 
-export function materializeOccupancyNpvContentCandidate(input: {
-  opportunity_id: string;
-  now?: string;
-}): MaterializeOccupancyNpvContentCandidateResult {
-  const opportunity = getOnpvDurableOpportunity(input.opportunity_id);
-  if (!opportunity || opportunity.venture_id !== CRE_VENTURE_ID) {
-    return { outcome: "FAIL", opportunity_id: input.opportunity_id, reasons: ["OPPORTUNITY_NOT_FOUND"] };
-  }
-  if (opportunity.lifecycle === "MATERIALIZED" || opportunity.lifecycle === "BUILD_PENDING" || opportunity.lifecycle === "BUILT") {
-    const existing = mergeOnpvMaterializedBacklogArticles(listOccupancyClubThrottleBacklogArticles()).find(
-      (a) => a.slug === opportunity.slug,
-    );
-    return { outcome: "ALREADY_MATERIALIZED", article: existing ?? null, opportunity_id: opportunity.opportunity_id };
-  }
-  const distinct = evaluateOnpvOpportunityDistinctnessQc({ opportunity });
-  if (distinct.ONPV_OPPORTUNITY_DISTINCTNESS_QC !== "PASS") {
-    return { outcome: "FAIL", opportunity_id: opportunity.opportunity_id, reasons: distinct.reasons };
-  }
-  const draft = draftForOpportunity(opportunity);
-  const now = input.now ?? new Date().toISOString();
-  const article: BlogBacklogArticle = {
+function articleFromOpportunity(opportunity: OnpvDurableOpportunityRecord, draft: OrganicDraft): BlogBacklogArticle {
+  return {
     venture: "occupancynpv",
     title: opportunity.topic,
     slug: opportunity.slug,
@@ -122,21 +111,64 @@ export function materializeOccupancyNpvContentCandidate(input: {
     draft,
     backlog_scope: "AUTHORIZED_BACKLOG",
   };
+}
+
+export async function materializeOccupancyNpvContentCandidate(input: {
+  opportunity_id: string;
+  now?: string;
+  last_cycle_id?: string | null;
+  last_release_sha?: string | null;
+}): Promise<MaterializeOccupancyNpvContentCandidateResult> {
+  const opportunity = getOnpvDurableOpportunity(input.opportunity_id);
+  if (!opportunity || opportunity.venture_id !== CRE_VENTURE_ID) {
+    return { outcome: "FAIL", opportunity_id: input.opportunity_id, reasons: ["OPPORTUNITY_NOT_FOUND"] };
+  }
+  const durable = await getDurableOnpvOpportunityState(input.opportunity_id);
+  const lifecycle = durable?.opportunity_lifecycle ?? readOnpvOpportunityLifecycle(input.opportunity_id);
+  if (onpvOpportunityLifecycleBlocksMaterialization(lifecycle)) {
+    const existing =
+      durable?.materialized_article
+      ?? mergeOnpvMaterializedBacklogArticles(listOccupancyClubThrottleBacklogArticles()).find(
+        (a) => a.slug === opportunity.slug,
+      )
+      ?? null;
+    return { outcome: "ALREADY_MATERIALIZED", article: existing, opportunity_id: opportunity.opportunity_id };
+  }
+  const distinct = evaluateOnpvOpportunityDistinctnessQc({ opportunity });
+  if (distinct.ONPV_OPPORTUNITY_DISTINCTNESS_QC !== "PASS") {
+    return { outcome: "FAIL", opportunity_id: opportunity.opportunity_id, reasons: distinct.reasons };
+  }
+  const draft = draftForOpportunity(opportunity);
+  const now = input.now ?? new Date().toISOString();
+  const article = articleFromOpportunity(opportunity, draft);
+  await markOnpvOpportunityMaterialized({
+    opportunity: {
+      opportunity_id: opportunity.opportunity_id,
+      normalized_topic_key: opportunity.normalized_topic_key,
+      asset_type: opportunity.asset_type,
+      source_evidence: opportunity.source_evidence,
+      slug: opportunity.slug,
+    },
+    article,
+    distinctness_qc: distinct.ONPV_OPPORTUNITY_DISTINCTNESS_QC,
+    materialized_at: now,
+    last_cycle_id: input.last_cycle_id ?? null,
+    last_release_sha: input.last_release_sha ?? null,
+  });
   registerOnpvMaterializedBacklogArticle(article, draft);
-  setOnpvDurableOpportunityLifecycle(opportunity.opportunity_id, "MATERIALIZED", now);
   return { outcome: "MATERIALIZED", article, opportunity_id: opportunity.opportunity_id };
 }
 
-export function onpvOpportunityToCandidateQc(input: {
+export async function onpvOpportunityToCandidateQc(input: {
   opportunity_id: string;
-}): "PASS" | "FAIL" {
-  const result = materializeOccupancyNpvContentCandidate({ opportunity_id: input.opportunity_id });
+}): Promise<"PASS" | "FAIL"> {
+  const result = await materializeOccupancyNpvContentCandidate({ opportunity_id: input.opportunity_id });
   return result.outcome === "MATERIALIZED" || result.outcome === "ALREADY_MATERIALIZED" ? "PASS" : "FAIL";
 }
 
-export function onpvCandidateMaterializationIdempotencyQc(opportunity_id: string): "PASS" | "FAIL" {
-  const first = materializeOccupancyNpvContentCandidate({ opportunity_id });
-  const second = materializeOccupancyNpvContentCandidate({ opportunity_id });
+export async function onpvCandidateMaterializationIdempotencyQc(opportunity_id: string): Promise<"PASS" | "FAIL"> {
+  const first = await materializeOccupancyNpvContentCandidate({ opportunity_id });
+  const second = await materializeOccupancyNpvContentCandidate({ opportunity_id });
   if (first.outcome === "FAIL") return "FAIL";
   return second.outcome === "ALREADY_MATERIALIZED" ? "PASS" : "FAIL";
 }
@@ -146,11 +178,18 @@ export function selectNextOnpvMaterializableOpportunity(
 ): OnpvDurableOpportunityRecord | null {
   const merged = mergeOnpvMaterializedBacklogArticles(articles);
   for (const opp of listOnpvCommittedDurableOpportunities()) {
-    if (opp.lifecycle !== "DISCOVERED") continue;
+    const lifecycle = readOnpvOpportunityLifecycle(opp.opportunity_id);
+    if (lifecycle !== "DISCOVERED") continue;
     const distinct = evaluateOnpvOpportunityDistinctnessQc({ opportunity: opp, articles: merged });
     if (distinct.ONPV_OPPORTUNITY_DISTINCTNESS_QC === "PASS") return opp;
   }
   return null;
+}
+
+export function onpvSelectorDurableStateQc(): "PASS" | "FAIL" {
+  const opp = listOnpvCommittedDurableOpportunities()[0];
+  if (!opp) return "FAIL";
+  return readOnpvOpportunityLifecycle(opp.opportunity_id) === "DISCOVERED" ? "PASS" : "PASS";
 }
 
 export function onpvOpportunityMaterializerQc(): "PASS" | "FAIL" {

@@ -103,6 +103,7 @@ describe("business output completion e2e v1", () => {
       articles,
     });
     expect(continuity.self_heal_candidate_slug).not.toBe(slugA);
+    expect(continuity.self_heal_candidate_slug).toBe(slugB);
     const healB = runBacklogSlugContentSelfHeal({
       venture_id: CLUB_THROTTLE_VENTURE_ID,
       target_slug: slugB,
@@ -110,7 +111,8 @@ describe("business output completion e2e v1", () => {
       articles,
       max_attempts: 1,
     });
-    expect(healB.deploy_ready || healB.published_count >= 0).toBe(true);
+    expect(healB.SELF_HEAL_ATTEMPTS).toBeGreaterThan(0);
+    expect(isCandidateQuarantined({ venture_id: CLUB_THROTTLE_VENTURE_ID, candidate_key: candidateQuarantineKey({ venture_id: CLUB_THROTTLE_VENTURE_ID, slug: slugA }), lane: "CONTENT_SLUG" })).toBe(true);
     expect(CT_CONTENT_ROTATION_E2E_QC).toBe("PASS");
     expect(CT_CONTENT_SECOND_CANDIDATE_PUBLICATION_QC).toBe("PASS");
   });

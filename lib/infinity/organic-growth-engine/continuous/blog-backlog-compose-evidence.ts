@@ -77,7 +77,7 @@ function occupancyEvidence(article: BlogBacklogArticle): RenderedBacklogEvidence
   const expansion = occupancynpvExpansionDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
   const autonomous = occupancynpvAutonomousBacklogDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
   const materialized = listOnpvMaterializedBacklogDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
-  let draft = expansion ?? autonomous ?? materialized ?? null;
+  let draft = expansion ?? autonomous ?? materialized ?? (article.draft ?? null);
   if (!draft && pathNorm.endsWith("/blog/occupancy-costs/cam-first-year")) {
     draft = occupancynpvCamFirstYearDraft();
   } else if (!draft && pathNorm.includes("how-interest-rates-affect-commercial-property-values")) {

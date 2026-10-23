@@ -17,7 +17,8 @@ import {
   evaluateOccupancyNpvTargetPrepublishQc,
   evaluateOnpvInternalLinkClusterQc,
 } from "../portfolio-operating-backlog-publish-v1";
-import { resolveOnpvDailyCreationAction } from "../onpv-daily-creation-priority-v1";
+import { enqueueOnpvBlogBuildFromCreationAction, resolveOnpvDailyCreationAction } from "../onpv-daily-creation-priority-v1";
+import { hydrateOnpvOpportunityStateCacheFromDurable, markOnpvOpportunityBuildPending } from "../onpv-durable-opportunity-state-v1";
 import { mergeOnpvMaterializedBacklogArticles } from "../occupancynpv-materialized-backlog-overlay-v1";
 import { loadQuarantinedPortfolioCandidateRows } from "./durable-portfolio-candidate-state-v1";
 import {
@@ -123,6 +124,7 @@ export async function orchestratePortfolioOperatingTick(input: {
   LIVE_VENTURE_PREMATURE_IDLE_QC: "PASS" | "FAIL";
 }> {
   const timer = createPortfolioTickTimer();
+  await hydrateOnpvOpportunityStateCacheFromDurable();
   const inventory = buildOperatingVentureInventory();
   const inventoryQc = operatingVentureInventoryQc(inventory);
   timer.mark("inventory_ms");
@@ -273,31 +275,35 @@ export async function orchestratePortfolioOperatingTick(input: {
             }
           }
         } else {
-          const creation = resolveOnpvDailyCreationAction({
+          const creation = await resolveOnpvDailyCreationAction({
             blog_floor_unmet: !ventureContinuity.daily_blog_target_met,
             daily_blog_target_met: ventureContinuity.daily_blog_target_met,
             articles: backlog,
           });
           if (creation.kind === "BLOG_BUILD_REPAIR" || creation.kind === "MATERIALIZE_AND_BUILD") {
-            const buildKey = `blog-build:${creation.candidate.slug}`;
+            const buildSpec = await enqueueOnpvBlogBuildFromCreationAction({
+              cycle_id,
+              venture_id: vid,
+              creation,
+            });
+            if (!buildSpec) continue;
+            if (creation.kind === "MATERIALIZE_AND_BUILD") {
+              await markOnpvOpportunityBuildPending({
+                opportunity_id: creation.opportunity_id,
+                last_cycle_id: cycle_id,
+              });
+            }
             const buildJob = await enqueuePortfolioJob({
               cycle_id,
               venture_id: vid,
-              job_type: "BLOG_BUILD",
-              idempotency_key: buildKey,
+              job_type: buildSpec.job_type,
+              idempotency_key: buildSpec.idempotency_key,
               priority: 72,
-              input_lineage: {
-                slug: creation.candidate.slug,
-                path: creation.candidate.path,
-                canonical_url: creation.candidate.canonical_url,
-                work_type: "NEW_PUBLICATION",
-                opportunity_id:
-                  creation.kind === "MATERIALIZE_AND_BUILD" ? creation.opportunity_id : undefined,
-              },
+              input_lineage: buildSpec.input_lineage,
             });
             if (buildJob.job_id) {
               jobsCreated += 1;
-              enqueued.push({ job_type: "BLOG_BUILD", venture_id: vid, idempotency_key: buildKey });
+              enqueued.push({ job_type: "BLOG_BUILD", venture_id: vid, idempotency_key: buildSpec.idempotency_key });
             }
           } else if (creation.kind === "MAINTENANCE_INTERNAL_LINK") {
             const clusterQc = evaluateOnpvInternalLinkClusterQc(backlog);
