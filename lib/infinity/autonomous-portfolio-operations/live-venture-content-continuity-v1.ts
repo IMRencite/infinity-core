@@ -19,6 +19,7 @@ import {
   isCandidateQuarantined,
 } from "./venture-candidate-quarantine-v1";
 import { countBacklogPublishCandidates } from "./portfolio-operating-backlog-publish-v1";
+import { evaluateNoDistinctQualifiedOpportunityProof } from "./no-distinct-qualified-opportunity-proof-v1";
 
 export const LIVE_VENTURE_CONTENT_CONTINUITY_V1 = "LIVE_VENTURE_CONTENT_CONTINUITY_V1" as const;
 
@@ -257,11 +258,19 @@ export function resolveLiveVentureContentContinuityV1(input: {
     const authority = analyzeVentureAuthorityExpansionV1({ venture_id: CRE_VENTURE_ID });
     const onpvReady = countBacklogPublishCandidates(articles);
     const onpvDrafts = articles.filter((a) => a.venture === "occupancynpv" && a.draft).length;
+    const noDistinctProof = evaluateNoDistinctQualifiedOpportunityProof(articles);
+    let stop: ContentLaneStopReason | null = null;
+    if (dailyMet && blogMet) stop = "DAILY_QUALIFIED_CONTENT_TARGET_MET";
+    else if (noDistinctProof.NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN) {
+      stop = "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN";
+    } else if (onpvReady > 0 || noDistinctProof.materializable_opportunity_count > 0) {
+      stop = "ACTIVE_CONTINUATION_IN_PROGRESS";
+    }
     return {
       venture_id: CRE_VENTURE_ID,
       ready_candidate_count: onpvReady,
       refresh_ready_count: 0,
-      repairable_candidate_count: 0,
+      repairable_candidate_count: noDistinctProof.repairable_unpublished_count,
       self_heal_candidate_slug: null,
       self_heal_failure_reasons: [],
       discovery_ran: true,
@@ -270,13 +279,13 @@ export function resolveLiveVentureContentContinuityV1(input: {
       duplicates_rejected: 0,
       low_value_opportunities_rejected: 0,
       quality_infeasible_opportunities: 0,
-      remaining_valid_opportunities: authority.gaps_identified.length,
+      remaining_valid_opportunities: noDistinctProof.materializable_opportunity_count,
       selected_new_opportunity: authority.top_gap?.gap_id ?? null,
       daily_qualified_content_target_met: dailyMet,
       daily_blog_target_met: blogMet,
       assets_published_today: assetsToday,
       blogs_published_today: blogsToday,
-      content_lane_stop_reason: dailyMet ? "DAILY_QUALIFIED_CONTENT_TARGET_MET" : null,
+      content_lane_stop_reason: stop,
       deploy_candidate: null,
       LIVE_VENTURE_PREMATURE_IDLE_QC: "PASS",
     };

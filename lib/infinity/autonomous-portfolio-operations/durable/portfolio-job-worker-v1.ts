@@ -309,7 +309,22 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           return;
         }
         if (deploy.ok) {
-          await patchPortfolioCycle(job.cycle_id, { assets_published: 1 });
+          const workType = String(lineage.work_type ?? "NEW_PUBLICATION");
+          const { incrementPortfolioCyclePublicationCounters } = await import(
+            "./autonomous-portfolio-durable-execution-v1"
+          );
+          if (workType === "INTERNAL_LINK_UPDATE") {
+            await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
+              maintenance_actions_completed: 1,
+            });
+          } else if (workType === "CONTENT_REFRESH") {
+            await incrementPortfolioCyclePublicationCounters(job.cycle_id, { refreshes_completed: 1 });
+          } else {
+            await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
+              new_assets_published: 1,
+              blogs_published: 1,
+            });
+          }
         }
         const terminalDeployFail =
           deploy.safe_error === "VERCEL_DEPLOYMENT_FAILED" || deploy.safe_error === "VERCEL_DEPLOYMENT_CREATE_FAILED";

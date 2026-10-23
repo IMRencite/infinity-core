@@ -87,7 +87,22 @@ export function evaluateDailyBlogFloorQc(input: {
   if (input.qualified_publish_candidates > 0) {
     return { gate: DAILY_BLOG_FLOOR_QC, result: "FAIL", reasons: ["BLOG_FLOOR_UNMET_WITH_QUALIFIED_CANDIDATES"] };
   }
-  return { gate: DAILY_BLOG_FLOOR_QC, result: "PASS", reasons: ["NO_QUALIFIED_CANDIDATE"] };
+  return { gate: DAILY_BLOG_FLOOR_QC, result: "FAIL", reasons: ["BLOG_FLOOR_UNMET_WITHOUT_TRUTHFUL_STOP"] };
+}
+
+export function dailyBlogFloorWaiverRepairQc(): "PASS" | "FAIL" {
+  const weakWaiver = evaluateDailyBlogFloorQc({
+    daily_blog_published: 0,
+    qualified_publish_candidates: 0,
+    stop_reason: "NO_QUALIFIED_CANDIDATE",
+  });
+  if (weakWaiver.result === "PASS") return "FAIL";
+  const truthful = evaluateDailyBlogFloorQc({
+    daily_blog_published: 0,
+    qualified_publish_candidates: 0,
+    stop_reason: "NO_DISTINCT_QUALIFIED_OPPORTUNITY_EXISTS_PROVEN",
+  });
+  return truthful.result === "PASS" ? "PASS" : "FAIL";
 }
 
 export function evaluateOnpvContentPriorityInversionQc(input: {
