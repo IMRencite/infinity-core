@@ -10,7 +10,6 @@ import { resolveScheduledAutonomousPublish } from "../scheduled-autonomous-publi
 import type { PortfolioOperatingTrigger } from "../scheduled-autonomous-publish-policy-v1";
 import {
   pickOccupancyNpvAutonomousBacklogCandidate,
-  pickOccupancyNpvAutonomousBuildCandidate,
   buildClubThrottleAutonomousPublishCycleDiagnostic,
   clubThrottleBacklogCandidateWorkType,
   countBacklogPublishCandidates,
@@ -18,6 +17,8 @@ import {
   evaluateOccupancyNpvTargetPrepublishQc,
   evaluateOnpvInternalLinkClusterQc,
 } from "../portfolio-operating-backlog-publish-v1";
+import { resolveOnpvDailyCreationAction } from "../onpv-daily-creation-priority-v1";
+import { mergeOnpvMaterializedBacklogArticles } from "../occupancynpv-materialized-backlog-overlay-v1";
 import { loadQuarantinedPortfolioCandidateRows } from "./durable-portfolio-candidate-state-v1";
 import {
   evaluateBacklogSourceVNext,
@@ -163,7 +164,7 @@ export async function orchestratePortfolioOperatingTick(input: {
 
   await loadQuarantinedPortfolioCandidateRows([CLUB_THROTTLE_VENTURE_ID, CRE_VENTURE_ID]);
 
-  const backlog = listOccupancyClubThrottleBacklogArticles();
+  const backlog = mergeOnpvMaterializedBacklogArticles(listOccupancyClubThrottleBacklogArticles());
   const backlogPublishCandidates = countBacklogPublishCandidates(backlog);
   const ctPublishDiagnostic = buildClubThrottleAutonomousPublishCycleDiagnostic(backlog);
   const ctContentContinuity = resolveLiveVentureContentContinuityV1({
@@ -272,50 +273,52 @@ export async function orchestratePortfolioOperatingTick(input: {
             }
           }
         } else {
-          const qualifiedPublish = countBacklogPublishCandidates(backlog);
-          const blogFloorUnmet = !ventureContinuity.daily_blog_target_met;
-          const maintenanceAllowed =
-            ventureContinuity.daily_blog_target_met || qualifiedPublish === 0;
-          const clusterQc = evaluateOnpvInternalLinkClusterQc(backlog);
-          if (maintenanceAllowed && clusterQc.ONPV_INTERNAL_LINK_CLUSTER_QC === "PASS") {
-            const refreshKey = "refresh:onpv-lease-internal-link-cluster:v1";
-            const refreshDeploy = await enqueuePortfolioJob({
+          const creation = resolveOnpvDailyCreationAction({
+            blog_floor_unmet: !ventureContinuity.daily_blog_target_met,
+            daily_blog_target_met: ventureContinuity.daily_blog_target_met,
+            articles: backlog,
+          });
+          if (creation.kind === "BLOG_BUILD_REPAIR" || creation.kind === "MATERIALIZE_AND_BUILD") {
+            const buildKey = `blog-build:${creation.candidate.slug}`;
+            const buildJob = await enqueuePortfolioJob({
               cycle_id,
               venture_id: vid,
-              job_type: "VENTURE_DEPLOY",
-              idempotency_key: refreshKey,
-              priority: 70,
+              job_type: "BLOG_BUILD",
+              idempotency_key: buildKey,
+              priority: 72,
               input_lineage: {
-                work_type: "INTERNAL_LINK_UPDATE",
-                path: "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
-                canonical_url: "https://occupancynpv.com/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
-                asset_identity: refreshKey,
+                slug: creation.candidate.slug,
+                path: creation.candidate.path,
+                canonical_url: creation.candidate.canonical_url,
+                work_type: "NEW_PUBLICATION",
+                opportunity_id:
+                  creation.kind === "MATERIALIZE_AND_BUILD" ? creation.opportunity_id : undefined,
               },
             });
-            if (refreshDeploy.job_id) {
+            if (buildJob.job_id) {
               jobsCreated += 1;
-              enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: vid, idempotency_key: refreshKey });
+              enqueued.push({ job_type: "BLOG_BUILD", venture_id: vid, idempotency_key: buildKey });
             }
-          } else if (blogFloorUnmet && qualifiedPublish === 0) {
-            const buildCandidate = pickOccupancyNpvAutonomousBuildCandidate(backlog);
-            if (buildCandidate) {
-              const buildKey = `blog-build:${buildCandidate.slug}`;
-              const buildJob = await enqueuePortfolioJob({
+          } else if (creation.kind === "MAINTENANCE_INTERNAL_LINK") {
+            const clusterQc = evaluateOnpvInternalLinkClusterQc(backlog);
+            if (clusterQc.ONPV_INTERNAL_LINK_CLUSTER_QC === "PASS") {
+              const refreshKey = "refresh:onpv-lease-internal-link-cluster:v1";
+              const refreshDeploy = await enqueuePortfolioJob({
                 cycle_id,
                 venture_id: vid,
-                job_type: "BLOG_BUILD",
-                idempotency_key: buildKey,
-                priority: 72,
+                job_type: "VENTURE_DEPLOY",
+                idempotency_key: refreshKey,
+                priority: 70,
                 input_lineage: {
-                  slug: buildCandidate.slug,
-                  path: buildCandidate.path,
-                  canonical_url: buildCandidate.canonical_url,
-                  work_type: "NEW_PUBLICATION",
+                  work_type: "INTERNAL_LINK_UPDATE",
+                  path: "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+                  canonical_url: "https://occupancynpv.com/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
+                  asset_identity: refreshKey,
                 },
               });
-              if (buildJob.job_id) {
+              if (refreshDeploy.job_id) {
                 jobsCreated += 1;
-                enqueued.push({ job_type: "BLOG_BUILD", venture_id: vid, idempotency_key: buildKey });
+                enqueued.push({ job_type: "VENTURE_DEPLOY", venture_id: vid, idempotency_key: refreshKey });
               }
             }
           }

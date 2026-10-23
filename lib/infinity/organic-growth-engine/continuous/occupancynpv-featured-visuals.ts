@@ -96,6 +96,15 @@ export const OCCUPANCYNPV_FEATURED_EDITORIAL: OccupancyFeaturedEditorial[] = [
     asset_file: "occ-v2-lease-numbers-packets.webp",
   },
   {
+    slug: "how-ti-amortization-affects-occupancy-cost-for-tenants",
+    path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Tenant improvement allowance amortization schedule beside occupancy-cost worksheets on a conference table.",
+    subject: "TI allowance amortization schedule with occupancy-cost comparison notes",
+    question: "How does tenant improvement allowance amortization affect occupancy cost for tenants?",
+    visual_role: "FEATURED_EDITORIAL_IMAGE",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+  },
+  {
     slug: "how-do-you-compare-two-commercial-lease-options",
     path: "/media/blog/occ-v2-lease-options-properties.webp",
     alt: "Two different commercial building models and site photos laid out for side-by-side lease option evaluation.",

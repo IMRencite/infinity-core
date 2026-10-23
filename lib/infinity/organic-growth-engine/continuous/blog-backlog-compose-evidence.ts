@@ -10,6 +10,7 @@ import type { BlogBacklogArticle } from "./blog-backlog-inventory";
 import type { RenderedBacklogEvidence } from "./blog-backlog-deploy-guard";
 import { occupancynpvExpansionDrafts } from "./occupancynpv-blog-expansion";
 import { occupancynpvAutonomousBacklogDrafts } from "./occupancynpv-autonomous-backlog-v1";
+import { listOnpvMaterializedBacklogDrafts } from "@/lib/infinity/autonomous-portfolio-operations/occupancynpv-materialized-backlog-overlay-v1";
 import { occupancynpvInterestRateDraft } from "./occupancynpv-blog";
 import { occupancynpvCamFirstYearDraft } from "./occupancynpv-cam-first-year-page";
 import { occupancyInfoVisualHtml, slugFromOccupancyPath } from "./occupancynpv-info-visuals";
@@ -75,7 +76,8 @@ function occupancyEvidence(article: BlogBacklogArticle): RenderedBacklogEvidence
   const pathNorm = article.path.replace(/\/+$/, "");
   const expansion = occupancynpvExpansionDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
   const autonomous = occupancynpvAutonomousBacklogDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
-  let draft = expansion ?? autonomous ?? null;
+  const materialized = listOnpvMaterializedBacklogDrafts().find((d) => d.canonical.replace(/\/+$/, "") === pathNorm);
+  let draft = expansion ?? autonomous ?? materialized ?? null;
   if (!draft && pathNorm.endsWith("/blog/occupancy-costs/cam-first-year")) {
     draft = occupancynpvCamFirstYearDraft();
   } else if (!draft && pathNorm.includes("how-interest-rates-affect-commercial-property-values")) {

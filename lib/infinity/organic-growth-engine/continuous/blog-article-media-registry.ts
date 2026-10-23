@@ -45,6 +45,7 @@ export const BLOG_AUTHORIZED_BACKLOG_PATHS = [
   "/blog/leasing/gross-lease-vs-net-lease-for-tenants/",
   "/blog/leasing/expense-stop-vs-base-year-for-tenants/",
   "/blog/leasing/how-free-rent-affects-occupancy-cost-for-tenants/",
+  "/blog/leasing/how-ti-amortization-affects-occupancy-cost-for-tenants/",
   "/blog/occupancy-costs/cam-first-year/",
 ] as const;
 

@@ -8,6 +8,7 @@ export type OccupancyInfoVisualSlug =
   | "gross-lease-vs-net-lease-for-tenants"
   | "expense-stop-vs-base-year-for-tenants"
   | "how-free-rent-affects-occupancy-cost-for-tenants"
+  | "how-ti-amortization-affects-occupancy-cost-for-tenants"
   | "cam-first-year"
   | "how-interest-rates-affect-commercial-property-values";
 
@@ -27,6 +28,19 @@ export function occupancyInfoVisualHtml(slug: OccupancyInfoVisualSlug): string {
       <tr><td>Stabilized NOI</td><td>$120,000</td></tr>
       <tr><td>Going-in cap rate</td><td>6.0%</td></tr>
       <tr><td>Indicated value</td><td>$120,000 ÷ 0.06 = $2,000,000</td></tr>
+    </tbody>
+  </table>
+</div>`;
+    case "how-ti-amortization-affects-occupancy-cost-for-tenants":
+      return `<div className="onpv-info-visual" data-onpv-info-visual="table" role="region" aria-label="TI amortization on occupancy-cost timeline">
+  <p className="onpv-table-label">Illustrative amortization month (hypothetical)</p>
+  <table className="onpv-info-table">
+    <thead><tr><th scope="col">Line</th><th scope="col">Monthly amount</th><th scope="col">Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Base rent</td><td>$8,500</td><td>Face rent per schedule</td></tr>
+      <tr><td>TI amortization</td><td>$1,200</td><td>Allowance spread per lease</td></tr>
+      <tr><td>CAM / recoveries</td><td>$950</td><td>Often separate from TI line</td></tr>
+      <tr><td>Occupancy-cost total</td><td>$10,650</td><td>Compare paths on this row</td></tr>
     </tbody>
   </table>
 </div>`;
@@ -142,6 +156,7 @@ export function slugFromOccupancyPath(path: string): OccupancyInfoVisualSlug | n
     "gross-lease-vs-net-lease-for-tenants",
     "expense-stop-vs-base-year-for-tenants",
     "how-free-rent-affects-occupancy-cost-for-tenants",
+    "how-ti-amortization-affects-occupancy-cost-for-tenants",
     "how-do-you-compare-two-commercial-lease-options",
     "what-numbers-do-you-need-to-compare-two-leases",
     "what-is-occupancy-cost-versus-rent",

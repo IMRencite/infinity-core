@@ -7,7 +7,8 @@ export type OccupancyBlogVisualSubject =
   | "LEASE_OPTIONS_TIMELINE"
   | "CAM_OPERATIONS_BUDGET"
   | "LEASE_CONCESSION_SCHEDULE"
-  | "LEASE_RECOVERY_MECHANICS";
+  | "LEASE_RECOVERY_MECHANICS"
+  | "TI_AMORTIZATION_SCHEDULE";
 
 export type OccupancyBlogImageBrief = {
   slug: string;
@@ -87,6 +88,19 @@ export const OCCUPANCY_BLOG_IMAGE_BRIEFS: OccupancyBlogImageBrief[] = [
     forbidden: ["duplicate lease-packet-only shot", "portrait"],
     generation_prompt:
       "Editorial photograph: meeting table with two distinct commercial property reference photos or architectural models side by side, plus two slim lease folders and a timeline notepad. Evaluating two real estate alternatives. No people. No readable text on models or paper. Visually different from a single-table lease-packet scene.",
+    portrait_primary: false,
+  },
+  {
+    slug: "how-ti-amortization-affects-occupancy-cost-for-tenants",
+    visual_concept_id: "occ-v2-ti-amortization-schedule",
+    primary_subject: "TI_AMORTIZATION_SCHEDULE",
+    asset_file: "occ-v2-lease-numbers-packets.webp",
+    public_path: "/media/blog/occ-v2-lease-numbers-packets.webp",
+    alt: "Tenant improvement allowance amortization schedule beside occupancy-cost worksheets on a conference table.",
+    required_visual_elements: ["TI amortization worksheet", "occupancy-cost table", "meeting table context"],
+    forbidden: ["portrait", "readable dollar amounts"],
+    generation_prompt:
+      "Editorial photograph: conference table with commercial lease TI allowance summary, amortization schedule printout, and occupancy-cost comparison worksheet. Tenant modeling amortization versus face rent. No people. No readable text or numbers.",
     portrait_primary: false,
   },
   {

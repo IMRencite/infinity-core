@@ -7,6 +7,13 @@ import { buildBacklogRenderedEvidenceMap } from "@/lib/infinity/organic-growth-e
 import { evaluateBlogArticlePreDeployQc } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-deploy-guard";
 import { isBacklogRefreshRevisionAlreadyCurrent } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-refresh-current-revision-v1";
 import { evaluateOccupancyNpvInternalLinkMaintenancePreDeployQc } from "./occupancynpv-internal-link-maintenance-prepublish-v1";
+import { mergeOnpvMaterializedBacklogArticles } from "./occupancynpv-materialized-backlog-overlay-v1";
+
+function withOnpvMaterializedBacklog(
+  articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
+): BlogBacklogArticle[] {
+  return mergeOnpvMaterializedBacklogArticles(articles);
+}
 
 const AUTONOMOUS_PUBLISH_EXCLUDED_SLUGS = new Set(["cam-first-year"]);
 
@@ -57,6 +64,7 @@ export function rankOccupancyNpvRepairableHeldRows(articles: BlogBacklogArticle[
 export function pickOccupancyNpvAutonomousBuildCandidate(
   articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
 ): BlogBacklogArticle | null {
+  articles = withOnpvMaterializedBacklog(articles);
   const ready = pickOccupancyNpvAutonomousBacklogCandidate(articles);
   if (ready) return null;
   return rankOccupancyNpvRepairableHeldRows(articles)[0]?.article ?? null;
@@ -115,13 +123,14 @@ export function pickUnpublishedEligibleOccupancyNpvBacklogFallbackV1(
 export function pickOccupancyNpvAutonomousBacklogCandidate(
   articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles(),
 ): BlogBacklogArticle | null {
+  articles = withOnpvMaterializedBacklog(articles);
   const ranked = rankOccupancyNpvAutonomousPublishRows(articles);
   if (ranked[0]?.article) return ranked[0].article;
   return pickUnpublishedEligibleOccupancyNpvBacklogFallbackV1(articles);
 }
 
 export function countBacklogPublishCandidates(articles: BlogBacklogArticle[] = listOccupancyClubThrottleBacklogArticles()): number {
-  return rankOccupancyNpvAutonomousPublishRows(articles).length;
+  return rankOccupancyNpvAutonomousPublishRows(withOnpvMaterializedBacklog(articles)).length;
 }
 
 export function rankClubThrottleAutonomousPublishRows(articles: BlogBacklogArticle[]) {
