@@ -13,6 +13,7 @@ import { verifyOccupancyNpvProductionPublication } from "../occupancynpv-product
 import { verifyClubThrottleProductionPublication } from "../club-throttle-production-publish-proof-v1";
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
 import { evaluateOccupancyNpvTargetPrepublishQc } from "../portfolio-operating-backlog-publish-v1";
+import { resolveOccupancyNpvTargetArticleForPrepublish } from "../onpv-target-article-resolution-v1";
 import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants";
 import { recordVentureGrowthLearning } from "../venture-growth-learning-loop-v1";
 import {
@@ -216,6 +217,9 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
               canonical_url: article.canonical_url,
               asset_identity: assetId,
               work_type: "NEW_PUBLICATION",
+              slug: article.slug,
+              opportunity_id: opportunityId,
+              materialized_candidate_key: lineage.materialized_candidate_key ?? article.asset_id,
             },
           });
         }
@@ -242,9 +246,24 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           job.venture_id === "occupancynpv" ||
           String(job.venture_id).includes("7e7e924e");
         if (expectedPath && isOnpvDeploy) {
+          const resolved = await resolveOccupancyNpvTargetArticleForPrepublish({
+            path: expectedPath,
+            work_type: String(lineage.work_type ?? ""),
+            opportunity_id: typeof lineage.opportunity_id === "string" ? lineage.opportunity_id : null,
+            materialized_candidate_key:
+              typeof lineage.materialized_candidate_key === "string"
+                ? lineage.materialized_candidate_key
+                : null,
+            slug: typeof lineage.slug === "string" ? lineage.slug : null,
+          });
           const prepublish = evaluateOccupancyNpvTargetPrepublishQc({
             path: expectedPath,
             work_type: String(lineage.work_type ?? ""),
+            resolved_article: resolved.article,
+            lineage_fail_reasons: resolved.fail_reasons,
+            articles: resolved.article
+              ? mergeOnpvMaterializedBacklogArticles(listOccupancyClubThrottleBacklogArticles())
+              : undefined,
           });
           if (prepublish.OCCUPANCYNPV_TARGET_PREPUBLISH_QC !== "PASS") {
             await completeJob(job, holder, {

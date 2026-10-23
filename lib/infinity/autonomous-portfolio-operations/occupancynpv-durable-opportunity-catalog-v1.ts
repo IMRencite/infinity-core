@@ -44,10 +44,19 @@ const COMMITTED_ONPV_OPPORTUNITIES: Omit<
     asset_type: "DECISION_SUPPORT_PAGE",
     distinctness_signal: "TI amortization timing vs face rent; not covered by free-rent or gross/net cluster",
     qualification_signal: "CRE leasing authority gap; passes venture isolation and decision-support intent",
+    /** Committed seed provenance (not live weekly discovery cron output). */
     source_evidence: "WEEKLY_OPPORTUNITY_DISCOVERY:onpv-lease-concessions-v1",
     idempotency_key: "onpv-opp-ti-amortization-occupancy-cost-v1:DECISION_SUPPORT_PAGE",
   },
 ];
+
+/** Maps catalog source_evidence strings to runtime semantics (reporting only). */
+export function classifyOnpvCommittedSeedSourceEvidence(source_evidence: string): string {
+  if (source_evidence.startsWith("WEEKLY_OPPORTUNITY_DISCOVERY:")) {
+    return "COMMITTED_SEED_FROM_DISCOVERY_EVIDENCE";
+  }
+  return source_evidence;
+}
 
 export function resetOnpvDurableOpportunityStoreForTests(): void {
   resetOnpvDurableOpportunityAuthoritativeStoreForTests();

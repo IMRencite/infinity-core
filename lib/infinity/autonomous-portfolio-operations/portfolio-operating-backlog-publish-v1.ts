@@ -273,9 +273,16 @@ export function evaluateOccupancyNpvTargetPrepublishQc(input: {
   path: string;
   work_type?: string;
   articles?: BlogBacklogArticle[];
+  resolved_article?: BlogBacklogArticle | null;
+  lineage_fail_reasons?: string[];
 }): { OCCUPANCYNPV_TARGET_PREPUBLISH_QC: "PASS" | "FAIL"; reasons: string[] } {
+  if (input.lineage_fail_reasons?.length) {
+    return { OCCUPANCYNPV_TARGET_PREPUBLISH_QC: "FAIL", reasons: [...input.lineage_fail_reasons] };
+  }
   const articles = input.articles ?? listOccupancyClubThrottleBacklogArticles();
-  const article = articles.find((a) => a.path.replace(/\/+$/, "") === input.path.replace(/\/+$/, ""));
+  const article =
+    input.resolved_article ??
+    articles.find((a) => a.path.replace(/\/+$/, "") === input.path.replace(/\/+$/, ""));
   if (!article) {
     return { OCCUPANCYNPV_TARGET_PREPUBLISH_QC: "FAIL", reasons: ["ARTICLE_NOT_FOUND"] };
   }
