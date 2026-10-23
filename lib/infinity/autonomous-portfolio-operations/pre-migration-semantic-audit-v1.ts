@@ -13,6 +13,7 @@ import {
 import {
   listOnpvCommittedDurableOpportunities,
   ONPV_DURABLE_OPPORTUNITY_CATALOG_V1,
+  onpvCommittedCatalogActualRole,
   onpvDurableOpportunityCatalogQc,
 } from "./occupancynpv-durable-opportunity-catalog-v1";
 import {
@@ -26,6 +27,8 @@ import { CRE_VENTURE_ID } from "@/lib/infinity/venture-operating-scale/constants
 import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { resetOnpvDurableOpportunityStoreForTests } from "./occupancynpv-durable-opportunity-catalog-v1";
 import { resetOnpvMaterializedBacklogOverlayForTests } from "./occupancynpv-materialized-backlog-overlay-v1";
+import { onpvSelectorDurableStateQc } from "./occupancynpv-opportunity-materialization-v1";
+import { onpvModuleMemoryIsCacheOnlyQc } from "./onpv-durable-opportunity-state-v1";
 
 export const ONPV_DAILY_CREATION_PRIORITY_CONTRACT = onpvDailyCreationPriorityContractDoc();
 
@@ -34,14 +37,11 @@ export function onpvDurableOpportunitySourceReport(): string {
   if (!row) return "NONE";
   return [
     `SOURCE=${ONPV_DURABLE_OPPORTUNITY_CATALOG_V1}`,
-    "STORAGE=in-memory committed catalog + lifecycle map (production path via weekly discovery output)",
-    "DURABLE=true",
-    "CONTAINS_ONPV=true",
+    "SEED=STATIC_COMMITTED_TYPESCRIPT",
+    "LIFECYCLE=autonomous_portfolio_candidate_state lane ONPV_OPPORTUNITY",
+    "MATERIALIZED_CANDIDATE=payload.materialized_article",
     `OPPORTUNITY_ID=${row.opportunity_id}`,
-    `DISTINCTNESS_SIGNAL=${row.distinctness_signal}`,
-    `QUALIFICATION_SIGNAL=${row.qualification_signal}`,
-    "CONSUMED_STATE=lifecycle DISCOVERED→MATERIALIZED",
-    "PRODUCTION_REACHABLE=true",
+    `ROLE=${onpvCommittedCatalogActualRole()}`,
   ].join("; ");
 }
 
@@ -68,7 +68,7 @@ export type PreMigrationSemanticAuditReport = {
   PRE_MIGRATION_RELEASE_GATE_QC: "PASS" | "FAIL";
 };
 
-export function evaluatePreMigrationSemanticAuditV1(): PreMigrationSemanticAuditReport {
+export async function evaluatePreMigrationSemanticAuditV1(): Promise<PreMigrationSemanticAuditReport> {
   resetOnpvDurableOpportunityStoreForTests();
   resetOnpvMaterializedBacklogOverlayForTests();
   const emptyPickHealthy = pickOccupancyNpvAutonomousBacklogCandidate() === null;
@@ -79,10 +79,11 @@ export function evaluatePreMigrationSemanticAuditV1(): PreMigrationSemanticAudit
     evaluateOnpvOpportunityDistinctnessQc({
       opportunity: listOnpvCommittedDurableOpportunities()[0]!,
     }).ONPV_OPPORTUNITY_DISTINCTNESS_QC === "PASS";
-  const maintenancePreempt = onpvMaintenancePreemptionRepairQc();
-  const maintenancePreserve = onpvMaintenancePreservationQc();
-  const idempotency = onpvCandidateMaterializationIdempotencyQc("onpv-opp-ti-amortization-occupancy-cost-v1");
-  const refillPath = materializerOk && distinctOk && idempotency === "PASS";
+  const maintenancePreempt = await onpvMaintenancePreemptionRepairQc();
+  const maintenancePreserve = await onpvMaintenancePreservationQc();
+  const idempotency = await onpvCandidateMaterializationIdempotencyQc("onpv-opp-ti-amortization-occupancy-cost-v1");
+  const refillPath =
+    materializerOk && distinctOk && idempotency === "PASS" && onpvSelectorDurableStateQc() === "PASS";
 
   const caseA = resolveLiveVentureContentContinuityV1({
     venture_id: CRE_VENTURE_ID,
@@ -100,6 +101,7 @@ export function evaluatePreMigrationSemanticAuditV1(): PreMigrationSemanticAudit
   const waiverQc = dailyBlogFloorWaiverRepairQc();
   const counters = cyclePublicationCounterSemanticsQc();
   const ctHydration = ctHydrationRemovalSemanticsQc();
+  const cacheOnly = onpvModuleMemoryIsCacheOnlyQc();
 
   const onpvSemanticsPass =
     emptyPickHealthy &&
@@ -108,7 +110,8 @@ export function evaluatePreMigrationSemanticAuditV1(): PreMigrationSemanticAudit
     maintenancePreempt === "PASS" &&
     maintenancePreserve === "PASS" &&
     idempotency === "PASS" &&
-    counters === "PASS";
+    counters === "PASS" &&
+    cacheOnly === "PASS";
 
   const allPass =
     onpvSemanticsPass &&
