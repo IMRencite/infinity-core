@@ -7,6 +7,9 @@ export function portfolioDurablePostgresConfigured(env: NodeJS.ProcessEnv = proc
 }
 
 export function createPortfolioDurableSupabase(env: NodeJS.ProcessEnv = process.env): PortfolioDurableSupabase | null {
+  if (env.NODE_ENV === "test" && env.PORTFOLIO_DURABLE_USE_LIVE_SUPABASE_IN_TEST !== "1") {
+    return null;
+  }
   const url = env.NEXT_PUBLIC_SUPABASE_URL;
   const key = env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
