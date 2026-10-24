@@ -3,7 +3,7 @@ import {
   createPortfolioDurableSupabase,
   PORTFOLIO_DURABLE_TABLES,
 } from "./portfolio-durable-supabase-v1";
-import type { PortfolioJobRow } from "./autonomous-portfolio-job-queue-v1";
+import { listTestPortfolioJobQueueForTests, type PortfolioJobRow } from "./autonomous-portfolio-job-queue-v1";
 
 export const ONE_PROVIDER_DEPLOYMENT_PER_FROZEN_REVISION_V1 =
   "ONE_PROVIDER_DEPLOYMENT_PER_FROZEN_REVISION_V1" as const;
@@ -165,7 +165,16 @@ export async function findVentureDeployJobForAsset(input: {
   asset_identity: string;
 }): Promise<PortfolioJobRow | null> {
   const client = createPortfolioDurableSupabase();
-  if (!client) return null;
+  if (!client) {
+    const rows = listTestPortfolioJobQueueForTests().filter(
+      (row) => row.cycle_id === input.cycle_id && row.job_type === "VENTURE_DEPLOY",
+    );
+    return (
+      rows.find(
+        (row) => String((row.input_lineage as Record<string, unknown>)?.asset_identity ?? "") === input.asset_identity,
+      ) ?? null
+    );
+  }
   const { data } = await client
     .from(PORTFOLIO_DURABLE_TABLES.jobs)
     .select("*")

@@ -12,6 +12,20 @@ import { countPortfolioJobsByCycle } from "./autonomous-portfolio-job-queue-v1";
 
 export const AUTONOMOUS_PORTFOLIO_DURABLE_EXECUTION_V1 = "AUTONOMOUS_PORTFOLIO_DURABLE_EXECUTION_V1" as const;
 
+const testPortfolioCycleRows = new Map<string, PortfolioCycleRow>();
+
+export function resetTestPortfolioCycleStoreForTests(): void {
+  testPortfolioCycleRows.clear();
+}
+
+export function seedTestPortfolioCycleForTests(row: PortfolioCycleRow): void {
+  testPortfolioCycleRows.set(row.cycle_id, { ...row });
+}
+
+export function getTestPortfolioCycleForTests(cycle_id: string): PortfolioCycleRow | null {
+  return testPortfolioCycleRows.get(cycle_id) ?? null;
+}
+
 export type PortfolioCycleStatus =
   | "QUEUED"
   | "RUNNING"
@@ -107,7 +121,21 @@ export async function patchPortfolioCycle(
   >,
 ): Promise<void> {
   const client = createPortfolioDurableSupabase();
-  if (!client) return;
+  if (!client) {
+    const existing = testPortfolioCycleRows.get(cycle_id);
+    if (!existing) return;
+    const { payload: incomingPayload, ...restPatch } = patch;
+    const updateRow: PortfolioCycleRow = {
+      ...existing,
+      ...restPatch,
+      payload:
+        incomingPayload !== undefined
+          ? preserveImmutableCyclePayloadFields(existing.payload ?? {}, incomingPayload)
+          : existing.payload,
+    };
+    testPortfolioCycleRows.set(cycle_id, updateRow);
+    return;
+  }
   const { payload: incomingPayload, ...restPatch } = patch;
   const updateRow: Record<string, unknown> = { ...restPatch, updated_at: new Date().toISOString() };
   if (incomingPayload !== undefined) {
@@ -178,7 +206,9 @@ export async function reconcileQualityHeldCreativeJobsForCycle(cycle_id: string)
 
 export async function getPortfolioCycle(cycle_id: string): Promise<PortfolioCycleRow | null> {
   const client = createPortfolioDurableSupabase();
-  if (!client) return null;
+  if (!client) {
+    return testPortfolioCycleRows.get(cycle_id) ?? null;
+  }
   const { data } = await client.from(PORTFOLIO_DURABLE_TABLES.cycles).select("*").eq("cycle_id", cycle_id).maybeSingle();
   return (data as PortfolioCycleRow | null) ?? null;
 }

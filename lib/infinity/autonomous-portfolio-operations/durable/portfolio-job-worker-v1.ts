@@ -43,6 +43,7 @@ import { mergeOnpvMaterializedBacklogArticles } from "../occupancynpv-materializ
 import {
   markOnpvOpportunityBuilt,
   markOnpvOpportunityPublished,
+  listOnpvPublishedMaterializedArticlesForSiteCompose,
   resolveOnpvMaterializedArticleBySlug,
 } from "../onpv-durable-opportunity-state-v1";
 import {
@@ -288,9 +289,28 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           }
           onpvResolvedArticle = resolved.article;
         }
-        const onpvBacklogPublications =
-          isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION" ? [onpvResolvedArticle] : undefined;
-        const onpvForceFresh = Boolean(onpvBacklogPublications?.length);
+        const normArticlePath = (path: string) => path.replace(/\/+$/, "").toLowerCase();
+        const publishedForCompose = isOnpvDeploy ? await listOnpvPublishedMaterializedArticlesForSiteCompose() : [];
+        const composePathSet = new Set<string>();
+        const onpvBacklogArticles: BlogBacklogArticle[] = [];
+        for (const article of publishedForCompose) {
+          const key = normArticlePath(article.path);
+          if (!composePathSet.has(key)) {
+            onpvBacklogArticles.push(article);
+            composePathSet.add(key);
+          }
+        }
+        if (isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION") {
+          const key = normArticlePath(onpvResolvedArticle.path);
+          if (!composePathSet.has(key)) {
+            onpvBacklogArticles.push(onpvResolvedArticle);
+            composePathSet.add(key);
+          }
+        }
+        const onpvBacklogPublications = isOnpvDeploy && onpvBacklogArticles.length > 0 ? onpvBacklogArticles : undefined;
+        const onpvForceFresh = Boolean(
+          isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION",
+        );
         const bundleStart = new Date().toISOString();
         const deployVentureId =
           job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"

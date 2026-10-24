@@ -320,6 +320,20 @@ export async function markOnpvOpportunityPublished(input: {
   });
 }
 
+let testDropPublishedInventoryForSiteCompose = false;
+
+export function setTestDropPublishedInventoryForSiteCompose(enabled: boolean): void {
+  testDropPublishedInventoryForSiteCompose = enabled;
+}
+
+export async function listOnpvPublishedMaterializedArticlesForSiteCompose(): Promise<BlogBacklogArticle[]> {
+  if (testDropPublishedInventoryForSiteCompose) return [];
+  const states = await listDurableOnpvOpportunityStates();
+  return states
+    .filter((s) => s.opportunity_lifecycle === "PUBLISHED" && s.materialized_article)
+    .map((s) => s.materialized_article as BlogBacklogArticle);
+}
+
 export function listDurableOnpvMaterializedArticlesFromCache(): BlogBacklogArticle[] {
   const articles: BlogBacklogArticle[] = [];
   for (const row of testAuthoritativeRows.values()) {
