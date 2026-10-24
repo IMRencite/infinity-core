@@ -57,8 +57,17 @@ import { evaluateContentQualityFramework } from "./content-quality-framework";
 import { FIRST_LEASE_INPUTS_ROUTE } from "../obligation/opportunity";
 import { classifyPublishThrow } from "./destination-source-pack";
 import { evaluateBlogMediaDeployArtifactQc, mergeBlogMediaIntoDeployFiles } from "./blog-deploy-media-bundle";
+import type { BlogBacklogArticle } from "./blog-backlog-inventory";
+import {
+  evaluateOnpvBuildArtifactPublicationIdentity,
+  injectOccupancyNpvBacklogPublicationsIntoSite,
+} from "./occupancynpv-backlog-publication-site-v1";
 
 type ArtifactFile = { path: string; content: string; encoding?: "utf8" | "base64" };
+
+export type ComposeOccupancyNpvOrganicLiveFilesInput = {
+  backlog_publications?: BlogBacklogArticle[];
+};
 
 export const OCCUPANCYNPV_LIVE_PUBLISHER_ID = "occupancynpv_vercel_source_bundle" as const;
 
@@ -122,16 +131,25 @@ export function injectOccupancyNpvOrganicPage(files: ArtifactFile[], input: {
   return next;
 }
 
-export function composeOccupancyNpvOrganicLiveFilesSafe(): {
+export function composeOccupancyNpvOrganicLiveFilesSafe(input?: ComposeOccupancyNpvOrganicLiveFilesInput): {
   ok: boolean;
   files: ArtifactFile[];
   pagePath: string;
   reason: string | null;
+  primary_publication_url?: string | null;
+  artifact_identity_qc?: ReturnType<typeof evaluateOnpvBuildArtifactPublicationIdentity>;
   exception?: ReturnType<typeof classifyPublishThrow>["exception"];
 } {
   try {
-    const composed = composeOccupancyNpvOrganicLiveFiles();
-    return { ok: true, files: composed.files, pagePath: composed.pagePath, reason: null };
+    const composed = composeOccupancyNpvOrganicLiveFiles(input);
+    return {
+      ok: true,
+      files: composed.files,
+      pagePath: composed.pagePath,
+      primary_publication_url: composed.primary_publication_url ?? null,
+      artifact_identity_qc: composed.artifact_identity_qc,
+      reason: null,
+    };
   } catch (error) {
     const classified = classifyPublishThrow(error);
     return {
@@ -144,7 +162,12 @@ export function composeOccupancyNpvOrganicLiveFilesSafe(): {
   }
 }
 
-export function composeOccupancyNpvOrganicLiveFiles(): { files: ArtifactFile[]; pagePath: string } {
+export function composeOccupancyNpvOrganicLiveFiles(input?: ComposeOccupancyNpvOrganicLiveFilesInput): {
+  files: ArtifactFile[];
+  pagePath: string;
+  primary_publication_url?: string | null;
+  artifact_identity_qc?: ReturnType<typeof evaluateOnpvBuildArtifactPublicationIdentity>;
+} {
   const blogs = [occupancynpvInterestRateDraft(), occupancynpvCamFirstYearDraft()];
   if (blogs.some((draft) => evaluateContentQualityFramework(draft).result === "FAIL")) {
     throw new Error("CONTENT_QUALITY_FRAMEWORK_FAIL");
@@ -278,7 +301,20 @@ export default nextConfig;
       .replace(/href="\/early-access"/g, 'href="/pricing"')
       .replace(/href: "\/early-access"/g, 'href: "/pricing"'),
   }));
-  return { files, pagePath: filePathForRoute(OCCUPANCYNPV_LIVE_CAP_RATE_PATH) };
+  let primary_publication_url: string | null = null;
+  let artifact_identity_qc: ReturnType<typeof evaluateOnpvBuildArtifactPublicationIdentity> | undefined;
+  const publications = input?.backlog_publications ?? [];
+  if (publications.length > 0) {
+    const injected = injectOccupancyNpvBacklogPublicationsIntoSite(files, publications);
+    files = injected.files;
+    const primary = publications[0]!;
+    primary_publication_url = primary.canonical_url.replace(/\/+$/, "");
+    artifact_identity_qc = evaluateOnpvBuildArtifactPublicationIdentity({ files, article: primary });
+    if (artifact_identity_qc.ONPV_BUILD_ARTIFACT_ARTICLE_IDENTITY_QC !== "PASS") {
+      throw new Error(`ONPV_BUILD_ARTIFACT_IDENTITY_FAIL:${artifact_identity_qc.reasons.join(",")}`);
+    }
+  }
+  return { files, pagePath: filePathForRoute(OCCUPANCYNPV_LIVE_CAP_RATE_PATH), primary_publication_url, artifact_identity_qc };
 }
 
 export function createOccupancyNpvLivePublisher(): OrganicPublisherAdapter & {
@@ -447,6 +483,10 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
   aliasProduction?: boolean;
   /** Reconcile an existing Vercel deployment instead of POSTing a new bundle. */
   priorDeploymentId?: string | null;
+  /** Candidate-scoped NEW_PUBLICATION articles merged into full site artifact before deploy. */
+  backlogPublications?: BlogBacklogArticle[];
+  /** When true, always POST a fresh provider bundle (no prior-deployment reuse). */
+  forceFreshProviderPost?: boolean;
   onDeploymentSubmitted?: (deployment_id: string) => Promise<void> | void;
 } = {}) {
   const aliasProduction = input.aliasProduction !== false;
@@ -455,7 +495,10 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     reloadVercelFromLocalFile();
     await activateVercelTokenForProject({ projectId: CRE_VERCEL_PROJECT_ID });
   }
-  const composedSafe = composeOccupancyNpvOrganicLiveFilesSafe();
+  const composedSafe = composeOccupancyNpvOrganicLiveFilesSafe({
+    backlog_publications: input.backlogPublications,
+  });
+  const fallbackLiveUrl = `https://occupancynpv.com${OCCUPANCYNPV_LIVE_CAP_RATE_PATH.replace(/\/+$/, "")}`;
   if (!composedSafe.ok) {
     return {
       adapter: OCCUPANCYNPV_LIVE_PUBLISHER_ID,
@@ -467,14 +510,18 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
       preview_url: null,
       deployed: false,
       aliased: false,
-      live_url: `https://occupancynpv.com${OCCUPANCYNPV_LIVE_CAP_RATE_PATH.replace(/\/+$/, "")}`,
+      live_url: composedSafe.primary_publication_url ?? fallbackLiveUrl,
       live_status: 0,
       live_html: "",
       safe_error: composedSafe.reason,
       exception: composedSafe.exception ?? null,
     };
   }
-  const composed = { files: composedSafe.files, pagePath: composedSafe.pagePath };
+  const composed = {
+    files: composedSafe.files,
+    pagePath: composedSafe.pagePath,
+    primary_publication_url: composedSafe.primary_publication_url,
+  };
   const pageReady = composed.files.some((file) => file.path.replace(/\\/g, "/") === composed.pagePath)
     && composed.files.some((file) => file.path.replace(/\\/g, "/") === "app/pricing/page.tsx");
   let deploymentId: string | null = null;
@@ -489,7 +536,10 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     if (!vercel.tokenPresent()) {
       safeError = "VERCEL_TOKEN_MISSING";
     } else {
-      const priorId = input.priorDeploymentId?.trim();
+      const priorId =
+        input.forceFreshProviderPost || (input.backlogPublications?.length ?? 0) > 0
+          ? null
+          : input.priorDeploymentId?.trim();
       if (priorId?.startsWith("dpl_")) {
         deploymentId = priorId;
         const polled = await pollOccupancyNpvDeploymentToReady({
@@ -561,7 +611,13 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     }
   }
 
-  const liveUrl = `https://occupancynpv.com${OCCUPANCYNPV_LIVE_CAP_RATE_PATH.replace(/\/+$/, "")}`;
+  const candidateLiveUrl = composed.primary_publication_url
+    ? composed.primary_publication_url.startsWith("http")
+      ? composed.primary_publication_url.replace(/\/+$/, "")
+      : `https://occupancynpv.com${composed.primary_publication_url.replace(/\/+$/, "")}`
+    : null;
+  const liveUrl =
+    candidateLiveUrl ?? `https://occupancynpv.com${OCCUPANCYNPV_LIVE_CAP_RATE_PATH.replace(/\/+$/, "")}`;
   let live = { ok: false, status: 0, body: "", final_url: liveUrl };
   if (deployed && aliased) {
     for (let attempt = 0; attempt < 8; attempt += 1) {

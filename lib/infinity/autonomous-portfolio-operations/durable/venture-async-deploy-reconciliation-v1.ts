@@ -25,6 +25,9 @@ export type VentureDeployOutputLineage = {
   production_url?: string | null;
   provider_post_count?: number;
   submitted_at?: string;
+  deploy_result?: string;
+  publication_result?: string;
+  published_claim?: boolean;
 };
 
 const ACTIVE_VERCEL_STATES = new Set(["QUEUED", "BUILDING", "INITIALIZING", "READY"]);

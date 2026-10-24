@@ -8,7 +8,11 @@ import { classifyPortfolioJobRetry } from "./portfolio-job-retry-policy-v1";
 import { executeDurableContentSelfHealJob } from "./durable-content-self-healing-v1";
 import { executeBoundedVentureDeploy } from "./async-venture-deployment-reconciliation-v1";
 import { persistAutonomousDeployTelemetry } from "./autonomous-deploy-telemetry-v1";
-import { publicationAssetIdentity, registerSuccessfulPublication } from "./autonomous-publication-idempotency-v1";
+import {
+  publicationAssetIdentity,
+  readPublicationRegistry,
+  registerSuccessfulPublication,
+} from "./autonomous-publication-idempotency-v1";
 import { verifyOccupancyNpvProductionPublication } from "../occupancynpv-production-publish-proof-v1";
 import { verifyClubThrottleProductionPublication } from "../club-throttle-production-publish-proof-v1";
 import { CLUB_THROTTLE_VENTURE_ID } from "@/lib/infinity/commerce/club-throttle";
@@ -38,8 +42,15 @@ import { listOccupancyClubThrottleBacklogArticles } from "@/lib/infinity/organic
 import { mergeOnpvMaterializedBacklogArticles } from "../occupancynpv-materialized-backlog-overlay-v1";
 import {
   markOnpvOpportunityBuilt,
+  markOnpvOpportunityPublished,
   resolveOnpvMaterializedArticleBySlug,
 } from "../onpv-durable-opportunity-state-v1";
+import {
+  buildOnpvPublicationIdentityFromJobLineage,
+  evaluateOnpvPublicationIdentityParity,
+} from "../onpv-publication-identity-v1";
+import type { BlogBacklogArticle } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
+import { incrementPortfolioCyclePublicationCounters } from "./autonomous-portfolio-durable-execution-v1";
 import {
   evaluateAutonomousStorefrontPublicationAllowed,
   evaluateStorefrontManufacturingSeparationQc,
@@ -241,10 +252,12 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
       }
       case "VENTURE_DEPLOY": {
         const expectedPath = String(lineage.path ?? "");
+        const workType = String(lineage.work_type ?? "NEW_PUBLICATION");
         const isOnpvDeploy =
           job.venture_id === CRE_VENTURE_ID ||
           job.venture_id === "occupancynpv" ||
           String(job.venture_id).includes("7e7e924e");
+        let onpvResolvedArticle: BlogBacklogArticle | null = null;
         if (expectedPath && isOnpvDeploy) {
           const resolved = await resolveOccupancyNpvTargetArticleForPrepublish({
             path: expectedPath,
@@ -273,7 +286,11 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             });
             return;
           }
+          onpvResolvedArticle = resolved.article;
         }
+        const onpvBacklogPublications =
+          isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION" ? [onpvResolvedArticle] : undefined;
+        const onpvForceFresh = Boolean(onpvBacklogPublications?.length);
         const bundleStart = new Date().toISOString();
         const deployVentureId =
           job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"
@@ -287,7 +304,7 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
         });
         let priorDeploymentId = authoritative.authoritative_deployment_id ?? readPriorDeploymentIdFromLineage(job.output_lineage);
         const allowFreshPost = Boolean((job.output_lineage as Record<string, unknown>)?.allow_fresh_provider_post);
-        if (allowFreshPost) priorDeploymentId = null;
+        if (allowFreshPost || onpvForceFresh) priorDeploymentId = null;
         const deploy = await executeBoundedVentureDeploy({
           venture_id: deployVentureId,
           prior_deployment_id: priorDeploymentId,
@@ -298,6 +315,8 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             authoritative_deployment_id: priorDeploymentId,
             superseded_deployment_ids: authoritative.superseded_deployment_ids,
           }),
+          onpv_backlog_publications: onpvBacklogPublications,
+          onpv_force_fresh_provider_post: onpvForceFresh,
           on_deployment_submitted: async (deployment_id) => {
             await patchPortfolioJobFields(job.job_id, {
               output_lineage: mergeVentureDeployOutputLineage(job.output_lineage, {
@@ -311,14 +330,44 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             });
           },
         });
+        const canonicalOutput = String(lineage.canonical_url ?? "").trim();
+        const productionUrlForOutput =
+          deploy.phase === "COMPLETED"
+            ? isOnpvDeploy && canonicalOutput
+              ? canonicalOutput.replace(/\/+$/, "")
+              : deploy.production_url ?? undefined
+            : undefined;
+        if (onpvResolvedArticle && productionUrlForOutput) {
+          const parity = evaluateOnpvPublicationIdentityParity({
+            identity: buildOnpvPublicationIdentityFromJobLineage({
+              lineage,
+              article: onpvResolvedArticle,
+              venture_id: deployVentureId,
+            }),
+            article: onpvResolvedArticle,
+            production_url: productionUrlForOutput,
+          });
+          if (parity.ONPV_PUBLICATION_IDENTITY_PARITY_QC !== "PASS") {
+            await completeJob(job, holder, {
+              status: "FAILED",
+              safe_error: `ONPV_DEPLOY_OUTPUT_IDENTITY_FAIL:${parity.reasons.join(",")}`,
+              output_lineage: parity as unknown as Record<string, unknown>,
+            });
+            return;
+          }
+        }
+        const deployCommandOk = deploy.phase === "COMPLETED" && deploy.ok;
         const outputPatch = mergeVentureDeployOutputLineage(job.output_lineage, {
           deployment_id: deploy.deployment_id,
           authoritative_deployment_id: deploy.deployment_id ?? priorDeploymentId,
-          production_url: deploy.phase === "COMPLETED" ? deploy.production_url : undefined,
+          production_url: productionUrlForOutput,
           asset_identity: frozenRevision.asset_id,
           frozen_bundle_manifest_hash: deploy.frozen_bundle_manifest_hash ?? frozenRevision.frozen_bundle_manifest_hash,
           superseded_deployment_ids: authoritative.superseded_deployment_ids,
           provider_post_count: deploy.provider_post_count,
+          deploy_result: deployCommandOk ? "DEPLOYED_PENDING_VERIFY" : "DEPLOY_FAILED",
+          publication_result: deployCommandOk ? "PENDING_VERIFY" : "NOT_PUBLISHED",
+          published_claim: false,
         });
         await persistAutonomousDeployTelemetry({
           cycle_id: job.cycle_id,
@@ -351,33 +400,15 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           });
           return;
         }
-        if (deploy.ok) {
-          const workType = String(lineage.work_type ?? "NEW_PUBLICATION");
-          const { incrementPortfolioCyclePublicationCounters } = await import(
-            "./autonomous-portfolio-durable-execution-v1"
-          );
-          if (workType === "INTERNAL_LINK_UPDATE") {
-            await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
-              maintenance_actions_completed: 1,
-            });
-          } else if (workType === "CONTENT_REFRESH") {
-            await incrementPortfolioCyclePublicationCounters(job.cycle_id, { refreshes_completed: 1 });
-          } else {
-            await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
-              new_assets_published: 1,
-              blogs_published: 1,
-            });
-          }
-        }
         const terminalDeployFail =
           deploy.safe_error === "VERCEL_DEPLOYMENT_FAILED" || deploy.safe_error === "VERCEL_DEPLOYMENT_CREATE_FAILED";
-        if (!deploy.ok && terminalDeployFail) {
+        if (!deployCommandOk && terminalDeployFail) {
           outputPatch.allow_fresh_provider_post = true;
           outputPatch.authoritative_deployment_id = null;
           outputPatch.deployment_id = null;
         }
         await completeJob(job, holder, {
-          status: deploy.ok ? "COMPLETED" : "FAILED",
+          status: deployCommandOk ? "COMPLETED" : "FAILED",
           safe_error: deploy.safe_error,
           output_lineage: outputPatch,
         });
@@ -426,14 +457,41 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           upstream_blocked: false,
         });
         if (proof.AUTONOMOUS_PRODUCTION_PUBLISH_PROOF_QC === "PASS") {
+          const ventureKey = isClubThrottle ? "club-throttle" : "occupancynpv";
+          const priorReg = await readPublicationRegistry({ venture_id: ventureKey, asset_identity: assetIdentity });
           await registerSuccessfulPublication({
-            venture_id: isClubThrottle ? "club-throttle" : "occupancynpv",
+            venture_id: ventureKey,
             asset_identity: assetIdentity,
             canonical_path: expected_path,
             content_revision: assetIdentity,
             production_url: canonical_url,
-            payload: { proof },
+            deployment_id: readPriorDeploymentIdFromLineage(upstream?.output_lineage),
+            payload: { proof, work_type: lineage.work_type ?? null },
           });
+          if (!priorReg.published) {
+            const verifyWorkType = String(lineage.work_type ?? "NEW_PUBLICATION");
+            if (verifyWorkType === "INTERNAL_LINK_UPDATE") {
+              await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
+                maintenance_actions_completed: 1,
+              });
+            } else if (verifyWorkType === "CONTENT_REFRESH") {
+              await incrementPortfolioCyclePublicationCounters(job.cycle_id, { refreshes_completed: 1 });
+            } else {
+              await incrementPortfolioCyclePublicationCounters(job.cycle_id, {
+                new_assets_published: 1,
+                blogs_published: 1,
+              });
+            }
+          }
+          if (!isClubThrottle) {
+            const oppId = typeof lineage.opportunity_id === "string" ? lineage.opportunity_id : null;
+            if (oppId) {
+              await markOnpvOpportunityPublished({
+                opportunity_id: oppId,
+                published_at: new Date().toISOString(),
+              });
+            }
+          }
         }
         await persistAutonomousDeployTelemetry({
           cycle_id: job.cycle_id,

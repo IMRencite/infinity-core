@@ -239,6 +239,11 @@ export async function orchestratePortfolioOperatingTick(input: {
           });
           const reg = await readPublicationRegistry({ venture_id: "occupancynpv", asset_identity: assetId });
           if (!reg.published) {
+            const workType = clubThrottleBacklogCandidateWorkType(candidate);
+            const materializedOpportunityId =
+              candidate.asset_id?.startsWith("onpv-materialized-")
+                ? candidate.asset_id.replace(/^onpv-materialized-/, "")
+                : null;
             const deployKey = `deploy:${assetId}`;
             const deploy = await enqueuePortfolioJob({
               cycle_id,
@@ -250,6 +255,10 @@ export async function orchestratePortfolioOperatingTick(input: {
                 path: candidate.path,
                 canonical_url: candidate.canonical_url,
                 asset_identity: assetId,
+                work_type: workType,
+                slug: candidate.slug,
+                opportunity_id: materializedOpportunityId,
+                materialized_candidate_key: candidate.asset_id ?? null,
               },
             });
             if (deploy.job_id) {
@@ -266,6 +275,10 @@ export async function orchestratePortfolioOperatingTick(input: {
                   path: candidate.path,
                   canonical_url: candidate.canonical_url,
                   asset_identity: assetId,
+                  work_type: workType,
+                  slug: candidate.slug,
+                  opportunity_id: materializedOpportunityId,
+                  materialized_candidate_key: candidate.asset_id ?? null,
                 },
               });
               if (verify.job_id) {

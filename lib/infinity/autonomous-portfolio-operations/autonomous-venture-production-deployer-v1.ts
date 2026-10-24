@@ -1,6 +1,7 @@
 import { loadServerEnvFromLocalFile, reloadVercelFromLocalFile } from "@/lib/infinity/communication-provider/load-local-env";
 import { activateVercelTokenForProject } from "@/lib/infinity/commercialization/providers/vercel/token-select";
 import { deployOccupancyNpvOrganicLivePage } from "@/lib/infinity/organic-growth-engine/continuous/occupancynpv-publisher";
+import type { BlogBacklogArticle } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 import { executeClubThrottleProductionDeployment } from "@/lib/infinity/commerce/club-throttle-deployment";
 import { autonomousExistingVentureDeployAuthorityQc } from "./autonomous-existing-venture-deploy-authority-v1";
 import { auditPortfolioDeployCredentials } from "./portfolio-deploy-credentials-v1";
@@ -44,6 +45,8 @@ export async function deployApprovedVentureProductionBundle(input: {
   frozen_revision?: FrozenVentureDeployRevision;
   persisted_deploy_lineage?: Record<string, unknown>;
   on_deployment_submitted?: (deployment_id: string) => Promise<void> | void;
+  onpv_backlog_publications?: BlogBacklogArticle[];
+  onpv_force_fresh_provider_post?: boolean;
 }): Promise<VentureProductionDeployResult> {
   const target = resolveVentureDeployTarget(input.venture_id);
   if (!target) {
@@ -110,6 +113,8 @@ export async function deployApprovedVentureProductionBundle(input: {
       pollAttempts: input.poll_attempts ?? 45,
       pollDelayMs: 8000,
       priorDeploymentId: prior,
+      backlogPublications: input.onpv_backlog_publications,
+      forceFreshProviderPost: input.onpv_force_fresh_provider_post ?? (input.onpv_backlog_publications?.length ?? 0) > 0,
       onDeploymentSubmitted: input.on_deployment_submitted,
     });
     return {

@@ -1,5 +1,6 @@
 import { deployApprovedVentureProductionBundle } from "../autonomous-venture-production-deployer-v1";
 import type { FrozenVentureDeployRevision } from "./venture-async-deploy-reconciliation-v1";
+import type { BlogBacklogArticle } from "@/lib/infinity/organic-growth-engine/continuous/blog-backlog-inventory";
 
 export const ASYNC_VENTURE_DEPLOYMENT_RECONCILIATION_V1 = "ASYNC_VENTURE_DEPLOYMENT_RECONCILIATION_V1" as const;
 
@@ -29,6 +30,8 @@ export async function executeBoundedVentureDeploy(input: {
   persisted_deploy_lineage?: Record<string, unknown>;
   short_poll?: boolean;
   on_deployment_submitted?: (deployment_id: string) => Promise<void> | void;
+  onpv_backlog_publications?: BlogBacklogArticle[];
+  onpv_force_fresh_provider_post?: boolean;
 }): Promise<AsyncDeployJobResult> {
   const deployed = await deployApprovedVentureProductionBundle({
     venture_id: input.venture_id,
@@ -38,6 +41,8 @@ export async function executeBoundedVentureDeploy(input: {
     frozen_revision: input.frozen_revision,
     persisted_deploy_lineage: input.persisted_deploy_lineage,
     on_deployment_submitted: input.on_deployment_submitted,
+    onpv_backlog_publications: input.onpv_backlog_publications,
+    onpv_force_fresh_provider_post: input.onpv_force_fresh_provider_post,
   });
 
   const manifestHash = input.frozen_revision?.frozen_bundle_manifest_hash;
