@@ -131,30 +131,33 @@ export async function listDeploymentIdsForJob(job_id: string): Promise<
   return out;
 }
 
-/** Earliest telemetry deployment for same revision; prefer lineage authoritative id when set. */
+/** Prefer durable output lineage id; telemetry supplies superseded duplicates only. */
 export function resolveAuthoritativeDeploymentId(input: {
   output_lineage: Record<string, unknown> | undefined;
   telemetry_deployments: Array<{ deployment_id: string; created_at: string; build_status: string | null }>;
 }): { authoritative_deployment_id: string | null; superseded_deployment_ids: string[]; selection_reason: string } {
+  const fromLineage = readPriorDeploymentIdFromLineage(input.output_lineage);
+  const lineageSuperseded = Array.isArray(input.output_lineage?.superseded_deployment_ids)
+    ? (input.output_lineage!.superseded_deployment_ids as string[]).filter((id) => typeof id === "string")
+    : [];
+  if (fromLineage) {
+    const superseded = new Set<string>(lineageSuperseded.filter((id) => id !== fromLineage));
+    for (const row of input.telemetry_deployments) {
+      if (row.deployment_id !== fromLineage) superseded.add(row.deployment_id);
+    }
+    return {
+      authoritative_deployment_id: fromLineage,
+      superseded_deployment_ids: [...superseded],
+      selection_reason: "OUTPUT_LINEAGE_AUTHORITATIVE",
+    };
+  }
   if (input.telemetry_deployments.length > 0) {
     const earliest = input.telemetry_deployments[0]!.deployment_id;
     const superseded = input.telemetry_deployments.slice(1).map((row) => row.deployment_id);
-    const fromLineage = readPriorDeploymentIdFromLineage(input.output_lineage);
-    if (fromLineage && fromLineage !== earliest && !superseded.includes(fromLineage)) {
-      superseded.push(fromLineage);
-    }
     return {
       authoritative_deployment_id: earliest,
       superseded_deployment_ids: superseded.filter((id) => id !== earliest),
       selection_reason: "EARLIEST_TELEMETRY_DEPLOYMENT",
-    };
-  }
-  const fromLineage = readPriorDeploymentIdFromLineage(input.output_lineage);
-  if (fromLineage) {
-    return {
-      authoritative_deployment_id: fromLineage,
-      superseded_deployment_ids: [],
-      selection_reason: "OUTPUT_LINEAGE_AUTHORITATIVE",
     };
   }
   return { authoritative_deployment_id: null, superseded_deployment_ids: [], selection_reason: "NO_TELEMETRY" };

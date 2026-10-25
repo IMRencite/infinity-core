@@ -71,11 +71,68 @@ export function listTestPortfolioJobQueueForTests(): PortfolioJobRow[] {
 
 export function patchTestPortfolioJobForTests(
   job_id: string,
-  patch: Partial<Pick<PortfolioJobRow, "status" | "output_lineage" | "safe_error">>,
+  patch: Partial<
+    Pick<
+      PortfolioJobRow,
+      "status" | "output_lineage" | "safe_error" | "eligible_at" | "completed_at" | "attempt_count" | "lease_holder" | "lease_expires_at"
+    >
+  >,
 ): void {
   const row = testPortfolioJobRows.find((j) => j.job_id === job_id);
   if (!row) return;
   Object.assign(row, patch);
+}
+
+function pendingJobStatuses(): PortfolioJobStatus[] {
+  return ["QUEUED", "IN_PROGRESS"];
+}
+
+export function getNextPendingPortfolioJobEligibleAtForTests(cycle_id?: string): string | null {
+  const now = Date.now();
+  let minMs: number | null = null;
+  for (const row of testPortfolioJobRows) {
+    if (cycle_id && row.cycle_id !== cycle_id) continue;
+    if (!pendingJobStatuses().includes(row.status)) continue;
+    if (row.completed_at) continue;
+    const eligibleMs = Date.parse(row.eligible_at);
+    if (!Number.isFinite(eligibleMs)) continue;
+    if (eligibleMs <= now) continue;
+    if (minMs === null || eligibleMs < minMs) minMs = eligibleMs;
+  }
+  return minMs === null ? null : new Date(minMs).toISOString();
+}
+
+export async function getNextPendingPortfolioJobEligibleAt(cycle_id?: string): Promise<string | null> {
+  if (process.env.NODE_ENV === "test") {
+    return getNextPendingPortfolioJobEligibleAtForTests(cycle_id);
+  }
+  const client = createPortfolioDurableSupabase();
+  if (!client) return null;
+  let query = client
+    .from(PORTFOLIO_DURABLE_TABLES.jobs)
+    .select("eligible_at")
+    .in("status", pendingJobStatuses())
+    .is("completed_at", null)
+    .gt("eligible_at", new Date().toISOString());
+  if (cycle_id) query = query.eq("cycle_id", cycle_id);
+  const { data } = await query.order("eligible_at", { ascending: true }).limit(1);
+  const row = data?.[0];
+  return row?.eligible_at ? String(row.eligible_at) : null;
+}
+
+export function countPortfolioJobsByCycleForTests(cycle_id: string): {
+  queued: number;
+  running: number;
+  failed: number;
+  completed: number;
+} {
+  const rows = testPortfolioJobRows.filter((r) => r.cycle_id === cycle_id);
+  return {
+    queued: rows.filter((r) => r.status === "QUEUED" || r.status === "IN_PROGRESS").length,
+    running: rows.filter((r) => r.status === "RUNNING").length,
+    failed: rows.filter((r) => r.status === "FAILED").length,
+    completed: rows.filter((r) => r.status === "COMPLETED").length,
+  };
 }
 
 export async function enqueuePortfolioJob(input: EnqueuePortfolioJobInput): Promise<{ job_id: string | null; skipped: boolean }> {
@@ -144,6 +201,10 @@ export async function patchPortfolioJobFields(
     completed_at?: string | null;
   },
 ): Promise<boolean> {
+  if (process.env.NODE_ENV === "test") {
+    patchTestPortfolioJobForTests(job_id, patch);
+    return true;
+  }
   const client = createPortfolioDurableSupabase();
   if (!client) return false;
   const { error } = await client
@@ -159,6 +220,9 @@ export async function countPortfolioJobsByCycle(cycle_id: string): Promise<{
   failed: number;
   completed: number;
 }> {
+  if (process.env.NODE_ENV === "test") {
+    return countPortfolioJobsByCycleForTests(cycle_id);
+  }
   const client = createPortfolioDurableSupabase();
   if (!client) return { queued: 0, running: 0, failed: 0, completed: 0 };
   const { data } = await client.from(PORTFOLIO_DURABLE_TABLES.jobs).select("status").eq("cycle_id", cycle_id);

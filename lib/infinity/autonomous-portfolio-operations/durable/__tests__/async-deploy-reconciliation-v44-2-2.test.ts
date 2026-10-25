@@ -16,16 +16,30 @@ describe("async deploy reconciliation v44.2.2", () => {
     expect(readPriorDeploymentIdFromLineage({})).toBeNull();
   });
 
-  it("selects earliest telemetry deployment and supersedes later duplicates", () => {
+  it("selects earliest telemetry deployment when lineage has no authoritative id", () => {
     const picked = resolveAuthoritativeDeploymentId({
-      output_lineage: { deployment_id: "dpl_newest" },
+      output_lineage: {},
       telemetry_deployments: [
         { deployment_id: "dpl_first", created_at: "t1", build_status: "IN_PROGRESS" },
         { deployment_id: "dpl_second", created_at: "t2", build_status: "IN_PROGRESS" },
       ],
     });
     expect(picked.authoritative_deployment_id).toBe("dpl_first");
-    expect(picked.superseded_deployment_ids).toEqual(["dpl_second", "dpl_newest"]);
+    expect(picked.superseded_deployment_ids).toEqual(["dpl_second"]);
+  });
+
+  it("prefers durable output lineage authoritative id over earliest telemetry", () => {
+    const picked = resolveAuthoritativeDeploymentId({
+      output_lineage: { deployment_id: "dpl_newest", superseded_deployment_ids: ["dpl_old"] },
+      telemetry_deployments: [
+        { deployment_id: "dpl_first", created_at: "t1", build_status: "IN_PROGRESS" },
+        { deployment_id: "dpl_second", created_at: "t2", build_status: "IN_PROGRESS" },
+      ],
+    });
+    expect(picked.authoritative_deployment_id).toBe("dpl_newest");
+    expect(picked.superseded_deployment_ids).toContain("dpl_first");
+    expect(picked.superseded_deployment_ids).toContain("dpl_second");
+    expect(picked.selection_reason).toBe("OUTPUT_LINEAGE_AUTHORITATIVE");
   });
 
   it("merges output lineage without dropping superseded ids", () => {

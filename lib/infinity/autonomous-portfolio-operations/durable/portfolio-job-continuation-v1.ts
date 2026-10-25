@@ -5,6 +5,9 @@ export async function triggerPortfolioJobWorkerContinuation(input: {
   env?: NodeJS.ProcessEnv;
 }): Promise<{ triggered: boolean; reason: string }> {
   const env = input.env ?? process.env;
+  if (env.NODE_ENV === "test") {
+    return { triggered: false, reason: "TEST_SKIP_CONTINUATION_HTTP" };
+  }
   const secret = env.CRON_SECRET || env.INFINITY_RUNTIME_TICK_SECRET;
   const base = (env.INFINITY_RUNTIME_URL || env.VERCEL_URL ? `https://${env.VERCEL_URL}` : "http://localhost:3000").replace(
     /\/$/,

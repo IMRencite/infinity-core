@@ -61,6 +61,8 @@ import { buildAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/com
 import { publishAutonomousClubThrottleStorefrontProduct } from "@/lib/infinity/commerce/club-throttle-autonomous-storefront-publication-v1";
 import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./autonomous-portfolio-durable-execution-v1";
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
+import { runBoundedPortfolioJobWorkerReclaimLoop } from "./portfolio-job-worker-reclaim-v1";
+import { shouldOnpvForceFreshProviderPost } from "./portfolio-job-worker-reclaim-v1";
 import {
   countPortfolioJobsByCycle,
   patchPortfolioJobFields,
@@ -92,6 +94,11 @@ async function completeJob(job: PortfolioJobRow, holder: string, patch: {
       status: patch.status,
       safe_error: patch.safe_error ?? null,
       output_lineage: patch.output_lineage ?? job.output_lineage,
+      eligible_at: patch.eligible_at,
+      completed_at:
+        patch.status === "COMPLETED" || patch.status === "FAILED" ? new Date().toISOString() : null,
+      lease_holder: null,
+      lease_expires_at: null,
     });
     return;
   }
@@ -308,9 +315,13 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           }
         }
         const onpvBacklogPublications = isOnpvDeploy && onpvBacklogArticles.length > 0 ? onpvBacklogArticles : undefined;
-        const onpvForceFresh = Boolean(
-          isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION",
-        );
+        const persistedAuthoritative = readPriorDeploymentIdFromLineage(job.output_lineage);
+        const allowFreshPost = Boolean((job.output_lineage as Record<string, unknown>)?.allow_fresh_provider_post);
+        const onpvForceFresh = shouldOnpvForceFreshProviderPost({
+          is_onpv_new_publication: Boolean(isOnpvDeploy && onpvResolvedArticle && workType === "NEW_PUBLICATION"),
+          persisted_authoritative_deployment_id: persistedAuthoritative,
+          allow_fresh_provider_post: allowFreshPost,
+        });
         const bundleStart = new Date().toISOString();
         const deployVentureId =
           job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"
@@ -322,9 +333,8 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           output_lineage: job.output_lineage,
           telemetry_deployments: telemetryDeployments,
         });
-        let priorDeploymentId = authoritative.authoritative_deployment_id ?? readPriorDeploymentIdFromLineage(job.output_lineage);
-        const allowFreshPost = Boolean((job.output_lineage as Record<string, unknown>)?.allow_fresh_provider_post);
-        if (allowFreshPost || onpvForceFresh) priorDeploymentId = null;
+        let priorDeploymentId = persistedAuthoritative ?? authoritative.authoritative_deployment_id;
+        if (onpvForceFresh) priorDeploymentId = null;
         const deploy = await executeBoundedVentureDeploy({
           venture_id: deployVentureId,
           prior_deployment_id: priorDeploymentId,
@@ -729,23 +739,31 @@ export async function runPortfolioJobWorker(input?: { cycle_id?: string; max_job
   continuation: { triggered: boolean; reason: string };
 }> {
   const holder = `worker:${Date.now()}`;
-  const jobs = await claimPortfolioJobs({
-    limit: input?.max_jobs ?? MAX_JOBS_PER_INVOCATION,
-    holder,
+  const reclaimDisabled = process.env.PORTFOLIO_JOB_RECLAIM_LOOP_DISABLED === "true";
+  const { processed } = await runBoundedPortfolioJobWorkerReclaimLoop({
     cycle_id: input?.cycle_id,
+    max_jobs: input?.max_jobs ?? MAX_JOBS_PER_INVOCATION,
+    holder,
+    reclaim_disabled: reclaimDisabled,
+    claim: (claimInput) =>
+      claimPortfolioJobs({
+        limit: claimInput.limit,
+        holder: claimInput.holder,
+        cycle_id: claimInput.cycle_id,
+      }),
+    execute: executeOneJob,
   });
-  for (const job of jobs) {
-    await executeOneJob(job, holder);
-  }
   const counts = input?.cycle_id
     ? await countPortfolioJobsByCycle(input.cycle_id)
     : { queued: 0, running: 0, failed: 0, completed: 0 };
   const continuation =
-    counts.queued > 0 ? await triggerPortfolioJobWorkerContinuation({ cycle_id: input?.cycle_id }) : { triggered: false, reason: "NO_REMAINING_JOBS" };
+    counts.queued > 0 || counts.running > 0
+      ? await triggerPortfolioJobWorkerContinuation({ cycle_id: input?.cycle_id })
+      : { triggered: false, reason: "NO_REMAINING_JOBS" };
   if (input?.cycle_id) {
     await reconcilePortfolioCycleTerminalState(input.cycle_id);
   }
-  return { processed: jobs.length, remaining_queued: counts.queued, continuation };
+  return { processed, remaining_queued: counts.queued, continuation };
 }
 
 export function autonomousPortfolioJobWorkerQc(): "PASS" | "FAIL" {
