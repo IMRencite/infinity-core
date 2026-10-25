@@ -24,6 +24,8 @@ export type VentureDeployOutputLineage = {
   superseded_deployment_ids?: string[];
   production_url?: string | null;
   provider_post_count?: number;
+  provider_post_count_slice?: number;
+  provider_post_count_job_lifetime?: number;
   submitted_at?: string;
   deploy_result?: string;
   publication_result?: string;

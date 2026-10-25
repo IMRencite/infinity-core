@@ -114,7 +114,7 @@ export async function deployApprovedVentureProductionBundle(input: {
       pollDelayMs: 8000,
       priorDeploymentId: prior,
       backlogPublications: input.onpv_backlog_publications,
-      forceFreshProviderPost: input.onpv_force_fresh_provider_post ?? (input.onpv_backlog_publications?.length ?? 0) > 0,
+      forceFreshProviderPost: input.onpv_force_fresh_provider_post === true,
       onDeploymentSubmitted: input.on_deployment_submitted,
     });
     return {

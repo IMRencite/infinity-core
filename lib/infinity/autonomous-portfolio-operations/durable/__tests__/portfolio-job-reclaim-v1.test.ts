@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { randomUUID } from "node:crypto";
 import {
   claimTestPortfolioJobs,
@@ -16,6 +16,10 @@ import {
 } from "../autonomous-portfolio-job-queue-v1";
 
 describe("portfolio job reclaim v1", () => {
+  beforeEach(() => {
+    resetTestPortfolioJobQueueForTests();
+  });
+
   afterEach(() => {
     resetTestPortfolioJobQueueForTests();
     vi.useRealTimers();
@@ -27,7 +31,7 @@ describe("portfolio job reclaim v1", () => {
       cycle_id,
       venture_id: "occupancynpv",
       job_type: "VENTURE_DEPLOY",
-      idempotency_key: "deploy:test",
+      idempotency_key: `deploy:${randomUUID()}`,
       input_lineage: {},
     });
     const row = listTestPortfolioJobQueueForTests()[0]!;
@@ -38,14 +42,16 @@ describe("portfolio job reclaim v1", () => {
     expect(claimed[0]!.attempt_count).toBe(1);
   });
 
-  it("does not claim IN_PROGRESS job before eligible_at", () => {
+  it("does not claim IN_PROGRESS job before eligible_at", async () => {
     const cycle_id = randomUUID();
-    void enqueuePortfolioJob({
+    await enqueuePortfolioJob({
       cycle_id,
       venture_id: "occupancynpv",
       job_type: "VENTURE_DEPLOY",
-      idempotency_key: "deploy:test2",
+      idempotency_key: `deploy:${randomUUID()}`,
+      input_lineage: {},
     });
+    expect(listTestPortfolioJobQueueForTests().length).toBe(1);
     const row = listTestPortfolioJobQueueForTests()[0]!;
     row.status = "IN_PROGRESS";
     row.eligible_at = new Date(Date.now() + 60_000).toISOString();
@@ -53,14 +59,16 @@ describe("portfolio job reclaim v1", () => {
     expect(claimed).toHaveLength(0);
   });
 
-  it("does not double-claim while lease active", () => {
+  it("does not double-claim while lease active", async () => {
     const cycle_id = randomUUID();
-    void enqueuePortfolioJob({
+    await enqueuePortfolioJob({
       cycle_id,
       venture_id: "occupancynpv",
       job_type: "VENTURE_DEPLOY",
-      idempotency_key: "deploy:test3",
+      idempotency_key: `deploy:${randomUUID()}`,
+      input_lineage: {},
     });
+    expect(listTestPortfolioJobQueueForTests().length).toBe(1);
     const row = listTestPortfolioJobQueueForTests()[0]!;
     row.status = "IN_PROGRESS";
     row.eligible_at = new Date(Date.now() - 1000).toISOString();

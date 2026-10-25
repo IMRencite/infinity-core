@@ -135,11 +135,53 @@ export function countPortfolioJobsByCycleForTests(cycle_id: string): {
   };
 }
 
-export async function enqueuePortfolioJob(input: EnqueuePortfolioJobInput): Promise<{ job_id: string | null; skipped: boolean }> {
+export const CROSS_CYCLE_ACTIVE_JOB_IDEMPOTENCY_CONTRACT_V1 =
+  "At most one non-terminal portfolio job per idempotency_key across cycles; new cycles continue existing logical work instead of enqueueing duplicates." as const;
+
+const ACTIVE_PORTFOLIO_JOB_STATUSES: PortfolioJobStatus[] = ["QUEUED", "RUNNING", "IN_PROGRESS"];
+
+export function isActivePortfolioJobStatus(status: PortfolioJobStatus): boolean {
+  return ACTIVE_PORTFOLIO_JOB_STATUSES.includes(status);
+}
+
+export function findActivePortfolioJobByIdempotencyKeyForTests(idempotency_key: string): PortfolioJobRow | null {
+  return (
+    testPortfolioJobRows.find(
+      (j) => j.idempotency_key === idempotency_key && isActivePortfolioJobStatus(j.status) && !j.completed_at,
+    ) ?? null
+  );
+}
+
+export async function findActivePortfolioJobByIdempotencyKey(
+  idempotency_key: string,
+): Promise<PortfolioJobRow | null> {
   if (process.env.NODE_ENV === "test") {
-    if (testPortfolioJobRows.some((j) => j.idempotency_key === input.idempotency_key)) {
-      return { job_id: null, skipped: true };
-    }
+    return findActivePortfolioJobByIdempotencyKeyForTests(idempotency_key);
+  }
+  const client = createPortfolioDurableSupabase();
+  if (!client) return null;
+  const { data } = await client
+    .from(PORTFOLIO_DURABLE_TABLES.jobs)
+    .select("*")
+    .eq("idempotency_key", idempotency_key)
+    .in("status", ACTIVE_PORTFOLIO_JOB_STATUSES)
+    .is("completed_at", null)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return (data as PortfolioJobRow | null) ?? null;
+}
+
+export async function enqueuePortfolioJob(input: EnqueuePortfolioJobInput): Promise<{
+  job_id: string | null;
+  skipped: boolean;
+  continued_existing?: boolean;
+}> {
+  const existingActive = await findActivePortfolioJobByIdempotencyKey(input.idempotency_key);
+  if (existingActive) {
+    return { job_id: existingActive.job_id, skipped: true, continued_existing: true };
+  }
+  if (process.env.NODE_ENV === "test") {
     const policy = resolvePortfolioJobRetryPolicy(input.job_type);
     const row: PortfolioJobRow = {
       job_id: randomUUID(),

@@ -62,6 +62,7 @@ import {
   evaluateOnpvBuildArtifactPublicationIdentity,
   injectOccupancyNpvBacklogPublicationsIntoSite,
 } from "./occupancynpv-backlog-publication-site-v1";
+import { resolveOnpvPriorDeploymentIdForProviderDeploy } from "./onpv-deploy-prior-resolution-v1";
 
 type ArtifactFile = { path: string; content: string; encoding?: "utf8" | "base64" };
 
@@ -536,10 +537,10 @@ export async function deployOccupancyNpvOrganicLivePage(input: {
     if (!vercel.tokenPresent()) {
       safeError = "VERCEL_TOKEN_MISSING";
     } else {
-      const priorId =
-        input.forceFreshProviderPost || (input.backlogPublications?.length ?? 0) > 0
-          ? null
-          : input.priorDeploymentId?.trim();
+      const priorId = resolveOnpvPriorDeploymentIdForProviderDeploy({
+        forceFreshProviderPost: input.forceFreshProviderPost,
+        priorDeploymentId: input.priorDeploymentId,
+      });
       if (priorId?.startsWith("dpl_")) {
         deploymentId = priorId;
         const polled = await pollOccupancyNpvDeploymentToReady({

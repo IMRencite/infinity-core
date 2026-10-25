@@ -63,6 +63,7 @@ import { patchPortfolioCycle, reconcilePortfolioCycleTerminalState } from "./aut
 import { triggerPortfolioJobWorkerContinuation } from "./portfolio-job-continuation-v1";
 import { runBoundedPortfolioJobWorkerReclaimLoop } from "./portfolio-job-worker-reclaim-v1";
 import { shouldOnpvForceFreshProviderPost } from "./portfolio-job-worker-reclaim-v1";
+import { resolveProviderPostAccountingForJob } from "./provider-call-accounting-v1";
 import {
   countPortfolioJobsByCycle,
   patchPortfolioJobFields,
@@ -314,7 +315,6 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
             composePathSet.add(key);
           }
         }
-        const onpvBacklogPublications = isOnpvDeploy && onpvBacklogArticles.length > 0 ? onpvBacklogArticles : undefined;
         const persistedAuthoritative = readPriorDeploymentIdFromLineage(job.output_lineage);
         const allowFreshPost = Boolean((job.output_lineage as Record<string, unknown>)?.allow_fresh_provider_post);
         const onpvForceFresh = shouldOnpvForceFreshProviderPost({
@@ -322,6 +322,7 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           persisted_authoritative_deployment_id: persistedAuthoritative,
           allow_fresh_provider_post: allowFreshPost,
         });
+        const onpvBacklogPublications = isOnpvDeploy && onpvBacklogArticles.length > 0 ? onpvBacklogArticles : undefined;
         const bundleStart = new Date().toISOString();
         const deployVentureId =
           job.venture_id === CRE_VENTURE_ID || job.venture_id === "occupancynpv"
@@ -387,6 +388,11 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           }
         }
         const deployCommandOk = deploy.phase === "COMPLETED" && deploy.ok;
+        const providerAccounting = await resolveProviderPostAccountingForJob({
+          job_id: job.job_id,
+          slice_provider_post_count: deploy.provider_post_count,
+          pending_deployment_id: deploy.deployment_id,
+        });
         const outputPatch = mergeVentureDeployOutputLineage(job.output_lineage, {
           deployment_id: deploy.deployment_id,
           authoritative_deployment_id: deploy.deployment_id ?? priorDeploymentId,
@@ -394,7 +400,9 @@ async function executeOneJob(job: PortfolioJobRow, holder: string): Promise<void
           asset_identity: frozenRevision.asset_id,
           frozen_bundle_manifest_hash: deploy.frozen_bundle_manifest_hash ?? frozenRevision.frozen_bundle_manifest_hash,
           superseded_deployment_ids: authoritative.superseded_deployment_ids,
-          provider_post_count: deploy.provider_post_count,
+          provider_post_count: providerAccounting.provider_post_count_job_lifetime,
+          provider_post_count_slice: providerAccounting.provider_post_count_slice,
+          provider_post_count_job_lifetime: providerAccounting.provider_post_count_job_lifetime,
           deploy_result: deployCommandOk ? "DEPLOYED_PENDING_VERIFY" : "DEPLOY_FAILED",
           publication_result: deployCommandOk ? "PENDING_VERIFY" : "NOT_PUBLISHED",
           published_claim: false,
