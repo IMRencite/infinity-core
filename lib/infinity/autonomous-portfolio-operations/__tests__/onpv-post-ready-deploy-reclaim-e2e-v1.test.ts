@@ -23,7 +23,11 @@ export const onpvDeployReclaimSimState = {
   aliasFailures: 0,
   terminalOnSecondPoll: false,
   terminalPollCount: 0,
+  priorPollCount: 0,
+  aliasAttemptCount: 0,
 };
+
+export const PRODUCTION_HXFK_DEPLOYMENT_ID = "dpl_HXfkYXUv4QjQ2baRzutew9aLyhkc" as const;
 
 vi.mock("../durable/async-venture-deployment-reconciliation-v1", async (importOriginal) => {
   const original = await importOriginal<typeof import("../durable/async-venture-deployment-reconciliation-v1")>();
@@ -34,6 +38,7 @@ vi.mock("../durable/async-venture-deployment-reconciliation-v1", async (importOr
       const now = Date.now();
       const prior = input.prior_deployment_id?.trim();
       if (prior?.startsWith("dpl_")) {
+        sim.priorPollCount += 1;
         if (sim.terminalOnSecondPoll && sim.terminalPollCount === 0) {
           sim.terminalPollCount += 1;
           return {
@@ -55,6 +60,7 @@ vi.mock("../durable/async-venture-deployment-reconciliation-v1", async (importOr
           };
         }
         if (now - sim.createdAtMs >= sim.readyAfterMs) {
+          sim.aliasAttemptCount += 1;
           return {
             phase: "COMPLETED" as const,
             ok: true,
@@ -107,6 +113,8 @@ function resetSim() {
   onpvDeployReclaimSimState.terminalOnSecondPoll = false;
   onpvDeployReclaimSimState.terminalPollCount = 0;
   onpvDeployReclaimSimState.readyAfterMs = 65_000;
+  onpvDeployReclaimSimState.priorPollCount = 0;
+  onpvDeployReclaimSimState.aliasAttemptCount = 0;
 }
 
 describe("ONPV post-ready deploy reclaim E2E", () => {
@@ -152,15 +160,69 @@ describe("ONPV post-ready deploy reclaim E2E", () => {
   });
 
   it("LONG_PROVIDER_BUILD_OUTLIVES_SLICE_QC", async () => {
-    onpvDeployReclaimSimState.readyAfterMs = 70_000;
+    onpvDeployReclaimSimState.readyAfterMs = 125_000;
     const cycle_id = randomUUID();
     seedWorkerE2ePortfolioCycle(cycle_id);
     await seedBuiltTiNewPublicationJobs(cycle_id);
     const run = runPortfolioJobWorker({ cycle_id });
-    await vi.advanceTimersByTimeAsync(130_000);
+    await vi.advanceTimersByTimeAsync(200_000);
     await run;
     expect(onpvDeployReclaimSimState.providerCreates).toBe(1);
+    expect(onpvDeployReclaimSimState.priorPollCount).toBeGreaterThanOrEqual(2);
     expect(listTestPortfolioJobQueueForTests().find((j) => j.job_type === "VENTURE_DEPLOY")!.status).toBe("COMPLETED");
+  });
+
+  it("MULTI_SLICE_SAME_DEPLOYMENT_RESUME_QC", async () => {
+    onpvDeployReclaimSimState.readyAfterMs = 130_000;
+    const cycle_id = randomUUID();
+    seedWorkerE2ePortfolioCycle(cycle_id);
+    await seedBuiltTiNewPublicationJobs(cycle_id);
+    const run = runPortfolioJobWorker({ cycle_id });
+    await vi.advanceTimersByTimeAsync(200_000);
+    await run;
+    expect(onpvDeployReclaimSimState.providerCreates).toBe(1);
+    expect(onpvDeployReclaimSimState.priorPollCount).toBeGreaterThanOrEqual(3);
+    expect(onpvDeployReclaimSimState.aliasAttemptCount).toBe(1);
+    const deploy = listTestPortfolioJobQueueForTests().find((j) => j.job_type === "VENTURE_DEPLOY")!;
+    expect(String(deploy.output_lineage.deployment_id)).toBe("dpl_TEST_A");
+    expect(deploy.status).toBe("COMPLETED");
+    expect(listTestPortfolioJobQueueForTests().find((j) => j.job_type === "PRODUCTION_VERIFY")!.status).toBe("COMPLETED");
+  });
+
+  it("EXISTING_PRODUCTION_STUCK_STATE_FIXTURE_QC — HXfk READY resume", async () => {
+    vi.useRealTimers();
+    resetSim();
+    onpvDeployReclaimSimState.deploymentId = PRODUCTION_HXFK_DEPLOYMENT_ID;
+    onpvDeployReclaimSimState.readyAfterMs = 0;
+    onpvDeployReclaimSimState.providerCreates = 0;
+    onpvDeployReclaimSimState.createdAtMs = Date.now() - 120_000;
+    const cycle_id = randomUUID();
+    seedWorkerE2ePortfolioCycle(cycle_id);
+    const { deployJob, verifyJob } = await seedBuiltTiNewPublicationJobs(cycle_id);
+    const deploy = listTestPortfolioJobQueueForTests().find((j) => j.job_id === deployJob.job_id)!;
+    deploy.status = "IN_PROGRESS";
+    deploy.attempt_count = 2;
+    deploy.max_attempts = 8;
+    deploy.eligible_at = new Date(Date.now() - 60_000).toISOString();
+    deploy.output_lineage = {
+      ...deploy.output_lineage,
+      deployment_id: PRODUCTION_HXFK_DEPLOYMENT_ID,
+      authoritative_deployment_id: PRODUCTION_HXFK_DEPLOYMENT_ID,
+      published_claim: false,
+      deploy_result: "DEPLOY_FAILED",
+    };
+    const verify = listTestPortfolioJobQueueForTests().find((j) => j.job_id === verifyJob.job_id)!;
+    verify.status = "QUEUED";
+    verify.output_lineage = {
+      upstream_deployment_id: PRODUCTION_HXFK_DEPLOYMENT_ID,
+      upstream_venture_deploy_status: "IN_PROGRESS",
+    };
+    await executePortfolioJobRowForTests({ ...deploy, status: "RUNNING", attempt_count: 3 });
+    expect(onpvDeployReclaimSimState.providerCreates).toBe(0);
+    expect(listTestPortfolioJobQueueForTests().find((j) => j.job_id === deployJob.job_id)!.status).toBe("COMPLETED");
+    await executePortfolioJobRowForTests({ ...verify, status: "RUNNING", attempt_count: 1 });
+    expect(listTestPortfolioJobQueueForTests().find((j) => j.job_id === verifyJob.job_id)!.status).toBe("COMPLETED");
+    vi.useFakeTimers();
   });
 
   it("RECLAIM_TEST_FAILS_WITH_CURRENT_STUCK_JOB_BUG when reclaim loop disabled", async () => {

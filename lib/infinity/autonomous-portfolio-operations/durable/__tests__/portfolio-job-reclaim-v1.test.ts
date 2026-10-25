@@ -130,4 +130,29 @@ describe("portfolio job reclaim v1", () => {
   it("portfolioJobClaimAndLeaseQc PASS", () => {
     expect(portfolioJobClaimAndLeaseQc()).toBe("PASS");
   });
+
+  it("claims IN_PROGRESS job from prior cycle when cycle_id filter omitted", async () => {
+    const old_cycle = randomUUID();
+    const new_cycle = randomUUID();
+    await enqueuePortfolioJob({
+      cycle_id: old_cycle,
+      venture_id: "occupancynpv",
+      job_type: "VENTURE_DEPLOY",
+      idempotency_key: "deploy:old-cycle",
+      input_lineage: {},
+    });
+    const row = listTestPortfolioJobQueueForTests()[0]!;
+    row.status = "IN_PROGRESS";
+    row.eligible_at = new Date(Date.now() - 1000).toISOString();
+    await enqueuePortfolioJob({
+      cycle_id: new_cycle,
+      venture_id: "occupancynpv",
+      job_type: "GROWTH_LEARNING",
+      idempotency_key: "growth:new-cycle",
+    });
+    const claimedScoped = claimTestPortfolioJobs({ limit: 4, holder: "scoped", cycle_id: new_cycle });
+    expect(claimedScoped.every((j) => j.cycle_id === new_cycle)).toBe(true);
+    const claimedBacklog = claimTestPortfolioJobs({ limit: 4, holder: "backlog" });
+    expect(claimedBacklog.some((j) => j.cycle_id === old_cycle)).toBe(true);
+  });
 });

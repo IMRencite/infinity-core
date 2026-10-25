@@ -109,6 +109,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const workerKick = await triggerPortfolioJobWorkerContinuation({
       cycle_id: orchestration.cycle_id ?? undefined,
     });
+    const backlogWorkerKick = await triggerPortfolioJobWorkerContinuation({});
 
     const cycleTerminal =
       orchestration.cycle_id != null
@@ -157,6 +158,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       cycle_id: orchestration.cycle_id,
       jobs_created: orchestration.jobs_created,
       worker_continuation: workerKick,
+      backlog_worker_continuation: backlogWorkerKick,
       V44_RUNTIME_TICK_STAGE_TIMINGS: orchestration.stage_timings,
       V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE: orchestration.V44_RUNTIME_PUBLISH_COMPLETION_ROOT_CAUSE,
       PORTFOLIO_OPERATING_SCHEDULER_QC: cronReconcile.PORTFOLIO_OPERATING_SCHEDULER_QC,
